@@ -125,7 +125,9 @@ public class LandingController implements Initializable,Serializable {
     void saveCurrentSession(ActionEvent event) {
         
         //if smodel.name==null or empty open a dialogue box to save name. i.e call saveSessionAs(event)
-        if(smodel.getName()==null || smodel.getName().isEmpty()){saveSessionAs(event);}
+        if(smodel.getName()==null || smodel.getName().isEmpty()){
+            saveSessionAs(event);
+        }
         else{
             
         }
@@ -286,13 +288,8 @@ public class LandingController implements Initializable,Serializable {
                 EXTRACT HEADERS HERE inside a further for loop.
                 */
             }
-            
-                
-                
-            
-            
-            
-        }
+           
+       }
         
         
         
