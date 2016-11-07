@@ -6,13 +6,23 @@
 package landing;
 
 import collector.Collector;
+import db.model.Child;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.Parent;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
+import db.services.AncestorsService;
+import db.services.AncestorsServiceImpl;
+import db.services.ChildService;
+import db.services.ChildServiceImpl;
+import db.services.JobStepService;
+import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.ParentService;
+import db.services.ParentServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
@@ -192,13 +202,46 @@ public class LandingController implements Initializable,Serializable {
         
         List<JobStep> js=new ArrayList<>();
         
+        ParentService pserv=new ParentServiceImpl();
+        ChildService cserv=new ChildServiceImpl();
+        
+        JobStepService jserv= new JobStepServiceImpl();
+        
         for (Iterator<SessionDetails> iterator = lsd.iterator(); iterator.hasNext();) {
             SessionDetails next = iterator.next();
             js.add(next.getJobStep());
             
+            //get the parents of this jobstep
+            
+            List<Parent> lParent=pserv.getParentsFor(next);
+            
+            for (Iterator<Parent> iterator1 = lParent.iterator(); iterator1.hasNext();) {
+                Parent next1 = iterator1.next();
+                Long parentjobId=next1.getParent();
+                SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
+                System.out.println(next.getJobStep().getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+                
+            }
+            
+            //get children of this jobstep
+            
+            List<Child> lChild=cserv.getChildrenFor(next);
+            for (Iterator<Child> iterator1 = lChild.iterator(); iterator1.hasNext();) {
+                Child next1 = iterator1.next();
+                Long childjobId=next1.getChild();
+                SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
+                System.out.println(next.getJobStep().getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+            }
+            
         }
        
-        //next get the volumes associated with each of the jobs from the jobVolumeDetails table
+       
+        
+        
+        
+        
+        
+        //next get the list of jobVolumeDetails associated with each of the jobs from the jobVolumeDetails table
         
         JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
         List<List<JobVolumeDetails>> ljvd = new ArrayList<>();
@@ -223,6 +266,7 @@ public class LandingController implements Initializable,Serializable {
         System.out.println("");
         System.out.println("The following jobstep:Volumes are present");
        
+        //next extract the list of volumes belonging to each job from the jobVolumeDetail list
          
         for (Iterator<List<JobVolumeDetails>> iterator = ljvd.iterator(); iterator.hasNext();) {
             List<JobVolumeDetails> next = iterator.next();
@@ -231,12 +275,22 @@ public class LandingController implements Initializable,Serializable {
                 JobVolumeDetails next1 = iterator1.next();
                 System.out.println(next1.getJobStep().getNameJobStep()+"-   Volume: "+next1.getVolume().getNameVolume()+ ":with ID: "+next1.getVolume().getIdVolume());
                 
+                
+                
+                /*
+                EXTRACT HEADERS HERE inside a further for loop.
+                */
             }
             
+                
+                
             
             
             
         }
+        
+        
+        
             
     }
 
