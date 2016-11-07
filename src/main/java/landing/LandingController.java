@@ -35,8 +35,10 @@ import fend.session.node.jobs.JobStepModel;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
@@ -205,7 +207,8 @@ public class LandingController implements Initializable,Serializable {
         ParentService pserv=new ParentServiceImpl();
         ChildService cserv=new ChildServiceImpl();
         
-        JobStepService jserv= new JobStepServiceImpl();
+        Map<JobStep,JobStep> parentAndJobMap=new HashMap<>();   
+        Map<JobStep,JobStep> childAndJobMap=new HashMap<>();                        //Use these maps to link the cubic curves
         
         for (Iterator<SessionDetails> iterator = lsd.iterator(); iterator.hasNext();) {
             SessionDetails next = iterator.next();
@@ -220,6 +223,7 @@ public class LandingController implements Initializable,Serializable {
                 Long parentjobId=next1.getParent();
                 SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
                 System.out.println(next.getJobStep().getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+                parentAndJobMap.put(next.getJobStep(), parentJobssd.getJobStep());
                 
             }
             
@@ -231,6 +235,7 @@ public class LandingController implements Initializable,Serializable {
                 Long childjobId=next1.getChild();
                 SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
                 System.out.println(next.getJobStep().getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+                childAndJobMap.put(next.getJobStep(), childssd.getJobStep());
             }
             
         }
