@@ -1,0 +1,160 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package db.model;
+
+import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+/**
+ *
+ * @author sharath nair
+ */
+
+@Entity
+@Table(name = "Volume",uniqueConstraints = {@UniqueConstraint(columnNames = {"idVolume"})})
+public class Volume {
+   @Id
+   //@GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "idVolume")
+   private long idVolume;
+   
+   @Column(name = "nameVolume",length = 255)
+   private String nameVolume;
+   
+   @Column(name = "md5Hash",length = 1025)
+   private String md5Hash;
+   
+   
+   @Column(name = "alert")
+   private Boolean alert;
+
+    
+   
+   
+   @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Headers> headers;
+   
+   @OneToMany(mappedBy="volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<JobVolumeDetails> jobVolumeDetails;
+   
+   
+   
+   
+   public Volume(){}
+
+    public Volume( String nameVolume, String md5Hash) {
+        
+        this.nameVolume = nameVolume;
+        this.md5Hash = md5Hash;
+       
+      
+       
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (int) (this.idVolume ^ (this.idVolume >>> 32));
+        hash = 53 * hash + Objects.hashCode(this.nameVolume);
+        hash = 53 * hash + Objects.hashCode(this.md5Hash);
+        hash = 53 * hash + Objects.hashCode(this.alert);
+       
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Volume other = (Volume) obj;
+        if (this.idVolume != other.idVolume) {
+            return false;
+        }
+        return true;
+    }
+
+    
+    
+    
+    public long getIdVolume() {
+        return idVolume;
+    }
+
+    public void setIdVolume(long idVolume) {
+        this.idVolume = idVolume;
+    }
+    
+    
+    public Boolean getAlert() {
+        return alert;
+    }
+
+    public void setAlert(Boolean alert) {
+        this.alert = alert;
+    }
+    
+
+    public String getNameVolume() {
+        return nameVolume;
+    }
+
+    public void setNameVolume(String nameVolume) {
+        this.nameVolume = nameVolume;
+    }
+
+    public String getMd5Hash() {
+        return md5Hash;
+    }
+
+    public void setMd5Hash(String md5Hash) {
+        this.md5Hash = md5Hash;
+    }
+
+    public Set<Headers> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Set<Headers> headers) {
+        this.headers = headers;
+    }
+
+    public Set<JobVolumeDetails> getJobVolumeDetails() {
+        return jobVolumeDetails;
+    }
+
+    public void setJobVolumeDetails(Set<JobVolumeDetails> jobVolumeDetails) {
+        this.jobVolumeDetails = jobVolumeDetails;
+    }
+
+    public void startAlert() {
+        this.setAlert(Boolean.TRUE);
+    }
+
+    public void stopAlert() {
+        this.setAlert(Boolean.FALSE);
+    }
+
+   
+    
+   
+   
+    
+}

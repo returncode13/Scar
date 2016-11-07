@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</property>
+    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+    <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/obpmanager</property>
+    <property name="hibernate.connection.username">irdb</property>
+    <property name="hibernate.connection.password">password</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <mapping class="db.model.JobStep"/>
+    <mapping class="db.model.Volume"/>
+    <mapping class="db.model.Sessions"/>
+    <mapping class="db.model.SessionDetails"/>
+    <mapping class="db.model.Descendants"/>
+    <mapping class="db.model.Ancestors"/>
+    <mapping class="db.model.Headers"/>
+    <mapping class="db.model.JobVolumeDetails"/>
+    <mapping class="db.model.Child"/>
+    <mapping class="db.model.Parent"/>
+  </session-factory>
+</hibernate-configuration>

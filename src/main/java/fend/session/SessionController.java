@@ -1,0 +1,285 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package fend.session;
+
+import collector.Collector;
+import fend.session.edges.Links;
+import fend.session.edges.LinksModel;
+import fend.session.node.jobs.JobStepNode;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import fend.session.node.jobs.JobStepModel;
+import fend.session.node.jobs.JobStepNodeController;
+import fend.session.node.volumes.VolumeSelectionModel;
+import java.util.Iterator;
+
+/**
+ *
+ * @author naila0152
+ */
+public class SessionController implements Initializable {
+    
+    
+    private ArrayList<JobStepModel> jobStepModelList=new ArrayList<>();
+    private ObservableList<JobStepModel> obsModelList=FXCollections.observableList(jobStepModelList);
+    
+    private List<VolumeSelectionModel> dummyList = new ArrayList<>();
+    private JobStepNode jsn;
+    
+    private ArrayList<LinksModel> linksModelList=new ArrayList<>();
+    private ObservableList<LinksModel> obsLinksModelList=FXCollections.observableList(linksModelList);
+    
+    private SessionModel model=new SessionModel();
+    private SessionNode snn;
+    
+    private int rowNo,ColNo;
+    private int numCols=1;
+    private int numRows=0;
+   
+    private Collector collector=new Collector();
+    private Long id;
+
+    @FXML
+    private VBox buttonHolderVBox;
+
+     @FXML
+    private ScrollPane rightPane;
+    
+    @FXML
+    private AnchorPane rightInteractivePane;
+
+    @FXML
+    private AnchorPane leftPane;
+
+    @FXML
+    private AnchorPane rootPane;
+
+    @FXML
+    private SplitPane basePane;
+
+
+
+     @FXML
+    private Button addJobStepButton;
+     
+    
+    
+     int i=0;
+    @FXML
+    void handleAddJobStepButton(ActionEvent event) {
+        //dummyList.add(new VolumeSelectionModel("v1", Boolean.TRUE));
+       // dummyList.add(new VolumeSelectionModel("v2", Boolean.TRUE));
+       // obsModelList.add(new JobStepModel("SRME", dummyList));
+        obsModelList.add(new JobStepModel());
+        jsn=new JobStepNode(obsModelList.get(obsModelList.size()-1));
+        System.out.println("Value of numCols: "+numCols+" numRows: "+numRows);
+        
+       rightInteractivePane.getChildren().add(jsn);
+        
+        //gridPane.getChildren().add(jsn.getJobStepNode()); above method of setting constraints and adding children
+        
+        numRows++;
+        numCols++;
+       i++;
+    }
+    
+    @FXML
+    void handleOnDragDetected(MouseEvent event) {
+
+    }
+
+    @FXML
+    void handleOnDragDone(DragEvent event) {
+     /*   System.out.println("Drag done on gridpane");
+         if(event.getDragboard().hasString()){
+            int valueToMove=Integer.parseInt(event.getDragboard().getString());
+           
+                event.acceptTransferModes(TransferMode.MOVE);
+           
+        }
+         //event.setDropCompleted(true);
+        event.consume();
+             */
+        
+        System.out.println("JGVC: Drag done: "+event.getDragboard().getContent(DataFormat.PLAIN_TEXT));
+    }
+   
+     @FXML
+    void handleOnDragDropped(DragEvent event) {
+           Dragboard dragboard=event.getDragboard();
+        boolean success=false;
+        if(dragboard.hasString()){
+            String nodeId=dragboard.getString();
+            jsn=(JobStepNode) rightInteractivePane.lookup("#"+nodeId);
+             System.out.println("JGVC: Drag dropped on basePane mouse entered in row# "+rowNo+" colume#"+ ColNo);
+         //interactiveAnchorPane.getChildren().add(node);
+         
+          jsn.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
+            success=true;
+        }
+        event.setDropCompleted(success);
+        event.consume();
+    }
+    
+    @FXML
+    void handleOnDragOver(DragEvent event) {
+      
+        if(event.getGestureSource()!=rightInteractivePane && event.getDragboard().hasString()) {
+          //    System.out.println("JGVC: Drag over ..accepting transfer.MOVE..class instanceOf "+event.getGestureSource().getClass().toString());
+            event.acceptTransferModes(TransferMode.MOVE);
+        }
+        event.consume();
+    }
+    
+    
+    @FXML
+    void commit(ActionEvent event) {
+           // ArrayList<Node> a=(ArrayList<Node>) rightInteractivePane.getChildren().;
+        
+        System.out.println("JGVC EventType: "+event.getEventType());
+            for (Iterator<Node> iterator = rightInteractivePane.getChildren().iterator(); iterator.hasNext();) {
+            Node next = iterator.next();
+            if(next instanceof  Links)
+            {
+                Links ln=(Links) next;
+                
+                obsLinksModelList.add(ln.getLmodel());
+            }
+            
+            
+            
+            
+        }
+            
+            model.setListOfJobs(jobStepModelList);
+            model.setListOfLinks(linksModelList);
+            
+                System.out.println("JGVC: Set the last model");
+
+             //   collector.setCurrentSession(model.getId());
+            //collector.setFeJobGraphModel(model);
+    }
+
+    public SessionModel getModel() {
+        return model;
+    }
+    
+    
+    
+    
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        
+        System.out.println("initialize");
+       
+        // TODO
+    }    
+    
+    public void addToLinksModelList(LinksModel l)
+    {
+        obsLinksModelList.add(l);
+    }
+
+    public ObservableList<JobStepModel> getObsModelList() {
+        return obsModelList;
+    }
+
+    public ObservableList<LinksModel> getObsLinksModelList() {
+        return obsLinksModelList;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+     void setModel(SessionModel item) {
+        this.model=item;
+        this.model.setId(id);
+    }
+
+    void setView(SessionNode aThis) {
+        this.snn=aThis;
+    }
+    
+    
+   public void setAllLinksAndJobsForCommit(){
+       for (Iterator<Node> iterator = rightInteractivePane.getChildren().iterator(); iterator.hasNext();) {
+            Node next = iterator.next();
+            if(next instanceof  Links)
+            {
+                Links ln=(Links) next;
+                
+                obsLinksModelList.add(ln.getLmodel());
+            }
+            
+            
+            
+            
+        }
+            
+            model.setListOfJobs(jobStepModelList);
+            
+            for (Iterator<JobStepModel> iterator = jobStepModelList.iterator(); iterator.hasNext();) {
+           JobStepModel next = iterator.next();
+           
+              //  System.out.println("SessContr: Checking on the Kids");
+                ArrayList<JobStepModel> children=next.getJsChildren();
+                
+                for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
+                    JobStepModel child1 = iterator1.next();
+                //    System.out.println("SessContr Parent: "+next.getJobStepText()+"   Child: "+child1.getJobStepText());
+                    
+                }
+           
+       }
+            
+            model.setListOfLinks(linksModelList);
+            
+            System.out.println("SC: model has ID: "+model.getId());
+   }
+}

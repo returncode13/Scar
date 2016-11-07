@@ -1,0 +1,40 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 7, 2016, 2:02:26 PM
+    Author     : sharath nair
+*/
+
+.root{
+-fx-base: rgb(50,50,50);
+-fx-background: rgb(50,50,50);
+-fx-control-inner-background: rgb(50,50,50)
+
+}
+
+
+
+
+.button{
+-fx-background-color:orange
+
+}
+
+.list-view{
+    -fx-background-color: -fx-control-inner-background
+}
+
+.list-cell{
+    -fx-background-color: -fx-control-inner-background
+}
+
+.list-cell:focused{
+    -fx-background-color: #52585e
+}
+
+.label{
+-fx-text-fill: orange;
+}
