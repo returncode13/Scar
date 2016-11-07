@@ -27,7 +27,7 @@ public class JobVolumeDetailsServiceImpl implements JobVolumeDetailsService{
 
     @Override
     public JobVolumeDetails getJobVolumeDetails(Long jvdId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return jvdDao.getJobVolumeDetails(jvdId);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class JobVolumeDetailsServiceImpl implements JobVolumeDetailsService{
 
     @Override
     public List<JobVolumeDetails> getJobVolumeDetails(JobStep js) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return jvdDao.getJobVolumeDetails(js);
     }
 
     @Override

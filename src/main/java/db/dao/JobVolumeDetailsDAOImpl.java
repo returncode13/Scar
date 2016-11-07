@@ -56,7 +56,22 @@ public class JobVolumeDetailsDAOImpl implements JobVolumeDetailsDAO{
 
     @Override
     public List<JobVolumeDetails> getJobVolumeDetails(JobStep js) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<JobVolumeDetails> result=null;
+        
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria = session.createCriteria(JobVolumeDetails.class);
+            criteria.add(Restrictions.eq("jobStep", js));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
     @Override

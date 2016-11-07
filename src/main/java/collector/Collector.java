@@ -105,6 +105,7 @@ public class Collector {
          
         currentSession=new Sessions();
         currentSession.setIdSessions(feSessionModel.getId());
+        currentSession.setNameSessions(feSessionModel.getName());
      
         
         feJobModel=feSessionModel.getListOfJobs();

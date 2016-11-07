@@ -39,7 +39,7 @@ public class SessionsServiceImpl implements SessionsService {
 
     @Override
     public List<Sessions> listSessions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sessDAO.listSessions();
     }
     
 }

@@ -20,6 +20,15 @@ public class SessionModel implements Serializable{
     //ArrayList<VolumeSelectionModel> listOfVolumes=new ArrayList<>();   // all volume information is held by the JobStepModel.
     ArrayList<LinksModel> listOfLinks=new ArrayList<>();
     Long Id;
+    String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
     
     
     

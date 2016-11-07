@@ -6,14 +6,28 @@
 package landing;
 
 import collector.Collector;
+import db.model.JobStep;
+import db.model.JobVolumeDetails;
+import db.model.SessionDetails;
+import db.model.Sessions;
+import db.model.Volume;
+import db.services.JobVolumeDetailsService;
+import db.services.JobVolumeDetailsServiceImpl;
+import db.services.SessionDetailsService;
+import db.services.SessionDetailsServiceImpl;
+import db.services.SessionsService;
+import db.services.SessionsServiceImpl;
 import fend.session.SessionController;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
 import fend.session.node.jobs.JobStepModel;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 
@@ -22,18 +36,32 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Pair;
+import landing.loadingSession.LoadSessionController;
+import landing.loadingSession.LoadSessionModel;
+import landing.loadingSession.LoadSessionNode;
+import landing.saveSession.SaveSessionController;
+import landing.saveSession.SaveSessionModel;
+import landing.saveSession.SaveSessionNode;
 
 /**
  * FXML Controller class
  *
  * @author naila0152
  */
-public class LandingController implements Initializable {
+public class LandingController implements Initializable,Serializable {
 
     /**
      * Initializes the controller class.
@@ -83,7 +111,14 @@ public class LandingController implements Initializable {
 
     @FXML
     void saveCurrentSession(ActionEvent event) {
-        System.out.println("LC: Saving session with Id: "+smodel.getId());
+        
+        //if smodel.name==null or empty open a dialogue box to save name. i.e call saveSessionAs(event)
+        if(smodel.getName()==null || smodel.getName().isEmpty()){saveSessionAs(event);}
+        else{
+            
+        }
+        
+        System.out.println("LC: Saving session with Id: "+smodel.getId()+" and name: "+smodel.getName());
             scontr.setAllLinksAndJobsForCommit();
             
             ArrayList<JobStepModel> ajs= smodel.getListOfJobs();
@@ -105,12 +140,104 @@ public class LandingController implements Initializable {
 
     @FXML
     void saveSessionAs(ActionEvent event) {
-
+            //open a dialogue box here
+            SaveSessionModel ssm=new SaveSessionModel();
+            SaveSessionNode sessnode=new SaveSessionNode(ssm);
+            SaveSessionController sc=sessnode.getSaveSessionController();
+            
+                      
+            String name=ssm.getName();
+            smodel.setName(name);
+            System.out.println("landing.LandingController.saveSessionAs(): "+smodel.getName());
+            
+            saveCurrentSession(event);
+             
+           
     }
 
     @FXML
     void loadSession(ActionEvent event) {
-
+        
+        /*
+        query the database for existing entries in the table "Sessions"
+        */
+        
+        SessionsService sserv=new SessionsServiceImpl();
+        List<Sessions> list=sserv.listSessions();
+        
+        
+        
+        
+        ObservableList<Sessions> obsList=FXCollections.observableArrayList();
+        
+        for (Iterator<Sessions> iterator = list.iterator(); iterator.hasNext();) {
+            Sessions next = iterator.next();
+            obsList.add(next);
+            
+        }
+        
+        
+        
+        LoadSessionModel lsm=new LoadSessionModel(obsList);
+        LoadSessionNode lnode=new LoadSessionNode(lsm);
+        LoadSessionController lc=lnode.getLoadSessionController();  // when this closes. lsm.sessionToBeLoaded will be the session that needs to be loaded from the database.
+        
+        Sessions sessionToBeLoaded=lsm.getSessionToBeLoaded();
+        
+        Sessions sessionFromDB=sserv.getSessions(sessionToBeLoaded.getIdSessions());
+        
+        //next get all jobs belonging to that session from the sessionDetails Table
+        SessionDetailsService ssDserv=new SessionDetailsServiceImpl();
+        List<SessionDetails> lsd=ssDserv.getSessionDetails(sessionFromDB);           //get all the sessionDetails which belong to the session = sessionFromDB;
+        
+        List<JobStep> js=new ArrayList<>();
+        
+        for (Iterator<SessionDetails> iterator = lsd.iterator(); iterator.hasNext();) {
+            SessionDetails next = iterator.next();
+            js.add(next.getJobStep());
+            
+        }
+       
+        //next get the volumes associated with each of the jobs from the jobVolumeDetails table
+        
+        JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
+        List<List<JobVolumeDetails>> ljvd = new ArrayList<>();
+          
+                
+        for (Iterator<JobStep> iterator = js.iterator(); iterator.hasNext();) {
+            JobStep next = iterator.next();
+            ljvd.add(jvdserv.getJobVolumeDetails(next));                      //This is a list of jobvolumedetail entries related to one job. Many to Many relation
+            
+            
+        }
+        
+        System.err.println("");
+        System.out.println("Session Loaded: "+sessionFromDB.getNameSessions()+" :with ID: "+sessionFromDB.getIdSessions());
+        System.err.println("");
+        System.out.println("The following jobsteps are present in the session");
+         for (Iterator<JobStep> iterator = js.iterator(); iterator.hasNext();) {
+            JobStep next = iterator.next();
+             System.out.println(next.getNameJobStep()+" :with ID: "+next.getIdJobStep());
+            
+        }
+        System.out.println("");
+        System.out.println("The following jobstep:Volumes are present");
+       
+         
+        for (Iterator<List<JobVolumeDetails>> iterator = ljvd.iterator(); iterator.hasNext();) {
+            List<JobVolumeDetails> next = iterator.next();
+            
+                for (Iterator<JobVolumeDetails> iterator1 = next.iterator(); iterator1.hasNext();) {
+                JobVolumeDetails next1 = iterator1.next();
+                System.out.println(next1.getJobStep().getNameJobStep()+"-   Volume: "+next1.getVolume().getNameVolume()+ ":with ID: "+next1.getVolume().getIdVolume());
+                
+            }
+            
+            
+            
+            
+        }
+            
     }
 
     @FXML
