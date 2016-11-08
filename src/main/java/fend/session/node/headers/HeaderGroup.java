@@ -33,7 +33,7 @@ public class HeaderGroup extends StackPane{
         getStylesheets().clear();
         System.out.println("HGroup: AbsPath: "+f.getAbsolutePath());
         //getStylesheets().add("file:///"+f.getAbsolutePath().replace("\\", "/"));
-        getStylesheets().add(this.getClass().getResource("table.css").toExternalForm());
+     //   getStylesheets().add(this.getClass().getResource("table.css").toExternalForm());
         
     }
 }

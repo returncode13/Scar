@@ -11,6 +11,7 @@
     <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.current_session_context_class">thread</property>
+    <property name="hibernate.default_schema">public</property>
     <mapping class="db.model.JobStep"/>
     <mapping class="db.model.Volume"/>
     <mapping class="db.model.Sessions"/>

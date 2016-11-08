@@ -22,6 +22,8 @@ public class DugioScripts implements Serializable{
     private File dugioGetHeaderList;
     private File dugioHeaderValues;
     private File getTimeSubsurfaces;
+    
+  
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
             + "module add prod\n"
@@ -29,14 +31,21 @@ public class DugioScripts implements Serializable{
     private String dugioHeaderValuesContent="#!/bin/bash\n"
             + "module add prod\n"
             + "dugio md_get file=$1 line=$2 key=$3";
-    //private String getTimeSubsurfacesContent="#!/bin/bash\n"
-    //        + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \"\\.0$\" | grep -o \"[[:digit:]]\{14\}.[_[:alnum:]-]*[^.]\"\n";
     
-  /*  private String getTimeSubsurfacesContent="#!/bin/bash\n"
-            + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \"\\.0$\" | grep -o \"[[:digit:]]\\{14\\}.[_[:alnum:]-]*[^.]\"\n";*/
+    
+    //LEAVE this COMMENTED                                                               //private String getTimeSubsurfacesContent="#!/bin/bash\n"
+                                                                                         //        + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \"\\.0$\" | grep -o \"[[:digit:]]\{14\}.[_[:alnum:]-]*[^.]\"\n";
+    
+    //LEAVE THIS COMMENTED                                                                /*  private String getTimeSubsurfacesContent="#!/bin/bash\n"
+                                                                                         // + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \"\\.0$\" | grep -o \"[[:digit:]]\\{14\\}.[_[:alnum:]-]*[^.]\"\n";*/
+    
+    
     
      private String getTimeSubsurfacesContent="#!/bin/bash\n"
-            + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \".[[:digit:]].single.idx\" | grep -o \"[[:digit:]]\\{14\\}.[_[:alnum:]-]*[^.]\" | sed s/2D-//\n";
+    + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \".[[:digit:]].single.idx\" | grep -o \"[[:digit:]]\\{14\\}.[_[:alnum:]-]*[^.]\" | sed s/2D-//\n";
+     
+     
+    
     
     public DugioScripts()
     {

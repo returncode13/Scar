@@ -35,8 +35,12 @@ public class Volume {
    @Column(name = "nameVolume",length = 255)
    private String nameVolume;
    
+   @Column(name = "path",length=2056)
+   private String pathOfVolume;
+   
    @Column(name = "md5Hash",length = 1025)
    private String md5Hash;
+   
    
    
    @Column(name = "alert")
@@ -67,17 +71,22 @@ public class Volume {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + (int) (this.idVolume ^ (this.idVolume >>> 32));
-        hash = 53 * hash + Objects.hashCode(this.nameVolume);
-        hash = 53 * hash + Objects.hashCode(this.md5Hash);
-        hash = 53 * hash + Objects.hashCode(this.alert);
-       
+        int hash = 7;
+        hash = 73 * hash + (int) (this.idVolume ^ (this.idVolume >>> 32));
+        hash = 73 * hash + Objects.hashCode(this.nameVolume);
+        hash = 73 * hash + Objects.hashCode(this.pathOfVolume);
+        hash = 73 * hash + Objects.hashCode(this.md5Hash);
+        hash = 73 * hash + Objects.hashCode(this.alert);
+        hash = 73 * hash + Objects.hashCode(this.headers);
+        hash = 73 * hash + Objects.hashCode(this.jobVolumeDetails);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -88,9 +97,28 @@ public class Volume {
         if (this.idVolume != other.idVolume) {
             return false;
         }
+        if (!Objects.equals(this.nameVolume, other.nameVolume)) {
+            return false;
+        }
+        if (!Objects.equals(this.pathOfVolume, other.pathOfVolume)) {
+            return false;
+        }
+        if (!Objects.equals(this.md5Hash, other.md5Hash)) {
+            return false;
+        }
+        if (!Objects.equals(this.alert, other.alert)) {
+            return false;
+        }
+        if (!Objects.equals(this.headers, other.headers)) {
+            return false;
+        }
+        if (!Objects.equals(this.jobVolumeDetails, other.jobVolumeDetails)) {
+            return false;
+        }
         return true;
     }
 
+   
     
     
     
@@ -150,6 +178,14 @@ public class Volume {
 
     public void stopAlert() {
         this.setAlert(Boolean.FALSE);
+    }
+
+    public String getPathOfVolume() {
+        return pathOfVolume;
+    }
+
+    public void setPathOfVolume(String pathOfVolume) {
+        this.pathOfVolume = pathOfVolume;
     }
 
    

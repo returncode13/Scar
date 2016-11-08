@@ -169,6 +169,7 @@ public class Collector {
                     vp.setNameVolume(vsm.getLabel());
                     vp.setAlert(Boolean.FALSE);
                     vp.setMd5Hash(null);                                //figure a way to calculate MD5
+                    vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
                     
                     
                     if(volServ.getVolume(vp.getIdVolume())==null){dbVolumes.add(vp);}

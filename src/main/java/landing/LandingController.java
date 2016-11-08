@@ -31,7 +31,9 @@ import fend.session.SessionController;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
+import fend.session.node.headers.HeaderTableModel;
 import fend.session.node.jobs.JobStepModel;
+import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -172,6 +174,16 @@ public class LandingController implements Initializable,Serializable {
     @FXML
     void loadSession(ActionEvent event) {
         
+        HeaderTableModel htmod=new HeaderTableModel();
+        VolumeSelectionModel vmod=new VolumeSelectionModel();
+        
+        ArrayList<JobStepModel> jmodList=new ArrayList<>();
+        
+        
+        
+        
+        
+        
         /*
         query the database for existing entries in the table "Sessions"
         */
@@ -196,9 +208,12 @@ public class LandingController implements Initializable,Serializable {
         LoadSessionNode lnode=new LoadSessionNode(lsm);
         LoadSessionController lc=lnode.getLoadSessionController();  // when this closes. lsm.sessionToBeLoaded will be the session that needs to be loaded from the database.
         
-        Sessions sessionToBeLoaded=lsm.getSessionToBeLoaded();
         
+        Sessions sessionToBeLoaded=lsm.getSessionToBeLoaded();
         Sessions sessionFromDB=sserv.getSessions(sessionToBeLoaded.getIdSessions());
+        
+        smodel.setName(sessionFromDB.getNameSessions());            //front end sessionModel name is the same as the backends
+        smodel.setId(sessionFromDB.getIdSessions());                //front end sessionModel id is the same as the backends
         
         //next get all jobs belonging to that session from the sessionDetails Table
         SessionDetailsService ssDserv=new SessionDetailsServiceImpl();
@@ -209,12 +224,25 @@ public class LandingController implements Initializable,Serializable {
         ParentService pserv=new ParentServiceImpl();
         ChildService cserv=new ChildServiceImpl();
         
+        JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
+        
+        
         Map<JobStep,JobStep> parentAndJobMap=new HashMap<>();   
         Map<JobStep,JobStep> childAndJobMap=new HashMap<>();                        //Use these maps to link the cubic curves
         
         for (Iterator<SessionDetails> iterator = lsd.iterator(); iterator.hasNext();) {
             SessionDetails next = iterator.next();
-            js.add(next.getJobStep());
+            
+            Sessions beSessions=next.getSessions();
+            JobStep beJobStep=next.getJobStep();                                    //beJobstep belongs to beSessions
+            
+            js.add(beJobStep);
+            
+            JobStepModel fejsm=new JobStepModel();
+            fejsm.setJobStepText(beJobStep.getNameJobStep());
+            fejsm.setId(beJobStep.getIdJobStep());
+            
+            
             
             //get the parents of this jobstep
             
@@ -224,8 +252,17 @@ public class LandingController implements Initializable,Serializable {
                 Parent next1 = iterator1.next();
                 Long parentjobId=next1.getParent();
                 SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
-                System.out.println(next.getJobStep().getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
-                parentAndJobMap.put(next.getJobStep(), parentJobssd.getJobStep());
+                System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+                parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
+                
+                
+                JobStepModel pjobStepModel=new JobStepModel();
+                pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
+                pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
+                
+                
+                
+                fejsm.addToParent(pjobStepModel);
                 
             }
             
@@ -236,9 +273,53 @@ public class LandingController implements Initializable,Serializable {
                 Child next1 = iterator1.next();
                 Long childjobId=next1.getChild();
                 SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
-                System.out.println(next.getJobStep().getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
-                childAndJobMap.put(next.getJobStep(), childssd.getJobStep());
+                System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+                childAndJobMap.put(beJobStep, childssd.getJobStep());
+                
+                
+                
+                
+                JobStepModel cJobStepModel=new JobStepModel();
+                cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
+                cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
+                
+                fejsm.addToChildren(cJobStepModel);
             }
+            
+            
+            
+            //get all volumes related to beJobstep from the table JobVolumeDetails
+            
+            
+            List<JobVolumeDetails> bejobVols= jvdserv.getJobVolumeDetails(beJobStep);        //this is the list of all the jobVolumeDetail entries related to beJobStep
+            List<Volume> beVols=new ArrayList<>();                                           // A list to hold the volumes related to this beJobStep
+            List<VolumeSelectionModel> feVols=new ArrayList<>();                             // A list to hold the volume models corresponding to beVols.  Frontend equivalents
+            
+            for (Iterator<JobVolumeDetails> iterator1 = bejobVols.iterator(); iterator1.hasNext();) {
+                JobVolumeDetails next1 = iterator1.next();
+                
+                Volume beV=next1.getVolume();
+                beVols.add(beV);
+                
+                VolumeSelectionModel fv=new VolumeSelectionModel();
+                //fv.setVolumeChosen(beV.);
+                
+                
+                
+                
+            }
+            
+            
+           // fejsm.
+            
+            
+            
+            jmodList.add(fejsm);                          //This list now contains all the jobs that belong to the session. (names and ids)
+            
+            
+            
+            
+            
             
         }
        
@@ -250,7 +331,7 @@ public class LandingController implements Initializable,Serializable {
         
         //next get the list of jobVolumeDetails associated with each of the jobs from the jobVolumeDetails table
         
-        JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
+        
         List<List<JobVolumeDetails>> ljvd = new ArrayList<>();
           
                 
@@ -291,7 +372,11 @@ public class LandingController implements Initializable,Serializable {
            
        }
         
+    
         
+     //Front end 
+     
+     
         
             
     }
