@@ -24,6 +24,9 @@ public class LinksModel implements Serializable{
        
     Long id;
     
+    public LinksModel(){
+        
+    }
     
     public LinksModel(AnchorModel ms,AnchorModel me,CubCurveModel cm){
         mStart=ms;
@@ -77,6 +80,14 @@ public class LinksModel implements Serializable{
     public JobStepModel getChild() {
         child=mEnd.getJob();
         return child;
+    }
+
+    public void setParent(JobStepModel parent) {
+        this.parent = parent;
+    }
+
+    public void setChild(JobStepModel child) {
+        this.child = child;
     }
     
     

@@ -53,7 +53,7 @@ public class JobStepDAOImpl implements JobStepDAO{
         
         try{
             JobStep js = (JobStep) session.get(JobStep.class, jobId);
-            System.out.println("JobDAOIMPL: checking for id "+jobId+" and found "+(js==null?" NULL":js.getIdJobStep()));
+           // System.out.println("JobDAOIMPL: checking for id "+jobId+" and found "+(js==null?" NULL":js.getIdJobStep()));
             return js;
         }catch(Exception e){
             e.printStackTrace();

@@ -471,6 +471,30 @@ public class JobStepNodeController {
     public Long getId() {
         return id;
     }
+
+    public void setVolumeModelsForFrontEndDisplay() {
+        
+        
+        for (Iterator<VolumeSelectionModel> iterator = obsList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModel next = iterator.next();
+            volumeSelView.setItems(obsList);
+               
+                
+                model.setVolList(obsList);                               //Redundant step???
+                
+                
+                System.out.println("JSNC: Adding volumeModel "+obsList.get(obsList.size()-1).getId()+" to JobStepModel "+model.getId());
+                System.out.println("JSNC: At this point the jobStep model# "+model.getId()+" has the following Volumes ");
+                
+                for (Iterator<VolumeSelectionModel> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
+            VolumeSelectionModel next1 = iterator1.next();
+                    System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
+            
+        }
+            
+            
+        }
+    }
     
     
 }

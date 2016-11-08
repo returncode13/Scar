@@ -42,6 +42,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -52,7 +53,8 @@ public class Collector {
     //from frontEnd. user
     
     private SessionModel feSessionModel;
-    private ArrayList<JobStepModel> feJobModel=new ArrayList<>();
+    //private ArrayList<JobStepModel> feJobModel=new ArrayList<>();
+    ObservableList<JobStepModel> feJobModel=FXCollections.observableArrayList();
     private ArrayList<VolumeSelectionModel> feVolume=new ArrayList<>();
        
     
@@ -106,10 +108,17 @@ public class Collector {
         currentSession=new Sessions();
         currentSession.setIdSessions(feSessionModel.getId());
         currentSession.setNameSessions(feSessionModel.getName());
+        
      
         
         feJobModel=feSessionModel.getListOfJobs();
-        if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
+        
+         for (Iterator<JobStepModel> iterator = feJobModel.iterator(); iterator.hasNext();) {
+             JobStepModel next = iterator.next();
+             System.out.println("collector.Collector.saveCurrentSession(): List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
+         }
+        dbSessions.add(currentSession);
+       // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
         setupEntries();
     }
     
@@ -129,8 +138,8 @@ public class Collector {
         
         
         //for every session
-        for (Iterator<Sessions> iterator = dbSessions.iterator(); iterator.hasNext();) {
-           Sessions sess = iterator.next();
+       // for (Iterator<Sessions> iterator = dbSessions.iterator(); iterator.hasNext();) {
+           Sessions sess = currentSession;//iterator.next();
             
            //for each jobStep from fe
             for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
@@ -141,9 +150,14 @@ public class Collector {
                  System.out.println("Coll: JSM ID: "+jsm.getId());
                  jobStep.setAlert(Boolean.FALSE);
                  
+                 System.out.println("collector.Collector.setupEntries(): jobStep: "+jobStep.getNameJobStep()+" :ID: "+jobStep.getIdJobStep());
+                 
                  //add to db
                  //if(!dbJobSteps.contains(jobStep))dbJobSteps.add(jobStep);
-                 if(jsServ.getJobStep(jobStep.getIdJobStep())==null){dbJobSteps.add(jobStep);}
+                 if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
+                     System.out.println("collector.Collector.setupEntries(): New jobStep: Adding to dbJobSteps: "+jobStep.getNameJobStep());
+                     dbJobSteps.add(jobStep);
+                 }
                  
                  
                  
@@ -186,7 +200,7 @@ public class Collector {
                  
                  
             }
-        }
+       // }
         
         
          //for (Iterator<Sessions> iterator = dbSessions.iterator(); iterator.hasNext();){
@@ -262,6 +276,8 @@ public class Collector {
          Delete ALL entries from the Parent table for the current Session
          */
          
+         
+         System.out.println("collector.Collector.createAllAncestors(): DELETING ALL ENTRIES FROM THE PARENT TABLE FOR THE SESSION : "+currentSession.getNameSessions());
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);
          
          for (Iterator<SessionDetails> sli = sL.iterator(); sli.hasNext();) {
@@ -285,21 +301,27 @@ public class Collector {
          //load the dbAncestor List
             for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
                 JobStepModel jsm = jit.next();
+              //  System.out.println("collector.Collector.createAllAncestors()  :JobStepModel: "+jsm.getJobStepText()+" id: "+jsm.getId());
                 JobStep js=jsServ.getJobStep(jsm.getId());
                // dbAncestors=new ArrayList<>();
                 dbParent=new ArrayList<>();
-                
+              //  System.out.println("collector.Collector.createAllAncestors() : JobStep: "+js.getNameJobStep()+ " :id: "+js.getIdJobStep());
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
-                    
+                   // System.out.println("collector.Collector.createAllAncestors(): CurrentSession: "+currentSession.getNameSessions());
+                   // System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
                       ArrayList<JobStepModel> listOfParents=jsm.getJsParents();
                  
                  for (Iterator<JobStepModel> pit = listOfParents.iterator(); pit.hasNext();) {
                      JobStepModel par = pit.next();
-                   
+              //       System.out.println("collector.Collector.createAllAncestors(): "+par.getJobStepText());
+                     
                    //  Ancestors ancestor=new Ancestors();  //
                      Parent parent=new Parent();
                      parent.setSessionDetails(sd);
                      JobStep parJs=jsServ.getJobStep(par.getId());
+                     
+               //      System.out.println("collector.Collector.createAllAncestors()  ParentJobStep: "+parJs.getNameJobStep());
+               //      System.out.println("collector.Collector.createAllAncestors() CurrentSession: "+currentSession.getNameSessions());
                      SessionDetails parSSd=ssdServ.getSessionDetails(parJs, currentSession);
                      parent.setParent(parSSd.getIdSessionDetails());
                     
@@ -388,6 +410,7 @@ public class Collector {
          
          // Delete ALL entries from the Child table  for the current Session
          
+         System.out.println("collector.Collector.createAllDescendants() : DELETING ALL ENTRIES FROM THE Child TABLE FOR THE SESSION : "+currentSession.getNameSessions());
          
          
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);

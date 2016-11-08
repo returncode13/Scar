@@ -42,7 +42,16 @@ public class SessionNode extends AnchorPane{
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
+                if(item.getId()==null)
+                {
                 setId(UUID.randomUUID().getMostSignificantBits()+"");
+                
+                }
+                else
+                {
+                    setId(item.getId()+"");
+                    
+                }
                 snc.setId(Long.valueOf(getId()));
                 snc.setModel(item);
                 snc.setView(this) ;

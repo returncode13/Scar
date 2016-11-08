@@ -31,6 +31,7 @@ import fend.session.SessionController;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
+import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeaderTableModel;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.volumes.VolumeSelectionModel;
@@ -127,6 +128,9 @@ public class LandingController implements Initializable,Serializable {
     @FXML
     void saveCurrentSession(ActionEvent event) {
         
+        System.out.println("landing.LandingController.saveCurrentSession(): sessionName: "+smodel.getName());
+                
+        
         //if smodel.name==null or empty open a dialogue box to save name. i.e call saveSessionAs(event)
         if(smodel.getName()==null || smodel.getName().isEmpty()){
             saveSessionAs(event);
@@ -138,7 +142,7 @@ public class LandingController implements Initializable,Serializable {
         System.out.println("LC: Saving session with Id: "+smodel.getId()+" and name: "+smodel.getName());
             scontr.setAllLinksAndJobsForCommit();
             
-            ArrayList<JobStepModel> ajs= smodel.getListOfJobs();
+            ObservableList<JobStepModel> ajs= smodel.getListOfJobs();
             
             for (Iterator<JobStepModel> iterator = ajs.iterator(); iterator.hasNext();) {
             JobStepModel next = iterator.next();
@@ -173,7 +177,7 @@ public class LandingController implements Initializable,Serializable {
     }
 
     @FXML
-    void loadSession(ActionEvent event) {
+    void loadSession(ActionEvent event) {    //All of this needs to go to the "Controller" class in package controller. This is just POC.
         
         HeaderTableModel htmod=new HeaderTableModel();
         VolumeSelectionModel vmod=new VolumeSelectionModel();
@@ -213,8 +217,8 @@ public class LandingController implements Initializable,Serializable {
         Sessions sessionToBeLoaded=lsm.getSessionToBeLoaded();
         Sessions sessionFromDB=sserv.getSessions(sessionToBeLoaded.getIdSessions());
         
-        smodel.setName(sessionFromDB.getNameSessions());            //front end sessionModel name is the same as the backends
-        smodel.setId(sessionFromDB.getIdSessions());                //front end sessionModel id is the same as the backends
+        System.out.println("landing.LandingController.loadSession(): Name of session thats about to be loaded: "+sessionFromDB.getNameSessions());
+        
         
         //next get all jobs belonging to that session from the sessionDetails Table
         SessionDetailsService ssDserv=new SessionDetailsServiceImpl();
@@ -307,18 +311,19 @@ public class LandingController implements Initializable,Serializable {
                 fv.setHeaderButtonStatus(beV.getHeaderExtracted());
                 fv.setAlert(beV.getAlert());
                 fv.setLabel(beV.getNameVolume());
-                
-                
-                
-                
+                fv.setId(beV.getIdVolume());
+                fv.setInflated(true);
+                feVols.add(fv);
+                ObservableList<VolumeSelectionModel> obv=FXCollections.observableArrayList(feVols);
+                fejsm.setVolList(obv);
             }
             
             
-           // fejsm.
+           
             
             
             
-            jmodList.add(fejsm);                          //This list now contains all the jobs that belong to the session. (names and ids)
+            jmodList.add(fejsm);                          //This list now contains all the jobs that belong to the session. (names and ids)..one job at a time in the loop
             
             
             
@@ -327,10 +332,67 @@ public class LandingController implements Initializable,Serializable {
             
         }
        
+        //Parents and Children
+        
+        ObservableList<LinksModel> oLink=FXCollections.observableArrayList();
+        
+        for (Iterator<JobStepModel> iterator = jmodList.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            
+            List<JobStepModel> parentList = next.getJsParents();
+            List<JobStepModel> childList = next.getJsChildren();
+            
+            for (Iterator<JobStepModel> iterator1 = parentList.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                
+                LinksModel lm=new LinksModel();
+                lm.setParent(next1);
+                
+                    for (Iterator<JobStepModel> iterator2 = childList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    lm.setChild(next2);
+                    
+                }
+                
+                 oLink.add(lm);
+                
+            }
+            
+            
+           
+            
+        }
+        
        
         
         
         
+        
+        //Front end 
+       smodel = new SessionModel();
+       smodel.setName(sessionFromDB.getNameSessions());            //front end sessionModel name is the same as the backends
+       smodel.setId(sessionFromDB.getIdSessions());                //front end sessionModel id is the same as the backends
+       ObservableList<JobStepModel> otemp=FXCollections.observableArrayList(jmodList);
+       smodel.setListOfJobs(otemp);
+       snode=new SessionNode(smodel);                               //same id as the one in the database
+       scontr=snode.getSessionController();
+       obsModL.clear();                                             //clear the previous model from the list
+       obsModL.add(smodel);
+       basePane.getChildren().clear();                              //clear previous setup... this will not save! fix this. Save the current session before loading a new one.
+       //saveCurrentSession(event);
+       basePane.getChildren().add(snode);
+       ObservableList<JobStepModel> obj=FXCollections.observableArrayList(jmodList);
+       
+        for (Iterator<JobStepModel> iterator = obj.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            System.out.println("landing.LandingController.loadSession(): jobs to be loaded "+next.getJobStepText());
+            
+        }
+       
+       scontr.setObsModelList(obj);
+       scontr.setAllModelsForFrontEndDisplay();
+        
+        /*
         
         
         //next get the list of jobVolumeDetails associated with each of the jobs from the jobVolumeDetails table
@@ -369,16 +431,14 @@ public class LandingController implements Initializable,Serializable {
                 
                 
                 
-                /*
-                EXTRACT HEADERS HERE inside a further for loop.
-                */
+               
             }
            
        }
-        
+       */ 
     
         
-     //Front end 
+     
      
      
         

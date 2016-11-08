@@ -65,7 +65,7 @@ public class VolumeSelectionModel {
         return id;
     }
 
-    /*
+    
     public boolean isHeaderButtonIsDisabled() {
         return headerButtonIsDisabled;
     }
@@ -73,7 +73,7 @@ public class VolumeSelectionModel {
     public void setHeaderButtonIsDisabled(boolean headerButtonIsDisabled) {
         this.headerButtonIsDisabled = headerButtonIsDisabled;
     }
-*/
+
 
     public BooleanProperty getHeaderButtonDisabledStatusProperty() {
         return headerButtonDisabledStatusProperty;

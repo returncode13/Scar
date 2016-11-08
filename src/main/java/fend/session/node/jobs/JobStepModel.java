@@ -85,21 +85,27 @@ public class JobStepModel {
     
     public void addToParent(JobStepModel parent){
         if(jsParents.contains(this)) {
-            System.out.println("JSM: contains "+this.getJobStepText()+" ..reomoving from parent");
+            System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from parent");
             jsParents.remove(this);
         }
-        System.out.println("JSM: in "+this.getJobStepText()+" setting parent: "+parent.getJobStepText());
+        if(parent!=this){
+            System.out.println("JSM: in "+this.getJobStepText()+" setting parent: "+parent.getJobStepText());
         jsParents.add(parent);
+        }
+        
     }
     
     
     public void addToChildren(JobStepModel child){
         if(jsChildren.contains(this)) {
-        System.out.println("JSM: contains "+this.getJobStepText()+" ..reomoving from Children");
+        System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from Children");
             jsChildren.remove(this);
         }
-        System.out.println("JSM: in "+this.getJobStepText()+" setting child: "+child.getJobStepText());
+        if(child!=this){
+            System.out.println("JSM: in "+this.getJobStepText()+" setting child: "+child.getJobStepText());
         jsChildren.add(child);
+        }
+        
     }
 
     public ArrayList<JobStepModel> getJsParents() {

@@ -110,6 +110,14 @@ public class SessionController implements Initializable {
         //dummyList.add(new VolumeSelectionModel("v1", Boolean.TRUE));
        // dummyList.add(new VolumeSelectionModel("v2", Boolean.TRUE));
        // obsModelList.add(new JobStepModel("SRME", dummyList));
+       
+        System.out.println("fend.session.SessionController.handleAddJobStepButton(): jobStepContents below");
+        
+        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
+            
+        }
         obsModelList.add(new JobStepModel());
         jsn=new JobStepNode(obsModelList.get(obsModelList.size()-1));
         System.out.println("Value of numCols: "+numCols+" numRows: "+numRows);
@@ -191,7 +199,7 @@ public class SessionController implements Initializable {
             
         }
             
-            model.setListOfJobs(jobStepModelList);
+            model.setListOfJobs(obsModelList);
             model.setListOfLinks(linksModelList);
             
                 System.out.println("JGVC: Set the last model");
@@ -221,6 +229,14 @@ public class SessionController implements Initializable {
         obsLinksModelList.add(l);
     }
 
+    public void setObsModelList(ObservableList<JobStepModel> obsModelList) {
+        this.obsModelList = obsModelList;
+    }
+
+    
+
+    
+    
     public ObservableList<JobStepModel> getObsModelList() {
         return obsModelList;
     }
@@ -229,6 +245,8 @@ public class SessionController implements Initializable {
         return obsLinksModelList;
     }
 
+    
+    
     public Long getId() {
         return id;
     }
@@ -248,6 +266,7 @@ public class SessionController implements Initializable {
     
     
    public void setAllLinksAndJobsForCommit(){
+       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit()");
        for (Iterator<Node> iterator = rightInteractivePane.getChildren().iterator(); iterator.hasNext();) {
             Node next = iterator.next();
             if(next instanceof  Links)
@@ -262,7 +281,13 @@ public class SessionController implements Initializable {
             
         }
             
-            model.setListOfJobs(jobStepModelList);
+       for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+           JobStepModel next = iterator.next();
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit():  jobStepModeList : "+next.getJobStepText());
+           
+       }
+       
+            model.setListOfJobs(obsModelList);
             
             for (Iterator<JobStepModel> iterator = jobStepModelList.iterator(); iterator.hasNext();) {
            JobStepModel next = iterator.next();
@@ -281,5 +306,42 @@ public class SessionController implements Initializable {
             model.setListOfLinks(linksModelList);
             
             System.out.println("SC: model has ID: "+model.getId());
+   }
+   
+   
+   public void setAllModelsForFrontEndDisplay(){
+       
+       for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+           
+           System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): display contents");
+           
+           JobStepModel next = iterator.next();
+           List<VolumeSelectionModel> testvm=next.getVolList();
+           
+           for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
+               VolumeSelectionModel next1 = iterator1.next();
+               System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
+           }
+           jsn=new JobStepNode(next);
+            JobStepNodeController jsc=jsn.getJsnc();
+            
+            ObservableList obvolist=next.getVolList();
+            jsc.setObsList(obvolist);
+           jsc.setVolumeModelsForFrontEndDisplay();
+            rightInteractivePane.getChildren().add(jsn);
+           
+            numRows++;
+        numCols++;
+       i++;
+           
+       }
+    /*   jsn=new JobStepNode(obsModelList.get(obsModelList.size()-1));*/
+        System.out.println("Value of numCols: "+numCols+" numRows: "+numRows);
+       
+       
+        
+        //gridPane.getChildren().add(jsn.getJobStepNode()); above method of setting constraints and adding children
+        
+       
    }
 }
