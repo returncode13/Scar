@@ -29,6 +29,7 @@ public class VolumeSelectionModel {
     private boolean Inflated=false;
     private boolean headerButtonIsDisabled=true;
     private final BooleanProperty headerButtonDisabledStatusProperty=new SimpleBooleanProperty(headerButtonIsDisabled);
+    private boolean alert=false;
     
     //for Debug
     private Long id;
@@ -64,6 +65,7 @@ public class VolumeSelectionModel {
         return id;
     }
 
+    /*
     public boolean isHeaderButtonIsDisabled() {
         return headerButtonIsDisabled;
     }
@@ -71,6 +73,7 @@ public class VolumeSelectionModel {
     public void setHeaderButtonIsDisabled(boolean headerButtonIsDisabled) {
         this.headerButtonIsDisabled = headerButtonIsDisabled;
     }
+*/
 
     public BooleanProperty getHeaderButtonDisabledStatusProperty() {
         return headerButtonDisabledStatusProperty;
@@ -112,6 +115,14 @@ public class VolumeSelectionModel {
 
     public void setVolumeChosen(File volumeChosen) {
         this.volumeChosen = volumeChosen;
+    }
+
+    public boolean isAlert() {
+        return alert;
+    }
+
+    public void setAlert(boolean alert) {
+        this.alert = alert;
     }
 
    

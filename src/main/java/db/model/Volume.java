@@ -41,6 +41,9 @@ public class Volume {
    @Column(name = "md5Hash",length = 1025)
    private String md5Hash;
    
+   @Column(name = "headerExStatus")
+   private Boolean headerExtracted;
+
    
    
    @Column(name = "alert")
@@ -188,6 +191,13 @@ public class Volume {
         this.pathOfVolume = pathOfVolume;
     }
 
+    public Boolean getHeaderExtracted() {
+        return headerExtracted;
+    }
+
+    public void setHeaderExtracted(Boolean headerExtracted) {
+        this.headerExtracted = headerExtracted;
+    }
    
     
    

@@ -34,6 +34,7 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.HeaderTableModel;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.volumes.VolumeSelectionModel;
+import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -302,7 +303,10 @@ public class LandingController implements Initializable,Serializable {
                 beVols.add(beV);
                 
                 VolumeSelectionModel fv=new VolumeSelectionModel();
-                //fv.setVolumeChosen(beV.);
+                fv.setVolumeChosen(new File(beV.getPathOfVolume()));
+                fv.setHeaderButtonStatus(beV.getHeaderExtracted());
+                fv.setAlert(beV.getAlert());
+                fv.setLabel(beV.getNameVolume());
                 
                 
                 
