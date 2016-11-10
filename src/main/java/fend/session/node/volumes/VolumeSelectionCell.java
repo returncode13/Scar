@@ -39,7 +39,7 @@ private static int i=0;
         
         if(item!=null && item.isInflated()){
             
-           System.out.println("VSCell: inflating xml "+i+" headerisDisabled: " + item.getHeaderButtonDisabledStatusProperty().get()+" label: "+item.getLabel() +" isEmpty: "+empty);
+          // System.out.println("VSCell: inflating xml "+i+" headerisDisabled: " + item.getHeaderButtonDisabledStatusProperty().get()+" label: "+item.getLabel() +" isEmpty: "+empty);
             URL location =getClass().getClassLoader().getResource("nodeResources/volumes/VolumeSelectionView.fxml");
             
             FXMLLoader fxmlLoader = new FXMLLoader();

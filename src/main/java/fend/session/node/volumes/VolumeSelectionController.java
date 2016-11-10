@@ -61,7 +61,7 @@ public class VolumeSelectionController  {
 
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            System.out.println("VSC: HButton Status changed from "+oldValue+" to "+ newValue);
+          //  System.out.println("VSC: HButton Status changed from "+oldValue+" to "+ newValue);
             model.setHeaderButtonStatus(newValue);
         }
             
@@ -93,7 +93,7 @@ public class VolumeSelectionController  {
              model.setVolumeChosen(f);
              model.setLabel(f.getName());
             }
-            System.out.println("VSC: "+model.getId()+" label is "+model.getLabel());
+           // System.out.println("VSC: "+model.getId()+" label is "+model.getLabel());
     }
     
     
@@ -190,7 +190,7 @@ public class VolumeSelectionController  {
     
     
      private void updateHeaderButton(){
-         System.out.println("VSV: HButton is now "+(model.isHeaderButtonIsDisabled()?"Disabled":"Enabled"));
+      //   System.out.println("VSC: HButton is now "+(model.isHeaderButtonIsDisabled()?"Disabled":"Enabled"));
          headerTableDisplayButton.setDisable(model.getHeaderButtonStatus());
          
      }

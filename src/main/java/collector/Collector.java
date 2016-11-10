@@ -392,7 +392,7 @@ public class Collector {
              ArrayList<JobStepModel> children=jsm.getJsChildren();
              for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
                  JobStepModel ch = iterator.next();
-                 System.out.println("Coll: FE Parent : "+jsm.getJobStepText()+ "  has child : "+ch.getJobStepText() +" is Leaf: "+jsm.isLeaf());
+             //    System.out.println("Coll: FE Parent : "+jsm.getJobStepText()+ "  has child : "+ch.getJobStepText() +" is Leaf: "+jsm.isLeaf());
                  
              }
                  
@@ -410,10 +410,13 @@ public class Collector {
          
          // Delete ALL entries from the Child table  for the current Session
          
-         System.out.println("collector.Collector.createAllDescendants() : DELETING ALL ENTRIES FROM THE Child TABLE FOR THE SESSION : "+currentSession.getNameSessions());
+         //System.out.println("collector.Collector.createAllDescendants() : DELETING ALL ENTRIES FROM THE Child TABLE FOR THE SESSION : "+currentSession.getNameSessions());
          
          
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);
+         
+        // System.out.println("collector.Collector.createAllDescendants(): deleting ALL CHILD entries for the session: "+currentSession.getIdSessions());
+                
          
          for (Iterator<SessionDetails> sli = sL.iterator(); sli.hasNext();) {
              SessionDetails sdn = sli.next();
@@ -422,7 +425,11 @@ public class Collector {
                 for (Iterator<Child> cit = cl.iterator(); cit.hasNext();) {
                  Child chn = cit.next();
                  Long cid=chn.getIdChild();
-                 cServ.deleteChild(cid);
+                 
+                  //  System.out.println("deleting entry for : "+ssdServ.getSessionDetails(chn.getChild()).getJobStep().getNameJobStep()+ " :for job: "+sdn.getJobStep().getNameJobStep());
+                 
+                  cServ.deleteChild(cid);
+                    
              }
          }
          
@@ -437,32 +444,39 @@ public class Collector {
                 dbChild=new ArrayList<>();
             
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
-                    
+                   // System.out.println("collector.Collector.createAllDescendants(): CurrentSession: "+currentSession.getNameSessions());
                       ArrayList<JobStepModel> listOfChildren=jsm.getJsChildren();
                  
                  for (Iterator<JobStepModel> cit = listOfChildren.iterator(); cit.hasNext();) {
                      JobStepModel child = cit.next();
-                   
+                   //  System.out.println("collector.Collector.createAllDescendants() :" +jsm.getJobStepText()+" : has child: "+child.getJobStepText() );
                    
                      Child c=new Child();
                   
-                     c.setSessionDetails(sd);
+                     c.setSessionDetails(sd);                            //This is the same as setting the parent of this child; in this case is the sessiondetails to which "js" belongs to.
+                  //   System.out.println("collector.Collector.createAllDescendants(): sessionDetailsID(Parent): "+c.getSessionDetails().getIdSessionDetails());
                      JobStep childJs=jsServ.getJobStep(child.getId());
-                     SessionDetails childSSd=ssdServ.getSessionDetails(childJs, currentSession);
-                  
-                     c.setChild(childSSd.getIdSessionDetails());
+                   //  System.out.println("collector.Collector.createAllDescendants(): childJobStep: "+childJs.getNameJobStep()+" :ID: "+childJs.getIdJobStep());
+                     SessionDetails childSSd=ssdServ.getSessionDetails(childJs, currentSession);   //get the sessiondetails corresponding to the child.
+                   //  System.out.println("collector.Collector.createAllDescendants() : sessionDetailsID(Child): "+childSSd.getIdSessionDetails());
+                     c.setChild(childSSd.getIdSessionDetails());   // this adds the sessiondetails of the child to the table Child.
+                                                                   // so the table entry will look like:      SSDofAjob, SSDofTheChild
                   
                     if(cServ.getChildFor(c.getSessionDetails(), c.getChild())==null){dbChild.add(c);}
-                    
+                    //dbChild.add(c);
+                    // System.out.println("collector.Collector.createAllDescendants(): sizeof DbChild: "+dbChild.size());
                 }
                   //write the initial dbAncestors List to the database . for each jobStepModel
                 
                         
                     for (Iterator<Child> iterator = dbChild.iterator(); iterator.hasNext();) {
                  Child next = iterator.next();
-                        System.out.println("Collector: child id "+next.getIdChild()+" sessDetailsID: "+next.getSessionDetails().getIdSessionDetails()+ " childID: "+next.getChild());
-                
-                 cServ.addChild(next);
+                       // System.out.println("Collector: child id "+next.getIdChild()+" sessDetailsID: "+next.getSessionDetails().getIdSessionDetails()+ " childID: "+next.getChild());
+                       // System.out.println("collector.Collector.createAllDescendants(): "+jsServ.getJobStep(next.getChild()).getIdJobStep()+" for job: "+jsm.getJobStepText());
+                     //  System.out.println("collector.Collector.createAllDescendants(): "+next.getChild()+" for job: "+jsm.getJobStepText());
+                     //   System.out.println("collector.Collector.createAllDescendants():  "+ssdServ.getSessionDetails(next.getChild()).getJobStep().getNameJobStep()+ " for Parent job: "+jsm.getJobStepText());
+                     //   System.out.println("collector.Collector.createAllDescendants():  for session: "+ssdServ.getSessionDetails(next.getChild()).getSessions().getIdSessions() );
+                        cServ.addChild(next);
              }
        
             }
@@ -475,6 +489,13 @@ public class Collector {
         List<SessionDetails> sdList= ssdServ.getSessionDetails(currentSession);
         
         for(SessionDetails ssd:sdList){
+            
+            // Start Debug
+              // System.out.println("collector.Collector.createAllDescendants(): jobs in current session: "+ssd.getJobStep().getNameJobStep());
+               
+            // End Debug
+            
+            
           Set<Long> descTableList=new LinkedHashSet<>();
           descServ.getInitialDescendantsListFor(ssd, descTableList);
           for(Long a:descTableList){

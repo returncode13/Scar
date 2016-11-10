@@ -16,6 +16,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import fend.session.node.volumes.VolumeSelectionModel;
+import java.util.Objects;
 
 /**
  *
@@ -34,6 +35,12 @@ public class JobStepModel {
     
     //For debug
     private Long id;
+
+    
+
+    
+    
+   
 
    
     
@@ -84,12 +91,13 @@ public class JobStepModel {
  
     
     public void addToParent(JobStepModel parent){
-        if(jsParents.contains(this)) {
+       /* if(jsParents.contains(this)) {
             System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from parent");
             jsParents.remove(this);
-        }
-        if(parent!=this){
+        }*/
+        if(!parent.getId().equals(this.id)){
             System.out.println("JSM: in "+this.getJobStepText()+" setting parent: "+parent.getJobStepText());
+            jsParents.remove(this);
         jsParents.add(parent);
         }
         
@@ -97,12 +105,14 @@ public class JobStepModel {
     
     
     public void addToChildren(JobStepModel child){
-        if(jsChildren.contains(this)) {
+       /* if(jsChildren.contains(this)) {
         System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from Children");
             jsChildren.remove(this);
-        }
-        if(child!=this){
-            System.out.println("JSM: in "+this.getJobStepText()+" setting child: "+child.getJobStepText());
+        }*/
+        System.out.println("fend.session.node.jobs.JobStepModel.addToChildren()   "+child.getId()+"=="+this.id+ "     :  "+child.getId().equals(this.id));
+        if(!child.getId().equals(this.id)){
+            System.out.println("JSM: in "+this.getJobStepText()+" :ID: "+this.getId()+" setting child: "+child.getJobStepText()+" :ID: "+child.id);
+            jsChildren.remove(this);
         jsChildren.add(child);
         }
         

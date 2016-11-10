@@ -56,15 +56,23 @@ public class DescendantsServiceImpl implements DescendantsService{
         try{
             //Criteria criteria=sess.createCriteria(Descendants.class);
             Criteria criteria=sess.createCriteria(Child.class);
-            criteria.add(Restrictions.eq("sessionDetails", fkid));                    //in the descendants table select all records where FK=fkid;
+            criteria.add(Restrictions.eq("sessionDetails", fkid));                    //in the Child table select all records where FK=fkid;
             List<Child> result=criteria.list();
-         
+          //  System.out.println("db.services.DescendantsServiceImpl.getInitialDescendantsListFor(): resultListvontents below ");
+          /*  for(Child dd:result){
+             //   System.out.println("Child: "+ssdServ.getSessionDetails(dd.getChild()).getJobStep().getNameJobStep()+"  for job: "+fkid.getJobStep().getNameJobStep());
+             //   System.out.println("ChildSession: "+ssdServ.getSessionDetails(dd.getChild()).getSessions().getIdSessions() +" :Parent session: "+fkid.getSessions().getIdSessions());
+            }*/
+            
             for(Child desc:result){
                   // SessionDetails sdDesc=ssdServ.getSessionDetails(desc.getDescendant());// 
                    SessionDetails sdDesc=ssdServ.getSessionDetails(desc.getChild());
                    
+                 //  System.out.println("db.services.DescendantsServiceImpl.getInitialDescendantsListFor():  "+ssdServ.getSessionDetails(desc.getChild()).getJobStep().getNameJobStep()+ " : for job: "+ssdServ.getSessionDetails(fkid.getIdSessionDetails()).getJobStep().getNameJobStep());
+                   
+                   
                     if(Objects.equals(fkid.getIdSessionDetails(), sdDesc.getIdSessionDetails())){
-                        System.out.println("leaf Or a standalone node...");
+                        System.out.println(fkid.getJobStep().getNameJobStep()+" is a leaf Or a standalone node...");
                         listOfDescendants.add(fkid.getIdSessionDetails());
                         return;
                     }
