@@ -332,7 +332,7 @@ public class LandingController implements Initializable,Serializable {
             
         }
        
-        //Parents and Children
+        //Parents and Children for links
         
         ObservableList<LinksModel> oLink=FXCollections.observableArrayList();
         
@@ -354,6 +354,9 @@ public class LandingController implements Initializable,Serializable {
                     
                 }
                 
+                 
+                 
+                    
                  oLink.add(lm);
                 
             }

@@ -62,6 +62,11 @@ public class Links extends Group{
         return end;
     }
 
+    public void setStart(Anchor start) {
+        this.start = start;
+    }
+
+    
     public void setEnd(Anchor end) {
         this.end = end;
     }
