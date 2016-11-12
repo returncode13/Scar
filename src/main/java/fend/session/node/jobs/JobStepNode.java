@@ -63,9 +63,12 @@ static int i=0;
                    setId(item.getId()+"");
                }
                 
+                System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+this.boundsInLocalProperty().get().getMaxY());
+                
                 jsnc.setId(Long.valueOf(getId()));
-                jsnc.setModel(item);
                 jsnc.setView(this) ;
+                jsnc.setModel(item);
+                
                
                 
                 
@@ -91,6 +94,7 @@ static int i=0;
             ClipboardContent content=new ClipboardContent();
           //  setId(this.getClass().getSimpleName()+System.currentTimeMillis());
           //  System.out.println("JSN: ID= "+getId());
+               // System.out.println("JobStepNode :mOnDragDetected: ");
             content.putString(getId());
             dragboard.setContent(content);
             event.consume();
@@ -103,6 +107,7 @@ static int i=0;
             public void handle(DragEvent event) {
           //      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                // System.out.println("JSN: Drag Over "+getId()+" xy "+event.getScreenX()+","+event.getScreenY());
+              // System.out.println("JobStepNode :mOnDragOver: ");
                 JobStepNode.this.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
                 event.acceptTransferModes(TransferMode.LINK);
                 event.consume();
@@ -116,6 +121,7 @@ static int i=0;
           //      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
               //  System.out.println("JSN: Drag Dropped on "+getId()+" xy "+event.getScreenX()+","+event.getScreenY());
                 // event.acceptTransferModes(TransferMode.LINK);
+               // System.out.println("JobStepNode :mOnDragDropped: ");
                 event.setDropCompleted(true);
         event.consume();
             }
@@ -140,16 +146,18 @@ static int i=0;
          //       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                // startFullDrag();
               //  System.out.println("JSN: Mouse Drag Entered on "+getId());
-                
+               // System.out.println("JobStepNode :setOnMouseDragEntered: ");
             }
         });
         
         setOnMouseDragReleased(new EventHandler<MouseDragEvent>(){
-
+            
             @Override
             public void handle(MouseDragEvent event) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                
+                
+              //  System.out.println("JobStepNode :setOnMouseDragReleased: ");
                Anchor anc=(Anchor) event.getGestureSource();
                JobStepNode jsource=(JobStepNode) event.getSource();
                
@@ -241,6 +249,7 @@ static int i=0;
                 // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                  double startX=getScene().getX();
                     double startY=getScene().getY();
+                   System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+JobStepNode.this.boundsInLocalProperty().get().getMaxY());
                    System.out.println("Curve will start @(x,y) = ("+startX+","+startY+")");
                  
                    

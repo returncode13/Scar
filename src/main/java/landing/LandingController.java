@@ -394,6 +394,7 @@ public class LandingController implements Initializable,Serializable {
        
        scontr.setObsModelList(obj);
        scontr.setAllModelsForFrontEndDisplay();
+       scontr.setAllLinksForFrontEnd();
         
         /*
         

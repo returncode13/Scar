@@ -58,6 +58,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 
@@ -79,6 +81,15 @@ public class SessionController implements Initializable {
     
     private SessionModel model=new SessionModel();
     private SessionNode snn;
+    
+    
+     private Map<JobStepNode,AnchorModel> jsnAnchorMap=new HashMap<>();
+       
+     private List<JobStepNode> roots=new ArrayList<>();                             // A list of possible root nodes. i.e step1->step2 and step1->step3  implies step1 is the root of the structure. However we can also have several independent graphs
+                                                           // e.g. one graph is step1-> step2 and step1-> step3  
+                                                           //the other graph is step6-> step7 and step6-> step8.
+                                                           // here there are two roots namely step1 and step6
+    
     
     private int rowNo,ColNo;
     private int numCols=1;
@@ -320,12 +331,7 @@ public class SessionController implements Initializable {
    public void setAllModelsForFrontEndDisplay(){
        
        
-       Map<JobStepNode,AnchorModel> jsnAnchorMap=new HashMap<>();
-       
-       List<JobStepNode> root=new ArrayList<>();                             // A list of possible root nodes. i.e step1->step2 and step1->step3  implies step1 is the root of the structure. However we can also have several independent graphs
-                                                           // e.g. one graph is step1-> step2 and step1-> step3  
-                                                           //the other graph is step6-> step7 and step6-> step8.
-                                                           // here there are two roots namely step1 and step6
+      
        
        
        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
@@ -350,18 +356,14 @@ public class SessionController implements Initializable {
                 if(jsmod.getId().equals(jsmodParents.get(0).getId())){
                      System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay():  "+jsmodParents.get(0).getJobStepText()+" is a root..adding to list of roots");
                     System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay():  id matched for model and the single content in the list of Parents");
-                    root.add(jsn);
+                    roots.add(jsn);
                 }
             }
             
             
             AnchorModel mstart= new AnchorModel();
             
-            Scene sc=jsn.getScene();
-            //System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay() SceneProperties: "+sc.getProperties().toString());
-            
-            Bounds pane=rightInteractivePane.getBoundsInLocal();
-            
+          
             
             
             
@@ -382,11 +384,12 @@ public class SessionController implements Initializable {
             */
             
             Double centerX=jsn.boundsInLocalProperty().getValue().getMinX();
-            Double centerY=jsn.boundsInLocalProperty().getValue().getMinY();
+            Double centerY=jsn.boundsInLocalProperty().getValue().getMinY()+jsn.boundsInLocalProperty().get().getHeight()/2;
             
+            mstart.setJob(next);
             mstart.setCenterX(centerX);
             mstart.setCenterY(centerY);
-            mstart.setJob(next);
+            
            
             
             jsnAnchorMap.put(jsn, mstart);
@@ -406,31 +409,36 @@ public class SessionController implements Initializable {
         
         //Iterate through the map of jsnode and anchormodel. for a given jsn find its child. set one anchor to jsn and the other to its child. if jsn = child. i.e. a leaf then dont add!
         
-        for (Iterator<JobStepNode> iterator = root.iterator(); iterator.hasNext();) {
-           JobStepNode next = iterator.next();
-           drawCurve(next,jsnAnchorMap);
-           
-           
-       }
+       
         
         
        
    }
 
+   
+   public void setAllLinksForFrontEnd(){
+        for (Iterator<JobStepNode> iterator = roots.iterator(); iterator.hasNext();) {
+           JobStepNode next = iterator.next();
+           drawCurve(next,jsnAnchorMap);
+           
+           
+       }
+   }
+   
     private void drawCurve(JobStepNode next, Map<JobStepNode, AnchorModel> jsnAnchorMap) {
         
         JobStepModel jsmod=next.getJsnc().getModel();
         AnchorModel mstart=new AnchorModel();
-        // Double centerX=next.boundsInLocalProperty().getValue().getMinX();
-          //  Double centerY=next.boundsInLocalProperty().getValue().getMinY();
+         Double centerX=next.boundsInLocalProperty().getValue().getMinX()+310;
+            Double centerY=next.boundsInLocalProperty().getValue().getMinY()+72;
           
-          Double centerX=next.layoutXProperty().doubleValue();
-          Double centerY=next.layoutYProperty().doubleValue();//next.getHeight();
+         // Double centerX=next.layoutXProperty().doubleValue();
+         // Double centerY=next.layoutYProperty().doubleValue();//next.getHeight();
             
-          
+            mstart.setJob(next.getJsnc().getModel());
             mstart.setCenterX(centerX);
             mstart.setCenterY(centerY);
-            mstart.setJob(next.getJsnc().getModel());
+            
         /*Bounds pane=rightInteractivePane.getBoundsInLocal();
             
             
@@ -464,12 +472,22 @@ public class SessionController implements Initializable {
                 
                 if(next1.getId().equals(keyId)){
                     System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " EQUALS id of node: "+keyId+ " : starting to draw cubic curves here: ");
-                   double sx=mEnd.getCenterX().doubleValue();
-                   double sy=mEnd.getCenterY().doubleValue();
-                   
-                   mEnd.setCenterX(sx+next.getWidth());
-                   mEnd.setCenterY(sy+next.getHeight()/2);                    //redundant but for the sake of uniformity..   :(
+                    System.out.println("fend.session.SessionController.drawCurve()    found   : "+next1.getJobStepText()+" === "+key.getJsnc().getModel().getJobStepText());
+                  // double sx=mEnd.getCenterX().doubleValue();
+                 //  double sy=mEnd.getCenterY().doubleValue();
+                    System.out.println("fend.session.SessionController.drawCurve() MAYlayoutY: "+key.getParent().boundsInLocalProperty().getValue().getMaxY());
+                    System.out.println("fend.session.SessionController.drawCurve() "+key.getProperties().toString());
+                  double sx=key.boundsInLocalProperty().getValue().getMaxX();
+                 double sy=key.boundsInLocalProperty().getValue().getMinY()+144;
+                  
+                  //double sx=key.getLayoutX();
+                  //double sy=key.getLayoutY();
+                  
                    mEnd.setJob(next1);
+                   mEnd.setCenterX(sx);
+                   
+                   mEnd.setCenterY(sy);                    //redundant but for the sake of uniformity..   :(
+                   
                    
                     CubCurveModel cmod=new CubCurveModel();
                     
@@ -478,11 +496,29 @@ public class SessionController implements Initializable {
                     
                     CubCurve curve=ln.getCurve();
                     
-                    curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMaxX()));         //next is the parent node
-                    curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMaxY()/2));
                     
-                    curve.endXProperty().bind(Bindings.add(key.layoutXProperty(),key.boundsInLocalProperty().get().getMaxX()));           //key in the child node
-                    curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getMaxY()/2));
+                   
+                    // DoubleProperty d= new SimpleDoubleProperty(next.layoutXProperty().get()+310);
+                   // curve.startXProperty().bindBidirectional(d);
+                    
+                    //
+                    //curve.startYProperty().bindBidirectional(new SimpleDoubleProperty(next.layoutYProperty().get()+72));
+                    //Bindings.add(next.layoutXProperty(), next.boundsInLocalProperty().get().getMinX()+310);
+                   // Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72);
+                   
+                  //  curve.startXProperty().bindBidirectional(next.layoutXProperty());
+                    //curve.startYProperty().bindBidirectional(next.layoutYProperty());
+                    
+                 //   System.out.println("fend.session.SessionController.drawCurve():  for: "+next.getJsnc().getModel().getJobStepText()+" : child: "+key.getJsnc().getModel().getJobStepText());
+                    
+                   curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMinX()+310));         //next is the parent node
+                   curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72));
+                    
+                    curve.endXProperty().bind(Bindings.add(key.layoutXProperty(),key.boundsInLocalProperty().get().getMinX()));           //key in the child node
+                    curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getMinY()+72));       // this is HARDCODED!!! find a way to get the height of the node!
+                   // curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getHeight()/2));
+                  //  System.out.println("fend.session.SessionController.drawCurve(): for parent "+next.getJsnc().getModel().getJobStepText()+"   :Setting startX : :next.boundsInLocalProperty().get().getMaxX():  "+next.boundsInLocalProperty().get().getMaxX());
+                  //  System.out.println("fend.session.SessionController.drawCurve(): for child  "+key.getJsnc().getModel().getJobStepText() +"   :Setting  endX  : :next.boundsInLocalProperty().get().getMaxX():  "+key.boundsInLocalProperty().get().getMaxX());
                     rightInteractivePane.getChildren().add(0,ln);
                     
                     
