@@ -16,7 +16,7 @@
       <HBox layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane fx:id="leftLinkHandle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onDragDetected="#onLinkDragDetected" onDragDropped="#onLinkDragDropped" prefHeight="10.0" prefWidth="1.0" HBox.hgrow="NEVER" />
-            <GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="695.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="470.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="576.0" minWidth="10.0" prefWidth="277.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="521.0" minWidth="10.0" prefWidth="29.0" />
@@ -51,7 +51,7 @@
                   </HBox>
                   <ListView fx:id="volumeSelView" maxHeight="-Infinity" opacity="0.79" prefHeight="133.0" prefWidth="560.0" style="-fx-background-color: ;" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES" />
                   <TextField fx:id="jobStepTextField" onAction="#handleJobStepLabelTextField" onMouseExited="#handleJobStepTextFieldMouseExited" promptText="JobStep" />
-                  <ListView fx:id="insightListView" prefHeight="200.0" prefWidth="111.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <ListView fx:id="insightListView" prefHeight="103.0" prefWidth="87.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>

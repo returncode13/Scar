@@ -6,6 +6,7 @@
 package fend.session.node.jobs;
 
 
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,7 @@ import java.util.Objects;
 public class JobStepModel {
     private final StringProperty jobStepTextProperty;
     private final ListProperty<VolumeSelectionModel>volListProperty;
-
+    private InsightVersionsModel insightVersionsModel;
     
     private ArrayList<JobStepModel> jsParents=new ArrayList<>();
     private ArrayList<JobStepModel> jsChildren=new ArrayList<>();
@@ -55,10 +56,20 @@ public class JobStepModel {
         jsChildren.add(this);                                                       //provision for leaf
         
         
-       
-        
+           
         
     }
+
+    public InsightVersionsModel getInsightVersionsModel() {
+        return insightVersionsModel;
+    }
+
+    public void setInsightVersionsModel(InsightVersionsModel insightVersionsModel) {
+        this.insightVersionsModel = insightVersionsModel;
+    }
+
+    
+    
 
     public JobStepModel() {
         this("Enter a name");
@@ -89,6 +100,10 @@ public class JobStepModel {
         volListProperty.set(obsList);
     }
  
+    
+    
+    
+    
     
     public void addToParent(JobStepModel parent){
        /* if(jsParents.contains(this)) {
