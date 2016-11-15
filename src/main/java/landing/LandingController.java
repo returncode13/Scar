@@ -34,17 +34,22 @@ import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeaderTableModel;
 import fend.session.node.jobs.JobStepModel;
+import fend.session.node.jobs.JobStepNodeController;
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 import javafx.beans.value.ChangeListener;
 
 import javafx.collections.FXCollections;
@@ -178,6 +183,31 @@ public class LandingController implements Initializable,Serializable {
 
     @FXML
     void loadSession(ActionEvent event) {    //All of this needs to go to the "Controller" class in package controller. This is just POC.
+       
+        
+        
+            String  regex=".\\d*.\\d*-[a-zA-Z0-9_-]*";  
+        Pattern pattern=Pattern.compile(regex);
+        
+       File[] versions= JobStepNodeController.insightLocation.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pattern.matcher(pathname.getName()).matches();
+            }
+        });
+        
+        List<String> allAvailableVs=new ArrayList<>();
+        for (File version:versions) {
+            
+            String n=version.getName();
+            allAvailableVs.add(n);
+        }
+        
+        
+        
+        
+        
+        
         
         HeaderTableModel htmod=new HeaderTableModel();
         VolumeSelectionModel vmod=new VolumeSelectionModel();
@@ -246,6 +276,25 @@ public class LandingController implements Initializable,Serializable {
             JobStepModel fejsm=new JobStepModel();
             fejsm.setJobStepText(beJobStep.getNameJobStep());
             fejsm.setId(beJobStep.getIdJobStep());
+            
+          
+            String concatString=beJobStep.getInsightVersions();                     //will return a string of the format v1;v2;v3;..vn;
+            
+            String[] tokens=concatString.split(";");
+            
+        
+            List<String> selectedversions=new ArrayList<>(Arrays.asList(tokens));
+            
+        
+            
+            
+            System.out.println("landing.LandingController.loadSession() Versions found: ");
+            
+            
+           InsightVersionsModel ivm=new InsightVersionsModel(allAvailableVs);
+           ivm.setCheckedVersions(selectedversions);
+           fejsm.setInsightVersionsModel(ivm);
+            
             
             
             
