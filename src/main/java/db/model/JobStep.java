@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -90,7 +91,17 @@ public class JobStep implements Serializable{
     }
 
     public void setJobVolumeDetails(Set<JobVolumeDetails> jobVolumeDetails) {
-        this.jobVolumeDetails = jobVolumeDetails;
+        
+        if(jobVolumeDetails!=null)
+        {
+        this.jobVolumeDetails.clear();
+        
+        for (Iterator<JobVolumeDetails> iterator = jobVolumeDetails.iterator(); iterator.hasNext();) {
+            JobVolumeDetails next = iterator.next();
+            this.jobVolumeDetails.add(next);
+        }
+        }
+        //this.jobVolumeDetails = jobVolumeDetails;
     }
 
     public Set<SessionDetails> getSessionDetails() {

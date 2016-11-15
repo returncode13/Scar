@@ -154,10 +154,13 @@ public class Collector {
                  
                  //add to db
                  //if(!dbJobSteps.contains(jobStep))dbJobSteps.add(jobStep);
-                 if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
-                     System.out.println("collector.Collector.setupEntries(): New jobStep: Adding to dbJobSteps: "+jobStep.getNameJobStep());
+                 
+                 dbJobSteps.clear();
+                 
+               //  if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
+                     System.out.println("collector.Collector.setupEntries(): New / Existing jobStep: Adding to dbJobSteps: "+jobStep.getNameJobStep());
                      dbJobSteps.add(jobStep);
-                 }
+                 //}
                  
                  
                  
@@ -237,7 +240,14 @@ public class Collector {
         //add to the Jobs Table
         for (Iterator<JobStep> jsit = dbJobSteps.iterator(); jsit.hasNext();) {
             JobStep js = jsit.next();
-            if(jsServ.getJobStep(js.getIdJobStep())==null)jsServ.createJobStep(js);
+            if(jsServ.getJobStep(js.getIdJobStep())==null){jsServ.createJobStep(js);}
+            else{
+                System.out.println("collector.Collector.commitEntries() Updating "+js.getNameJobStep());
+                jsServ.updateJobStep(js.getIdJobStep(), js);
+            }
+                
+            
+           
         }
         
         //add to the SessionDetails Table
