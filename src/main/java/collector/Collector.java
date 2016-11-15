@@ -147,8 +147,18 @@ public class Collector {
                  JobStep jobStep=new JobStep();
                  jobStep.setNameJobStep(jsm.getJobStepText());
                  jobStep.setIdJobStep(jsm.getId());
-                 System.out.println("Coll: JSM ID: "+jsm.getId());
+                 //System.out.println("Coll: JSM ID: "+jsm.getId());
                  jobStep.setAlert(Boolean.FALSE);
+                 List<String> insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
+                 String versionString="";                                                              //this string will be of form v1;v2;v3;.. where v1,v2.. are the chosen versions
+                 for (Iterator<String> iterator = insightVers.iterator(); iterator.hasNext();) {
+                    String next = iterator.next();
+                     System.out.println("collector.Collector.setupEntries(): InsVersL : "+next);
+                     versionString=versionString.concat(next+";");
+                }
+                 System.out.println("collector.Collector.setupEntries()  Concatenated String : "+versionString); 
+                 jobStep.setInsightVersions(versionString);
+                 
                  
                  System.out.println("collector.Collector.setupEntries(): jobStep: "+jobStep.getNameJobStep()+" :ID: "+jobStep.getIdJobStep());
                  
@@ -243,6 +253,9 @@ public class Collector {
             if(jsServ.getJobStep(js.getIdJobStep())==null){jsServ.createJobStep(js);}
             else{
                 System.out.println("collector.Collector.commitEntries() Updating "+js.getNameJobStep());
+                String jsv=js.getInsightVersions();
+                System.out.println("collector.Collector.commitEntries() About to commit the string of Versions: "+jsv); 
+                
                 jsServ.updateJobStep(js.getIdJobStep(), js);
             }
                 

@@ -75,6 +75,7 @@ public class JobStepDAOImpl implements JobStepDAO{
             oldJs.setNameJobStep(newJs.getNameJobStep());
             oldJs.setAlert(newJs.isAlert());
             oldJs.setJobVolumeDetails(newJs.getJobVolumeDetails());
+            oldJs.setInsightVersions(newJs.getInsightVersions());
             session.update(oldJs);
             
             transaction.commit();
