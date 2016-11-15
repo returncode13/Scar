@@ -6,6 +6,7 @@
 package landing;
 
 import collector.Collector;
+import com.sun.xml.internal.ws.util.Pool;
 import db.model.Child;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
@@ -45,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 
 import javafx.collections.FXCollections;
@@ -65,12 +68,20 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import landing.loadingSession.LoadSessionController;
 import landing.loadingSession.LoadSessionModel;
 import landing.loadingSession.LoadSessionNode;
 import landing.saveSession.SaveSessionController;
 import landing.saveSession.SaveSessionModel;
 import landing.saveSession.SaveSessionNode;
+import landing.settings.Settings;
+import landing.settings.SettingsController;
+import landing.settings.SettingsNode;
+import landing.settings.SettingsWrapper;
 
 /**
  * FXML Controller class
@@ -83,6 +94,12 @@ public class LandingController implements Initializable,Serializable {
      * Initializes the controller class.
      */
     
+    private static final String settingXml="src/main/resources/landingResources/settings/settings.xml";
+
+    public static String getSettingXml() {
+        return settingXml;
+    }
+    
     private Long id;
     private LandingNode lnode;
     private LandingModel model;
@@ -92,6 +109,11 @@ public class LandingController implements Initializable,Serializable {
     private SessionModel smodel;
     private SessionNode snode;
     private SessionController scontr;
+    
+    
+    private Settings settingsModel;
+    
+    
      @FXML
     private StackPane basePane;
 
@@ -114,6 +136,58 @@ public class LandingController implements Initializable,Serializable {
     @FXML
     private MenuItem saveCurrentSession;
 
+    @FXML
+    private MenuItem settings;
+
+    
+    @FXML
+    void settings(ActionEvent event) {
+        
+         settingsModel=new Settings();
+         File sFile=new File(settingXml);
+        
+        try {
+            JAXBContext contextObj = JAXBContext.newInstance(Settings.class);
+            
+            //try unmarshalling the file. if the fields are not null. populate settingsmodel
+            
+            Unmarshaller unm=contextObj.createUnmarshaller();
+            Settings sett=(Settings) unm.unmarshal(sFile);
+            System.out.println("landing.LandingController.settings():  unmarshalled: "+sett.getSshHost() );
+            
+            
+            
+            if(sett.isPopulated()){
+                settingsModel.setDbPassword(sett.getDbPassword());
+                settingsModel.setDbUser(sett.getDbUser());
+                settingsModel.setId(sett.getId());
+                settingsModel.setSshHost(sett.getSshHost());
+                settingsModel.setSshPassword(sett.getSshPassword());
+                settingsModel.setSshUser(sett.getSshUser());
+            }
+            
+            SettingsNode setnode=new SettingsNode(settingsModel);
+            SettingsController sc=new SettingsController();
+            
+            //save the xml
+            
+            
+            Marshaller marshallerObj = contextObj.createMarshaller();
+            marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshallerObj.marshal(settingsModel, new File(settingXml));
+            
+           
+        } catch (JAXBException ex) {
+            Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
     @FXML
     void startNewSession(ActionEvent event) {
             smodel = new SessionModel();
@@ -475,5 +549,6 @@ public class LandingController implements Initializable,Serializable {
     void setView(LandingNode aThis) {
        this.lnode=aThis;
     }
+    
     
 }

@@ -8,6 +8,9 @@ package hibUtil;
 
 
 import db.interceptor.AppInterceptor;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 import org.hibernate.Session;
@@ -15,6 +18,11 @@ import org.hibernate.SessionFactory;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.spi.PersistenceProvider;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import landing.LandingController;
+import landing.settings.Settings;
 
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -58,15 +66,60 @@ public class HibernateUtil {
      private static SSHManager instance; 
      private static int sshLocalPort=5432;    //Cannot bind to 5432 on Kiba. Permission issues??
      private static int dbPort=5432;
-     String strDbUSer="irdb";  //Kiba   . CHANGE this in the file hibernate.cfg.xml
-     String DBPass="password";  //Kiba      CHANGE this in the file hibernate.cfg.xml
+     private static String strDbUSer="irdb";  //Kiba   . CHANGE this in the file hibernate.cfg.xml
+     private static String DBPass="password";  //Kiba      CHANGE this in the file hibernate.cfg.xml
   
     /*
      End of Kiba Params
      */
     
+     
+     
+     
+     
+     
+     
+     
     private static SessionFactory buildSessionFactory(){
-        System.out.println("HibernateUtil called!");
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory() : Loading the connection configurations "+LandingController.getSettingXml());
+        
+         File sFile=new File(LandingController.getSettingXml());
+         
+         JAXBContext contextObj;
+        try {
+         contextObj = JAXBContext.newInstance(Settings.class);
+         Unmarshaller unm=contextObj.createUnmarshaller();
+         Settings sett=(Settings) unm.unmarshal(sFile);
+         
+         if(!sett.isPopulated()){
+             System.err.println("Settings not Found!");
+         }
+         else{
+             connectionIP=sett.getSshHost();
+             userName=sett.getSshUser();
+             password=sett.getSshPassword();
+             strDbUSer=sett.getDbUser();                // this doesnt matter. since its specified in the file persistence.xml
+             DBPass=sett.getDbPassword();               //ditto for this as well.
+             
+             
+             
+         }
+        } catch (JAXBException ex) {
+            Logger.getLogger(HibernateUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+         
+        
+        
+        
+        System.out.println("HibernateUtil called using connection settings:");
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  HOST: "+connectionIP);
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  USER: "+userName);
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  PASS: "+password);
+        
+        
+        
+        
         instance = new SSHManager(userName, password, connectionIP, "");
     String errorMessage = instance.connect();
        
