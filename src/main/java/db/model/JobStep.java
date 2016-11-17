@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,6 +38,10 @@ public class JobStep implements Serializable{
     @Column(name = "nameJobStep",nullable = true,length = 256)
     private String nameJobStep;
     
+    @Column(name = "insightVersionsUsed",nullable=false,length=2048)
+    private String insightVersions;
+    
+    
     @Column(name = "alert",nullable = true)
     private Boolean alert;
 
@@ -46,9 +51,10 @@ public class JobStep implements Serializable{
     @OneToMany(mappedBy = "jobStep",cascade = CascadeType.ALL,orphanRemoval = true)                             //create a member named "jobStep" in the SessionDetails class definition
     private Set<SessionDetails> sessionDetails;
 
-    public JobStep(String nameJobStep, Boolean alert) {
+    public JobStep(String nameJobStep, Boolean alert,String insightVersion) {
         this.nameJobStep = nameJobStep;
         this.alert = alert;
+        this.insightVersions=insightVersion;
     }
 
     public JobStep() {
@@ -90,7 +96,17 @@ public class JobStep implements Serializable{
     }
 
     public void setJobVolumeDetails(Set<JobVolumeDetails> jobVolumeDetails) {
-        this.jobVolumeDetails = jobVolumeDetails;
+        
+        if(jobVolumeDetails!=null)
+        {
+        this.jobVolumeDetails.clear();
+        
+        for (Iterator<JobVolumeDetails> iterator = jobVolumeDetails.iterator(); iterator.hasNext();) {
+            JobVolumeDetails next = iterator.next();
+            this.jobVolumeDetails.add(next);
+        }
+        }
+        //this.jobVolumeDetails = jobVolumeDetails;
     }
 
     public Set<SessionDetails> getSessionDetails() {
@@ -99,6 +115,14 @@ public class JobStep implements Serializable{
 
     public void setSessionDetails(Set<SessionDetails> sessionDetails) {
         this.sessionDetails = sessionDetails;
+    }
+
+    public String getInsightVersions() {
+        return insightVersions;
+    }
+
+    public void setInsightVersions(String insightVersions) {
+        this.insightVersions = insightVersions;
     }
     
     

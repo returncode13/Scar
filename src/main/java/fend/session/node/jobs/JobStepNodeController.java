@@ -76,7 +76,7 @@ import javafx.scene.control.cell.CheckBoxListCell;
  */
 public class JobStepNodeController {
     
-    private static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
+    public static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
     
     final private ChangeListener<String> JOBSTEP_TEXT_FIELD_CHANGE_LISTENER=new ChangeListener<String>() {
 
@@ -581,7 +581,33 @@ public class JobStepNodeController {
             
         }
     }
-    
+
+    public void setInsightListForFrontEndDisplay() {
+        /*   if(model.getInsightVersionsModel()==null){
+        model.setInsightVersionsModel(ismod);
+        }
+        else
+        ismod=model.getInsightVersionsModel();*/
+         
+        
+         System.out.println("fend.session.node.jobs.JobStepNodeController.setInsightListForFrontEndDisplay():");
+       // InsightVersionsNode isnode=new InsightVersionsNode(ismod);
+       // InsightVersionsController iscontr=isnode.getInsightVersionsController();
+        
+        
+        selectedVersions=FXCollections.observableArrayList(ismod.getCheckedVersions());
+        for(Iterator<String> it=selectedVersions.iterator();it.hasNext();){
+            String ver=it.next();
+            System.out.println("fend.session.node.jobs.JobStepNodeController.setInsightListForFrontEndDisplay():  "+ver);
+        }
+        insightListView.setItems(selectedVersions);
+    }
+
+    public void setInsightVersionsModel(InsightVersionsModel insVerModel) {
+        ismod=insVerModel;
+    }
+
+   
     
 }
 

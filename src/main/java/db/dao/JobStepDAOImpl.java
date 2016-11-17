@@ -36,7 +36,7 @@ public class JobStepDAOImpl implements JobStepDAO{
         
         try{
             transaction=session.beginTransaction();
-            session.save(js);
+            session.saveOrUpdate(js);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -75,6 +75,7 @@ public class JobStepDAOImpl implements JobStepDAO{
             oldJs.setNameJobStep(newJs.getNameJobStep());
             oldJs.setAlert(newJs.isAlert());
             oldJs.setJobVolumeDetails(newJs.getJobVolumeDetails());
+            oldJs.setInsightVersions(newJs.getInsightVersions());
             session.update(oldJs);
             
             transaction.commit();

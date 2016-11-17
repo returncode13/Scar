@@ -25,7 +25,7 @@ public class SessionsDAOImpl implements SessionsDAO {
       
       try{
           transaction=session.beginTransaction();
-          session.save(s);
+          session.saveOrUpdate(s);
           transaction.commit();
           
       }catch(Exception e){

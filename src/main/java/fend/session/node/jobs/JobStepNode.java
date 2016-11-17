@@ -55,15 +55,15 @@ static int i=0;
              //i++;
                // this.setId(new Integer(i) +"");
                if(item.getId()==null){
-                   System.out.println("fend.session.node.jobs.JobStepNode.<init>(): A new jobstepNode: "   );
+                 //  System.out.println("fend.session.node.jobs.JobStepNode.<init>(): A new jobstepNode: "   );
                    setId(UUID.randomUUID().getMostSignificantBits()+"");
                }
                else{
-                    System.out.println("fend.session.node.jobs.JobStepNode.<init>(): jobstepnode from existing jobstepmodel : "+item.getId()   );
+                //    System.out.println("fend.session.node.jobs.JobStepNode.<init>(): jobstepnode from existing jobstepmodel : "+item.getId()   );
                    setId(item.getId()+"");
                }
                 
-                System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+this.boundsInLocalProperty().get().getMaxY());
+              //  System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+this.boundsInLocalProperty().get().getMaxY());
                 
                 jsnc.setId(Long.valueOf(getId()));
                 jsnc.setView(this) ;

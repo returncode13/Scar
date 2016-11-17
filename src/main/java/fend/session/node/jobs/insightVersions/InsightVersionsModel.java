@@ -5,6 +5,7 @@
  */
 package fend.session.node.jobs.insightVersions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -21,8 +22,8 @@ import org.controlsfx.control.CheckModel;
  * @author sharath
  */
 public class InsightVersionsModel {
-    private List<String> versions;
-    private List<String> checkedVersions;
+    private List<String> versions=new ArrayList<>();
+    private List<String> checkedVersions=new ArrayList<>();
     private CheckModel checkModel;
     
     public InsightVersionsModel(List<String> versions) {

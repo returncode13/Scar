@@ -53,6 +53,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.jobs.JobStepNodeController;
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -341,6 +342,16 @@ public class SessionController implements Initializable {
            JobStepModel next = iterator.next();
            List<VolumeSelectionModel> testvm=next.getVolList();
            
+           InsightVersionsModel insVerModel=next.getInsightVersionsModel();
+           
+           List<String>vv = insVerModel.getCheckedVersions();
+           
+           for (Iterator<String> iterator1 = vv.iterator(); iterator1.hasNext();) {
+               String next1 = iterator1.next();
+               System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay() VERSIONS FOUND: "+next1);
+           }
+           
+           
            for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
                VolumeSelectionModel next1 = iterator1.next();
                System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
@@ -371,8 +382,12 @@ public class SessionController implements Initializable {
            
             
             ObservableList obvolist=next.getVolList();
+           
             jsc.setObsList(obvolist);
+            jsc.setInsightVersionsModel(insVerModel);
            jsc.setVolumeModelsForFrontEndDisplay();
+           jsc.setInsightListForFrontEndDisplay();
+           
             rightInteractivePane.getChildren().add(jsn);
             
           /*  
