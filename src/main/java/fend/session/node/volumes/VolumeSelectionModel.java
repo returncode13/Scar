@@ -5,7 +5,7 @@
  */
 package fend.session.node.volumes;
 
-import fend.session.node.headers.HeaderTableModel;
+import fend.session.node.headers.HeaderTableModelBack;
 import java.io.File;
 import java.util.Observable;
 import javafx.beans.property.BooleanProperty;

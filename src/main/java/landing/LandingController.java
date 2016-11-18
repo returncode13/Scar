@@ -33,7 +33,7 @@ import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
-import fend.session.node.headers.HeaderTableModel;
+import fend.session.node.headers.HeaderTableModelBack;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.jobs.JobStepNodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
@@ -285,7 +285,7 @@ public class LandingController implements Initializable,Serializable {
         
         
         
-        HeaderTableModel htmod=new HeaderTableModel();
+        HeaderTableModelBack htmod=new HeaderTableModelBack();
         VolumeSelectionModel vmod=new VolumeSelectionModel();
         
         ArrayList<JobStepModel> jmodList=new ArrayList<>();

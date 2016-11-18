@@ -140,5 +140,10 @@
             <version>8.40.12</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
+        </dependency>
     </dependencies>
 </project>

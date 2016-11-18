@@ -9,13 +9,21 @@ package fend.session.node.volumes;
 import collector.HeaderCollector;
 import db.model.Headers;
 import fend.session.node.headers.HeaderGroup;
-import fend.session.node.headers.HeaderTableModel;
+import fend.session.node.headers.HeaderTableModelBack;
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.HeadersNode;
+import fend.session.node.headers.HeadersViewController;
+import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -109,12 +117,21 @@ public class VolumeSelectionController  {
     
     @FXML
     void showTable(ActionEvent event) {
-        Stage stage=new Stage();
-        HeaderTableModel htm=new HeaderTableModel();
-        htm.setHeaderList(hcollector.getHeaderListForVolume());
-        HeaderGroup hg=new HeaderGroup(htm);
+        /*Stage stage=new Stage();*/
+        /*HeaderTableModelBack htm=new HeaderTableModelBack();
+        htm.setHeaderList(hcollector.getHeaderListForVolume());*/
+        //HeaderGroup hg=new HeaderGroup(htm);
+        HeadersModel hmodel=new HeadersModel();
+       // List<SubSurface> subs=hcollector.getHeaderListForVolume();
+        List<Sequences> seqs=hcollector.getHeaderListForVolume();
+        ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
+        hmodel.setObsHList(obSeqs);
         
-        Scene scene =new Scene(hg);
+        
+        HeadersNode hnode=new HeadersNode(hmodel);
+        HeadersViewController hvc=hnode.getHeadersViewController();
+        
+        //Scene scene =new Scene(hg);
         
         
         
@@ -135,8 +152,8 @@ public class VolumeSelectionController  {
            table.getColumns().addAll(firstCol,secondCol,thirdCol);
            ((Group)scene.getRoot()).getChildren().addAll(table);
                 */
-           stage.setScene(scene);
-           stage.show();
+          // stage.setScene(scene);
+          // stage.show();
            
            
     }

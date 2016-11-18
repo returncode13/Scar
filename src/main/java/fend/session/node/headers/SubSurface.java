@@ -15,7 +15,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author naila0152
  */
-public class SubSurface implements Serializable{
+public class SubSurface extends Sequences implements Serializable{
     private   LongProperty sequenceNumber=new SimpleLongProperty();   
     private   StringProperty subsurface=new SimpleStringProperty();
     private   StringProperty timeStamp=new SimpleStringProperty();

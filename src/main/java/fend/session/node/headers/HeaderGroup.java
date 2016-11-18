@@ -17,9 +17,9 @@ import javafx.scene.layout.StackPane;
 public class HeaderGroup extends StackPane{
     //private StackPane pane=new StackPane();
     SubSurfaceTable table=new SubSurfaceTable(new SubSurface());
-    HeaderTableModel htm;
+    HeaderTableModelBack htm;
     
-    public HeaderGroup(HeaderTableModel htm){
+    public HeaderGroup(HeaderTableModelBack htm){
         this.htm=htm;
         table.addSubs(this.htm.getHeaderList());
        // pane.getChildren().add(table);

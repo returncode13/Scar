@@ -15,10 +15,10 @@ import javafx.fxml.Initializable;
  *
  * @author naila0152
  */
-public class HeaderTableController implements Initializable {
+public class HeaderTableControllerBack implements Initializable {
 
     private HeaderCollector hCollector=new HeaderCollector();
-    private HeaderTableModel model;
+    private HeaderTableModelBack model;
     /**
      * Initializes the controller class.
      */
