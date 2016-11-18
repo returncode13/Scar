@@ -107,6 +107,8 @@ public class CubCurve extends CubicCurve{
         setId(UUID.randomUUID().getMostSignificantBits()+"");
         cm.setId(Long.valueOf(getId()));
         
+        
+        
     }
 
     public CubCurveModel getModel() {

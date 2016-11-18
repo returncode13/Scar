@@ -10,27 +10,38 @@ import fend.session.node.jobs.JobStepModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.Serializable;
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
  * @author naila0152
  */
 public class SessionModel implements Serializable{
-    ArrayList<JobStepModel> listOfJobs=new ArrayList<>();
+    ObservableList<JobStepModel> listOfJobs=FXCollections.observableArrayList();
     //ArrayList<VolumeSelectionModel> listOfVolumes=new ArrayList<>();   // all volume information is held by the JobStepModel.
     ArrayList<LinksModel> listOfLinks=new ArrayList<>();
     Long Id;
-    
-    
-    
-    public ArrayList<JobStepModel> getListOfJobs() {
-        return listOfJobs;
+    String name;
+
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
+    
+    public ObservableList<JobStepModel> getListOfJobs() {
+        return listOfJobs;
+    }
+/*
     public void setListOfJobs(ArrayList<JobStepModel> listOfJobs) {
         this.listOfJobs = listOfJobs;
     }
-
+*/
     public ArrayList<LinksModel> getListOfLinks() {
         return listOfLinks;
     }
@@ -46,6 +57,12 @@ public class SessionModel implements Serializable{
     public void setId(Long Id) {
         this.Id = Id;
     }
+
+    public void setListOfJobs(ObservableList<JobStepModel> listOfJobs) {
+        this.listOfJobs = listOfJobs;
+    }
+
+    
 
     
     

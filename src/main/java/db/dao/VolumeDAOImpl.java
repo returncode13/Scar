@@ -23,7 +23,7 @@ public class VolumeDAOImpl implements VolumeDAO {
         
         try{
             transaction=session.beginTransaction();
-            session.save(v);
+            session.saveOrUpdate(v);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

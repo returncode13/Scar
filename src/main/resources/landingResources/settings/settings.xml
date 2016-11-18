@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings id="0">
+    <dbPassword>password</dbPassword>
+    <dbUser>irdb</dbUser>
+    <sshHost>192.168.56.101</sshHost>
+    <sshPassword>rdV9BPk9WS</sshPassword>
+    <sshUser>irdb</sshUser>
+</settings>

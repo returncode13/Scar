@@ -27,7 +27,7 @@ public class SessionDetailsDAOImpl implements SessionDetailsDAO{
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            session.save(sd);
+            session.saveOrUpdate(sd);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

@@ -12,16 +12,22 @@ import db.services.HeadersServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioHeaderValuesExtractor;
-import fend.session.node.headers.HeaderTableModel;
+import fend.session.node.headers.HeaderTableModelBack;
+import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections4.MultiMap;
+import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  *
@@ -76,9 +82,11 @@ public class HeaderCollector {
         
     }
 
-  public List<SubSurface> getHeaderListForVolume(){
+  public List<Sequences> getHeaderListForVolume(){
       List<Headers> hl=hdrServ.getHeadersFor(dbVolume);
       List<SubSurface> sl=new ArrayList<>();
+      List<Sequences> seqList=new ArrayList<>();
+      MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
       
       for (Iterator<Headers> iterator = hl.iterator(); iterator.hasNext();) {
           Headers next = iterator.next();
@@ -109,13 +117,29 @@ public class HeaderCollector {
           s.setXlineMax(next.getXlineMax());
           s.setXlineMin(next.getXlineMin());
           
+          seqSubMap.put(s.getSequenceNumber(), s);
+         
           
           sl.add(s);
+          
+          
+          
+      }
+      
+      Set<Long> seqNos=seqSubMap.keySet();
+      
+      
+      for (Iterator<Long> iterator = seqNos.iterator(); iterator.hasNext();) {
+          Long next = iterator.next();
+          Sequences sq=new Sequences();
+          ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(next);
+          sq.setSubsurfaces(ssubs);
+          seqList.add(sq);
       }
       
       
       System.out.println("HColl: done setting the headerList here");
-      return sl;
+      return seqList;
   }
     
     

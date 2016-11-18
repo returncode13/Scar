@@ -17,22 +17,23 @@ import javafx.collections.ObservableList;
  *
  * @author naila0152
  */
-public class HeaderTableModel {
+public class HeadersModel {
    
-    private List<SubSurface> headerList=new ArrayList<>();
-    private ObservableList<SubSurface> obsHList=FXCollections.observableList(headerList);
+    private List<Sequences> seqList=new ArrayList<>();
+    private ObservableList<Sequences> obsHList=FXCollections.observableList(seqList);
     private Long id;
+
+    public ObservableList<Sequences> getObsHList() {
+        return obsHList;
+    }
+
+    public void setObsHList(ObservableList<Sequences> obsHList) {
+        this.obsHList = obsHList;
+    }
     
-    public List<SubSurface> getHeaderList() {
-        return headerList;
-    }
-
-    public void setHeaderList(List<SubSurface> headerList) {
-        System.out.println("HTM: headerList set");
-        this.headerList = headerList;
-       // noOfcols=
-    }
-
+    
+    
+    
     void setId(Long id) {
         this.id=id;
     }

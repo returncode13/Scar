@@ -82,6 +82,11 @@ public class Sessions implements Serializable{
         this.sessionDetails = sessionDetails;
     }
 
+    @Override
+    public String toString() {
+        return "Sessions{" + "idSessions=" + idSessions + ", nameSessions=" + nameSessions + '}';
+    }
+
     
    
    

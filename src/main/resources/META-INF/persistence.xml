@@ -2,6 +2,16 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>db.model.Ancestors</class>
+    <class>db.model.Child</class>
+    <class>db.model.Descendants</class>
+    <class>db.model.Headers</class>
+    <class>db.model.JobStep</class>
+    <class>db.model.JobVolumeDetails</class>
+    <class>db.model.Parent</class>
+    <class>db.model.SessionDetails</class>
+    <class>db.model.Sessions</class>
+    <class>db.model.Volume</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/obpmanager"/>
       <property name="javax.persistence.jdbc.user" value="irdb"/>

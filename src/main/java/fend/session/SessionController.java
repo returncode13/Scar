@@ -8,6 +8,9 @@ package fend.session;
 import collector.Collector;
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
+import fend.session.edges.anchor.AnchorModel;
+import fend.session.edges.curves.CubCurve;
+import fend.session.edges.curves.CubCurveModel;
 import fend.session.node.jobs.JobStepNode;
 import java.io.IOException;
 import java.net.URL;
@@ -50,8 +53,16 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.jobs.JobStepNodeController;
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.volumes.VolumeSelectionModel;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Bounds;
+import javafx.scene.Scene;
 
 /**
  *
@@ -71,6 +82,15 @@ public class SessionController implements Initializable {
     
     private SessionModel model=new SessionModel();
     private SessionNode snn;
+    
+    
+     private Map<JobStepNode,AnchorModel> jsnAnchorMap=new HashMap<>();
+       
+     private List<JobStepNode> roots=new ArrayList<>();                             // A list of possible root nodes. i.e step1->step2 and step1->step3  implies step1 is the root of the structure. However we can also have several independent graphs
+                                                           // e.g. one graph is step1-> step2 and step1-> step3  
+                                                           //the other graph is step6-> step7 and step6-> step8.
+                                                           // here there are two roots namely step1 and step6
+    
     
     private int rowNo,ColNo;
     private int numCols=1;
@@ -110,6 +130,14 @@ public class SessionController implements Initializable {
         //dummyList.add(new VolumeSelectionModel("v1", Boolean.TRUE));
        // dummyList.add(new VolumeSelectionModel("v2", Boolean.TRUE));
        // obsModelList.add(new JobStepModel("SRME", dummyList));
+       
+        System.out.println("fend.session.SessionController.handleAddJobStepButton(): jobStepContents below");
+        
+        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
+            
+        }
         obsModelList.add(new JobStepModel());
         jsn=new JobStepNode(obsModelList.get(obsModelList.size()-1));
         System.out.println("Value of numCols: "+numCols+" numRows: "+numRows);
@@ -191,7 +219,7 @@ public class SessionController implements Initializable {
             
         }
             
-            model.setListOfJobs(jobStepModelList);
+            model.setListOfJobs(obsModelList);
             model.setListOfLinks(linksModelList);
             
                 System.out.println("JGVC: Set the last model");
@@ -221,6 +249,14 @@ public class SessionController implements Initializable {
         obsLinksModelList.add(l);
     }
 
+    public void setObsModelList(ObservableList<JobStepModel> obsModelList) {
+        this.obsModelList = obsModelList;
+    }
+
+    
+
+    
+    
     public ObservableList<JobStepModel> getObsModelList() {
         return obsModelList;
     }
@@ -229,6 +265,8 @@ public class SessionController implements Initializable {
         return obsLinksModelList;
     }
 
+    
+    
     public Long getId() {
         return id;
     }
@@ -248,6 +286,7 @@ public class SessionController implements Initializable {
     
     
    public void setAllLinksAndJobsForCommit(){
+       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit()");
        for (Iterator<Node> iterator = rightInteractivePane.getChildren().iterator(); iterator.hasNext();) {
             Node next = iterator.next();
             if(next instanceof  Links)
@@ -262,7 +301,13 @@ public class SessionController implements Initializable {
             
         }
             
-            model.setListOfJobs(jobStepModelList);
+       for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+           JobStepModel next = iterator.next();
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit():  jobStepModeList : "+next.getJobStepText());
+           
+       }
+       
+            model.setListOfJobs(obsModelList);
             
             for (Iterator<JobStepModel> iterator = jobStepModelList.iterator(); iterator.hasNext();) {
            JobStepModel next = iterator.next();
@@ -282,4 +327,228 @@ public class SessionController implements Initializable {
             
             System.out.println("SC: model has ID: "+model.getId());
    }
+   
+   
+   public void setAllModelsForFrontEndDisplay(){
+       
+       
+      
+       
+       
+       for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+           
+           System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): display contents");
+           
+           JobStepModel next = iterator.next();
+           List<VolumeSelectionModel> testvm=next.getVolList();
+           
+           InsightVersionsModel insVerModel=next.getInsightVersionsModel();
+           
+           List<String>vv = insVerModel.getCheckedVersions();
+           
+           for (Iterator<String> iterator1 = vv.iterator(); iterator1.hasNext();) {
+               String next1 = iterator1.next();
+               System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay() VERSIONS FOUND: "+next1);
+           }
+           
+           
+           for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
+               VolumeSelectionModel next1 = iterator1.next();
+               System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
+           }
+           jsn=new JobStepNode(next);
+            JobStepNodeController jsc=jsn.getJsnc();
+            
+            JobStepModel jsmod=jsc.getModel();
+            
+            ArrayList<JobStepModel> jsmodParents=jsmod.getJsParents();
+            if (jsmodParents.size()==1){
+               
+                if(jsmod.getId().equals(jsmodParents.get(0).getId())){
+                     System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay():  "+jsmodParents.get(0).getJobStepText()+" is a root..adding to list of roots");
+                    System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay():  id matched for model and the single content in the list of Parents");
+                    roots.add(jsn);
+                }
+            }
+            
+            
+            AnchorModel mstart= new AnchorModel();
+            
+          
+            
+            
+            
+            
+           
+            
+            ObservableList obvolist=next.getVolList();
+           
+            jsc.setObsList(obvolist);
+            jsc.setInsightVersionsModel(insVerModel);
+           jsc.setVolumeModelsForFrontEndDisplay();
+           jsc.setInsightListForFrontEndDisplay();
+           
+            rightInteractivePane.getChildren().add(jsn);
+            
+          /*  
+           try {
+               Thread.sleep(100000000L);
+           } catch (InterruptedException ex) {
+               Logger.getLogger(SessionController.class.getName()).log(Level.SEVERE, null, ex);
+           }
+            */
+            
+            Double centerX=jsn.boundsInLocalProperty().getValue().getMinX();
+            Double centerY=jsn.boundsInLocalProperty().getValue().getMinY()+jsn.boundsInLocalProperty().get().getHeight()/2;
+            
+            mstart.setJob(next);
+            mstart.setCenterX(centerX);
+            mstart.setCenterY(centerY);
+            
+           
+            
+            jsnAnchorMap.put(jsn, mstart);
+         //  System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay():  jsnSceneX() "+jsn.localToScene(rightInteractivePane.getBoundsInLocal()).toString());
+            numRows++;
+        numCols++;
+       i++;
+           
+       }
+    /*   jsn=new JobStepNode(obsModelList.get(obsModelList.size()-1));*/
+        System.out.println("Value of numCols: "+numCols+" numRows: "+numRows);
+       
+       
+        
+        //gridPane.getChildren().add(jsn.getJobStepNode()); above method of setting constraints and adding children
+        
+        
+        //Iterate through the map of jsnode and anchormodel. for a given jsn find its child. set one anchor to jsn and the other to its child. if jsn = child. i.e. a leaf then dont add!
+        
+       
+        
+        
+       
+   }
+
+   
+   public void setAllLinksForFrontEnd(){
+        for (Iterator<JobStepNode> iterator = roots.iterator(); iterator.hasNext();) {
+           JobStepNode next = iterator.next();
+           drawCurve(next,jsnAnchorMap);
+           
+           
+       }
+   }
+   
+    private void drawCurve(JobStepNode next, Map<JobStepNode, AnchorModel> jsnAnchorMap) {
+        
+        JobStepModel jsmod=next.getJsnc().getModel();
+        AnchorModel mstart=new AnchorModel();
+         Double centerX=next.boundsInLocalProperty().getValue().getMinX()+310;
+            Double centerY=next.boundsInLocalProperty().getValue().getMinY()+72;
+          
+         // Double centerX=next.layoutXProperty().doubleValue();
+         // Double centerY=next.layoutYProperty().doubleValue();//next.getHeight();
+            
+            mstart.setJob(next.getJsnc().getModel());
+            mstart.setCenterX(centerX);
+            mstart.setCenterY(centerY);
+            
+        /*Bounds pane=rightInteractivePane.getBoundsInLocal();
+            
+            
+            
+            Double centerX=pane.getMaxY();
+            Double centerY=pane.getMaxY();
+        
+        double startX=centerX;
+        double startY=centerY;
+        mstart.setCenterX(startX);
+        mstart.setCenterY(startY);
+        mstart.setJob(jsmod);
+        */        
+                
+        ArrayList<JobStepModel> children=jsmod.getJsChildren();
+        
+        
+        for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
+            JobStepModel next1 = iterator.next();
+            
+            if(next1.getId().equals(jsmod.getId())){
+                System.out.println("fend.session.SessionController.drawCurve(): "+jsmod.getJobStepText()+ " :is a leaf: "+next1.getJobStepText());
+                return;
+            }
+                for (Map.Entry<JobStepNode, AnchorModel> entry : jsnAnchorMap.entrySet()) {
+                JobStepNode key = entry.getKey();
+                AnchorModel mEnd = entry.getValue();
+                
+                Long keyId=Long.parseLong(key.getId());         //since jobstepnodes id is a string
+                   // System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " id of node: "+keyId);
+                
+                if(next1.getId().equals(keyId)){
+                    System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " EQUALS id of node: "+keyId+ " : starting to draw cubic curves here: ");
+                    System.out.println("fend.session.SessionController.drawCurve()    found   : "+next1.getJobStepText()+" === "+key.getJsnc().getModel().getJobStepText());
+                  // double sx=mEnd.getCenterX().doubleValue();
+                 //  double sy=mEnd.getCenterY().doubleValue();
+                    System.out.println("fend.session.SessionController.drawCurve() MAYlayoutY: "+key.getParent().boundsInLocalProperty().getValue().getMaxY());
+                    System.out.println("fend.session.SessionController.drawCurve() "+key.getProperties().toString());
+                  double sx=key.boundsInLocalProperty().getValue().getMaxX();
+                 double sy=key.boundsInLocalProperty().getValue().getMinY()+144;
+                  
+                  //double sx=key.getLayoutX();
+                  //double sy=key.getLayoutY();
+                  
+                   mEnd.setJob(next1);
+                   mEnd.setCenterX(sx);
+                   
+                   mEnd.setCenterY(sy);                    //redundant but for the sake of uniformity..   :(
+                   
+                   
+                    CubCurveModel cmod=new CubCurveModel();
+                    
+                    LinksModel lm=new LinksModel(mstart, mEnd, cmod);
+                    Links ln=new Links(lm);
+                    
+                    CubCurve curve=ln.getCurve();
+                    
+                    
+                   
+                    // DoubleProperty d= new SimpleDoubleProperty(next.layoutXProperty().get()+310);
+                   // curve.startXProperty().bindBidirectional(d);
+                    
+                    //
+                    //curve.startYProperty().bindBidirectional(new SimpleDoubleProperty(next.layoutYProperty().get()+72));
+                    //Bindings.add(next.layoutXProperty(), next.boundsInLocalProperty().get().getMinX()+310);
+                   // Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72);
+                   
+                  //  curve.startXProperty().bindBidirectional(next.layoutXProperty());
+                    //curve.startYProperty().bindBidirectional(next.layoutYProperty());
+                    
+                 //   System.out.println("fend.session.SessionController.drawCurve():  for: "+next.getJsnc().getModel().getJobStepText()+" : child: "+key.getJsnc().getModel().getJobStepText());
+                    
+                   curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMinX()+310));         //next is the parent node
+                   curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72));
+                    
+                    curve.endXProperty().bind(Bindings.add(key.layoutXProperty(),key.boundsInLocalProperty().get().getMinX()));           //key in the child node
+                    curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getMinY()+72));       // this is HARDCODED!!! find a way to get the height of the node!
+                   // curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getHeight()/2));
+                  //  System.out.println("fend.session.SessionController.drawCurve(): for parent "+next.getJsnc().getModel().getJobStepText()+"   :Setting startX : :next.boundsInLocalProperty().get().getMaxX():  "+next.boundsInLocalProperty().get().getMaxX());
+                  //  System.out.println("fend.session.SessionController.drawCurve(): for child  "+key.getJsnc().getModel().getJobStepText() +"   :Setting  endX  : :next.boundsInLocalProperty().get().getMaxX():  "+key.boundsInLocalProperty().get().getMaxX());
+                    rightInteractivePane.getChildren().add(0,ln);
+                    
+                    
+                    drawCurve(key, jsnAnchorMap);
+                }
+                    
+                
+            }
+            
+        }
+        
+        
+    }
+
+   
+
+   
 }

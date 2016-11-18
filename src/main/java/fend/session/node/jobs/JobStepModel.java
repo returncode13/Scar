@@ -6,6 +6,7 @@
 package fend.session.node.jobs;
 
 
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import fend.session.node.volumes.VolumeSelectionModel;
+import java.util.Objects;
 
 /**
  *
@@ -24,7 +26,7 @@ import fend.session.node.volumes.VolumeSelectionModel;
 public class JobStepModel {
     private final StringProperty jobStepTextProperty;
     private final ListProperty<VolumeSelectionModel>volListProperty;
-
+    private InsightVersionsModel insightVersionsModel;
     
     private ArrayList<JobStepModel> jsParents=new ArrayList<>();
     private ArrayList<JobStepModel> jsChildren=new ArrayList<>();
@@ -34,6 +36,12 @@ public class JobStepModel {
     
     //For debug
     private Long id;
+
+    
+
+    
+    
+   
 
    
     
@@ -48,10 +56,20 @@ public class JobStepModel {
         jsChildren.add(this);                                                       //provision for leaf
         
         
-       
-        
+           
         
     }
+
+    public InsightVersionsModel getInsightVersionsModel() {
+        return insightVersionsModel;
+    }
+
+    public void setInsightVersionsModel(InsightVersionsModel insightVersionsModel) {
+        this.insightVersionsModel = insightVersionsModel;
+    }
+
+    
+    
 
     public JobStepModel() {
         this("Enter a name");
@@ -83,23 +101,36 @@ public class JobStepModel {
     }
  
     
+    
+    
+    
+    
     public void addToParent(JobStepModel parent){
-        if(jsParents.contains(this)) {
-            System.out.println("JSM: contains "+this.getJobStepText()+" ..reomoving from parent");
+       /* if(jsParents.contains(this)) {
+            System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from parent");
             jsParents.remove(this);
-        }
-        System.out.println("JSM: in "+this.getJobStepText()+" setting parent: "+parent.getJobStepText());
+        }*/
+        if(!parent.getId().equals(this.id)){
+            System.out.println("JSM: in "+this.getJobStepText()+" setting parent: "+parent.getJobStepText());
+            jsParents.remove(this);
         jsParents.add(parent);
+        }
+        
     }
     
     
     public void addToChildren(JobStepModel child){
-        if(jsChildren.contains(this)) {
-        System.out.println("JSM: contains "+this.getJobStepText()+" ..reomoving from Children");
+       /* if(jsChildren.contains(this)) {
+        System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from Children");
             jsChildren.remove(this);
-        }
-        System.out.println("JSM: in "+this.getJobStepText()+" setting child: "+child.getJobStepText());
+        }*/
+        System.out.println("fend.session.node.jobs.JobStepModel.addToChildren()   "+child.getId()+"=="+this.id+ "     :  "+child.getId().equals(this.id));
+        if(!child.getId().equals(this.id)){
+            System.out.println("JSM: in "+this.getJobStepText()+" :ID: "+this.getId()+" setting child: "+child.getJobStepText()+" :ID: "+child.id);
+            jsChildren.remove(this);
         jsChildren.add(child);
+        }
+        
     }
 
     public ArrayList<JobStepModel> getJsParents() {
@@ -118,7 +149,7 @@ public class JobStepModel {
         this.jsChildren = jsChildren;
     }
 
-    void setId(Long id) {
+    public void setId(Long id) {
         this.id=id;
     }
     

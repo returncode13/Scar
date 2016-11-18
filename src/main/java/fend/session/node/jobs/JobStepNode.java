@@ -38,7 +38,7 @@ import javafx.scene.input.ContextMenuEvent;
 public class JobStepNode extends AnchorPane {
 static int i=0;
     public JobStepNode(JobStepModel item) {
-        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/JobStepNodeView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/JobStepNodeView_1_1.fxml"); 
         //URL location = JobStepNodeController.class.getResource("JobStepNodeView.fxml");
           
            fXMLLoader=new FXMLLoader();
@@ -54,11 +54,21 @@ static int i=0;
                 jsnc=(JobStepNodeController)fXMLLoader.getController();
              //i++;
                // this.setId(new Integer(i) +"");
-               
-                setId(UUID.randomUUID().getMostSignificantBits()+"");
+               if(item.getId()==null){
+                 //  System.out.println("fend.session.node.jobs.JobStepNode.<init>(): A new jobstepNode: "   );
+                   setId(UUID.randomUUID().getMostSignificantBits()+"");
+               }
+               else{
+                //    System.out.println("fend.session.node.jobs.JobStepNode.<init>(): jobstepnode from existing jobstepmodel : "+item.getId()   );
+                   setId(item.getId()+"");
+               }
+                
+              //  System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+this.boundsInLocalProperty().get().getMaxY());
+                
                 jsnc.setId(Long.valueOf(getId()));
-                jsnc.setModel(item);
                 jsnc.setView(this) ;
+                jsnc.setModel(item);
+                
                
                 
                 
@@ -83,7 +93,8 @@ static int i=0;
                 Dragboard dragboard=startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content=new ClipboardContent();
           //  setId(this.getClass().getSimpleName()+System.currentTimeMillis());
-            System.out.println("JSN: ID= "+getId());
+          //  System.out.println("JSN: ID= "+getId());
+               // System.out.println("JobStepNode :mOnDragDetected: ");
             content.putString(getId());
             dragboard.setContent(content);
             event.consume();
@@ -96,6 +107,7 @@ static int i=0;
             public void handle(DragEvent event) {
           //      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                // System.out.println("JSN: Drag Over "+getId()+" xy "+event.getScreenX()+","+event.getScreenY());
+              // System.out.println("JobStepNode :mOnDragOver: ");
                 JobStepNode.this.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
                 event.acceptTransferModes(TransferMode.LINK);
                 event.consume();
@@ -107,8 +119,9 @@ static int i=0;
             @Override
             public void handle(DragEvent event) {
           //      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                System.out.println("JSN: Drag Dropped on "+getId()+" xy "+event.getScreenX()+","+event.getScreenY());
+              //  System.out.println("JSN: Drag Dropped on "+getId()+" xy "+event.getScreenX()+","+event.getScreenY());
                 // event.acceptTransferModes(TransferMode.LINK);
+               // System.out.println("JobStepNode :mOnDragDropped: ");
                 event.setDropCompleted(true);
         event.consume();
             }
@@ -132,34 +145,36 @@ static int i=0;
             public void handle(MouseDragEvent event) {
          //       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                // startFullDrag();
-                System.out.println("JSN: Mouse Drag Entered on "+getId());
-                
+              //  System.out.println("JSN: Mouse Drag Entered on "+getId());
+               // System.out.println("JobStepNode :setOnMouseDragEntered: ");
             }
         });
         
         setOnMouseDragReleased(new EventHandler<MouseDragEvent>(){
-
+            
             @Override
             public void handle(MouseDragEvent event) {
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                
+                
+              //  System.out.println("JobStepNode :setOnMouseDragReleased: ");
                Anchor anc=(Anchor) event.getGestureSource();
                JobStepNode jsource=(JobStepNode) event.getSource();
                
                anc.getModel().setJob(JobStepNode.this.getJsnc().getModel());            //set child job
                
                
-               System.out.println("JSN: Mouse Drag Released on "+getId()+ " source "+event.getSource().getClass().getSimpleName()+ " SourceID: "+ jsource.getId()+" GSource: "+event.getGestureSource().getClass().getSimpleName()+ " Target: "+event.getTarget().getClass().getSimpleName());
+             //  System.out.println("JSN: Mouse Drag Released on "+getId()+ " source "+event.getSource().getClass().getSimpleName()+ " SourceID: "+ jsource.getId()+" GSource: "+event.getGestureSource().getClass().getSimpleName()+ " Target: "+event.getTarget().getClass().getSimpleName());
                Links link=anc.getLink();
                CubCurve curve=link.getCurve();
                curve.endXProperty().bind(Bindings.add(JobStepNode.this.layoutXProperty(),JobStepNode.this.boundsInLocalProperty().get().getMinX()));// JobStepNode.this.getWidth()/2.0));
                curve.endYProperty().bind(Bindings.add(JobStepNode.this.layoutYProperty(),JobStepNode.this.boundsInLocalProperty().get().getMaxY()/2));//JobStepNode.this.getWidth()/2.0));
-               System.out.println("JSN: the anchor dropped has the id "+anc.getAId());
-                //System.out.println("Link # "+link.getId()+ "now connects Parent : "+link.getStart().getModel().getJob().getJsId() +" to Child :"+link.getEnd().getModel().getJob().getJsId());
+             //  System.out.println("JSN: the anchor dropped has the id "+anc.getAId());
+//                System.out.println("Link # "+link.getId()+ "now connects Parent : "+link.getStart().getModel().getJob().getJsId() +" to Child :"+link.getEnd().getModel().getJob().getJsId());
            System.out.println("JSN: Link # "+link.getId()+ "now connects Parent : "+link.getLmodel().getParent().getId() +" to Child :"+link.getLmodel().getChild().getId());
            
            
-                System.out.println("JSN: Adding to current job as a parent");
+            //    System.out.println("JSN: Adding to current job as a parent");
                 jsnc.addToLineage(link.getLmodel().getParent());
             }
             
@@ -170,7 +185,7 @@ static int i=0;
             @Override
             public void handle(MouseDragEvent event) {
          //       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-         System.out.println("JSN: Mouse Drag Over on "+getId());
+       //  System.out.println("JSN: Mouse Drag Over on "+getId());
             }
         });
         setOnMouseEntered(new EventHandler<MouseEvent>(){
@@ -178,7 +193,7 @@ static int i=0;
             @Override
             public void handle(MouseEvent event) {
                // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-              System.out.println("JSN: Mouse Entered on "+getId()+ "  eventType: "+event.getEventType().toString());
+            //  System.out.println("JSN: Mouse Entered on "+getId()+ "  eventType: "+event.getEventType().toString());
             }
             
         });
@@ -234,6 +249,7 @@ static int i=0;
                 // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                  double startX=getScene().getX();
                     double startY=getScene().getY();
+                   System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+JobStepNode.this.boundsInLocalProperty().get().getMaxY());
                    System.out.println("Curve will start @(x,y) = ("+startX+","+startY+")");
                  
                    

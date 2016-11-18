@@ -8,6 +8,7 @@ package db.dao;
 import hibUtil.HibernateUtil;
 import java.util.List;
 import db.model.Sessions;
+import java.util.ArrayList;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -24,7 +25,7 @@ public class SessionsDAOImpl implements SessionsDAO {
       
       try{
           transaction=session.beginTransaction();
-          session.save(s);
+          session.saveOrUpdate(s);
           transaction.commit();
           
       }catch(Exception e){
@@ -91,7 +92,23 @@ public class SessionsDAOImpl implements SessionsDAO {
 
     @Override
     public List<Sessions> listSessions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session hibsession = HibernateUtil.getSessionFactory().openSession();
+        List<Sessions> sessList=new ArrayList<>();
+      Transaction transaction=null;
+      
+      try{
+          transaction=hibsession.beginTransaction();
+          sessList=hibsession.createCriteria(Sessions.class).list();
+          
+          transaction.commit();
+          
+      }catch(Exception e){
+          e.printStackTrace();
+      }finally{
+          hibsession.close();
+      }
+      return sessList;
     }
+    
     
 }

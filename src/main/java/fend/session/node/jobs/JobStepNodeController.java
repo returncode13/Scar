@@ -54,10 +54,20 @@ import fend.session.edges.anchor.Anchor;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import fend.session.node.jobs.insightVersions.InsightVersionsController;
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.insightVersions.InsightVersionsNode;
 
 import fend.session.node.volumes.VolumeSelectionCell;
 import fend.session.node.volumes.VolumeSelectionModel;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.regex.Pattern;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.scene.control.cell.CheckBoxListCell;
 
 
 /**
@@ -66,8 +76,7 @@ import javafx.collections.ListChangeListener;
  */
 public class JobStepNodeController {
     
-    
-    
+    public static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
     
     final private ChangeListener<String> JOBSTEP_TEXT_FIELD_CHANGE_LISTENER=new ChangeListener<String>() {
 
@@ -77,6 +86,8 @@ public class JobStepNodeController {
             updateJobStepTextFieldView(newValue);
         }
     };
+    
+    
     
     final private ChangeListener<ObservableList<VolumeSelectionModel>> JOBSTEP_VOLUME_LIST_CHANGE_LISTENER =new ChangeListener<ObservableList<VolumeSelectionModel>>() {
 
@@ -125,9 +136,17 @@ public class JobStepNodeController {
     private List<LinksModel> linksModelList=new ArrayList<>();
     private ObservableList<LinksModel> obsLinkList=FXCollections.observableList(linksModelList);
     
+    
+    
+    private List<String> versionNames=new ArrayList<>();
+    private ObservableList<String> allAvailableVersionsObsList=FXCollections.observableArrayList(versionNames);
+    
+    
+    private List<String> selectedVersionNames=new ArrayList<>();
+    private ObservableList<String> selectedVersions=FXCollections.observableArrayList(selectedVersionNames);
     private Long id;
     
-    
+    InsightVersionsModel ismod=new InsightVersionsModel(allAvailableVersionsObsList);
     
 //    final Delta dragDelta = new Delta();
     
@@ -151,6 +170,12 @@ public class JobStepNodeController {
 
     @FXML
     private ListView<VolumeSelectionModel> volumeSelView;
+    
+    @FXML
+    private Button insightVerButton;
+    
+     @FXML
+    private ListView<String> insightListView;
     
  
      
@@ -271,6 +296,55 @@ public class JobStepNodeController {
         
     }
     
+    @FXML
+    void handleInsightVerButtonClicked(ActionEvent event) {
+        
+       
+        
+        
+        
+        
+        String  regex=".\\d*.\\d*-[a-zA-Z0-9_-]*";  
+        Pattern pattern=Pattern.compile(regex);
+        
+       File[] versions= insightLocation.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pattern.matcher(pathname.getName()).matches();
+            }
+        });
+        ArrayList<String> versionNames=new ArrayList<>();
+        allAvailableVersionsObsList.clear();
+        for (File version : versions) {
+            
+            String name=version.getName();
+            this.allAvailableVersionsObsList.add(name);
+            System.err.println("version: "+version);
+        }
+        
+        
+       
+        if(model.getInsightVersionsModel()==null){
+            model.setInsightVersionsModel(ismod);
+        }
+        else
+            ismod=model.getInsightVersionsModel();
+        
+        InsightVersionsNode isnode=new InsightVersionsNode(ismod);
+        InsightVersionsController iscontr=isnode.getInsightVersionsController();
+        
+        
+        selectedVersions=FXCollections.observableArrayList(ismod.getCheckedVersions());
+        insightListView.setItems(selectedVersions);
+       
+        
+        
+        
+       
+       
+       
+    }
+    
    
     public ObservableList<VolumeSelectionModel> getObsList() {
         return obsList;
@@ -310,7 +384,7 @@ public class JobStepNodeController {
        
       // curve.endXProperty().bind(Bindings.add(jsn.layoutXProperty(),jsn.boundsInLocalProperty().get().getMaxX()+100.0));
        //curve.endYProperty().bind(Bindings.add(jsn.layoutYProperty(),jsn.boundsInLocalProperty().get().getMaxY()/2+100.0));
-       
+        System.out.println("fend.session.node.jobs.JobStepNodeController.testIfButtonCanBeAdded(): Curve added : maxyY: "+jsn.boundsInLocalProperty().get().getMaxY());
        
       curve.setEndX(basePane.getScene().getX()+100.0);
       curve.setEndY(basePane.getScene().getY()+100.0);
@@ -342,12 +416,18 @@ public class JobStepNodeController {
          model.getVolListProperty().removeListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().unbindBidirectional(model.getVolListProperty());
          
+        
          
      }
     
      private void setupModelListeners(){
          model.getJobStepTextProperty().addListener(JOBSTEP_TEXT_FIELD_CHANGE_LISTENER);
          jobStepTextField.accessibleTextProperty().bindBidirectional(model.getJobStepTextProperty());
+         
+         
+        
+         
+         
          
       volumeSelView.setCellFactory(new Callback<ListView<VolumeSelectionModel>, ListCell<VolumeSelectionModel>>() {
 
@@ -373,9 +453,15 @@ public class JobStepNodeController {
           
         
         updateJobStepTextFieldView();
+       
         updateJobStepVolumeListView();
         
+        
     }
+    
+    
+    
+   
     
     
     private void updateJobStepTextFieldView(){
@@ -471,7 +557,57 @@ public class JobStepNodeController {
     public Long getId() {
         return id;
     }
-    
+
+    public void setVolumeModelsForFrontEndDisplay() {
+        
+        
+        for (Iterator<VolumeSelectionModel> iterator = obsList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModel next = iterator.next();
+            volumeSelView.setItems(obsList);
+               
+                
+                model.setVolList(obsList);                               //Redundant step???
+                
+                
+                System.out.println("JSNC: Adding volumeModel "+obsList.get(obsList.size()-1).getId()+" to JobStepModel "+model.getId());
+                System.out.println("JSNC: At this point the jobStep model# "+model.getId()+" has the following Volumes ");
+                
+                for (Iterator<VolumeSelectionModel> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
+            VolumeSelectionModel next1 = iterator1.next();
+                    System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
+            
+        }
+            
+            
+        }
+    }
+
+    public void setInsightListForFrontEndDisplay() {
+        /*   if(model.getInsightVersionsModel()==null){
+        model.setInsightVersionsModel(ismod);
+        }
+        else
+        ismod=model.getInsightVersionsModel();*/
+         
+        
+         System.out.println("fend.session.node.jobs.JobStepNodeController.setInsightListForFrontEndDisplay():");
+       // InsightVersionsNode isnode=new InsightVersionsNode(ismod);
+       // InsightVersionsController iscontr=isnode.getInsightVersionsController();
+        
+        
+        selectedVersions=FXCollections.observableArrayList(ismod.getCheckedVersions());
+        for(Iterator<String> it=selectedVersions.iterator();it.hasNext();){
+            String ver=it.next();
+            System.out.println("fend.session.node.jobs.JobStepNodeController.setInsightListForFrontEndDisplay():  "+ver);
+        }
+        insightListView.setItems(selectedVersions);
+    }
+
+    public void setInsightVersionsModel(InsightVersionsModel insVerModel) {
+        ismod=insVerModel;
+    }
+
+   
     
 }
 

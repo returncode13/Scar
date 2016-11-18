@@ -55,10 +55,13 @@ public class AnchorModel implements Serializable{
     
     public void setCenterX(Double d)
     {
+        System.out.println("fend.session.edges.anchor.AnchorModel.setCenterX(): value of d= "+d);
+//        System.out.println("fend.session.edges.anchor.AnchorModel.setCenterX(): job: "+job.getJobStepText()+" centreX="+d);
         centerX.set(d);
     }
     
     public void setCenterY(Double d){
+   //     System.out.println("fend.session.edges.anchor.AnchorModel.setCenterY(): job: "+job.getJobStepText()+" centreY="+d);
         centerY.set(d);
     }
     
@@ -71,6 +74,7 @@ public class AnchorModel implements Serializable{
     }
 
     public void setJob(JobStepModel job) {
+        System.out.println("fend.session.edges.anchor.AnchorModel.setJob(): setting job: "+job.getJobStepText());
         this.job = job;
     }
 

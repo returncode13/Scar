@@ -36,7 +36,7 @@ public class JobStepDAOImpl implements JobStepDAO{
         
         try{
             transaction=session.beginTransaction();
-            session.save(js);
+            session.saveOrUpdate(js);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -53,7 +53,7 @@ public class JobStepDAOImpl implements JobStepDAO{
         
         try{
             JobStep js = (JobStep) session.get(JobStep.class, jobId);
-            System.out.println("JobDAOIMPL: checking for id "+jobId+" and found "+(js==null?" NULL":js.getIdJobStep()));
+           // System.out.println("JobDAOIMPL: checking for id "+jobId+" and found "+(js==null?" NULL":js.getIdJobStep()));
             return js;
         }catch(Exception e){
             e.printStackTrace();
@@ -75,6 +75,7 @@ public class JobStepDAOImpl implements JobStepDAO{
             oldJs.setNameJobStep(newJs.getNameJobStep());
             oldJs.setAlert(newJs.isAlert());
             oldJs.setJobVolumeDetails(newJs.getJobVolumeDetails());
+            oldJs.setInsightVersions(newJs.getInsightVersions());
             session.update(oldJs);
             
             transaction.commit();
