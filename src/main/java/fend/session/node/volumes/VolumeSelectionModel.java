@@ -35,7 +35,7 @@ public class VolumeSelectionModel {
     private boolean alert=false;
     
     
-    private HeadersModel headersModel;                                    // the headers corresponding to this particular volume.
+    private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
     private List<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
     
     

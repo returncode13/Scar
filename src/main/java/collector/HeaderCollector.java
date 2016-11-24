@@ -82,6 +82,7 @@ public class HeaderCollector {
             for (Iterator<Headers> iterator = headerList.iterator(); iterator.hasNext();) {
                 Headers next = iterator.next();
                 next.setVolume(dbVolume);
+                
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
               
                 hdrServ.createHeaders(next);                             //commit to the db
@@ -141,7 +142,7 @@ public class HeaderCollector {
        
       ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
       headersModel.setObsHList(obseq);                                     //set the headersModel that will be used to launch the header table
-      
+      dbVolume.setHeaderExtracted(Boolean.TRUE);
             
             
         } catch (InterruptedException ex) {
