@@ -5,8 +5,11 @@
  */
 package fend.session.node.volumes;
 
-import fend.session.node.headers.HeaderTableModelBack;
+
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.SubSurface;
 import java.io.File;
+import java.util.List;
 import java.util.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -31,8 +34,32 @@ public class VolumeSelectionModel {
     private final BooleanProperty headerButtonDisabledStatusProperty=new SimpleBooleanProperty(headerButtonIsDisabled);
     private boolean alert=false;
     
+    
+    private HeadersModel headersModel;                                    // the headers corresponding to this particular volume.
+    private List<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
+    
+    
+    
     //for Debug
     private Long id;
+
+    public HeadersModel getHeadersModel() {
+        return headersModel;
+    }
+
+    public void setHeadersModel(HeadersModel headersModel) {
+        this.headersModel = headersModel;
+    }
+
+    
+
+    public List<SubSurface> getSubsurfaces() {
+        return subsurfaces;
+    }
+
+    public void setSubsurfaces(List<SubSurface> subsurfaces) {
+        this.subsurfaces = subsurfaces;
+    }
 
         
     

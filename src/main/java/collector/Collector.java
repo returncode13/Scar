@@ -14,6 +14,8 @@ import db.model.Parent;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
+import db.services.AcquisitionService;
+import db.services.AcquisitionServiceImpl;
 import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
 import db.services.ChildService;
@@ -33,6 +35,7 @@ import db.services.SessionsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
+import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
@@ -86,7 +89,7 @@ public class Collector {
     
     final private static ParentService pServ=new ParentServiceImpl();
     final private static ChildService cServ=new ChildServiceImpl();
-    
+    final private static AcquisitionService acqServ=new AcquisitionServiceImpl();
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
@@ -121,8 +124,6 @@ public class Collector {
        // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
         setupEntries();
     }
-    
-    
     
     /*
     Set up the data base entry datastructures
@@ -226,8 +227,6 @@ public class Collector {
         
         commitEntries();
     }
-    
-    
     
     //codes for commiting the transactions
        
@@ -399,10 +398,6 @@ public class Collector {
                    
     }
      
-     
-     
-     
-     
      private void createAllDescendants() {
          
          /*
@@ -538,5 +533,27 @@ public class Collector {
       }
     }
      
+     
+     private void tracking(){
+         
+     }
+     
+     /**
+      * 
+      * @param parent
+      * @param child 
+      * call to set the pending job flag in each jobStepModel
+      */
+     private void setPendingJobsFlag(JobStepModel parent,JobStepModel child){
+         if(parent.getId().equals(child.getId())){
+             System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+         
+         //Calculate the subsurfaces present in the parent
+         
+         
+         
+     }
     
 }

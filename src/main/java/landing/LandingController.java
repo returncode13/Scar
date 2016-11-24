@@ -8,6 +8,7 @@ package landing;
 import collector.Collector;
 import com.sun.xml.internal.ws.util.Pool;
 import db.model.Child;
+import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
 import db.model.Parent;
@@ -18,6 +19,8 @@ import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
 import db.services.ChildService;
 import db.services.ChildServiceImpl;
+import db.services.HeadersService;
+import db.services.HeadersServiceImpl;
 import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
@@ -33,7 +36,9 @@ import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
-import fend.session.node.headers.HeaderTableModelBack;
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.Sequences;
+import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.jobs.JobStepNodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
@@ -50,11 +55,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-/*<<<<<<< HEAD*/import java.util.logging.Level;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-/*=======*/
+
 import java.util.regex.Pattern;
-/*>>>>>>> insightVersionAddBackEnd*/
+
 import javafx.beans.value.ChangeListener;
 
 import javafx.collections.FXCollections;
@@ -89,6 +95,8 @@ import landing.settings.Settings;
 import landing.settings.SettingsController;
 import landing.settings.SettingsNode;
 import landing.settings.SettingsWrapper;
+import org.apache.commons.collections4.MultiMap;
+import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  * FXML Controller class
@@ -285,8 +293,8 @@ public class LandingController implements Initializable,Serializable {
         
         
         
-        HeaderTableModelBack htmod=new HeaderTableModelBack();
-        VolumeSelectionModel vmod=new VolumeSelectionModel();
+       
+        
         
         ArrayList<JobStepModel> jmodList=new ArrayList<>();
         
@@ -336,7 +344,7 @@ public class LandingController implements Initializable,Serializable {
         ChildService cserv=new ChildServiceImpl();
         
         JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
-        
+        HeadersService hdrServ=new HeadersServiceImpl(); 
         
         Map<JobStep,JobStep> parentAndJobMap=new HashMap<>();   
         Map<JobStep,JobStep> childAndJobMap=new HashMap<>();                        //Use these maps to link the cubic curves
@@ -431,6 +439,64 @@ public class LandingController implements Initializable,Serializable {
                 Volume beV=next1.getVolume();
                 beVols.add(beV);
                 
+                //Load headers for beV i.e the backend Volume.
+                List<Headers> hl=hdrServ.getHeadersFor(beV);
+                List<SubSurface> sl=new ArrayList<>();
+                List<Sequences> seqList=new ArrayList<>();
+                MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
+      
+                        for (Iterator<Headers> iteratornn = hl.iterator(); iteratornn.hasNext();) {
+                            Headers beH = iteratornn.next();
+                            SubSurface s= new SubSurface();
+          
+                            s.setSequenceNumber(beH.getSequenceNumber());
+                            s.setSubsurface(beH.getSubsurface());
+                            s.setTimeStamp(beH.getTimeStamp());
+
+                            s.setCmpInc(beH.getCmpInc());
+                            s.setCmpMax(beH.getCmpMax());
+                            s.setCmpMin(beH.getCmpMin());
+                            s.setDugChannelInc(beH.getDugChannelInc());
+                            s.setDugChannelMax(beH.getDugChannelMax());
+                            s.setDugChannelMin(beH.getDugChannelMin());
+                            s.setDugShotInc(beH.getDugShotInc());
+                            s.setDugShotMax(beH.getDugShotMax());
+                            s.setDugShotMin(beH.getDugShotMin());
+                            s.setInlineInc(beH.getInlineInc());
+                            s.setInlineMax(beH.getInlineMax());
+                            s.setInlineMin(beH.getInlineMin());
+                            s.setOffsetInc(beH.getOffsetInc());
+                            s.setOffsetMax(beH.getOffsetMax());
+                            s.setOffsetMin(beH.getOffsetMin());
+
+                            s.setTraceCount(beH.getTraceCount());
+                            s.setXlineInc(beH.getXlineInc());
+                            s.setXlineMax(beH.getXlineMax());
+                            s.setXlineMin(beH.getXlineMin());
+
+                            seqSubMap.put(s.getSequenceNumber(), s);
+
+
+                            sl.add(s);
+          
+          
+          
+                        }
+      
+                        Set<Long> seqNos=seqSubMap.keySet();
+
+
+                        for (Iterator<Long> iteratorSeq = seqNos.iterator(); iterator.hasNext();) {
+                            Long seq_no = iteratorSeq.next();
+                            Sequences sq=new Sequences();
+                            ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(seq_no);
+                            sq.setSubsurfaces(ssubs);
+                            seqList.add(sq);
+                        }
+      
+      
+                
+                
                 VolumeSelectionModel fv=new VolumeSelectionModel();
                 fv.setVolumeChosen(new File(beV.getPathOfVolume()));
                 fv.setHeaderButtonStatus(beV.getHeaderExtracted());
@@ -438,8 +504,19 @@ public class LandingController implements Initializable,Serializable {
                 fv.setLabel(beV.getNameVolume());
                 fv.setId(beV.getIdVolume());
                 fv.setInflated(true);
+                fv.setSubsurfaces(sl);
+                
+                            HeadersModel hmod=new HeadersModel();
+                            ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
+                            hmod.setObsHList(obseq);
+                
+                
+                fv.setHeadersModel(hmod);                                       //set the headersModel
                 feVols.add(fv);
+                
                 ObservableList<VolumeSelectionModel> obv=FXCollections.observableArrayList(feVols);
+                
+                
                 fejsm.setVolList(obv);
             }
             

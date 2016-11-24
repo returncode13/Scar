@@ -8,8 +8,6 @@ package fend.session.node.volumes;
 
 import collector.HeaderCollector;
 import db.model.Headers;
-import fend.session.node.headers.HeaderGroup;
-import fend.session.node.headers.HeaderTableModelBack;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.HeadersViewController;
@@ -121,39 +119,17 @@ public class VolumeSelectionController  {
         /*HeaderTableModelBack htm=new HeaderTableModelBack();
         htm.setHeaderList(hcollector.getHeaderListForVolume());*/
         //HeaderGroup hg=new HeaderGroup(htm);
-        HeadersModel hmodel=new HeadersModel();
+       // HeadersModel hmodel=new HeadersModel();
        // List<SubSurface> subs=hcollector.getHeaderListForVolume();
         List<Sequences> seqs=hcollector.getHeaderListForVolume();
-        ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
-        hmodel.setObsHList(obSeqs);
+        //ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
+       // hmodel.setObsHList(obSeqs);
+       // model.setHeadersModel(hmodel);
         
-        
-        HeadersNode hnode=new HeadersNode(hmodel);
+        HeadersNode hnode=new HeadersNode(model.getHeadersModel());
         HeadersViewController hvc=hnode.getHeadersViewController();
         
-        //Scene scene =new Scene(hg);
-        
-        
-        
-        /*
-        
-        Scene scene = new Scene(new Group());
-           TableColumn<SubSurface,String> firstCol=new TableColumn<>("Subsurface");
-           firstCol.setMinWidth(100);
-           firstCol.setCellValueFactory(new PropertyValueFactory<>("subsurface"));
-           TableColumn<SubSurface,String> secondCol=new TableColumn<>("TimeStamp");
-           secondCol.setMinWidth(100);
-           secondCol.setCellValueFactory(new PropertyValueFactory<>("timeStamp"));
-           TableColumn<SubSurface,Long> thirdCol=new TableColumn<>("Traces");
-           thirdCol.setMinWidth(100);
-           thirdCol.setCellValueFactory(new PropertyValueFactory<>("traceCount"));
-           table=new TableView<>();
-           table.getItems().addAll(hcollector.getHeaderListForVolume());
-           table.getColumns().addAll(firstCol,secondCol,thirdCol);
-           ((Group)scene.getRoot()).getChildren().addAll(table);
-                */
-          // stage.setScene(scene);
-          // stage.show();
+
            
            
     }
