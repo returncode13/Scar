@@ -143,7 +143,7 @@ public class HeaderCollector {
       ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
       headersModel.setObsHList(obseq);                                     //set the headersModel that will be used to launch the header table
       dbVolume.setHeaderExtracted(Boolean.TRUE);
-            
+      volServ.setHeaderExtractionFlag(dbVolume);
             
         } catch (InterruptedException ex) {
             Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);

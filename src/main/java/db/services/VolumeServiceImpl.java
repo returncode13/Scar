@@ -50,6 +50,16 @@ public class VolumeServiceImpl implements VolumeService{
        volDao.stopAlert(v);
     }
 
+    @Override
+    public void setHeaderExtractionFlag(Volume v) {
+        volDao.setHeaderExtractionFlag(v);
+    }
+
+    @Override
+    public void resetHeaderExtractionFlag(Volume v) {
+        volDao.resetHeaderExtractionFlag(v);
+    }
+
     
     
 }
