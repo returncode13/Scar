@@ -56,7 +56,8 @@ public class VolumeSelectionController  {
             updateVolumeSelectionLabelView(newValue);
             
             if(newValue!=null){
-              updateHeaderButton(Boolean.FALSE);
+              //updateHeaderButton(Boolean.FALSE);
+              updateHeaderButton();
             }
                 
         }
@@ -98,6 +99,8 @@ public class VolumeSelectionController  {
             if(f!=null) {
              model.setVolumeChosen(f);
              model.setLabel(f.getName());
+             model.setHeaderButtonStatus(Boolean.FALSE);                    //Counter intuitive !:(
+             
             }
            // System.out.println("VSC: "+model.getId()+" label is "+model.getLabel());
     }
@@ -107,7 +110,7 @@ public class VolumeSelectionController  {
     void handleHeaderDisplayButton(ActionEvent event) {
            
            hcollector.setFeVolumeSelModel(model);    //first Click        < -- calculate and commit headers into db
-           showTable.setDisable(false);
+           showTable.setDisable(model.getHeaderButtonStatus());
            
            //hcollector.setHeaderTableModel  on second Click
     }
@@ -121,7 +124,7 @@ public class VolumeSelectionController  {
         //HeaderGroup hg=new HeaderGroup(htm);
        // HeadersModel hmodel=new HeadersModel();
        // List<SubSurface> subs=hcollector.getHeaderListForVolume();
-        List<Sequences> seqs=hcollector.getHeaderListForVolume();
+        List<Sequences> seqs=hcollector.getHeaderListForVolume(model);
         //ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
        // hmodel.setObsHList(obSeqs);
        // model.setHeadersModel(hmodel);
@@ -185,6 +188,7 @@ public class VolumeSelectionController  {
      private void updateHeaderButton(){
       //   System.out.println("VSC: HButton is now "+(model.isHeaderButtonIsDisabled()?"Disabled":"Enabled"));
          headerTableDisplayButton.setDisable(model.getHeaderButtonStatus());
+        showTable.setDisable(model.getHeaderButtonStatus());
          
      }
     

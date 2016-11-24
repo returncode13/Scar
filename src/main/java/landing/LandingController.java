@@ -486,7 +486,7 @@ public class LandingController implements Initializable,Serializable {
                         Set<Long> seqNos=seqSubMap.keySet();
 
 
-                        for (Iterator<Long> iteratorSeq = seqNos.iterator(); iterator.hasNext();) {
+                        for (Iterator<Long> iteratorSeq = seqNos.iterator(); iteratorSeq.hasNext();) {
                             Long seq_no = iteratorSeq.next();
                             Sequences sq=new Sequences();
                             ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(seq_no);
@@ -499,7 +499,7 @@ public class LandingController implements Initializable,Serializable {
                 
                 VolumeSelectionModel fv=new VolumeSelectionModel();
                 fv.setVolumeChosen(new File(beV.getPathOfVolume()));
-                fv.setHeaderButtonStatus(beV.getHeaderExtracted());
+                fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
                 fv.setAlert(beV.getAlert());
                 fv.setLabel(beV.getNameVolume());
                 fv.setId(beV.getIdVolume());

@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ import org.hibernate.annotations.Columns;
  */
 @Entity
 @Table(name="Headers")
-public class Headers {
+public class Headers implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idHeaders;

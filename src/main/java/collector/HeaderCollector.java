@@ -153,7 +153,7 @@ public class HeaderCollector {
         
     }
 
-  public List<Sequences> getHeaderListForVolume(){
+  public List<Sequences> getHeaderListForVolume(VolumeSelectionModel vm){
     /*  List<Headers> hl=hdrServ.getHeadersFor(dbVolume);
       List<SubSurface> sl=new ArrayList<>();
       List<Sequences> seqList=new ArrayList<>();
@@ -214,6 +214,7 @@ public class HeaderCollector {
       
       System.out.println("HColl: done setting the headerList here");
 */
+      headersModel=vm.getHeadersModel();
       return headersModel.getObsHList();                                                //the observable List is the list of sequences. which contains all the header information
   }
     

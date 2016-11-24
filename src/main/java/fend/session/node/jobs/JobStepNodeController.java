@@ -54,6 +54,8 @@ import fend.session.edges.anchor.Anchor;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.insightVersions.InsightVersionsController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
@@ -575,6 +577,13 @@ public class JobStepNodeController {
                 for (Iterator<VolumeSelectionModel> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
             VolumeSelectionModel next1 = iterator1.next();
                     System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
+                    
+                    HeadersModel hmod=next1.getHeadersModel();
+                    List<Sequences> seqL=hmod.getObsHList();
+                    for (Iterator<Sequences> iterator2 = seqL.iterator(); iterator2.hasNext();) {
+                        Sequences next2 = iterator2.next();
+                        System.out.println("fend.session.node.jobs.JobStepNodeController.setVolumeModelsForFrontEndDisplay() Sequence: "+next2.getSequenceNumber());
+                    }
             
         }
             
