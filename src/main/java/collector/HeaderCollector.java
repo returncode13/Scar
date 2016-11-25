@@ -19,6 +19,7 @@ import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class HeaderCollector {
     
     private VolumeSelectionModel feVolumeSelModel;
     private HeadersModel headersModel;                                                                      //the headers model corresponding to this volume
-    List<SubSurface> sl;
+    Set<SubSurface> sl;                                                                                     // the SET of subsurfaces in the volume. Note this DOES NOT account for more than one occurrence of the sub
     List<Sequences> seqList;
     
     
@@ -74,7 +75,8 @@ public class HeaderCollector {
             
             ArrayList<Headers> headerList=dugHve.calculatedHeaders();     //  <<<<  The workhorse
             
-           sl=new ArrayList<>();
+            /*sl=new ArrayList<>();*/
+            sl=new HashSet<>();
            seqList=new ArrayList<>();
             MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
             

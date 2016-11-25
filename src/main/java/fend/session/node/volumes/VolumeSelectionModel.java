@@ -11,6 +11,7 @@ import fend.session.node.headers.SubSurface;
 import java.io.File;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -36,7 +37,7 @@ public class VolumeSelectionModel {
     
     
     private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
-    private List<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
+    private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
     
     
     
@@ -53,11 +54,11 @@ public class VolumeSelectionModel {
 
     
 
-    public List<SubSurface> getSubsurfaces() {
+    public Set<SubSurface> getSubsurfaces() {
         return subsurfaces;
     }
 
-    public void setSubsurfaces(List<SubSurface> subsurfaces) {
+    public void setSubsurfaces(Set<SubSurface> subsurfaces) {
         this.subsurfaces = subsurfaces;
     }
 

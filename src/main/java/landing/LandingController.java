@@ -50,6 +50,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -441,7 +442,7 @@ public class LandingController implements Initializable,Serializable {
                 
                 //Load headers for beV i.e the backend Volume.
                 List<Headers> hl=hdrServ.getHeadersFor(beV);
-                List<SubSurface> sl=new ArrayList<>();
+                Set<SubSurface> sl=new HashSet<>();
                 List<Sequences> seqList=new ArrayList<>();
                 MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
       

@@ -18,6 +18,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.Objects;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -27,6 +29,8 @@ public class JobStepModel {
     private final StringProperty jobStepTextProperty;
     private final ListProperty<VolumeSelectionModel>volListProperty;
     private InsightVersionsModel insightVersionsModel;
+    
+    private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.TRUE);
     
     private ArrayList<JobStepModel> jsParents=new ArrayList<>();
     private ArrayList<JobStepModel> jsChildren=new ArrayList<>();
@@ -166,6 +170,18 @@ public class JobStepModel {
 
     public Boolean isRoot() {
         return (jsParents.isEmpty()?true:false);
+    }
+
+    public BooleanProperty getPendingFlagProperty() {
+        return pendingFlagProperty;
+    }
+    
+    public Boolean isPending(){
+        return pendingFlagProperty.get();
+    }
+
+    public void setPendingFlagProperty(Boolean b) {
+        this.pendingFlagProperty.set(b);
     }
 
     

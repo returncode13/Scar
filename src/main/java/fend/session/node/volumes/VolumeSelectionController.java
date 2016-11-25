@@ -125,10 +125,15 @@ public class VolumeSelectionController  {
        // HeadersModel hmodel=new HeadersModel();
        // List<SubSurface> subs=hcollector.getHeaderListForVolume();
         List<Sequences> seqs=hcollector.getHeaderListForVolume(model);
+        
+        /*At the end of this call the model's headersmodel contains all the sequences and the models variable "subsurfaces" contains the subsurfaces in the volume.
+        */
+        
+        
         //ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
        // hmodel.setObsHList(obSeqs);
        // model.setHeadersModel(hmodel);
-        
+                                    
         HeadersNode hnode=new HeadersNode(model.getHeadersModel());
         HeadersViewController hvc=hnode.getHeadersViewController();
         

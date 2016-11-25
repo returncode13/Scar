@@ -150,6 +150,7 @@ public class Collector {
                  jobStep.setIdJobStep(jsm.getId());
                  //System.out.println("Coll: JSM ID: "+jsm.getId());
                  jobStep.setAlert(Boolean.FALSE);
+                 /*jobStep.setPending(Boolean.);*/
                  List<String> insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
                  String versionString="";                                                              //this string will be of form v1;v2;v3;.. where v1,v2.. are the chosen versions
                  for (Iterator<String> iterator = insightVers.iterator(); iterator.hasNext();) {
@@ -535,26 +536,6 @@ public class Collector {
     }
      
      
-     private void tracking(){
-         
-     }
-     
-     /**
-      * 
-      * @param parent
-      * @param child 
-      * call to set the pending job flag in each jobStepModel
-      */
-     private void setPendingJobsFlag(JobStepModel parent,JobStepModel child){
-         if(parent.getId().equals(child.getId())){
-             System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
-             return;
-         }
-         
-         //Calculate the subsurfaces present in the parent
-         
-         
-         
-     }
+    
     
 }

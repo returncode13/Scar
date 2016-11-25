@@ -44,7 +44,9 @@ public class JobStep implements Serializable{
     
     @Column(name = "alert",nullable = true)
     private Boolean alert;
-
+    
+    /*@Column(name = "pending",nullable = true)
+    private Boolean pending;*/
     @OneToMany(mappedBy = "jobStep",cascade = CascadeType.ALL,orphanRemoval = true)                              //create a member named "jobStep" in the JobVolumeDetails class definition
     private Set<JobVolumeDetails> jobVolumeDetails;
     
@@ -124,7 +126,16 @@ public class JobStep implements Serializable{
     public void setInsightVersions(String insightVersions) {
         this.insightVersions = insightVersions;
     }
+
+    /* public Boolean getPending() {
+    return pending;
+    }
     
+    public void setPending(Boolean pending) {
+    this.pending = pending;
+    }
+    */
+
     
     
     

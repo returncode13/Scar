@@ -23,6 +23,9 @@ public interface JobStepService {
     
     public void startAlert(JobStep js);
     public void stopAlert(JobStep js);
+    /*public void setPending(JobStep js);
+    public void resetPending(JobStep js);*/
+    
     public List<JobStep> listJobSteps();
     
    

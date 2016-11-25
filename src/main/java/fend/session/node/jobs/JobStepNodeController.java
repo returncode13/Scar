@@ -69,6 +69,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxListCell;
 
 
@@ -114,14 +115,16 @@ public class JobStepNodeController {
     };
             
             final private ListChangeListener<LinksModel> LINKS_CHANGE_LISTENER=new ListChangeListener<LinksModel>() {
-
-        
-
-       
-
         @Override
         public void onChanged(ListChangeListener.Change<? extends LinksModel> c) {
             System.out.println(" Added: "+c.next());
+        }
+    };
+            
+            final private ChangeListener<Boolean> CHECK_BOX_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println(".changed() from "+oldValue+" to "+newValue);
         }
     };
     
@@ -179,6 +182,8 @@ public class JobStepNodeController {
      @FXML
     private ListView<String> insightListView;
     
+    @FXML
+    private CheckBox pendingCheckBox;
  
      
      
@@ -417,7 +422,7 @@ public class JobStepNodeController {
          
          model.getVolListProperty().removeListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().unbindBidirectional(model.getVolListProperty());
-         
+         pendingCheckBox.selectedProperty().unbind();
         
          
      }
@@ -444,6 +449,8 @@ public class JobStepNodeController {
                         }
                     });
          
+        // model.getPendingFlagProperty().addListener(CHECK_BOX_CHANGE_LISTENER);
+         pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
          model.getVolListProperty().addListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().bindBidirectional(model.getVolListProperty());
          obsLinkList.addListener(LINKS_CHANGE_LISTENER);

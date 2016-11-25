@@ -6,11 +6,17 @@
 package fend.session;
 
 import collector.Collector;
+import db.model.Acquisition;
+import db.services.AcquisitionService;
+import db.services.AcquisitionServiceImpl;
+import db.services.JobStepService;
+import db.services.JobStepServiceImpl;
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.JobStepNode;
 import java.io.IOException;
 import java.net.URL;
@@ -56,13 +62,16 @@ import fend.session.node.jobs.JobStepNodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 
 /**
  *
@@ -91,13 +100,18 @@ public class SessionController implements Initializable {
                                                            //the other graph is step6-> step7 and step6-> step8.
                                                            // here there are two roots namely step1 and step6
     
-    
+    private List<JobStepModel> modelRoots=new ArrayList<>();
     private int rowNo,ColNo;
     private int numCols=1;
     private int numRows=0;
    
     private Collector collector=new Collector();
     private Long id;
+    
+    
+    
+    private AcquisitionService acqServ=new AcquisitionServiceImpl();
+    private JobStepService jServ=new JobStepServiceImpl();
 
     @FXML
     private VBox buttonHolderVBox;
@@ -122,9 +136,20 @@ public class SessionController implements Initializable {
      @FXML
     private Button addJobStepButton;
      
+     @FXML
+    private CheckBox tracker;
     
     
      int i=0;
+     
+     @FXML
+    void onTrackCheck(ActionEvent event) {
+         System.out.println("fend.session.SessionController.onTrackCheck() Checked "+tracker.isSelected());
+         if(tracker.isSelected()){
+             tracking();
+         }
+    }
+     
     @FXML
     void handleAddJobStepButton(ActionEvent event) {
         //dummyList.add(new VolumeSelectionModel("v1", Boolean.TRUE));
@@ -144,6 +169,8 @@ public class SessionController implements Initializable {
         
        rightInteractivePane.getChildren().add(jsn);
         
+      
+       
         //gridPane.getChildren().add(jsn.getJobStepNode()); above method of setting constraints and adding children
         
         numRows++;
@@ -340,22 +367,22 @@ public class SessionController implements Initializable {
            System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): display contents");
            
            JobStepModel next = iterator.next();
-           List<VolumeSelectionModel> testvm=next.getVolList();
+           /*List<VolumeSelectionModel> testvm=next.getVolList();*/
            
            InsightVersionsModel insVerModel=next.getInsightVersionsModel();
            
-           List<String>vv = insVerModel.getCheckedVersions();
+           /*List<String>vv = insVerModel.getCheckedVersions();
            
            for (Iterator<String> iterator1 = vv.iterator(); iterator1.hasNext();) {
-               String next1 = iterator1.next();
-               System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay() VERSIONS FOUND: "+next1);
-           }
+           String next1 = iterator1.next();
+           System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay() VERSIONS FOUND: "+next1);
+           }*/
            
            
-           for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
-               VolumeSelectionModel next1 = iterator1.next();
-               System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
-           }
+           /*for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
+           VolumeSelectionModel next1 = iterator1.next();
+           System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
+           }*/
            jsn=new JobStepNode(next);
             JobStepNodeController jsc=jsn.getJsnc();
             
@@ -548,6 +575,169 @@ public class SessionController implements Initializable {
         
     }
 
+    
+    private void setRoots(){
+        
+        modelRoots.clear();
+        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepModel job = iterator.next();
+            ArrayList<JobStepModel> jobParents=job.getJsParents();
+            if (jobParents.size()==1){
+               
+                if(job.getId().equals(jobParents.get(0).getId())){
+                     System.out.println("fend.session.SessionController.setRoots():  "+jobParents.get(0).getJobStepText()+" is a root..adding to list of roots");
+                    System.out.println("fend.session.SessionController.setRoots() :  id matched for model and the single content in the list of Parents");
+                    modelRoots.add(job);
+                }
+            }
+            
+            
+            
+        }
+    }
+    
+    private Set<SubSurface> calculateSubsInJob(JobStepModel job){
+        List<VolumeSelectionModel> volList=job.getVolList();
+        Set<SubSurface> subsInJob=new HashSet<>();
+        
+        for (Iterator<VolumeSelectionModel> iterator = volList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModel vol = iterator.next();
+                
+                if(!vol.isHeaderButtonIsDisabled()){
+                Set<SubSurface> subsInVol=vol.getSubsurfaces();
+                subsInJob.addAll(subsInVol);
+                }
+            
+            
+            
+        }
+        
+        for (Iterator<SubSurface> iterator = subsInJob.iterator(); iterator.hasNext();) {
+            SubSurface subinJob = iterator.next();
+            System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
+        }
+        
+        return subsInJob;
+    }
+    
+    
+    
+     private void tracking(){
+         setRoots();
+         List<Acquisition> acuiredSubs=acqServ.getAcquisition();      // this will query the db. Maybe put a timer?
+         List<String> acqString=new ArrayList<>();                      // hold the names of the acquired subsurfaces
+         
+         for (Iterator<Acquisition> iterator = acuiredSubs.iterator(); iterator.hasNext();) {
+             Acquisition acq = iterator.next();
+             acqString.add(acq.getSubsurfaceLines());   
+             
+             
+         }
+         
+         List<String> jobSubString=new ArrayList<>();            // holds the names of the subsurfaces in the job
+         
+         for(JobStepModel root : modelRoots){
+             Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
+             
+             for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
+                 SubSurface subinRoot = iterator.next();
+                 jobSubString.add(subinRoot.getSubsurface());
+                 
+             }
+             
+                List<String> acqStringBackedUp=new ArrayList(acqString);    //because acqString is about to go ba-bye!
+         
+                acqString.removeAll(jobSubString);    //remove the subs common to both acq and jobs. Since acq leads job , I guess it is logical to assume that acq be the larger list
+                List<String> remainingSubs=new ArrayList<>(acqString);
+
+                if(remainingSubs.size()>0){  //means jobs has subs that were acquired but weren't processed
+                        root.setPendingFlagProperty(Boolean.TRUE);
+                       
+                        
+                }
+                else{                       //all subs acquired are present in the job
+                    root.setPendingFlagProperty(Boolean.FALSE);
+                }
+                
+                List<JobStepModel> children = root.getJsChildren();
+                for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
+                 JobStepModel child = iterator.next();
+                 setPendingJobsFlag(root,child);
+             }
+             
+             
+         }
+         
+         
+         
+     }
+     
+     /**
+      * 
+      * @param parent
+      * @param child 
+      * call to set the pending job flag in each jobStepModel
+      */
+     private void setPendingJobsFlag(JobStepModel parent,JobStepModel child){
+         if(parent.getId().equals(child.getId())){
+             System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+         
+         //Calculate the subsurfaces present in the parent
+         
+         Set<SubSurface> pSubs=calculateSubsInJob(parent);
+         Set<SubSurface> cSubs=calculateSubsInJob(child);
+         
+         List<String> pSubsStrings=new ArrayList<>();
+         List<String> cSubsStrings=new ArrayList<>();
+         
+         for (Iterator<SubSurface> iterator = pSubs.iterator(); iterator.hasNext();) {
+             SubSurface subInParent = iterator.next();
+             pSubsStrings.add(subInParent.getSubsurface());
+             
+         }
+         
+         for (Iterator<SubSurface> iterator = cSubs.iterator(); iterator.hasNext();) {
+             SubSurface subInChild = iterator.next();
+             cSubsStrings.add(subInChild.getSubsurface());
+             
+         }
+         
+         List<String> remaining=new ArrayList<>();
+         
+         if(pSubsStrings.size()<cSubsStrings.size()){
+             System.out.println("fend.session.SessionController.setPendingJobsFlag():  Child : "+child.getJobStepText()+"  has more subsurfaces than Parent: "+parent.getJobStepText());
+             System.out.println("fend.session.SessionController.setPendingJobsFlag(): Unimplemented Method. Contact dev");
+         
+         }
+         
+         if(pSubsStrings.size()>=cSubsStrings.size()){  
+             pSubsStrings.removeAll(cSubsStrings);
+             remaining=pSubsStrings;
+             if(remaining.size()>0){   //child has pending subs
+                 child.setPendingFlagProperty(Boolean.TRUE);
+                 
+                 System.out.println("fend.session.SessionController.setPendingJobsFlag():  child :"+child.getJobStepText()+" has pending subs "+remaining);
+                 System.out.println("fend.session.SessionController.setPendingJobsFlag(): Pending flag set in model");
+             }else     //child has no pending subs
+             {
+                 child.setPendingFlagProperty(Boolean.FALSE);
+             }
+         }
+         
+         List<JobStepModel> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepModel> iterator = grandChildren.iterator(); iterator.hasNext();) {
+             JobStepModel grandchild = iterator.next();
+             setPendingJobsFlag(child, grandchild);
+         }
+         
+         
+         
+         
+     }
+
+    
    
     
    
