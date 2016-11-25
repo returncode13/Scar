@@ -39,6 +39,11 @@ public class Acquisition implements Serializable{
         return subsurfaceLines;
     }
 
+    public void setSubsurfaceLines(String subsurfaceLines) {
+        this.subsurfaceLines = subsurfaceLines;
+    }
+    
+    
     public Acquisition() {
     }
     

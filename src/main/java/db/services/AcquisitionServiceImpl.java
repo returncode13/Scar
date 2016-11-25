@@ -22,6 +22,11 @@ public class AcquisitionServiceImpl implements AcquisitionService{
     public List<Acquisition> getAcquisition() {
         return acqDao.getAcquisition();
     }
+
+    @Override
+    public void createAcquisition(Acquisition acq) {
+        acqDao.createAcquisition(acq);
+    }
     
     
     

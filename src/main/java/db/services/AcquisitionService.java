@@ -15,6 +15,6 @@ import java.util.List;
 public interface AcquisitionService {
     
     public List<Acquisition> getAcquisition();              //return the list of Acquisition parameters. Subsurfacelinename,starting shot pont, ending sp, start time,end time etc.
-    
+     public void createAcquisition(Acquisition acq);
     
 }

@@ -14,5 +14,5 @@ import java.util.List;
  */
 public interface AcquisitionDAO {
     public List<Acquisition> getAcquisition(); //return a list of ALL subsurfaces shot till date (SELECT * FROM <table> )
-    
+    public void createAcquisition(Acquisition acq);
 }

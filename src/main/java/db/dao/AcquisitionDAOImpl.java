@@ -37,6 +37,22 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
         return result;
     }
 
+    @Override
+    public void createAcquisition(Acquisition acq) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        
+        try{
+            transaction=session.beginTransaction();
+            session.saveOrUpdate(acq);
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
    
     
 }
