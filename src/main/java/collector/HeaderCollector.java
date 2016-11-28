@@ -100,12 +100,12 @@ public class HeaderCollector {
                 /*
                 DEBUG ONLY!! START 
                 */
-                Acquisition ac=new Acquisition();
+                /*Acquisition ac=new Acquisition();
                 ++aci;
                 Long l=new Long(aci);
                 ac.setId(l);
                 ac.setSubsurfaceLines(next.getSubsurface());
-                acqServ.createAcquisition(ac);
+                acqServ.createAcquisition(ac);*/
                 
                 /*
                 DEBUG END

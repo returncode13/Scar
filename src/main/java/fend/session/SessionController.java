@@ -623,6 +623,7 @@ public class SessionController implements Initializable {
     
     
      private void tracking(){
+         System.out.println("fend.session.SessionController.tracking():  STARTED");
          setRoots();
          List<Acquisition> acuiredSubs=acqServ.getAcquisition();      // this will query the db. Maybe put a timer?
          List<String> acqString=new ArrayList<>();                      // hold the names of the acquired subsurfaces
@@ -630,7 +631,7 @@ public class SessionController implements Initializable {
          for (Iterator<Acquisition> iterator = acuiredSubs.iterator(); iterator.hasNext();) {
              Acquisition acq = iterator.next();
              acqString.add(acq.getSubsurfaceLines());   
-             
+             System.out.println("fend.session.SessionController.tracking(): in AcqString: added: "+acqString.get(acqString.size()-1));
              
          }
          
@@ -642,6 +643,7 @@ public class SessionController implements Initializable {
              for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
                  SubSurface subinRoot = iterator.next();
                  jobSubString.add(subinRoot.getSubsurface());
+                 System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
                  
              }
              
@@ -649,10 +651,12 @@ public class SessionController implements Initializable {
          
                 acqString.removeAll(jobSubString);    //remove the subs common to both acq and jobs. Since acq leads job , I guess it is logical to assume that acq be the larger list
                 List<String> remainingSubs=new ArrayList<>(acqString);
-
+                
+                System.out.println("fend.session.SessionController.tracking(): remaining subs: "+remainingSubs);
+                
                 if(remainingSubs.size()>0){  //means jobs has subs that were acquired but weren't processed
                         root.setPendingFlagProperty(Boolean.TRUE);
-                       
+                       System.out.println("fend.session.SessionController.tracking(): ");
                         
                 }
                 else{                       //all subs acquired are present in the job
@@ -662,6 +666,7 @@ public class SessionController implements Initializable {
                 List<JobStepModel> children = root.getJsChildren();
                 for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
                  JobStepModel child = iterator.next();
+                    System.out.println("fend.session.SessionController.tracking(): setPendingJobs: to be called for Parent: "+root.getJobStepText()+" : child: "+child.getJobStepText());
                  setPendingJobsFlag(root,child);
              }
              
@@ -684,7 +689,11 @@ public class SessionController implements Initializable {
              return;
          }
          
+         
+         System.out.println("fend.session.SessionController.setPendingJobsFlag(): called for Parent: "+parent.getJobStepText()+" :child: "+child.getJobStepText());
+         
          //Calculate the subsurfaces present in the parent
+         
          
          Set<SubSurface> pSubs=calculateSubsInJob(parent);
          Set<SubSurface> cSubs=calculateSubsInJob(child);
@@ -695,13 +704,14 @@ public class SessionController implements Initializable {
          for (Iterator<SubSurface> iterator = pSubs.iterator(); iterator.hasNext();) {
              SubSurface subInParent = iterator.next();
              pSubsStrings.add(subInParent.getSubsurface());
+             System.out.println("fend.session.SessionController.setPendingJobsFlag():  pSubsStrings found : "+pSubsStrings.get(pSubsStrings.size()-1));
              
          }
          
          for (Iterator<SubSurface> iterator = cSubs.iterator(); iterator.hasNext();) {
              SubSurface subInChild = iterator.next();
              cSubsStrings.add(subInChild.getSubsurface());
-             
+             System.out.println("fend.session.SessionController.setPendingJobsFlag():  cSubsStrings found : "+cSubsStrings.get(cSubsStrings.size()-1));
          }
          
          List<String> remaining=new ArrayList<>();
