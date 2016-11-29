@@ -385,78 +385,78 @@ public class LandingController implements Initializable,Serializable {
             
             //get the parents of this jobstep
             
-            List<Parent> lParent=pserv.getParentsFor(next);
+            /* List<Parent> lParent=pserv.getParentsFor(next);
             
             for (Iterator<Parent> iterator1 = lParent.iterator(); iterator1.hasNext();) {
-                Parent next1 = iterator1.next();
-                Long parentjobId=next1.getParent();
-                SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
-                //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
-                parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
-                
-                Long parentId=parentJobssd.getJobStep().getIdJobStep();
-                
-                boolean parentExists=false;
-                
-                for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
-                    JobStepModel next2 = iterator2.next();
-                    if(next2.getId().equals(parentId)){
-                        parentExists=true;
-                        fejsm.addToParent(next2);
-                    }
-                    
-                }
-                
-                if(!parentExists){
-                    JobStepModel pjobStepModel=new JobStepModel();
-                pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
-                pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
-                
-                
-                
-                fejsm.addToParent(pjobStepModel);
-                }
-                
-                
+            Parent next1 = iterator1.next();
+            Long parentjobId=next1.getParent();
+            SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
+            //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+            parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
+            
+            Long parentId=parentJobssd.getJobStep().getIdJobStep();
+            
+            boolean parentExists=false;
+            
+            for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+            JobStepModel next2 = iterator2.next();
+            if(next2.getId().equals(parentId)){
+            parentExists=true;
+            fejsm.addToParent(next2);
             }
+            
+            }
+            
+            if(!parentExists){
+            JobStepModel pjobStepModel=new JobStepModel();
+            pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
+            pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
+            
+            
+            
+            fejsm.addToParent(pjobStepModel);
+            }
+            
+            
+            }*/
             
             //get children of this jobstep
             
-            List<Child> lChild=cserv.getChildrenFor(next);
+            /*  List<Child> lChild=cserv.getChildrenFor(next);
             for (Iterator<Child> iterator1 = lChild.iterator(); iterator1.hasNext();) {
-                Child next1 = iterator1.next();
-                Long childjobId=next1.getChild();
-                SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
-                //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
-                childAndJobMap.put(beJobStep, childssd.getJobStep());
-                
-                
-                Long childId=childssd.getJobStep().getIdJobStep();
-                
-                //in jmodList find the job that has the same id as the childId
-                boolean childExists=false;
-                
-                    for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
-                    JobStepModel next2 = iterator2.next();
-                    if(next2.getId().equals(childId))
-                    {
-                        childExists=true;
-                        fejsm.addToChildren(next2);
-                    }
-                    
-                }
-                    if(!childExists)
-                    {
-                        JobStepModel cJobStepModel=new JobStepModel();
-                        cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
-                        cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
-
-                        fejsm.addToChildren(cJobStepModel);
-                    }
-                
-                
-               
+            Child next1 = iterator1.next();
+            Long childjobId=next1.getChild();
+            SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
+            //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+            childAndJobMap.put(beJobStep, childssd.getJobStep());
+            
+            
+            Long childId=childssd.getJobStep().getIdJobStep();
+            
+            //in jmodList find the job that has the same id as the childId
+            boolean childExists=false;
+            
+            for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+            JobStepModel next2 = iterator2.next();
+            if(next2.getId().equals(childId))
+            {
+            childExists=true;
+            fejsm.addToChildren(next2);
             }
+            
+            }
+            if(!childExists)
+            {
+            JobStepModel cJobStepModel=new JobStepModel();
+            cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
+            cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
+            
+            fejsm.addToChildren(cJobStepModel);
+            }
+            
+            
+            
+            }*/
             
             
             
@@ -568,6 +568,79 @@ public class LandingController implements Initializable,Serializable {
             
         }
        
+        
+        
+        for (Iterator<SessionDetails> iterator = lsd.iterator(); iterator.hasNext();) {
+            SessionDetails next = iterator.next();
+            
+            Sessions beSessions=next.getSessions();
+            JobStep beJobStep=next.getJobStep();                                    //beJobstep belongs to beSessions
+            JobStepModel fejsm=new JobStepModel();
+            
+            for (Iterator<JobStepModel> iterator1 = jmodList.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                if(next1.getId().equals(beJobStep.getIdJobStep())){
+                    fejsm=next1;
+                }
+                
+                
+            }
+            
+            List<Child> lChild=cserv.getChildrenFor(next);
+            for (Iterator<Child> iterator1 = lChild.iterator(); iterator1.hasNext();) {
+                Child next1 = iterator1.next();
+                Long childjobId=next1.getChild();
+                SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
+                //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+                childAndJobMap.put(beJobStep, childssd.getJobStep());
+                
+                
+                Long childId=childssd.getJobStep().getIdJobStep();
+                
+                //in jmodList find the job that has the same id as the childId
+               
+                
+                    for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    if(next2.getId().equals(childId))
+                    {
+                       
+                        fejsm.addToChildren(next2);
+                    }
+                    
+                }
+                   
+                
+                
+               
+            }
+            
+             List<Parent> lParent=pserv.getParentsFor(next);
+            
+            for (Iterator<Parent> iterator1 = lParent.iterator(); iterator1.hasNext();) {
+                Parent next1 = iterator1.next();
+                Long parentjobId=next1.getParent();
+                SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
+                //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+                parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
+                
+                Long parentId=parentJobssd.getJobStep().getIdJobStep();
+                
+              
+                
+                for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    if(next2.getId().equals(parentId)){
+                       
+                        fejsm.addToParent(next2);
+                    }
+                    
+                }
+               
+                
+            }
+            
+        }
         
         for (Iterator<JobStepModel> iterator = jmodList.iterator(); iterator.hasNext();) {
             JobStepModel next = iterator.next();

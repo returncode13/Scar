@@ -120,12 +120,12 @@ public class JobStepModel {
             jsParents.remove(this);
         jsParents.add(parent);
         }
-        /* System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Parents of "+this.getJobStepText());
+        System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Parents of "+this.getJobStepText());
         for (Iterator<JobStepModel> iterator = jsParents.iterator(); iterator.hasNext();) {
-        JobStepModel next = iterator.next();
-        System.out.println(next.getJobStepText());
-        
-        }*/
+            JobStepModel next = iterator.next();
+            System.out.println(next.getJobStepText());
+            
+        }
     }
     
     
@@ -141,21 +141,21 @@ public class JobStepModel {
         jsChildren.add(child);
         }
         
-        /* System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Children of "+this.getJobStepText()+"  :id: "+this.id);
+        System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Children of "+this.getJobStepText()+"  :id: "+this.id);
         for (Iterator<JobStepModel> iterator = jsChildren.iterator(); iterator.hasNext();) {
-        JobStepModel next = iterator.next();
-        System.out.println(next.getJobStepText() + " : id: "+next.getId());
-        
-        List<JobStepModel> gchildren=next.getJsChildren();
-        System.out.println("children of "+next.getJobStepText());
-        for (Iterator<JobStepModel> iterator1 = gchildren.iterator(); iterator1.hasNext();) {
-        JobStepModel next1 = iterator1.next();
-        System.out.println(next1.getJobStepText()+" :id: "+next1.getId());
-        
+            JobStepModel next = iterator.next();
+            System.out.println(next.getJobStepText() + " : id: "+next.getId());
+            
+            List<JobStepModel> gchildren=next.getJsChildren();
+            System.out.println("children of "+next.getJobStepText());
+                for (Iterator<JobStepModel> iterator1 = gchildren.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                    System.out.println(next1.getJobStepText()+" :id: "+next1.getId());
+                
+            }
+                System.out.println("");
+            
         }
-        System.out.println("");
-        
-        }*/
         
     }
 
