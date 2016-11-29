@@ -125,7 +125,7 @@ public class VolumeSelectionModel {
         return volumeSelectionLabel.get();
     }
     public void setLabel(String volumeSelected){
-        System.out.println("VSModel: setting label to : "+volumeSelected);
+       // System.out.println("VSModel: setting label to : "+volumeSelected);
         volumeSelectionLabel.set(volumeSelected);
     }
 

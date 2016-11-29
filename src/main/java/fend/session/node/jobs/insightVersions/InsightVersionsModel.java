@@ -35,7 +35,7 @@ public class InsightVersionsModel {
         
         for (Iterator<String> iterator = versions.iterator(); iterator.hasNext();) {
             String next = iterator.next();
-            System.out.println(next);
+           // System.out.println(next);
             
         }
     }

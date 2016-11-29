@@ -199,7 +199,8 @@ public class Collector {
                     vp.setIdVolume(vsm.getId());
                     vp.setNameVolume(vsm.getLabel());
                     vp.setAlert(Boolean.FALSE);
-                    vp.setHeaderExtracted(Boolean.FALSE);
+                    //vp.setHeaderExtracted(Boolean.FALSE);
+                    vp.setHeaderExtracted(!vsm.getHeaderButtonStatus());
                     vp.setMd5Hash(null);                                //figure a way to calculate MD5
                     vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
                     

@@ -391,17 +391,32 @@ public class LandingController implements Initializable,Serializable {
                 Parent next1 = iterator1.next();
                 Long parentjobId=next1.getParent();
                 SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
-                System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+                //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
                 parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
                 
+                Long parentId=parentJobssd.getJobStep().getIdJobStep();
                 
-                JobStepModel pjobStepModel=new JobStepModel();
+                boolean parentExists=false;
+                
+                for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    if(next2.getId().equals(parentId)){
+                        parentExists=true;
+                        fejsm.addToParent(next2);
+                    }
+                    
+                }
+                
+                if(!parentExists){
+                    JobStepModel pjobStepModel=new JobStepModel();
                 pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
                 pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
                 
                 
                 
                 fejsm.addToParent(pjobStepModel);
+                }
+                
                 
             }
             
@@ -412,17 +427,35 @@ public class LandingController implements Initializable,Serializable {
                 Child next1 = iterator1.next();
                 Long childjobId=next1.getChild();
                 SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
-                System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+                //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
                 childAndJobMap.put(beJobStep, childssd.getJobStep());
                 
                 
+                Long childId=childssd.getJobStep().getIdJobStep();
+                
+                //in jmodList find the job that has the same id as the childId
+                boolean childExists=false;
+                
+                    for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    if(next2.getId().equals(childId))
+                    {
+                        childExists=true;
+                        fejsm.addToChildren(next2);
+                    }
+                    
+                }
+                    if(!childExists)
+                    {
+                        JobStepModel cJobStepModel=new JobStepModel();
+                        cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
+                        cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
+
+                        fejsm.addToChildren(cJobStepModel);
+                    }
                 
                 
-                JobStepModel cJobStepModel=new JobStepModel();
-                cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
-                cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
-                
-                fejsm.addToChildren(cJobStepModel);
+               
             }
             
             
@@ -535,6 +568,24 @@ public class LandingController implements Initializable,Serializable {
             
         }
        
+        
+        for (Iterator<JobStepModel> iterator = jmodList.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            List<JobStepModel> children=next.getJsChildren();
+            for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                System.out.println("landing.LandingController.loadSession(): job : "+next.getJobStepText()+" :has child: "+next1.getJobStepText());
+            }
+            
+            List<JobStepModel> parents=next.getJsParents();
+            for (Iterator<JobStepModel> iterator1 = parents.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                System.out.println("landing.LandingController.loadSession(): job : "+next.getJobStepText()+" :has parent: "+next1.getJobStepText());
+            }
+        }
+
+        
+        
         //Parents and Children for links
         
         ObservableList<LinksModel> oLink=FXCollections.observableArrayList();
