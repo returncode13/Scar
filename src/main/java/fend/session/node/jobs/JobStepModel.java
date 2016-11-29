@@ -30,7 +30,7 @@ public class JobStepModel {
     private final ListProperty<VolumeSelectionModel>volListProperty;
     private InsightVersionsModel insightVersionsModel;
     
-    private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.TRUE);
+    private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     
     private ArrayList<JobStepModel> jsParents=new ArrayList<>();
     private ArrayList<JobStepModel> jsChildren=new ArrayList<>();

@@ -49,8 +49,12 @@ private static int i=0;
             try{
                 Node root=(Node)fxmlLoader.load(location.openStream());
                 VolumeSelectionController controller=(VolumeSelectionController)fxmlLoader.getController();
-               
+               if(item.getId()==null){
                 setId(UUID.randomUUID().getMostSignificantBits()+"");
+               }
+               else{
+                   setId(item.getId()+"");
+               }
                 controller.setId(Long.valueOf(getId()));
                 
                 controller.setModel(item);

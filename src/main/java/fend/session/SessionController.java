@@ -603,7 +603,7 @@ public class SessionController implements Initializable {
         for (Iterator<VolumeSelectionModel> iterator = volList.iterator(); iterator.hasNext();) {
             VolumeSelectionModel vol = iterator.next();
                 
-                if(!vol.isHeaderButtonIsDisabled()){
+                if(!vol.getHeaderButtonStatus()){
                 Set<SubSurface> subsInVol=vol.getSubsurfaces();
                 subsInJob.addAll(subsInVol);
                 }

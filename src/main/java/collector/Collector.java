@@ -135,8 +135,9 @@ public class Collector {
     private void setupEntries(){
         
         
-        
-        
+        dbJobSteps.clear();                         //clear previous jobmodel array. set current entries here
+       dbVolumes.clear();
+        dbJobVolumeDetails.clear();
         
         //for every session
        // for (Iterator<Sessions> iterator = dbSessions.iterator(); iterator.hasNext();) {
@@ -167,7 +168,7 @@ public class Collector {
                  //add to db
                  //if(!dbJobSteps.contains(jobStep))dbJobSteps.add(jobStep);
                  
-                 dbJobSteps.clear();
+               //  dbJobSteps.clear();
                  
                //  if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
                      System.out.println("collector.Collector.setupEntries(): New / Existing jobStep: Adding to dbJobSteps: "+jobStep.getNameJobStep());
@@ -194,6 +195,7 @@ public class Collector {
                  for (Iterator<VolumeSelectionModel> vit = vsmlist.iterator(); vit.hasNext();) {
                     VolumeSelectionModel vsm = vit.next();
                     Volume vp=new Volume();
+                     System.out.println("collector.Collector.setupEntries(): Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
                     vp.setIdVolume(vsm.getId());
                     vp.setNameVolume(vsm.getLabel());
                     vp.setAlert(Boolean.FALSE);
@@ -201,8 +203,9 @@ public class Collector {
                     vp.setMd5Hash(null);                                //figure a way to calculate MD5
                     vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
                     
+                    dbVolumes.add(vp);
                     
-                    if(volServ.getVolume(vp.getIdVolume())==null){dbVolumes.add(vp);}
+                   // if(volServ.getVolume(vp.getIdVolume())==null){dbVolumes.add(vp);}
                     
                     
                    // if(!dbVolumes.contains(vp))dbVolumes.add(vp);
@@ -210,7 +213,8 @@ public class Collector {
                     JobVolumeDetails jvd=new JobVolumeDetails(jobStep, vp);
                     
                    // if(!dbJobVolumeDetails.contains(jvd))dbJobVolumeDetails.add(jvd);
-                    if(jvdServ.getJobVolumeDetails(jobStep, vp)==null){dbJobVolumeDetails.add(jvd);}
+                   // if(jvdServ.getJobVolumeDetails(jobStep, vp)==null){dbJobVolumeDetails.add(jvd);}
+                   dbJobVolumeDetails.add(jvd);
                 }
                       
                  
