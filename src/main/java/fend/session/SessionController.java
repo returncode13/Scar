@@ -16,6 +16,8 @@ import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.JobStepNode;
 import java.io.IOException;
@@ -745,6 +747,7 @@ public class SessionController implements Initializable {
                         
                     }
                  setPendingJobsFlag(root,child);
+                    setQCFlag(root, child);
              }
              
              
@@ -827,7 +830,105 @@ public class SessionController implements Initializable {
          
      }
 
-    
+    private void setQCFlag(JobStepModel parent,JobStepModel child){
+         if(parent.getId().equals(child.getId())){
+             System.out.println("collector.Collector.setQCFlag():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+         
+         
+         Set<SubSurface> csubs= calculateSubsInJob(child);
+         Set<SubSurface> psubs=calculateSubsInJob(parent);
+         
+         List<VolumeSelectionModel> cVolList=child.getVolList();
+         
+        
+         
+         
+         for (Iterator<SubSurface> iterator = csubs.iterator(); iterator.hasNext();) {
+            SubSurface c = iterator.next();
+            VolumeSelectionModel targetVol=null;
+            Sequences targetSeq=null;
+            SubSurface targetSub=c;
+            SubSurface refSub=null;
+            
+                        for (Iterator<VolumeSelectionModel> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
+                            VolumeSelectionModel vc = iterator1.next();
+                            Set<SubSurface> vcSub=vc.getSubsurfaces();
+                            System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
+                            if(vcSub.contains(targetSub)){
+                                System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
+                                targetVol=vc;
+                            }
+                 
+                        }
+                        
+                        if(targetVol!=null){
+                            HeadersModel hmod=targetVol.getHeadersModel();
+                            List<Sequences> seqList=hmod.getObsHList();
+                            
+                            for (Iterator<Sequences> iterator1 = seqList.iterator(); iterator1.hasNext();) {
+                                Sequences seq = iterator1.next();
+                                List<SubSurface> seqSubs=seq.getSubsurfaces();
+                                System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                                    if(seqSubs.contains(targetSub)){
+                                        targetSeq=seq;
+                                        System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                                    }
+                            }
+                            
+                        }else
+                        {
+                                try {
+                                    throw new Exception("Subline: "+targetSub.getSubsurface()+" :not found in any of the child job: "+child.getJobStepText()+" : volumes!!");
+                                } catch (Exception ex) {
+                                    Logger.getLogger(SessionController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                        }
+                        
+                        
+                        for (Iterator<SubSurface> iterator1 = psubs.iterator(); iterator1.hasNext();) {
+                          SubSurface p = iterator1.next();
+                          
+                            System.out.println("fend.session.SessionController.setQCFlag(): Trying to find : "+c.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
+                            if(p.getSubsurface().equals(c.getSubsurface())){
+                                 System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!found : "+c.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
+                                refSub=p;
+                            }
+                        }
+                        
+                        if(!refSub.getTraceCount().equals(targetSub.getTraceCount())){                                //Change this to a computed hash.
+                            
+                            System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
+                            System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True");
+                            targetVol.setQcFlagProperty(Boolean.TRUE);
+                            targetSeq.setQcFlagProperty(Boolean.TRUE);
+                            targetSub.setQcFlagProperty(Boolean.TRUE);
+                        }
+                        else{
+                            System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
+                            System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Setting QC flags to FALSE");
+                            
+                            targetVol.setQcFlagProperty(Boolean.FALSE);
+                            targetSeq.setQcFlagProperty(Boolean.FALSE);
+                            targetSub.setQcFlagProperty(Boolean.FALSE);
+                        }
+            
+        }
+         
+         List<JobStepModel> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepModel> iterator = grandChildren.iterator(); iterator.hasNext();) {
+            JobStepModel gchild = iterator.next();
+             System.out.println("fend.session.SessionController.setQCFlag():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+            setQCFlag(child, gchild);
+        }
+         
+         
+        
+         
+         
+         
+    }
    
     
    

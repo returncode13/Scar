@@ -7,12 +7,17 @@ package fend.session.node.headers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
  * @author naila0152
  */
 public class Sequences implements Serializable{
+    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    
+    
     ArrayList<SubSurface> subsurfaces=new ArrayList<>();
     private Long sequenceNumber;   
     private String subsurface;
@@ -219,6 +224,14 @@ public class Sequences implements Serializable{
 
     public void setCmpInc(Long cmpInc) {
         this.cmpInc = cmpInc;
+    }
+
+    public BooleanProperty getQcFlagProperty() {
+        return qcFlagProperty;
+    }
+
+    public void setQcFlagProperty(Boolean b) {
+        this.qcFlagProperty.set(b);
     }
 
    

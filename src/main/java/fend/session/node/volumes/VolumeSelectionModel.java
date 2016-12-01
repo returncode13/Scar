@@ -34,7 +34,7 @@ public class VolumeSelectionModel {
     private boolean headerButtonIsDisabled=true;
     private final BooleanProperty headerButtonDisabledStatusProperty=new SimpleBooleanProperty(headerButtonIsDisabled);
     private boolean alert=false;
-    
+    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     
     private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
     private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
@@ -151,6 +151,14 @@ public class VolumeSelectionModel {
 
     public void setAlert(boolean alert) {
         this.alert = alert;
+    }
+
+    public BooleanProperty getQcFlagProperty() {
+        return qcFlagProperty;
+    }
+
+    public void setQcFlagProperty(Boolean b) {
+        this.qcFlagProperty.set(b);
     }
 
    

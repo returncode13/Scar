@@ -32,6 +32,7 @@ public class JobStepModel {
     private InsightVersionsModel insightVersionsModel;
     
     private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     
     private ArrayList<JobStepModel> jsParents=new ArrayList<>();
     private ArrayList<JobStepModel> jsChildren=new ArrayList<>();
@@ -206,6 +207,15 @@ public class JobStepModel {
         this.pendingFlagProperty.set(b);
     }
 
+    public BooleanProperty getQcFlagProperty() {
+        return qcFlagProperty;
+    }
+
+    public void setQcFlagProperty(Boolean b) {
+        this.qcFlagProperty.set(b);
+    }
+
+    
     
 
      

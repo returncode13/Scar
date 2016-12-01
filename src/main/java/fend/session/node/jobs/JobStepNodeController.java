@@ -184,6 +184,9 @@ public class JobStepNodeController {
     
     @FXML
     private CheckBox pendingCheckBox;
+    
+     @FXML
+    private CheckBox qcCheckBox;
  
      
      
@@ -423,6 +426,7 @@ public class JobStepNodeController {
          model.getVolListProperty().removeListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().unbindBidirectional(model.getVolListProperty());
          pendingCheckBox.selectedProperty().unbind();
+         qcCheckBox.selectedProperty().unbind();
         
          
      }
@@ -451,6 +455,7 @@ public class JobStepNodeController {
          
         // model.getPendingFlagProperty().addListener(CHECK_BOX_CHANGE_LISTENER);
          pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
+         qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
          model.getVolListProperty().addListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().bindBidirectional(model.getVolListProperty());
          obsLinkList.addListener(LINKS_CHANGE_LISTENER);
