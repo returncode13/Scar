@@ -168,6 +168,7 @@ public class VolumeSelectionController  {
         
        volumePathLabel.accessibleTextProperty().unbindBidirectional(model.getVolumeSelectionLabel());
         headerTableDisplayButton.disableProperty().unbindBidirectional(model.getHeaderButtonDisabledStatusProperty());
+        qcCheckBox.selectedProperty().unbind();
     }
     
     private void setupModelListeners(){
@@ -177,6 +178,7 @@ public class VolumeSelectionController  {
        // System.out.println("VSController: binding");
         volumePathLabel.accessibleTextProperty().bindBidirectional(model.getVolumeSelectionLabel());
         headerTableDisplayButton.disableProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
+        qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
         //headerTableDisplayButton.defaultButtonProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
     }
     

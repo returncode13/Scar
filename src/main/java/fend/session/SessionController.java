@@ -847,10 +847,10 @@ public class SessionController implements Initializable {
          
          for (Iterator<SubSurface> iterator = csubs.iterator(); iterator.hasNext();) {
             SubSurface c = iterator.next();
-            VolumeSelectionModel targetVol=null;
-            Sequences targetSeq=null;
+            VolumeSelectionModel targetVol=new VolumeSelectionModel();
+            Sequences targetSeq=new Sequences();
             SubSurface targetSub=c;
-            SubSurface refSub=null;
+            SubSurface refSub=new SubSurface();
             
                         for (Iterator<VolumeSelectionModel> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
                             VolumeSelectionModel vc = iterator1.next();
@@ -901,6 +901,7 @@ public class SessionController implements Initializable {
                             
                             System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
                             System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True");
+                            child.setQcFlagProperty(Boolean.TRUE);
                             targetVol.setQcFlagProperty(Boolean.TRUE);
                             targetSeq.setQcFlagProperty(Boolean.TRUE);
                             targetSub.setQcFlagProperty(Boolean.TRUE);
@@ -908,7 +909,7 @@ public class SessionController implements Initializable {
                         else{
                             System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
                             System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Setting QC flags to FALSE");
-                            
+                            child.setQcFlagProperty(Boolean.FALSE);
                             targetVol.setQcFlagProperty(Boolean.FALSE);
                             targetSeq.setQcFlagProperty(Boolean.FALSE);
                             targetSub.setQcFlagProperty(Boolean.FALSE);

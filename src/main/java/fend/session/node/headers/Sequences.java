@@ -7,6 +7,8 @@ package fend.session.node.headers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -48,6 +50,11 @@ public class Sequences implements Serializable{
 
     public void setSubsurfaces(ArrayList<SubSurface> subsurfaces) {
         this.subsurfaces = subsurfaces;
+        this.sequenceNumber=Collections.min(subsurfaces, (SubSurface o1, SubSurface o2) -> {
+            return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
+        }).getSequenceNumber();
+        
+        
     }
 
     public Long getSequenceNumber() {
