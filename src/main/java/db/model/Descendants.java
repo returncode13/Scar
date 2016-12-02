@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +23,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Descendants")
-public class Descendants {
+public class Descendants implements Serializable{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -54,6 +54,8 @@ import fend.session.edges.anchor.Anchor;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.insightVersions.InsightVersionsController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
@@ -67,6 +69,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxListCell;
 
 
@@ -112,14 +115,16 @@ public class JobStepNodeController {
     };
             
             final private ListChangeListener<LinksModel> LINKS_CHANGE_LISTENER=new ListChangeListener<LinksModel>() {
-
-        
-
-       
-
         @Override
         public void onChanged(ListChangeListener.Change<? extends LinksModel> c) {
             System.out.println(" Added: "+c.next());
+        }
+    };
+            
+            final private ChangeListener<Boolean> CHECK_BOX_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println(".changed() from "+oldValue+" to "+newValue);
         }
     };
     
@@ -177,6 +182,11 @@ public class JobStepNodeController {
      @FXML
     private ListView<String> insightListView;
     
+    @FXML
+    private CheckBox pendingCheckBox;
+    
+     @FXML
+    private CheckBox qcCheckBox;
  
      
      
@@ -415,7 +425,8 @@ public class JobStepNodeController {
          
          model.getVolListProperty().removeListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().unbindBidirectional(model.getVolListProperty());
-         
+         pendingCheckBox.selectedProperty().unbind();
+         qcCheckBox.selectedProperty().unbind();
         
          
      }
@@ -442,6 +453,9 @@ public class JobStepNodeController {
                         }
                     });
          
+        // model.getPendingFlagProperty().addListener(CHECK_BOX_CHANGE_LISTENER);
+         pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
+         qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
          model.getVolListProperty().addListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().bindBidirectional(model.getVolListProperty());
          obsLinkList.addListener(LINKS_CHANGE_LISTENER);
@@ -575,6 +589,13 @@ public class JobStepNodeController {
                 for (Iterator<VolumeSelectionModel> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
             VolumeSelectionModel next1 = iterator1.next();
                     System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
+                    
+                    HeadersModel hmod=next1.getHeadersModel();
+                    List<Sequences> seqL=hmod.getObsHList();
+                    for (Iterator<Sequences> iterator2 = seqL.iterator(); iterator2.hasNext();) {
+                        Sequences next2 = iterator2.next();
+                        System.out.println("fend.session.node.jobs.JobStepNodeController.setVolumeModelsForFrontEndDisplay() Sequence: "+next2.getSequenceNumber());
+                    }
             
         }
             

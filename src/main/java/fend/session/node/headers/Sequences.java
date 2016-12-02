@@ -7,12 +7,19 @@ package fend.session.node.headers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
  * @author naila0152
  */
 public class Sequences implements Serializable{
+    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    
+    
     ArrayList<SubSurface> subsurfaces=new ArrayList<>();
     private Long sequenceNumber;   
     private String subsurface;
@@ -43,6 +50,11 @@ public class Sequences implements Serializable{
 
     public void setSubsurfaces(ArrayList<SubSurface> subsurfaces) {
         this.subsurfaces = subsurfaces;
+        this.sequenceNumber=Collections.min(subsurfaces, (SubSurface o1, SubSurface o2) -> {
+            return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
+        }).getSequenceNumber();
+        
+        
     }
 
     public Long getSequenceNumber() {
@@ -219,6 +231,14 @@ public class Sequences implements Serializable{
 
     public void setCmpInc(Long cmpInc) {
         this.cmpInc = cmpInc;
+    }
+
+    public BooleanProperty getQcFlagProperty() {
+        return qcFlagProperty;
+    }
+
+    public void setQcFlagProperty(Boolean b) {
+        this.qcFlagProperty.set(b);
     }
 
    

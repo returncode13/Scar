@@ -8,6 +8,7 @@ package landing;
 import collector.Collector;
 import com.sun.xml.internal.ws.util.Pool;
 import db.model.Child;
+import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
 import db.model.Parent;
@@ -18,6 +19,8 @@ import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
 import db.services.ChildService;
 import db.services.ChildServiceImpl;
+import db.services.HeadersService;
+import db.services.HeadersServiceImpl;
 import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
@@ -33,7 +36,9 @@ import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
-import fend.session.node.headers.HeaderTableModelBack;
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.Sequences;
+import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.jobs.JobStepNodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
@@ -45,16 +50,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-/*<<<<<<< HEAD*/import java.util.logging.Level;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-/*=======*/
+
 import java.util.regex.Pattern;
-/*>>>>>>> insightVersionAddBackEnd*/
+
 import javafx.beans.value.ChangeListener;
 
 import javafx.collections.FXCollections;
@@ -89,6 +96,8 @@ import landing.settings.Settings;
 import landing.settings.SettingsController;
 import landing.settings.SettingsNode;
 import landing.settings.SettingsWrapper;
+import org.apache.commons.collections4.MultiMap;
+import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  * FXML Controller class
@@ -285,8 +294,8 @@ public class LandingController implements Initializable,Serializable {
         
         
         
-        HeaderTableModelBack htmod=new HeaderTableModelBack();
-        VolumeSelectionModel vmod=new VolumeSelectionModel();
+       
+        
         
         ArrayList<JobStepModel> jmodList=new ArrayList<>();
         
@@ -336,7 +345,7 @@ public class LandingController implements Initializable,Serializable {
         ChildService cserv=new ChildServiceImpl();
         
         JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
-        
+        HeadersService hdrServ=new HeadersServiceImpl(); 
         
         Map<JobStep,JobStep> parentAndJobMap=new HashMap<>();   
         Map<JobStep,JobStep> childAndJobMap=new HashMap<>();                        //Use these maps to link the cubic curves
@@ -376,45 +385,78 @@ public class LandingController implements Initializable,Serializable {
             
             //get the parents of this jobstep
             
-            List<Parent> lParent=pserv.getParentsFor(next);
+            /* List<Parent> lParent=pserv.getParentsFor(next);
             
             for (Iterator<Parent> iterator1 = lParent.iterator(); iterator1.hasNext();) {
-                Parent next1 = iterator1.next();
-                Long parentjobId=next1.getParent();
-                SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
-                System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
-                parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
-                
-                
-                JobStepModel pjobStepModel=new JobStepModel();
-                pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
-                pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
-                
-                
-                
-                fejsm.addToParent(pjobStepModel);
-                
+            Parent next1 = iterator1.next();
+            Long parentjobId=next1.getParent();
+            SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
+            //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+            parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
+            
+            Long parentId=parentJobssd.getJobStep().getIdJobStep();
+            
+            boolean parentExists=false;
+            
+            for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+            JobStepModel next2 = iterator2.next();
+            if(next2.getId().equals(parentId)){
+            parentExists=true;
+            fejsm.addToParent(next2);
             }
+            
+            }
+            
+            if(!parentExists){
+            JobStepModel pjobStepModel=new JobStepModel();
+            pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
+            pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
+            
+            
+            
+            fejsm.addToParent(pjobStepModel);
+            }
+            
+            
+            }*/
             
             //get children of this jobstep
             
-            List<Child> lChild=cserv.getChildrenFor(next);
+            /*  List<Child> lChild=cserv.getChildrenFor(next);
             for (Iterator<Child> iterator1 = lChild.iterator(); iterator1.hasNext();) {
-                Child next1 = iterator1.next();
-                Long childjobId=next1.getChild();
-                SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
-                System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
-                childAndJobMap.put(beJobStep, childssd.getJobStep());
-                
-                
-                
-                
-                JobStepModel cJobStepModel=new JobStepModel();
-                cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
-                cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
-                
-                fejsm.addToChildren(cJobStepModel);
+            Child next1 = iterator1.next();
+            Long childjobId=next1.getChild();
+            SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
+            //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+            childAndJobMap.put(beJobStep, childssd.getJobStep());
+            
+            
+            Long childId=childssd.getJobStep().getIdJobStep();
+            
+            //in jmodList find the job that has the same id as the childId
+            boolean childExists=false;
+            
+            for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+            JobStepModel next2 = iterator2.next();
+            if(next2.getId().equals(childId))
+            {
+            childExists=true;
+            fejsm.addToChildren(next2);
             }
+            
+            }
+            if(!childExists)
+            {
+            JobStepModel cJobStepModel=new JobStepModel();
+            cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
+            cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
+            
+            fejsm.addToChildren(cJobStepModel);
+            }
+            
+            
+            
+            }*/
             
             
             
@@ -431,15 +473,84 @@ public class LandingController implements Initializable,Serializable {
                 Volume beV=next1.getVolume();
                 beVols.add(beV);
                 
+                //Load headers for beV i.e the backend Volume.
+                List<Headers> hl=hdrServ.getHeadersFor(beV);
+                Set<SubSurface> sl=new HashSet<>();
+                List<Sequences> seqList=new ArrayList<>();
+                MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
+      
+                        for (Iterator<Headers> iteratornn = hl.iterator(); iteratornn.hasNext();) {
+                            Headers beH = iteratornn.next();
+                            SubSurface s= new SubSurface();
+          
+                            s.setSequenceNumber(beH.getSequenceNumber());
+                            s.setSubsurface(beH.getSubsurface());
+                            s.setTimeStamp(beH.getTimeStamp());
+
+                            s.setCmpInc(beH.getCmpInc());
+                            s.setCmpMax(beH.getCmpMax());
+                            s.setCmpMin(beH.getCmpMin());
+                            s.setDugChannelInc(beH.getDugChannelInc());
+                            s.setDugChannelMax(beH.getDugChannelMax());
+                            s.setDugChannelMin(beH.getDugChannelMin());
+                            s.setDugShotInc(beH.getDugShotInc());
+                            s.setDugShotMax(beH.getDugShotMax());
+                            s.setDugShotMin(beH.getDugShotMin());
+                            s.setInlineInc(beH.getInlineInc());
+                            s.setInlineMax(beH.getInlineMax());
+                            s.setInlineMin(beH.getInlineMin());
+                            s.setOffsetInc(beH.getOffsetInc());
+                            s.setOffsetMax(beH.getOffsetMax());
+                            s.setOffsetMin(beH.getOffsetMin());
+
+                            s.setTraceCount(beH.getTraceCount());
+                            s.setXlineInc(beH.getXlineInc());
+                            s.setXlineMax(beH.getXlineMax());
+                            s.setXlineMin(beH.getXlineMin());
+
+                            seqSubMap.put(s.getSequenceNumber(), s);
+
+
+                            sl.add(s);
+          
+          
+          
+                        }
+      
+                        Set<Long> seqNos=seqSubMap.keySet();
+
+
+                        for (Iterator<Long> iteratorSeq = seqNos.iterator(); iteratorSeq.hasNext();) {
+                            Long seq_no = iteratorSeq.next();
+                            Sequences sq=new Sequences();
+                            ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(seq_no);
+                            sq.setSubsurfaces(ssubs);
+                            seqList.add(sq);
+                        }
+      
+      
+                
+                
                 VolumeSelectionModel fv=new VolumeSelectionModel();
                 fv.setVolumeChosen(new File(beV.getPathOfVolume()));
-                fv.setHeaderButtonStatus(beV.getHeaderExtracted());
+                fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
                 fv.setAlert(beV.getAlert());
                 fv.setLabel(beV.getNameVolume());
                 fv.setId(beV.getIdVolume());
                 fv.setInflated(true);
+                fv.setSubsurfaces(sl);
+                
+                            HeadersModel hmod=new HeadersModel();
+                            ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
+                            hmod.setObsHList(obseq);
+                
+                
+                fv.setHeadersModel(hmod);                                       //set the headersModel
                 feVols.add(fv);
+                
                 ObservableList<VolumeSelectionModel> obv=FXCollections.observableArrayList(feVols);
+                
+                
                 fejsm.setVolList(obv);
             }
             
@@ -457,6 +568,97 @@ public class LandingController implements Initializable,Serializable {
             
         }
        
+        
+        
+        for (Iterator<SessionDetails> iterator = lsd.iterator(); iterator.hasNext();) {
+            SessionDetails next = iterator.next();
+            
+            Sessions beSessions=next.getSessions();
+            JobStep beJobStep=next.getJobStep();                                    //beJobstep belongs to beSessions
+            JobStepModel fejsm=new JobStepModel();
+            
+            for (Iterator<JobStepModel> iterator1 = jmodList.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                if(next1.getId().equals(beJobStep.getIdJobStep())){
+                    fejsm=next1;
+                }
+                
+                
+            }
+            
+            List<Child> lChild=cserv.getChildrenFor(next);
+            for (Iterator<Child> iterator1 = lChild.iterator(); iterator1.hasNext();) {
+                Child next1 = iterator1.next();
+                Long childjobId=next1.getChild();
+                SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
+                //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+                childAndJobMap.put(beJobStep, childssd.getJobStep());
+                
+                
+                Long childId=childssd.getJobStep().getIdJobStep();
+                
+                //in jmodList find the job that has the same id as the childId
+               
+                
+                    for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    if(next2.getId().equals(childId))
+                    {
+                       
+                        fejsm.addToChildren(next2);
+                    }
+                    
+                }
+                   
+                
+                
+               
+            }
+            
+             List<Parent> lParent=pserv.getParentsFor(next);
+            
+            for (Iterator<Parent> iterator1 = lParent.iterator(); iterator1.hasNext();) {
+                Parent next1 = iterator1.next();
+                Long parentjobId=next1.getParent();
+                SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
+                //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
+                parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
+                
+                Long parentId=parentJobssd.getJobStep().getIdJobStep();
+                
+              
+                
+                for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepModel next2 = iterator2.next();
+                    if(next2.getId().equals(parentId)){
+                       
+                        fejsm.addToParent(next2);
+                    }
+                    
+                }
+               
+                
+            }
+            
+        }
+        
+        for (Iterator<JobStepModel> iterator = jmodList.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            List<JobStepModel> children=next.getJsChildren();
+            for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                System.out.println("landing.LandingController.loadSession(): job : "+next.getJobStepText()+" :has child: "+next1.getJobStepText());
+            }
+            
+            List<JobStepModel> parents=next.getJsParents();
+            for (Iterator<JobStepModel> iterator1 = parents.iterator(); iterator1.hasNext();) {
+                JobStepModel next1 = iterator1.next();
+                System.out.println("landing.LandingController.loadSession(): job : "+next.getJobStepText()+" :has parent: "+next1.getJobStepText());
+            }
+        }
+
+        
+        
         //Parents and Children for links
         
         ObservableList<LinksModel> oLink=FXCollections.observableArrayList();

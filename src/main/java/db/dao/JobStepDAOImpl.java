@@ -145,6 +145,46 @@ public class JobStepDAOImpl implements JobStepDAO{
             session.close();
         }
     }
+    /*
+    @Override
+    public void setPending(JobStep njs) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    
+    try{
+    transaction=session.beginTransaction();
+    
+    JobStep oldJs=(JobStep) session.get(JobStep.class, njs.getIdJobStep());
+    oldJs.setPending(Boolean.TRUE);
+    session.update(oldJs);
+    
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    }
+    
+    @Override
+    public void resetPending(JobStep njs) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    
+    try{
+    transaction=session.beginTransaction();
+    
+    JobStep oldJs=(JobStep) session.get(JobStep.class, njs.getIdJobStep());
+    oldJs.setPending(Boolean.FALSE);
+    session.update(oldJs);
+    
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    }*/
 
     
     

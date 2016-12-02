@@ -14,6 +14,8 @@ import db.model.Parent;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
+import db.services.AcquisitionService;
+import db.services.AcquisitionServiceImpl;
 import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
 import db.services.ChildService;
@@ -33,6 +35,7 @@ import db.services.SessionsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
+import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.JobStepModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
@@ -86,7 +89,7 @@ public class Collector {
     
     final private static ParentService pServ=new ParentServiceImpl();
     final private static ChildService cServ=new ChildServiceImpl();
-    
+    final private static AcquisitionService acqServ=new AcquisitionServiceImpl();
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
@@ -122,8 +125,6 @@ public class Collector {
         setupEntries();
     }
     
-    
-    
     /*
     Set up the data base entry datastructures
     */
@@ -134,8 +135,9 @@ public class Collector {
     private void setupEntries(){
         
         
-        
-        
+        dbJobSteps.clear();                         //clear previous jobmodel array. set current entries here
+       dbVolumes.clear();
+        dbJobVolumeDetails.clear();
         
         //for every session
        // for (Iterator<Sessions> iterator = dbSessions.iterator(); iterator.hasNext();) {
@@ -149,6 +151,7 @@ public class Collector {
                  jobStep.setIdJobStep(jsm.getId());
                  //System.out.println("Coll: JSM ID: "+jsm.getId());
                  jobStep.setAlert(Boolean.FALSE);
+                 /*jobStep.setPending(Boolean.);*/
                  List<String> insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
                  String versionString="";                                                              //this string will be of form v1;v2;v3;.. where v1,v2.. are the chosen versions
                  for (Iterator<String> iterator = insightVers.iterator(); iterator.hasNext();) {
@@ -165,7 +168,7 @@ public class Collector {
                  //add to db
                  //if(!dbJobSteps.contains(jobStep))dbJobSteps.add(jobStep);
                  
-                 dbJobSteps.clear();
+               //  dbJobSteps.clear();
                  
                //  if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
                      System.out.println("collector.Collector.setupEntries(): New / Existing jobStep: Adding to dbJobSteps: "+jobStep.getNameJobStep());
@@ -192,14 +195,18 @@ public class Collector {
                  for (Iterator<VolumeSelectionModel> vit = vsmlist.iterator(); vit.hasNext();) {
                     VolumeSelectionModel vsm = vit.next();
                     Volume vp=new Volume();
+                     System.out.println("collector.Collector.setupEntries(): Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
                     vp.setIdVolume(vsm.getId());
                     vp.setNameVolume(vsm.getLabel());
                     vp.setAlert(Boolean.FALSE);
+                    //vp.setHeaderExtracted(Boolean.FALSE);
+                    vp.setHeaderExtracted(!vsm.getHeaderButtonStatus());
                     vp.setMd5Hash(null);                                //figure a way to calculate MD5
                     vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
                     
+                    dbVolumes.add(vp);
                     
-                    if(volServ.getVolume(vp.getIdVolume())==null){dbVolumes.add(vp);}
+                   // if(volServ.getVolume(vp.getIdVolume())==null){dbVolumes.add(vp);}
                     
                     
                    // if(!dbVolumes.contains(vp))dbVolumes.add(vp);
@@ -207,7 +214,8 @@ public class Collector {
                     JobVolumeDetails jvd=new JobVolumeDetails(jobStep, vp);
                     
                    // if(!dbJobVolumeDetails.contains(jvd))dbJobVolumeDetails.add(jvd);
-                    if(jvdServ.getJobVolumeDetails(jobStep, vp)==null){dbJobVolumeDetails.add(jvd);}
+                   // if(jvdServ.getJobVolumeDetails(jobStep, vp)==null){dbJobVolumeDetails.add(jvd);}
+                   dbJobVolumeDetails.add(jvd);
                 }
                       
                  
@@ -226,8 +234,6 @@ public class Collector {
         
         commitEntries();
     }
-    
-    
     
     //codes for commiting the transactions
        
@@ -399,10 +405,6 @@ public class Collector {
                    
     }
      
-     
-     
-     
-     
      private void createAllDescendants() {
          
          /*
@@ -538,5 +540,7 @@ public class Collector {
       }
     }
      
+     
+    
     
 }

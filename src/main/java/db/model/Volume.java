@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -26,7 +27,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "Volume",uniqueConstraints = {@UniqueConstraint(columnNames = {"idVolume"})})
-public class Volume {
+public class Volume implements Serializable {
    @Id
    //@GeneratedValue(strategy = GenerationType.IDENTITY)
    @Column(name = "idVolume")

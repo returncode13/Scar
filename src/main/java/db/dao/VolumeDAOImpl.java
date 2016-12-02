@@ -132,6 +132,50 @@ public class VolumeDAOImpl implements VolumeDAO {
         }
     }
 
+    @Override
+    public void setHeaderExtractionFlag(Volume nv) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           Volume v = (Volume) session.get(Volume.class, nv.getIdVolume());
+           
+            
+               v.setHeaderExtracted(Boolean.TRUE);
+                session.update(v);
+            
+            
+          
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void resetHeaderExtractionFlag(Volume nv) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           Volume v = (Volume) session.get(Volume.class, nv.getIdVolume());
+           
+            
+               v.setHeaderExtracted(Boolean.FALSE);
+                session.update(v);
+            
+            
+          
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
     
     
 }

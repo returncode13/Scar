@@ -8,8 +8,6 @@ package fend.session.node.volumes;
 
 import collector.HeaderCollector;
 import db.model.Headers;
-import fend.session.node.headers.HeaderGroup;
-import fend.session.node.headers.HeaderTableModelBack;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.HeadersViewController;
@@ -30,6 +28,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -58,7 +57,8 @@ public class VolumeSelectionController  {
             updateVolumeSelectionLabelView(newValue);
             
             if(newValue!=null){
-              updateHeaderButton(Boolean.FALSE);
+              //updateHeaderButton(Boolean.FALSE);
+              updateHeaderButton();
             }
                 
         }
@@ -90,6 +90,9 @@ public class VolumeSelectionController  {
     @FXML
     private Label volumePathLabel;
     
+    @FXML
+    private CheckBox qcCheckBox;
+    
     private VolumeSelectionModel model;
      private  TableView<SubSurface> table;
      
@@ -100,6 +103,8 @@ public class VolumeSelectionController  {
             if(f!=null) {
              model.setVolumeChosen(f);
              model.setLabel(f.getName());
+             model.setHeaderButtonStatus(Boolean.FALSE);                    //Counter intuitive !:(
+             
             }
            // System.out.println("VSC: "+model.getId()+" label is "+model.getLabel());
     }
@@ -109,7 +114,7 @@ public class VolumeSelectionController  {
     void handleHeaderDisplayButton(ActionEvent event) {
            
            hcollector.setFeVolumeSelModel(model);    //first Click        < -- calculate and commit headers into db
-           showTable.setDisable(false);
+           showTable.setDisable(model.getHeaderButtonStatus());
            
            //hcollector.setHeaderTableModel  on second Click
     }
@@ -121,39 +126,22 @@ public class VolumeSelectionController  {
         /*HeaderTableModelBack htm=new HeaderTableModelBack();
         htm.setHeaderList(hcollector.getHeaderListForVolume());*/
         //HeaderGroup hg=new HeaderGroup(htm);
-        HeadersModel hmodel=new HeadersModel();
+       // HeadersModel hmodel=new HeadersModel();
        // List<SubSurface> subs=hcollector.getHeaderListForVolume();
-        List<Sequences> seqs=hcollector.getHeaderListForVolume();
-        ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
-        hmodel.setObsHList(obSeqs);
+        List<Sequences> seqs=hcollector.getHeaderListForVolume(model);
+        
+        /*At the end of this call the model's headersmodel contains all the sequences and the models variable "subsurfaces" contains the subsurfaces in the volume.
+        */
         
         
-        HeadersNode hnode=new HeadersNode(hmodel);
+        //ObservableList<Sequences> obSeqs=FXCollections.observableList(seqs);
+       // hmodel.setObsHList(obSeqs);
+       // model.setHeadersModel(hmodel);
+                                    
+        HeadersNode hnode=new HeadersNode(model.getHeadersModel());
         HeadersViewController hvc=hnode.getHeadersViewController();
         
-        //Scene scene =new Scene(hg);
-        
-        
-        
-        /*
-        
-        Scene scene = new Scene(new Group());
-           TableColumn<SubSurface,String> firstCol=new TableColumn<>("Subsurface");
-           firstCol.setMinWidth(100);
-           firstCol.setCellValueFactory(new PropertyValueFactory<>("subsurface"));
-           TableColumn<SubSurface,String> secondCol=new TableColumn<>("TimeStamp");
-           secondCol.setMinWidth(100);
-           secondCol.setCellValueFactory(new PropertyValueFactory<>("timeStamp"));
-           TableColumn<SubSurface,Long> thirdCol=new TableColumn<>("Traces");
-           thirdCol.setMinWidth(100);
-           thirdCol.setCellValueFactory(new PropertyValueFactory<>("traceCount"));
-           table=new TableView<>();
-           table.getItems().addAll(hcollector.getHeaderListForVolume());
-           table.getColumns().addAll(firstCol,secondCol,thirdCol);
-           ((Group)scene.getRoot()).getChildren().addAll(table);
-                */
-          // stage.setScene(scene);
-          // stage.show();
+
            
            
     }
@@ -180,6 +168,7 @@ public class VolumeSelectionController  {
         
        volumePathLabel.accessibleTextProperty().unbindBidirectional(model.getVolumeSelectionLabel());
         headerTableDisplayButton.disableProperty().unbindBidirectional(model.getHeaderButtonDisabledStatusProperty());
+        qcCheckBox.selectedProperty().unbind();
     }
     
     private void setupModelListeners(){
@@ -189,6 +178,7 @@ public class VolumeSelectionController  {
        // System.out.println("VSController: binding");
         volumePathLabel.accessibleTextProperty().bindBidirectional(model.getVolumeSelectionLabel());
         headerTableDisplayButton.disableProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
+        qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
         //headerTableDisplayButton.defaultButtonProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
     }
     
@@ -209,6 +199,7 @@ public class VolumeSelectionController  {
      private void updateHeaderButton(){
       //   System.out.println("VSC: HButton is now "+(model.isHeaderButtonIsDisabled()?"Disabled":"Enabled"));
          headerTableDisplayButton.setDisable(model.getHeaderButtonStatus());
+        showTable.setDisable(model.getHeaderButtonStatus());
          
      }
     

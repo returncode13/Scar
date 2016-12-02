@@ -22,5 +22,7 @@ public interface VolumeService {
     
     public void startAlert(Volume v);
     public void stopAlert(Volume v);
+    public void setHeaderExtractionFlag(Volume v);
+    public void resetHeaderExtractionFlag(Volume v);
     
 }

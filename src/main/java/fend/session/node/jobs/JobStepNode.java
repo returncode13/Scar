@@ -38,7 +38,7 @@ import javafx.scene.input.ContextMenuEvent;
 public class JobStepNode extends AnchorPane {
 static int i=0;
     public JobStepNode(JobStepModel item) {
-        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/JobStepNodeView_1_1.fxml"); 
+        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/JobStepNodeView_1_1_1_1.fxml"); 
         //URL location = JobStepNodeController.class.getResource("JobStepNodeView.fxml");
           
            fXMLLoader=new FXMLLoader();

@@ -6,7 +6,10 @@
 package fend.session.node.headers;
 
 import java.io.Serializable;
+import java.util.Objects;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -16,6 +19,11 @@ import javafx.beans.property.StringProperty;
  * @author naila0152
  */
 public class SubSurface extends Sequences implements Serializable{
+    
+    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    
+    
+    
     private   LongProperty sequenceNumber=new SimpleLongProperty();   
     private   StringProperty subsurface=new SimpleStringProperty();
     private   StringProperty timeStamp=new SimpleStringProperty();
@@ -225,6 +233,127 @@ public class SubSurface extends Sequences implements Serializable{
 
     public void setCmpInc(Long cmpInc) {
         this.cmpInc.set(cmpInc);
+    }
+
+    public BooleanProperty getQcFlagProperty() {
+        return qcFlagProperty;
+    }
+
+    public void setQcFlagProperty(Boolean b) {
+        this.qcFlagProperty.set(b);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.sequenceNumber);
+        hash = 37 * hash + Objects.hashCode(this.subsurface);
+        hash = 37 * hash + Objects.hashCode(this.timeStamp);
+        hash = 37 * hash + Objects.hashCode(this.traceCount);
+        hash = 37 * hash + Objects.hashCode(this.inlineMax);
+        hash = 37 * hash + Objects.hashCode(this.inlineMin);
+        hash = 37 * hash + Objects.hashCode(this.inlineInc);
+        hash = 37 * hash + Objects.hashCode(this.xlineMax);
+        hash = 37 * hash + Objects.hashCode(this.xlineMin);
+        hash = 37 * hash + Objects.hashCode(this.xlineInc);
+        hash = 37 * hash + Objects.hashCode(this.dugShotMax);
+        hash = 37 * hash + Objects.hashCode(this.dugShotMin);
+        hash = 37 * hash + Objects.hashCode(this.dugShotInc);
+        hash = 37 * hash + Objects.hashCode(this.dugChannelMax);
+        hash = 37 * hash + Objects.hashCode(this.dugChannelMin);
+        hash = 37 * hash + Objects.hashCode(this.dugChannelInc);
+        hash = 37 * hash + Objects.hashCode(this.offsetMax);
+        hash = 37 * hash + Objects.hashCode(this.offsetMin);
+        hash = 37 * hash + Objects.hashCode(this.offsetInc);
+        hash = 37 * hash + Objects.hashCode(this.cmpMax);
+        hash = 37 * hash + Objects.hashCode(this.cmpMin);
+        hash = 37 * hash + Objects.hashCode(this.cmpInc);
+        hash = 37 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SubSurface other = (SubSurface) obj;
+        if (!Objects.equals(this.sequenceNumber, other.sequenceNumber)) {
+            return false;
+        }
+        if (!Objects.equals(this.subsurface, other.subsurface)) {
+            return false;
+        }
+        if (!Objects.equals(this.timeStamp, other.timeStamp)) {
+            return false;
+        }
+        if (!Objects.equals(this.traceCount, other.traceCount)) {
+            return false;
+        }
+        if (!Objects.equals(this.inlineMax, other.inlineMax)) {
+            return false;
+        }
+        if (!Objects.equals(this.inlineMin, other.inlineMin)) {
+            return false;
+        }
+        if (!Objects.equals(this.inlineInc, other.inlineInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.xlineMax, other.xlineMax)) {
+            return false;
+        }
+        if (!Objects.equals(this.xlineMin, other.xlineMin)) {
+            return false;
+        }
+        if (!Objects.equals(this.xlineInc, other.xlineInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.dugShotMax, other.dugShotMax)) {
+            return false;
+        }
+        if (!Objects.equals(this.dugShotMin, other.dugShotMin)) {
+            return false;
+        }
+        if (!Objects.equals(this.dugShotInc, other.dugShotInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.dugChannelMax, other.dugChannelMax)) {
+            return false;
+        }
+        if (!Objects.equals(this.dugChannelMin, other.dugChannelMin)) {
+            return false;
+        }
+        if (!Objects.equals(this.dugChannelInc, other.dugChannelInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.offsetMax, other.offsetMax)) {
+            return false;
+        }
+        if (!Objects.equals(this.offsetMin, other.offsetMin)) {
+            return false;
+        }
+        if (!Objects.equals(this.offsetInc, other.offsetInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.cmpMax, other.cmpMax)) {
+            return false;
+        }
+        if (!Objects.equals(this.cmpMin, other.cmpMin)) {
+            return false;
+        }
+        if (!Objects.equals(this.cmpInc, other.cmpInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
 
    

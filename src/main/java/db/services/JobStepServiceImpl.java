@@ -57,6 +57,16 @@ public class JobStepServiceImpl implements JobStepService {
     public void stopAlert(JobStep js) {
     jobStepDAO.stopAlert(js);    }
 
+    /*@Override
+    public void setPending(JobStep js) {
+    jobStepDAO.setPending(js);
+    }
+    
+    @Override
+    public void resetPending(JobStep js) {
+    jobStepDAO.resetPending(js);
+    }*/
+
     
     
 }

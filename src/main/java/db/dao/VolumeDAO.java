@@ -19,7 +19,8 @@ public interface VolumeDAO {
 
     public void startAlert(Volume v);
     public void stopAlert(Volume v);
-
+    public void setHeaderExtractionFlag(Volume v);
+    public void resetHeaderExtractionFlag(Volume v);
     
 
    

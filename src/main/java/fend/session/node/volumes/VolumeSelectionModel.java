@@ -5,9 +5,13 @@
  */
 package fend.session.node.volumes;
 
-import fend.session.node.headers.HeaderTableModelBack;
+
+import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.SubSurface;
 import java.io.File;
+import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -30,9 +34,33 @@ public class VolumeSelectionModel {
     private boolean headerButtonIsDisabled=true;
     private final BooleanProperty headerButtonDisabledStatusProperty=new SimpleBooleanProperty(headerButtonIsDisabled);
     private boolean alert=false;
+    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    
+    private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
+    private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
+    
+    
     
     //for Debug
     private Long id;
+
+    public HeadersModel getHeadersModel() {
+        return headersModel;
+    }
+
+    public void setHeadersModel(HeadersModel headersModel) {
+        this.headersModel = headersModel;
+    }
+
+    
+
+    public Set<SubSurface> getSubsurfaces() {
+        return subsurfaces;
+    }
+
+    public void setSubsurfaces(Set<SubSurface> subsurfaces) {
+        this.subsurfaces = subsurfaces;
+    }
 
         
     
@@ -97,7 +125,7 @@ public class VolumeSelectionModel {
         return volumeSelectionLabel.get();
     }
     public void setLabel(String volumeSelected){
-        System.out.println("VSModel: setting label to : "+volumeSelected);
+       // System.out.println("VSModel: setting label to : "+volumeSelected);
         volumeSelectionLabel.set(volumeSelected);
     }
 
@@ -123,6 +151,14 @@ public class VolumeSelectionModel {
 
     public void setAlert(boolean alert) {
         this.alert = alert;
+    }
+
+    public BooleanProperty getQcFlagProperty() {
+        return qcFlagProperty;
+    }
+
+    public void setQcFlagProperty(Boolean b) {
+        this.qcFlagProperty.set(b);
     }
 
    
