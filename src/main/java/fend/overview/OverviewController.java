@@ -5,8 +5,11 @@
  */
 package fend.overview;
 
+import java.util.Iterator;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.controlsfx.control.GridView;
 
@@ -25,13 +28,24 @@ public class OverviewController extends Stage{
         this.model=lsm;
         gridview=new GridView<>();
         
+        System.out.println("fend.overview.OverviewController.setModel(): Models contents: ");
+        List<OverviewItem> ls=model.getOverviewItemList();
+        for (Iterator<OverviewItem> iterator = ls.iterator(); iterator.hasNext();) {
+            OverviewItem next = iterator.next();
+            System.out.println("fend.overview.OverviewController.setModel():  name= "+next.getName());
+            
+        }
         gridview.getItems().addAll(model.getOverviewItemList());
         gridview.setCellFactory(new OverviewCellFactory());
     }
 
     void setView(OverviewNode aThis) {
         this.node=aThis;
-        this.setScene(new Scene(node));
+        VBox vb=new VBox();
+        
+        this.setScene(new Scene(vb));
+        vb.getChildren().add(gridview);
+        vb.setStyle("-fx-background-color: black");
         this.showAndWait();
         
        
