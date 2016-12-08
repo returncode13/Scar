@@ -11,6 +11,10 @@ import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
+import fend.overview.OverviewController;
+import fend.overview.OverviewItem;
+import fend.overview.OverviewModel;
+import fend.overview.OverviewNode;
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
@@ -74,6 +78,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import org.controlsfx.control.GridView;
 
 /**
  *
@@ -143,6 +148,40 @@ public class SessionController implements Initializable {
     
     
      int i=0;
+     
+     @FXML
+    private Button overviewButton;
+
+     
+     @FXML
+    void overviewButtonClicked(ActionEvent event) {
+         System.out.println("fend.session.SessionController.overviewButtonClicked(): Click");
+        
+        // tracking();
+         List<OverviewItem> overviewItems=new ArrayList<>();
+         OverviewModel ovModel=new OverviewModel();
+                 
+         List<JobStepModel> jobs=obsModelList;
+         
+         for (Iterator<JobStepModel> iterator = jobs.iterator(); iterator.hasNext();) {
+             JobStepModel job = iterator.next();
+             OverviewItem jobOverview=new OverviewItem();
+             jobOverview.setName(job.getJobStepText());
+             jobOverview.setpFlag(job.getPendingFlagProperty().get());
+             jobOverview.setqFlag(job.getQcFlagProperty().get());
+             
+             overviewItems.add(jobOverview);
+             
+         }
+         
+         ovModel.setOverviewItemList(overviewItems);
+         OverviewNode ovNode= new OverviewNode(ovModel);
+         
+         OverviewController ovContr=ovNode.getOverviewController();
+         
+         
+    } 
+     
      
      @FXML
     void onTrackCheck(ActionEvent event) {
