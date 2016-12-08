@@ -157,7 +157,7 @@ public class SessionController implements Initializable {
     void overviewButtonClicked(ActionEvent event) {
          System.out.println("fend.session.SessionController.overviewButtonClicked(): Click");
         
-        // tracking();
+         tracking();
          List<OverviewItem> overviewItems=new ArrayList<>();
          OverviewModel ovModel=new OverviewModel();
                  
