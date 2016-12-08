@@ -36,19 +36,20 @@ public class OverviewItemCell extends GridCell<OverviewItem>{
             setText(null);
             this.getGridView().setCellWidth(300);
             Label jobName=new Label(item.getName());
-            CheckBox pCheckBox=new CheckBox();
+            /* CheckBox pCheckBox=new CheckBox();
             pCheckBox.setDisable(Boolean.TRUE);
-            pCheckBox.setText("P");
+            pCheckBox.setText("P");*/
             boolean pf=item.getpFlag();
-            pCheckBox.setSelected(pf);
+            /* pCheckBox.setSelected(pf);
             
             CheckBox qCheckBox=new CheckBox();
             qCheckBox.setDisable(Boolean.TRUE);
-            qCheckBox.setText("Q");
+            qCheckBox.setText("Q");*/
             boolean qf=item.getqFlag();
-            qCheckBox.setSelected(qf);
+            /* qCheckBox.setSelected(qf);
             
-            vb.getChildren().addAll(jobName,pCheckBox,qCheckBox);
+            vb.getChildren().addAll(jobName,pCheckBox,qCheckBox);*/
+            vb.getChildren().add(jobName);
             setGraphic(vb);
             
             if(pf && !qf){

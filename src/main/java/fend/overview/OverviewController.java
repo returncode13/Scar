@@ -43,7 +43,7 @@ public class OverviewController extends Stage{
         this.node=aThis;
         VBox vb=new VBox();
         
-        this.setScene(new Scene(vb));
+        this.setScene(new Scene(vb,400,600));
         vb.getChildren().add(gridview);
         vb.setStyle("-fx-background-color: black");
         this.showAndWait();
