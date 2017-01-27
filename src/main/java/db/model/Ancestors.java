@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author sharath nair
  */
 @Entity
-@Table(name = "Ancestors")
+@Table(name = "Ancestors",schema = "obpmanager")
 public class Ancestors implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

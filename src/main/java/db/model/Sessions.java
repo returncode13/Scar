@@ -22,7 +22,7 @@ import javax.persistence.UniqueConstraint;
  * @author sharath nair
  */
 @Entity
-@Table(name = "Sessions",uniqueConstraints = {@UniqueConstraint(columnNames = {"idSessions"})})
+@Table(name = "Sessions",schema = "obpmanager",uniqueConstraints = {@UniqueConstraint(columnNames = {"idSessions"})})
 
 public class Sessions implements Serializable{
     @Id

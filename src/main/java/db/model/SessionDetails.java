@@ -23,7 +23,7 @@ import javax.persistence.Table;
  * @author sharath nair
  */
 @Entity
-@Table(name = "SessionDetails")
+@Table(name = "SessionDetails",schema = "obpmanager")
 public class SessionDetails implements Serializable{
     
    @Id
