@@ -72,6 +72,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
@@ -158,6 +159,7 @@ public class LandingController implements Initializable,Serializable {
     @FXML
     private MenuItem settings;
 
+    
     
     @FXML
     void settings(ActionEvent event) {

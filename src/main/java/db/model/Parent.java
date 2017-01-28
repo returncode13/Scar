@@ -20,7 +20,7 @@ import javax.persistence.Table;
  * @author sharath nair
  */
 @Entity
-@Table(name="ImmediateParent",schema = "obpmanager")
+@Table(name="ImmediateParent")
 public class Parent implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
