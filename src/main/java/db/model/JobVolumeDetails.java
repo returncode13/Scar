@@ -19,7 +19,7 @@ import javax.persistence.Table;
  * @author sharath nair
  */
 @Entity
-@Table(name = "JobVolumeDetails")
+@Table(name = "JobVolumeDetails",schema = "obpmanager")
 public class JobVolumeDetails implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

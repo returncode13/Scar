@@ -18,7 +18,7 @@ import javax.persistence.UniqueConstraint;
  */
 
 @Entity
-@Table(name="Acquisition")
+@Table(name="Acquisition",schema = "obpmanager")
 public class Acquisition implements Serializable{
 
     @Id

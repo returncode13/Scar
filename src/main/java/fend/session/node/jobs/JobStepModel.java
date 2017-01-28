@@ -6,6 +6,8 @@
 package fend.session.node.jobs;
 
 
+import com.sun.org.apache.xpath.internal.axes.SubContextList;
+import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +19,15 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import fend.session.node.volumes.VolumeSelectionModel;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.apache.commons.collections4.MultiMap;
+import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  *
@@ -42,7 +49,9 @@ public class JobStepModel {
     
     //For debug
     private Long id;
-
+    
+    private Set<SubSurface> subsurfacesInJob=new HashSet<>();
+    
     
 
     
@@ -215,9 +224,17 @@ public class JobStepModel {
         this.qcFlagProperty.set(b);
     }
 
-    
-    
+    public Set<SubSurface> getSubsurfacesInJob() {
+        return subsurfacesInJob;
+    }
 
+    public void setSubsurfacesInJob(Set<SubSurface> subsurfacesInJob) {
+        this.subsurfacesInJob = subsurfacesInJob;
+    }
+
+    
+    
+    
      
      
 }

@@ -26,7 +26,7 @@ import javax.persistence.UniqueConstraint;
  */
 
 @Entity
-@Table(name = "Volume",uniqueConstraints = {@UniqueConstraint(columnNames = {"idVolume"})})
+@Table(name = "Volume",schema = "obpmanager",uniqueConstraints = {@UniqueConstraint(columnNames = {"idVolume"})})
 public class Volume implements Serializable {
    @Id
    //@GeneratedValue(strategy = GenerationType.IDENTITY)
