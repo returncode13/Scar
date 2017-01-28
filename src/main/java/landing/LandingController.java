@@ -31,6 +31,7 @@ import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
 import db.services.SessionsServiceImpl;
+import fend.overview.OverviewItem;
 import fend.session.SessionController;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
@@ -70,6 +71,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
@@ -98,6 +100,7 @@ import landing.settings.SettingsNode;
 import landing.settings.SettingsWrapper;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import org.controlsfx.control.GridView;
 
 /**
  * FXML Controller class
@@ -155,6 +158,7 @@ public class LandingController implements Initializable,Serializable {
     @FXML
     private MenuItem settings;
 
+    
     
     @FXML
     void settings(ActionEvent event) {
