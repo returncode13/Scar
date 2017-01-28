@@ -7,12 +7,9 @@ package fend.session.node.volumes;
 
 
 import fend.session.node.headers.HeadersModel;
-import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
@@ -23,8 +20,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.commons.collections4.MultiMap;
-import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  *
@@ -43,7 +38,7 @@ public class VolumeSelectionModel {
     
     private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
     private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
-    private MultiMap<Long,SubSurface> seqSubsMap=new MultiValueMap<>();
+    
     
     
     //for Debug
@@ -166,20 +161,6 @@ public class VolumeSelectionModel {
         this.qcFlagProperty.set(b);
     }
 
-    public MultiMap<Long, SubSurface> getSeqSubsMap() {
-        return seqSubsMap;
-    }
-
-    
-    
-    public void setSeqSubsMap(MultiMap<Long, SubSurface> seqSubsMap) {
-        this.seqSubsMap = seqSubsMap;
-    }
-
-    
-    
-    
-    
    
     
 }

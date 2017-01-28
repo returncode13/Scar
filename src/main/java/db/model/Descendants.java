@@ -22,7 +22,7 @@ import javax.persistence.Table;
  * @author sharath nair
  */
 @Entity
-@Table(name = "Descendants",schema = "obpmanager")
+@Table(name = "Descendants")
 public class Descendants implements Serializable{
     
     @Id
