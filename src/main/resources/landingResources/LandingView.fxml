@@ -11,7 +11,7 @@
    <children>
       <SplitPane dividerPositions="0.060784313725490195" orientation="VERTICAL" prefHeight="512.0" prefWidth="602.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="27.0" SplitPane.resizableWithParent="false">
+          <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="27.0" prefWidth="2046.0" SplitPane.resizableWithParent="false">
                <children>
                   <MenuBar fx:id="menubar">
                     <menus>
@@ -43,7 +43,7 @@
                   </MenuBar>
                </children>
             </AnchorPane>
-            <StackPane fx:id="basePane" SplitPane.resizableWithParent="false" />
+            <StackPane fx:id="basePane" prefHeight="2001.0" prefWidth="2046.0" SplitPane.resizableWithParent="false" />
         </items>
       </SplitPane>
    </children>

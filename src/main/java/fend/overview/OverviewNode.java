@@ -3,31 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session;
+package fend.overview;
 
 import java.io.IOException;
 import java.net.URL;
-import java.rmi.server.UID;
-import java.util.UUID;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.layout.AnchorPane;
+import landing.loadingSession.LoadSessionController;
+import landing.loadingSession.LoadSessionModel;
 
 /**
  *
- * @author naila0152
+ * @author sharath
  */
-public class SessionNode extends AnchorPane{
-    
-    private SessionController snc;
+public class OverviewNode extends AnchorPane{
     private FXMLLoader fXMLLoader;
     private final URL location;
+    private OverviewController lsc;
     
-    
-    public SessionNode(SessionModel item){
-        this.location=getClass().getClassLoader().getResource("sessionResources/SessionView_1_1.fxml"); 
+    public OverviewNode(OverviewModel lsm)
+    {
        
-          
+        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("overviewResources/overview.fxml"); 
+          System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
             fXMLLoader.setLocation(location);
@@ -36,36 +36,31 @@ public class SessionNode extends AnchorPane{
             fXMLLoader.setBuilderFactory(new JavaFXBuilderFactory());
            
             try{
+                
                 fXMLLoader.load(location.openStream());
-           
-                snc=(SessionController)fXMLLoader.getController();
+                
+                
+                lsc=(OverviewController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
-                if(item.getId()==null)
-                {
-                setId(UUID.randomUUID().getMostSignificantBits()+"");
-                
-                }
-                else
-                {
-                    setId(item.getId()+"");
-                    
-                }
-                snc.setId(Long.valueOf(getId()));
-                snc.setModel(item);
-                snc.setView(this) ;
                
+               // sc.setId(Long.valueOf(getId()));
                 
+                lsc.setModel(lsm);
+                lsc.setView(this) ;
+                
+               
+               
+                System.out.println("fend.overview.OverviewNode.<init>()");
             }catch(IOException e){
                 throw new RuntimeException(e);
             }
     }
 
-    public SessionController getSessionController() {
-        return snc;
+
+
+    public OverviewController getOverviewController() {
+        return lsc;
     }
-    
-    
-    
 }
