@@ -23,7 +23,7 @@ import org.hibernate.annotations.Columns;
  * @author sharath nair
  */
 @Entity
-@Table(name="Headers",schema = "obpmanager")
+@Table(name="Headers")
 public class Headers implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

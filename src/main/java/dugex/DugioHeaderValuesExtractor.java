@@ -35,7 +35,7 @@ class DugioMetaHeaders{                      /*
      
      String timeStamp;
      String subsurface;
-     //String traceCount="_HDR:P_MAX_FOLD";   //No longer found in the metavalues! Use dugio summary and grep to extract
+     String traceCount="_HDR:P_MAX_FOLD";
      String inlineMax="_HDR:INLINE_MAX";
      String inlineMin="_HDR:INLINE_MIN";
      String inlineInc="_HDR:INLINE_INC";
@@ -152,9 +152,7 @@ public class DugioHeaderValuesExtractor {
                          Headers hdr = iterator.next();
                          System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface());
                          
-                       // Long traceCount=Long.valueOf(forEachKey(hdr,dmh.traceCount));
-                       //  System.out.println("Value from forTraces:"+forTraces(hdr));
-                        Long traceCount=Long.valueOf(forTraces(hdr)).longValue();
+                        Long traceCount=Long.valueOf(forEachKey(hdr,dmh.traceCount));
                         Long cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
                         Long cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
                         Long cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
@@ -225,23 +223,6 @@ public class DugioHeaderValuesExtractor {
                         String value;
                         while((value=br.readLine())!=null){
                             System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
-                            return value;
-                        }
-                       
-                        return null;
-                        
-    }
-    
-    private String forTraces(Headers hdr) throws IOException{
-                        System.out.println("Inside forTraces key with NO key");
-                        Process process=new ProcessBuilder(ds.getDugioGetTraces().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface()).start();
-                        InputStream is = process.getInputStream();
-                        InputStreamReader isr=new InputStreamReader(is);
-                        BufferedReader br=new BufferedReader(isr);
-                        
-                        String value;
-                        while((value=br.readLine())!=null){
-                            System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
                             return value;
                         }
                        

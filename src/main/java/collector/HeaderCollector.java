@@ -158,8 +158,7 @@ public class HeaderCollector {
           seqList.add(sq);
       }
             
-     feVolumeSelModel.setSubsurfaces(sl);
-       //feVolumeSelModel.setSeqSubsMap(seqSubMap);
+       feVolumeSelModel.setSubsurfaces(sl);
        
       ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
       headersModel.setObsHList(obseq);                                     //set the headersModel that will be used to launch the header table
