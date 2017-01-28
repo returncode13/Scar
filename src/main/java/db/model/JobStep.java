@@ -25,7 +25,7 @@ import javax.persistence.UniqueConstraint;
  */
 
 @Entity
-@Table(name="JobStep",schema = "obpmanager",uniqueConstraints = {@UniqueConstraint(columnNames = {"idJobStep"})})
+@Table(name="JobStep",uniqueConstraints = {@UniqueConstraint(columnNames = {"idJobStep"})})
 
 public class JobStep implements Serializable{
     

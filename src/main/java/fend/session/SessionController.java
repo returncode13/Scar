@@ -7,13 +7,14 @@ package fend.session;
 
 import collector.Collector;
 import db.model.Acquisition;
-import db.model.OrcaView;
 import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
-import db.services.OrcaViewService;
-import db.services.OrcaViewServiceImpl;
+import fend.overview.OverviewController;
+import fend.overview.OverviewItem;
+import fend.overview.OverviewModel;
+import fend.overview.OverviewNode;
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
@@ -77,6 +78,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import org.controlsfx.control.GridView;
 
 /**
  *
@@ -115,8 +117,7 @@ public class SessionController implements Initializable {
     
     
     
-    //private AcquisitionService acqServ=new AcquisitionServiceImpl();
-    private OrcaViewService orcaServ=new OrcaViewServiceImpl();
+    private AcquisitionService acqServ=new AcquisitionServiceImpl();
     private JobStepService jServ=new JobStepServiceImpl();
 
     @FXML
@@ -147,6 +148,40 @@ public class SessionController implements Initializable {
     
     
      int i=0;
+     
+     @FXML
+    private Button overviewButton;
+
+     
+     @FXML
+    void overviewButtonClicked(ActionEvent event) {
+         System.out.println("fend.session.SessionController.overviewButtonClicked(): Click");
+        
+         tracking();
+         List<OverviewItem> overviewItems=new ArrayList<>();
+         OverviewModel ovModel=new OverviewModel();
+                 
+         List<JobStepModel> jobs=obsModelList;
+         
+         for (Iterator<JobStepModel> iterator = jobs.iterator(); iterator.hasNext();) {
+             JobStepModel job = iterator.next();
+             OverviewItem jobOverview=new OverviewItem();
+             jobOverview.setName(job.getJobStepText());
+             jobOverview.setpFlag(job.getPendingFlagProperty().get());
+             jobOverview.setqFlag(job.getQcFlagProperty().get());
+             
+             overviewItems.add(jobOverview);
+             
+         }
+         
+         ovModel.setOverviewItemList(overviewItems);
+         OverviewNode ovNode= new OverviewNode(ovModel);
+         
+         OverviewController ovContr=ovNode.getOverviewController();
+         
+         
+    } 
+     
      
      @FXML
     void onTrackCheck(ActionEvent event) {
@@ -682,11 +717,11 @@ public class SessionController implements Initializable {
             
             
         }
-        job.setSubsurfacesInJob(subsInJob);
-        /*for (Iterator<SubSurface> iterator = subsInJob.iterator(); iterator.hasNext();) {
-        SubSurface subinJob = iterator.next();
-        System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
-        }*/
+        
+        for (Iterator<SubSurface> iterator = subsInJob.iterator(); iterator.hasNext();) {
+            SubSurface subinJob = iterator.next();
+            System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
+        }
         
         return subsInJob;
     }
@@ -696,12 +731,11 @@ public class SessionController implements Initializable {
      private void tracking(){
          System.out.println("fend.session.SessionController.tracking():  STARTED");
          setRoots();
-        // List<Acquisition> acuiredSubs=acqServ.getAcquisition();      // this will query the db. Maybe put a timer?
-         List<OrcaView> acquiredSubs=orcaServ.getOrcaView();
+         List<Acquisition> acuiredSubs=acqServ.getAcquisition();      // this will query the db. Maybe put a timer?
          List<String> acqString=new ArrayList<>();                      // hold the names of the acquired subsurfaces
          
-         for (Iterator<OrcaView> iterator = acquiredSubs.iterator(); iterator.hasNext();) {
-         OrcaView acq = iterator.next();
+         for (Iterator<Acquisition> iterator = acuiredSubs.iterator(); iterator.hasNext();) {
+         Acquisition acq = iterator.next();
          acqString.add(acq.getSubsurfaceLines());
          System.out.println("fend.session.SessionController.tracking(): in AcqString: added: "+acqString.get(acqString.size()-1));
          
@@ -715,13 +749,12 @@ public class SessionController implements Initializable {
           //   JobStepModel root = iteratorr.next();
              
          
-             Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
-              //Set<SubSurface> rootsSubSurfaces=new HashSet(root.getSeqSubsInJob().values());
+              Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
              
              for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
              SubSurface subinRoot = iterator.next();
-             jobSubString.add(subinRoot.getSubsurface().split("_")[0]);
-             //System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
+             jobSubString.add(subinRoot.getSubsurface());
+             System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
              
              }
              
@@ -781,10 +814,8 @@ public class SessionController implements Initializable {
          //Calculate the subsurfaces present in the parent
          
          
-       // Set<SubSurface> pSubs=calculateSubsInJob(parent);
-         Set<SubSurface> pSubs=parent.getSubsurfacesInJob();
+         Set<SubSurface> pSubs=calculateSubsInJob(parent);
          Set<SubSurface> cSubs=calculateSubsInJob(child);
-      
          
          List<String> pSubsStrings=new ArrayList<>();
          List<String> cSubsStrings=new ArrayList<>();
@@ -792,14 +823,14 @@ public class SessionController implements Initializable {
          for (Iterator<SubSurface> iterator = pSubs.iterator(); iterator.hasNext();) {
          SubSurface subInParent = iterator.next();
          pSubsStrings.add(subInParent.getSubsurface());
-        // System.out.println("fend.session.SessionController.setPendingJobsFlag():  pSubsStrings found : "+pSubsStrings.get(pSubsStrings.size()-1));
+         System.out.println("fend.session.SessionController.setPendingJobsFlag():  pSubsStrings found : "+pSubsStrings.get(pSubsStrings.size()-1));
          
          }
          
          for (Iterator<SubSurface> iterator = cSubs.iterator(); iterator.hasNext();) {
          SubSurface subInChild = iterator.next();
          cSubsStrings.add(subInChild.getSubsurface());
-         //System.out.println("fend.session.SessionController.setPendingJobsFlag():  cSubsStrings found : "+cSubsStrings.get(cSubsStrings.size()-1));
+         System.out.println("fend.session.SessionController.setPendingJobsFlag():  cSubsStrings found : "+cSubsStrings.get(cSubsStrings.size()-1));
          }
          
          List<String> remaining=new ArrayList<>();
@@ -821,7 +852,6 @@ public class SessionController implements Initializable {
          }else     //child has no pending subs
          {
          child.setPendingFlagProperty(Boolean.FALSE);
-          System.out.println("fend.session.SessionController.setPendingJobsFlag():  child :"+child.getJobStepText()+" has NO pending subs "+remaining);
          }
          }
          
@@ -846,10 +876,8 @@ public class SessionController implements Initializable {
          }
          
          
-         //Set<SubSurface> csubs= calculateSubsInJob(child);
-         //Set<SubSurface> psubs=calculateSubsInJob(parent);
-         Set<SubSurface> psubs=parent.getSubsurfacesInJob();
-         Set<SubSurface> csubs=child.getSubsurfacesInJob();
+         Set<SubSurface> csubs= calculateSubsInJob(child);
+         Set<SubSurface> psubs=calculateSubsInJob(parent);
          
          List<VolumeSelectionModel> cVolList=child.getVolList();
          
@@ -870,7 +898,6 @@ public class SessionController implements Initializable {
                             if(vcSub.contains(targetSub)){
                                 System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                                 targetVol=vc;
-                                break;
                             }
                  
                         }
@@ -881,21 +908,12 @@ public class SessionController implements Initializable {
                             
                             for (Iterator<Sequences> iterator1 = seqList.iterator(); iterator1.hasNext();) {
                                 Sequences seq = iterator1.next();
-                                if(targetSub.getSequenceNumber().equals(seq.getSequenceNumber())){
-                                    targetSeq=seq;
-                                    System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
-                                    break;
-                                }
-                                
-                                
-                                /* List<SubSurface> seqSubs=seq.getSubsurfaces();
+                                List<SubSurface> seqSubs=seq.getSubsurfaces();
                                 System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
-                                if(seqSubs.contains(targetSub)){
-                                targetSeq=seq;
-                                System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
-                                targetSub.setSequenceNumber(seq.getSequenceNumber());
-                                break;
-                                }*/
+                                    if(seqSubs.contains(targetSub)){
+                                        targetSeq=seq;
+                                        System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                                    }
                             }
                             
                         }else
@@ -906,68 +924,35 @@ public class SessionController implements Initializable {
                                     Logger.getLogger(SessionController.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                         }
-                        /*
-                        if(psubs.contains(c)){
-                        System.out.println("SessionController.setQCFlag(): FOUND "+c.getSubsurface()+" : in Parent list!");
-                        refSub=c;
-                        }*/
+                        
                         
                         for (Iterator<SubSurface> iterator1 = psubs.iterator(); iterator1.hasNext();) {
                           SubSurface p = iterator1.next();
-                          if(csubs.contains(p))
-                          {
-                              if(p.equals(c)){
-                              System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!found : "+p.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
-                              refSub=p;
-                              
-                              if(!refSub.getTraceCount().equals(targetSub.getTraceCount())){                                //Change this to a computed hash.
-                        
-                                System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
-                                System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True");
-                                child.setQcFlagProperty(Boolean.TRUE);
-                                targetVol.setQcFlagProperty(Boolean.TRUE);
-                                targetSeq.setQcFlagProperty(Boolean.TRUE);
-                                targetSub.setQcFlagProperty(Boolean.TRUE);
-                                }
-                                else{
-                                  /* System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
-                                  System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Setting QC flags to FALSE");*/
-                                child.setQcFlagProperty(Boolean.FALSE);
-                                targetVol.setQcFlagProperty(Boolean.FALSE);
-                                targetSeq.setQcFlagProperty(Boolean.FALSE);
-                                targetSub.setQcFlagProperty(Boolean.FALSE);
-                                }
-                              
-                              
-                              break;
-                              }
-                             
-                          }
-                          /*System.out.println("fend.session.SessionController.setQCFlag(): Trying to find : "+c.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
-                          if(p.getSubsurface().equals(c.getSubsurface())){
-                          System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!found : "+c.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
-                          refSub=p;
-                          break;
-                          }*/
+                          
+                            System.out.println("fend.session.SessionController.setQCFlag(): Trying to find : "+c.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
+                            if(p.getSubsurface().equals(c.getSubsurface())){
+                                 System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!found : "+c.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
+                                refSub=p;
+                            }
                         }
                         
-                        /*if(!refSub.getTraceCount().equals(targetSub.getTraceCount())){                                //Change this to a computed hash.
-                        
-                        System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
-                        System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True");
-                        child.setQcFlagProperty(Boolean.TRUE);
-                        targetVol.setQcFlagProperty(Boolean.TRUE);
-                        targetSeq.setQcFlagProperty(Boolean.TRUE);
-                        targetSub.setQcFlagProperty(Boolean.TRUE);
+                        if(!refSub.getTraceCount().equals(targetSub.getTraceCount())){                                //Change this to a computed hash.
+                            
+                            System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
+                            System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True");
+                            child.setQcFlagProperty(Boolean.TRUE);
+                            targetVol.setQcFlagProperty(Boolean.TRUE);
+                            targetSeq.setQcFlagProperty(Boolean.TRUE);
+                            targetSub.setQcFlagProperty(Boolean.TRUE);
                         }
                         else{
-                        System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
-                        System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Setting QC flags to FALSE");
-                        child.setQcFlagProperty(Boolean.FALSE);
-                        targetVol.setQcFlagProperty(Boolean.FALSE);
-                        targetSeq.setQcFlagProperty(Boolean.FALSE);
-                        targetSub.setQcFlagProperty(Boolean.FALSE);
-                        }*/
+                            System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
+                            System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Setting QC flags to FALSE");
+                            child.setQcFlagProperty(Boolean.FALSE);
+                            targetVol.setQcFlagProperty(Boolean.FALSE);
+                            targetSeq.setQcFlagProperty(Boolean.FALSE);
+                            targetSub.setQcFlagProperty(Boolean.FALSE);
+                        }
             
         }
          

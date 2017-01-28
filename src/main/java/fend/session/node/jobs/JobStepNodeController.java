@@ -79,8 +79,8 @@ import javafx.scene.control.cell.CheckBoxListCell;
  */
 public class JobStepNodeController {
     
-    //public static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
-    public static File insightLocation=new File("/d/sw/Insight");    
+    public static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
+    
     final private ChangeListener<String> JOBSTEP_TEXT_FIELD_CHANGE_LISTENER=new ChangeListener<String>() {
 
         @Override

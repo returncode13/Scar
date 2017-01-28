@@ -246,9 +246,9 @@ public class SubSurface extends Sequences implements Serializable{
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 37 * hash + Objects.hashCode(this.sequenceNumber.get());
-        hash = 37 * hash + Objects.hashCode(this.subsurface.get());
-        /*hash = 37 * hash + Objects.hashCode(this.timeStamp);
+        hash = 37 * hash + Objects.hashCode(this.sequenceNumber);
+        hash = 37 * hash + Objects.hashCode(this.subsurface);
+        hash = 37 * hash + Objects.hashCode(this.timeStamp);
         hash = 37 * hash + Objects.hashCode(this.traceCount);
         hash = 37 * hash + Objects.hashCode(this.inlineMax);
         hash = 37 * hash + Objects.hashCode(this.inlineMin);
@@ -268,7 +268,7 @@ public class SubSurface extends Sequences implements Serializable{
         hash = 37 * hash + Objects.hashCode(this.cmpMax);
         hash = 37 * hash + Objects.hashCode(this.cmpMin);
         hash = 37 * hash + Objects.hashCode(this.cmpInc);
-        hash = 37 * hash + Objects.hashCode(this.id);*/
+        hash = 37 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -284,80 +284,80 @@ public class SubSurface extends Sequences implements Serializable{
             return false;
         }
         final SubSurface other = (SubSurface) obj;
-        if (!Objects.equals(this.sequenceNumber.get(), other.sequenceNumber.get())) {
+        if (!Objects.equals(this.sequenceNumber, other.sequenceNumber)) {
             return false;
         }
-        if (!Objects.equals(this.subsurface.get(), other.subsurface.get())) {
-        return false;
+        if (!Objects.equals(this.subsurface, other.subsurface)) {
+            return false;
         }
-        /*if (!Objects.equals(this.timeStamp, other.timeStamp)) {
-        return false;
+        if (!Objects.equals(this.timeStamp, other.timeStamp)) {
+            return false;
         }
         if (!Objects.equals(this.traceCount, other.traceCount)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.inlineMax, other.inlineMax)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.inlineMin, other.inlineMin)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.inlineInc, other.inlineInc)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.xlineMax, other.xlineMax)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.xlineMin, other.xlineMin)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.xlineInc, other.xlineInc)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.dugShotMax, other.dugShotMax)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.dugShotMin, other.dugShotMin)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.dugShotInc, other.dugShotInc)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.dugChannelMax, other.dugChannelMax)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.dugChannelMin, other.dugChannelMin)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.dugChannelInc, other.dugChannelInc)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.offsetMax, other.offsetMax)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.offsetMin, other.offsetMin)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.offsetInc, other.offsetInc)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.cmpMax, other.cmpMax)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.cmpMin, other.cmpMin)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.cmpInc, other.cmpInc)) {
-        return false;
+            return false;
         }
         if (!Objects.equals(this.id, other.id)) {
-        return false;
-        }*/
+            return false;
+        }
         return true;
     }
 
    
-   
+    
      
     
     

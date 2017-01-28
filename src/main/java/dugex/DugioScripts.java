@@ -22,7 +22,6 @@ public class DugioScripts implements Serializable{
     private File dugioGetHeaderList;
     private File dugioHeaderValues;
     private File getTimeSubsurfaces;
-    private File dugioGetTraces;
     
   
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
@@ -32,10 +31,7 @@ public class DugioScripts implements Serializable{
     private String dugioHeaderValuesContent="#!/bin/bash\n"
             + "module add prod\n"
             + "dugio md_get file=$1 line=$2 key=$3";
-    private String dugioTracesContent = "#!/bin/bash\n"
-            + "dugio summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1";
-            
-           // + "dugio summary file=$1 line=$2 | grep  Traces |grep -oP '\\d+\\s+'\n";
+    
     
     //LEAVE this COMMENTED                                                               //private String getTimeSubsurfacesContent="#!/bin/bash\n"
                                                                                          //        + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \"\\.0$\" | grep -o \"[[:digit:]]\{14\}.[_[:alnum:]-]*[^.]\"\n";
@@ -110,19 +106,6 @@ public class DugioScripts implements Serializable{
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        try {
-            dugioGetTraces=File.createTempFile("dugioTracesContent", ".sh");
-            BufferedWriter bw = new BufferedWriter(new FileWriter(dugioGetTraces));
-            bw.write(dugioTracesContent);
-            bw.close();
-            dugioGetTraces.setExecutable(true,false);
-            
-            
-            //dugioGetTraces.deleteOnExit();
-        } catch (IOException ex) {
-            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
     }
     
     
@@ -139,12 +122,8 @@ public class DugioScripts implements Serializable{
     public File getGetTimeSubsurfaces() 
     {//System.out.println("getTimeSubSurfaces Executed: "+getTimeSubsurfaces.getAbsolutePath());
         return getTimeSubsurfaces;}
-
-    public File getDugioGetTraces() {
-        return dugioGetTraces;
-    }
     
-     
+       
     
     
     
