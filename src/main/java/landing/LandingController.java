@@ -540,12 +540,13 @@ public class LandingController implements Initializable,Serializable {
                 fv.setAlert(beV.getAlert());
                 fv.setLabel(beV.getNameVolume());
                 fv.setId(beV.getIdVolume());
+                System.out.println("landing.LandingController.loadSession(): Volume name: "+beV.getNameVolume()+" : Volume Id: "+beV.getIdVolume());
                 fv.setInflated(true);
                 fv.setSubsurfaces(sl);
                 
                             HeadersModel hmod=new HeadersModel();
                             ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
-                            hmod.setObsHList(obseq);
+                            hmod.setSequenceListInHeaders(obseq);
                 
                 
                 fv.setHeadersModel(hmod);                                       //set the headersModel

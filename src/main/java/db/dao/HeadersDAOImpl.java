@@ -31,7 +31,7 @@ public class HeadersDAOImpl implements HeadersDAO{
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            session.save(h);
+            session.saveOrUpdate(h);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

@@ -49,7 +49,7 @@ public class HeadersViewController extends Stage implements Initializable {
 
     void setModel(HeadersModel lsm) {
       hmodel=lsm;  
-     seqListObs=hmodel.getObsHList();
+     seqListObs=hmodel.getSequenceListInHeaders();
      
      
         TreeTableColumn<Sequences,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
@@ -74,7 +74,8 @@ public class HeadersViewController extends Stage implements Initializable {
         TreeTableColumn<Sequences,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
         TreeTableColumn<Sequences,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
         TreeTableColumn<Sequences,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
-        
+        TreeTableColumn<Sequences,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
+        TreeTableColumn<Sequences,Long>  alert=new TreeTableColumn<>("alert");
      
         sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
         subsurfaceName.setCellValueFactory(new TreeItemPropertyValueFactory<>("subsurface"));
@@ -98,8 +99,9 @@ public class HeadersViewController extends Stage implements Initializable {
         cmpMax.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpMax"));
         cmpMin.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpMin"));
         cmpInc.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpInc"));
-        
-        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc);
+        insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
+        alert.setCellValueFactory(new TreeItemPropertyValueFactory<>("alert"));
+        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
         
      
      

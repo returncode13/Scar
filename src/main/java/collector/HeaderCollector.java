@@ -73,11 +73,28 @@ public class HeaderCollector {
     private void calculateAndCommitHeaders(){
         try {
             File volume=feVolumeSelModel.getVolumeChosen();
-            System.out.println("HeaderColl: calculating headers for "+volume.getAbsolutePath());
+            List<Headers> existingHeaders;
+            Map<String,String> subsurfaceTimestamp=new HashMap<>();
+            System.out.println("collector.HeaderCollector: calculating headers for "+volume.getAbsolutePath());
             dugHve.setVolume(volume);
+            if(dbVolume.getHeaderExtracted()){
+                System.out.println("collector.HeaderCollector: Headers have been extracted for Volume: "+dbVolume.getNameVolume());
+                existingHeaders=hdrServ.getHeadersFor(dbVolume);
+                for(Headers h:existingHeaders){
+                    subsurfaceTimestamp.put(h.getSubsurface(), h.getTimeStamp());
+                }
+                
+                
+                
+            }
             
-            ArrayList<Headers> headerList=dugHve.calculatedHeaders();     //  <<<<  The workhorse
-            
+            ArrayList<Headers> headerList=dugHve.calculatedHeaders(subsurfaceTimestamp);     //  <<<<  The workhorse
+            if (headerList.isEmpty()){
+                System.out.println("collector.HeaderCollector: headerList is empty");
+                return;
+            }
+            else
+                System.out.println("collector.HeaderCollector: headerList is NOT empty");                    
             /*sl=new ArrayList<>();*/
             sl=new HashSet<>();
            seqList=new ArrayList<>();
@@ -89,7 +106,7 @@ public class HeaderCollector {
                 next.setVolume(dbVolume);
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
-              
+                
                 hdrServ.createHeaders(next);                             //commit to the db
                 
                 
@@ -134,6 +151,8 @@ public class HeaderCollector {
                 s.setXlineInc(next.getXlineInc());
                 s.setXlineMax(next.getXlineMax());
                 s.setXlineMin(next.getXlineMin());
+                
+                
           
                 seqSubMap.put(s.getSequenceNumber(), s);
                 
@@ -162,7 +181,7 @@ public class HeaderCollector {
        //feVolumeSelModel.setSeqSubsMap(seqSubMap);
        
       ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
-      headersModel.setObsHList(obseq);                                     //set the headersModel that will be used to launch the header table
+      headersModel.setSequenceListInHeaders(obseq);                                     //set the headersModel that will be used to launch the header table
       dbVolume.setHeaderExtracted(Boolean.TRUE);
       volServ.setHeaderExtractionFlag(dbVolume);
             
@@ -236,7 +255,7 @@ public class HeaderCollector {
       System.out.println("HColl: done setting the headerList here");
 */
       headersModel=vm.getHeadersModel();
-      return headersModel.getObsHList();                                                //the observable List is the list of sequences. which contains all the header information
+      return headersModel.getSequenceListInHeaders();                                                //the observable List is the list of sequences. which contains all the header information
   }
     
     

@@ -138,8 +138,8 @@ public class VolumeSelectionController  {
        // hmodel.setObsHList(obSeqs);
        // model.setHeadersModel(hmodel);
                                     
-        HeadersNode hnode=new HeadersNode(model.getHeadersModel());
-        HeadersViewController hvc=hnode.getHeadersViewController();
+        HeadersNode hnode=new HeadersNode(model.getHeadersModel()); //displays the table. see method setView();
+        HeadersViewController hvc=hnode.getHeadersViewController();   
         
 
            
@@ -178,6 +178,7 @@ public class VolumeSelectionController  {
        // System.out.println("VSController: binding");
         volumePathLabel.accessibleTextProperty().bindBidirectional(model.getVolumeSelectionLabel());
         headerTableDisplayButton.disableProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
+        System.out.println("VolumeSelectioncontroller.  binding qcCheckBox: with Property Value: "+model.getQcFlagProperty());
         qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
         //headerTableDisplayButton.defaultButtonProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
     }

@@ -44,9 +44,10 @@ public class VolumeSelectionModel {
     private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
     private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
     private MultiMap<Long,SubSurface> seqSubsMap=new MultiValueMap<>();
-    
+    private String insightVersionUsed;
     
     //for Debug
+
     private Long id;
 
     public HeadersModel getHeadersModel() {
@@ -150,12 +151,12 @@ public class VolumeSelectionModel {
         this.volumeChosen = volumeChosen;
     }
 
-    public boolean isAlert() {
-        return alert;
+     public boolean isAlert() {
+    return alert;
     }
-
+    
     public void setAlert(boolean alert) {
-        this.alert = alert;
+    this.alert = alert;
     }
 
     public BooleanProperty getQcFlagProperty() {
@@ -164,6 +165,8 @@ public class VolumeSelectionModel {
 
     public void setQcFlagProperty(Boolean b) {
         this.qcFlagProperty.set(b);
+       // this.qcFlagProperty=new SimpleBooleanProperty(b);
+        
     }
 
     public MultiMap<Long, SubSurface> getSeqSubsMap() {
@@ -177,7 +180,9 @@ public class VolumeSelectionModel {
     }
 
     
-    
+    public void printQC(){
+        System.out.println("volumeSelectionModel: QcFlag status "+qcFlagProperty.get());
+    }
     
     
    

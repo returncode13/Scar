@@ -6,6 +6,8 @@
 package fend.session.node.headers;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
@@ -20,7 +22,7 @@ import javafx.beans.property.StringProperty;
  */
 public class SubSurface extends Sequences implements Serializable{
     
-    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    
     
     
     
@@ -46,6 +48,9 @@ public class SubSurface extends Sequences implements Serializable{
     private   LongProperty cmpMax= new SimpleLongProperty();
     private   LongProperty cmpMin= new SimpleLongProperty();
     private   LongProperty cmpInc= new SimpleLongProperty();
+    private   StringProperty insightVersion=new SimpleStringProperty("to be implemented");             //get from notes.txt
+            
+    private   BooleanProperty alert=new SimpleBooleanProperty();
     
     private Long id;
 
@@ -235,13 +240,25 @@ public class SubSurface extends Sequences implements Serializable{
         this.cmpInc.set(cmpInc);
     }
 
-    public BooleanProperty getQcFlagProperty() {
-        return qcFlagProperty;
+    public Boolean getAlert() {
+        return alert.get();
     }
 
-    public void setQcFlagProperty(Boolean b) {
-        this.qcFlagProperty.set(b);
+    public void setAlert(Boolean alert) {
+        this.alert=new SimpleBooleanProperty(alert);
     }
+
+    /*public String getInsightVersion() {
+    return insightVersion.get();
+    }
+    
+    public void setInsightVersion(String insightVersion) {
+    this.insightVersion = new SimpleStringProperty(insightVersion);
+    }*/
+
+    
+    
+    
 
     @Override
     public int hashCode() {

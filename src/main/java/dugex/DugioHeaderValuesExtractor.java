@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -55,6 +57,53 @@ class DugioMetaHeaders{                      /*
      String cmpMin="_HDR:CMP_MIN";
      String cmpInc="_HDR:CMP_INC";
 
+     String[] metaHeaders={inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc};
+}
+
+class LongHolder{
+                         Long cmpMax;
+                         Long cmpMin;
+                         Long cmpInc;
+                         Long inlineMax;
+                         Long inlineMin;
+                         Long inlineInc;
+                         Long xlineMax;
+                         Long xlineMin;
+                         Long xlineInc;
+                         Long dugShotMax;
+                         Long dugShotMin;
+                         Long dugShotInc;
+                         Long dugChannelMax;
+                         Long dugChannelMin;
+                         Long dugChannelInc;
+                         Long offsetMax;
+                         Long offsetMin;
+                         Long offsetInc;
+                         Map<String,Long> keyValueMap;
+                         DugioMetaHeaders ddmh=new DugioMetaHeaders();
+
+    LongHolder() {
+        this.keyValueMap = new HashMap<>();
+        keyValueMap.put(ddmh.cmpMax, cmpMax);
+        keyValueMap.put(ddmh.cmpMin, cmpMin);
+        keyValueMap.put(ddmh.cmpInc, cmpInc);
+        keyValueMap.put(ddmh.dugChannelInc, dugChannelInc);
+        keyValueMap.put(ddmh.dugChannelMax, dugChannelMax);
+        keyValueMap.put(ddmh.dugChannelMin, dugChannelMin);
+        keyValueMap.put(ddmh.dugShotInc,dugShotInc);
+        keyValueMap.put(ddmh.dugShotMax,dugShotMax);
+        keyValueMap.put(ddmh.dugShotMin,dugShotMin);
+        keyValueMap.put(ddmh.inlineInc, inlineInc);
+        keyValueMap.put(ddmh.inlineMax, inlineMax);
+        keyValueMap.put(ddmh.inlineMin, inlineMin);
+        keyValueMap.put(ddmh.offsetInc, offsetInc);
+        keyValueMap.put(ddmh.offsetMax, offsetMax);
+        keyValueMap.put(ddmh.offsetMin, offsetMin);
+        keyValueMap.put(ddmh.xlineInc, xlineInc);
+        keyValueMap.put(ddmh.xlineMax, xlineMax);
+        keyValueMap.put(ddmh.xlineMin, xlineMin);
+                
+    }
 }
 
 
@@ -75,15 +124,15 @@ public class DugioHeaderValuesExtractor {
     
     
     
-    public ArrayList<Headers> calculatedHeaders() throws InterruptedException, ExecutionException{
-        calculateSubsurfaceLines();
+    public ArrayList<Headers> calculatedHeaders(Map<String,String> subsurfaceTimestamp) throws InterruptedException, ExecutionException{
+        calculateSubsurfaceLines(subsurfaceTimestamp);
        
        /* for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
             Headers next = iterator.next();
             System.out.println("DHVEx: for volume "+volume+" sub: "+next.getSubsurface()+" time: "+next.getTimeStamp());
         }*/
         
-        
+       Long startTime=System.currentTimeMillis();
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         executorService.submit(new Callable<Void>() {
 
@@ -93,14 +142,16 @@ public class DugioHeaderValuesExtractor {
             }
         }).get();
         
-        
+        Long endTime=System.currentTimeMillis();
+        Long deltaTime=endTime-startTime;
+        System.out.println("Time Taken: "+deltaTime);
          
          
          
         return headers;
     }
     
-    private void calculateSubsurfaceLines(){
+    private void calculateSubsurfaceLines(Map<String,String> subsurfaceTimestamp){
         try{
             ExecutorService executorService= Executors.newFixedThreadPool(1);
             executorService.submit(new Callable<Void>() {
@@ -119,6 +170,10 @@ public class DugioHeaderValuesExtractor {
                         String lineName= line.substring(line.indexOf(" ")+1,line.length());
                         String seq=line.substring(line.indexOf("_")-3,line.indexOf("_"));
                         Headers hdr=new Headers();
+                        if(subsurfaceTimestamp.get(lineName).equals(time)){
+                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
+                        continue;
+                        }
                         hdr.setSubsurface(lineName);
                         hdr.setTimeStamp(time);
                         hdr.setSequenceNumber(Long.valueOf(seq));
@@ -150,32 +205,81 @@ public class DugioHeaderValuesExtractor {
                  synchronized(this){
                      for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
                          Headers hdr = iterator.next();
+                         //if(hdr.getTimeStamp().)
                          System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface());
                          
                        // Long traceCount=Long.valueOf(forEachKey(hdr,dmh.traceCount));
                        //  System.out.println("Value from forTraces:"+forTraces(hdr));
-                        Long traceCount=Long.valueOf(forTraces(hdr)).longValue();
-                        Long cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
-                        Long cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
-                        Long cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                         
+                         Long traceCount=Long.valueOf(forTraces(hdr));
+                         
+                         /* Long[] values=new Long[dmh.metaHeaders.length];
+                         keyValueExtractor(hdr, values);*/
                         
-                        Long inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
-                        Long inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
-                        Long inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
-                        Long xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
-                        Long xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
-                        Long xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
-                        Long dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
-                        Long dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
-                        Long dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
-                        Long dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
-                        Long dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
-                        Long dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
-                        Long offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
-                        Long offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
-                        Long offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                         Long cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                         Long cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                         Long cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                         
+                         Long inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                         Long inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                         Long inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                         Long xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                         Long xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                         Long xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                         Long dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                         Long dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                         Long dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                         Long dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                         Long dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                         Long dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                         Long offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                         Long offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                         Long offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                         
                         
                         
+                         /*Long inlineMax=values[0];
+                         Long inlineMin=values[1];
+                         Long inlineInc=values[2];
+                         Long xlineMax=values[3];
+                         Long xlineMin=values[4];
+                         Long xlineInc=values[5];
+                         Long dugShotMax=values[6];
+                         Long dugShotMin=values[7];
+                         Long dugShotInc=values[8];
+                         Long dugChannelMax=values[9];
+                         Long dugChannelMin=values[10];
+                         Long dugChannelInc=values[11];
+                         Long offsetMax=values[12];
+                         Long offsetMin=values[13];
+                         Long offsetInc=values[14];
+                         Long cmpMax=values[15];
+                         Long cmpMin=values[16];
+                         Long cmpInc=values[17];
+                        
+                         
+                         
+                        Long inlineMax=new Long(0);
+                        Long inlineMin=new Long(0);
+                        Long inlineInc=new Long(0);
+                        Long xlineMax=new Long(0);
+                        Long xlineMin=new Long(0);
+                        Long xlineInc=new Long(0);
+                        Long dugShotMax=new Long(0);
+                        Long dugShotMin=new Long(0);
+                        Long dugShotInc=new Long(0);
+                        Long dugChannelMax=new Long(0);
+                        Long dugChannelMin=new Long(0);
+                        Long dugChannelInc=new Long(0);
+                        Long offsetMax=new Long(0);
+                        Long offsetMin=new Long(0);
+                        Long offsetInc=new Long(0);
+                        Long cmpMax=new Long(0);
+                        Long cmpMin=new Long(0);
+                        Long cmpInc=new Long(0);
+                         */
+                         /*LongHolder lholder=new LongHolder();
+                         keyValueThreadExtractor(hdr,lholder);*/
                         hdr.setTraceCount(traceCount);
                         hdr.setCmpMax(cmpMax);
                         hdr.setCmpMin(cmpMin);
@@ -196,6 +300,25 @@ public class DugioHeaderValuesExtractor {
                         hdr.setOffsetMin(offsetMin);
                         hdr.setOffsetInc(offsetInc);
                         
+                        /*hdr.setCmpMax(lholder.cmpMax);
+                        hdr.setCmpMin(lholder.cmpMin);
+                        hdr.setCmpInc(lholder.cmpInc);
+                        hdr.setInlineMax(lholder.inlineMax);
+                        hdr.setInlineMin(lholder.inlineMin);
+                        hdr.setInlineInc(lholder.inlineInc);
+                        hdr.setXlineMax(lholder.xlineMax);
+                        hdr.setXlineMin(lholder.xlineMin);
+                        hdr.setXlineInc(lholder.xlineInc);
+                        hdr.setDugShotMax(lholder.dugShotMax);
+                        hdr.setDugShotMin(lholder.dugShotMin);
+                        hdr.setDugShotInc(lholder.dugShotInc);
+                        hdr.setDugChannelMax(lholder.dugChannelMax);
+                        hdr.setDugChannelMin(lholder.dugChannelMin);
+                        hdr.setDugChannelInc(lholder.dugChannelInc);
+                        hdr.setOffsetMax(lholder.offsetMax);
+                        hdr.setOffsetMin(lholder.offsetMin);
+                        hdr.setOffsetInc(lholder.offsetInc);*/
+                        
                         
                          
                      }
@@ -215,25 +338,29 @@ public class DugioHeaderValuesExtractor {
         return null;
     }
     
-    private String forEachKey(Headers hdr,String key) throws IOException{
-                        System.out.println("Inside forEach key with key ="+key);
-                        Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
+    private String forEachKey(Headers hdr,String key) throws IOException {
+                       /// System.out.println("Inside forEach key with key ="+key);
+        
+         
+                 Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
                         BufferedReader br=new BufferedReader(isr);
                         
                         String value;
                         while((value=br.readLine())!=null){
-                            System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
+                        //    System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
                             return value;
                         }
                        
-                        return null;
+           return null;
+                 
+                       
                         
     }
     
     private String forTraces(Headers hdr) throws IOException{
-                        System.out.println("Inside forTraces key with NO key");
+                      //  System.out.println("Inside forTraces key with NO key");
                         Process process=new ProcessBuilder(ds.getDugioGetTraces().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface()).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
@@ -241,14 +368,70 @@ public class DugioHeaderValuesExtractor {
                         
                         String value;
                         while((value=br.readLine())!=null){
-                            System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
+                         //   System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
                             return value;
                         }
                        
                         return null;
                         
     }
+    
+    
+    
+    private void keyValueExtractor(Headers hdr,Long[] headers) throws IOException{
+        int keycount=0;
+        for(String key:dmh.metaHeaders){
+            
+                        Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
+                        InputStream is = process.getInputStream();
+                        InputStreamReader isr=new InputStreamReader(is);
+                        BufferedReader br=new BufferedReader(isr);
+                        
+                        String value;
+                        while((value=br.readLine())!=null){
+                        //    System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
+                            headers[keycount]=Long.valueOf(value);
+                        }
+          
+                        keycount++;
+        }
+    }
+    
+    
+    private void keyValueThreadExtractor(Headers hdr,LongHolder hdrValue) throws InterruptedException, ExecutionException{
+        
+        
+        
+        for(String key:hdrValue.ddmh.metaHeaders){
+            
+        
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+         executorService.submit(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
+                        InputStream is = process.getInputStream();
+                        InputStreamReader isr=new InputStreamReader(is);
+                        BufferedReader br=new BufferedReader(isr);
+                        
+                        String stringValue;
+                        while((stringValue=br.readLine())!=null){
+                        //    System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
+                            //return value;
+//                     /       hdrValue=Long.valueOf(stringValue);
+                            hdrValue.keyValueMap.put(key, Long.valueOf(stringValue));
+                            
+                            
+                        }
+                        return null;
+            }
+         }).get();
+        }
+    }
 }
+
+
 
 
 
