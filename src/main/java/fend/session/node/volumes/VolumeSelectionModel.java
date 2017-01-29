@@ -164,8 +164,8 @@ public class VolumeSelectionModel {
     }
 
     public void setQcFlagProperty(Boolean b) {
-        //this.qcFlagProperty.set(b);
-        this.qcFlagProperty=new SimpleBooleanProperty(b);
+        this.qcFlagProperty.set(b);
+       // this.qcFlagProperty=new SimpleBooleanProperty(b);
         
     }
 

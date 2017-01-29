@@ -540,6 +540,7 @@ public class LandingController implements Initializable,Serializable {
                 fv.setAlert(beV.getAlert());
                 fv.setLabel(beV.getNameVolume());
                 fv.setId(beV.getIdVolume());
+                System.out.println("landing.LandingController.loadSession(): Volume name: "+beV.getNameVolume()+" : Volume Id: "+beV.getIdVolume());
                 fv.setInflated(true);
                 fv.setSubsurfaces(sl);
                 
