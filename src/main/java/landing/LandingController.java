@@ -545,7 +545,7 @@ public class LandingController implements Initializable,Serializable {
                 
                             HeadersModel hmod=new HeadersModel();
                             ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
-                            hmod.setObsHList(obseq);
+                            hmod.setSequenceListInHeaders(obseq);
                 
                 
                 fv.setHeadersModel(hmod);                                       //set the headersModel

@@ -17,7 +17,7 @@ import javafx.beans.property.SimpleBooleanProperty;
  * @author naila0152
  */
 public class Sequences implements Serializable{
-    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+
     
     
     ArrayList<SubSurface> subsurfaces=new ArrayList<>();
@@ -43,6 +43,8 @@ public class Sequences implements Serializable{
     private Long cmpMax;
     private Long cmpMin;
     private Long cmpInc;
+    private String insightVersion;
+    private Boolean alert;
 
     public ArrayList<SubSurface> getSubsurfaces() {
         return subsurfaces;
@@ -233,13 +235,23 @@ public class Sequences implements Serializable{
         this.cmpInc = cmpInc;
     }
 
-    public BooleanProperty getQcFlagProperty() {
-        return qcFlagProperty;
+    public String getInsightVersion() {
+        return insightVersion;
     }
 
-    public void setQcFlagProperty(Boolean b) {
-        this.qcFlagProperty.set(b);
+    public void setInsightVersion(String insightVersion) {
+        this.insightVersion = insightVersion;
     }
+
+    public Boolean getAlert() {
+        return alert;
+    }
+
+    public void setAlert(Boolean alert) {
+        this.alert = alert;
+    }
+
+    
 
    
 

@@ -591,7 +591,7 @@ public class JobStepNodeController {
                     System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
                     
                     HeadersModel hmod=next1.getHeadersModel();
-                    List<Sequences> seqL=hmod.getObsHList();
+                    List<Sequences> seqL=hmod.getSequenceListInHeaders();
                     for (Iterator<Sequences> iterator2 = seqL.iterator(); iterator2.hasNext();) {
                         Sequences next2 = iterator2.next();
                         System.out.println("fend.session.node.jobs.JobStepNodeController.setVolumeModelsForFrontEndDisplay() Sequence: "+next2.getSequenceNumber());

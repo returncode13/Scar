@@ -20,15 +20,15 @@ import javafx.collections.ObservableList;
 public class HeadersModel {
    
     private List<Sequences> seqList=new ArrayList<>();
-    private ObservableList<Sequences> obsHList=FXCollections.observableList(seqList);
+    private ObservableList<Sequences> sequenceListInHeaders=FXCollections.observableList(seqList);
     private Long id;
 
-    public ObservableList<Sequences> getObsHList() {
-        return obsHList;
+    public ObservableList<Sequences> getSequenceListInHeaders() {
+        return sequenceListInHeaders;
     }
 
-    public void setObsHList(ObservableList<Sequences> obsHList) {
-        this.obsHList = obsHList;
+    public void setSequenceListInHeaders(ObservableList<Sequences> sequenceListInHeaders) {
+        this.sequenceListInHeaders = sequenceListInHeaders;
     }
     
     

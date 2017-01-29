@@ -134,6 +134,8 @@ public class HeaderCollector {
                 s.setXlineInc(next.getXlineInc());
                 s.setXlineMax(next.getXlineMax());
                 s.setXlineMin(next.getXlineMin());
+                
+                
           
                 seqSubMap.put(s.getSequenceNumber(), s);
                 
@@ -162,7 +164,7 @@ public class HeaderCollector {
        //feVolumeSelModel.setSeqSubsMap(seqSubMap);
        
       ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
-      headersModel.setObsHList(obseq);                                     //set the headersModel that will be used to launch the header table
+      headersModel.setSequenceListInHeaders(obseq);                                     //set the headersModel that will be used to launch the header table
       dbVolume.setHeaderExtracted(Boolean.TRUE);
       volServ.setHeaderExtractionFlag(dbVolume);
             
@@ -236,7 +238,7 @@ public class HeaderCollector {
       System.out.println("HColl: done setting the headerList here");
 */
       headersModel=vm.getHeadersModel();
-      return headersModel.getObsHList();                                                //the observable List is the list of sequences. which contains all the header information
+      return headersModel.getSequenceListInHeaders();                                                //the observable List is the list of sequences. which contains all the header information
   }
     
     
