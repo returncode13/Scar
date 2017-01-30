@@ -12,7 +12,6 @@
     <class>db.model.SessionDetails</class>
     <class>db.model.Sessions</class>
     <class>db.model.Volume</class>
-    <class>db.model.OrcaView</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/proj_nai038916"/>
       <property name="javax.persistence.jdbc.user" value="fgeo"/>

@@ -45,7 +45,10 @@ public class Sequences implements Serializable{
     private Long cmpInc;
     private String insightVersion;
     private Boolean alert;
-
+    private Boolean modified;
+    private Boolean deleted;
+    private Long version;
+    
     public ArrayList<SubSurface> getSubsurfaces() {
         return subsurfaces;
     }
@@ -251,8 +254,30 @@ public class Sequences implements Serializable{
         this.alert = alert;
     }
 
-    
+    public Boolean getModified() {
+        return modified;
+    }
 
+    public void setModified(Boolean modified) {
+        this.modified = modified;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version=version;
+    }
    
 
    

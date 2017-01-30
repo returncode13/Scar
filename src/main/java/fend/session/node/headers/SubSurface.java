@@ -51,8 +51,9 @@ public class SubSurface extends Sequences implements Serializable{
     private   StringProperty insightVersion=new SimpleStringProperty("to be implemented");             //get from notes.txt
             
     private   BooleanProperty alert=new SimpleBooleanProperty();
-    private   BooleanProperty modified=new SimpleBooleanProperty();
-    private   BooleanProperty deleted=new SimpleBooleanProperty();
+    private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
+    private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
+    private   LongProperty version=new SimpleLongProperty(0L);
     
     private Long id;
 
@@ -250,6 +251,7 @@ public class SubSurface extends Sequences implements Serializable{
         this.alert=new SimpleBooleanProperty(alert);
     }
 
+    
     /*public String getInsightVersion() {
     return insightVersion.get();
     }
@@ -258,6 +260,31 @@ public class SubSurface extends Sequences implements Serializable{
     this.insightVersion = new SimpleStringProperty(insightVersion);
     }*/
 
+    public Boolean getModified() {
+        return modified.get();
+    }
+
+    public void setModified(Boolean modified) {
+        this.modified.set(modified);
+    }
+
+    public Boolean getDeleted() {
+        return deleted.get();
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted.set(deleted);
+    }
+
+    public Long getVersion() {
+        return version.get();
+    }
+
+    public void setVersion(Long version) {
+        this.version.set(version);
+    }
+
+    
     
     
     

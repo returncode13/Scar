@@ -27,6 +27,7 @@ public class HeadersDAOImpl implements HeadersDAO{
 
     @Override
     public void createHeaders(Headers h) {
+               
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -64,7 +65,7 @@ public class HeadersDAOImpl implements HeadersDAO{
             Headers h= (Headers) session.get(Headers.class, hid);
             
             if(h.getSequenceNumber()==newH.getSequenceNumber() && h.getSubsurface().equals(newH.getSubsurface())){
-            
+            h.setTimeStamp(newH.getTimeStamp());
             h.setCmpInc(newH.getCmpInc());
             h.setCmpMax(newH.getCmpMax());
             h.setCmpMin(newH.getCmpMin());
@@ -86,7 +87,13 @@ public class HeadersDAOImpl implements HeadersDAO{
             h.setOffsetMin(newH.getOffsetMin());
             
             h.setTraceCount(newH.getTraceCount());
+            h.setVersion(newH.getVersion());
+            h.setModified(newH.getModified());
+            /*if(newH.getModified()){
+            h.setModified(Boolean.FALSE);
+            }*/
             session.update(h);
+                System.out.println("db.dao.HeadersDAOImpl: updating entry for subsurface : "+newH.getSubsurface()+" with id: "+newH.getIdHeaders() );
             }
             else{
                 throw new Exception("The id belongs to a different seq/subsurface compared to the ones that the new header value refers to!!. ");

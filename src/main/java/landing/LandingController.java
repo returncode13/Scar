@@ -510,7 +510,10 @@ public class LandingController implements Initializable,Serializable {
                             s.setXlineInc(beH.getXlineInc());
                             s.setXlineMax(beH.getXlineMax());
                             s.setXlineMin(beH.getXlineMin());
-
+                            s.setModified(beH.getModified());
+                            s.setDeleted(beH.getDeleted());
+                            s.setVersion(beH.getVersion());
+                
                             seqSubMap.put(s.getSequenceNumber(), s);
 
 
