@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -111,7 +112,7 @@ public class DugioHeaderValuesExtractor {
     private DugioScripts ds=new DugioScripts();
     private DugioMetaHeaders dmh=new DugioMetaHeaders();
     private File volume;
-    private ArrayList<Headers> headers=new ArrayList<>();
+    private ArrayList<Headers> headers=new ArrayList<>();;
     
     public DugioHeaderValuesExtractor(){
         
@@ -124,7 +125,7 @@ public class DugioHeaderValuesExtractor {
     
     
     
-    public ArrayList<Headers> calculatedHeaders(Map<String,String> subsurfaceTimestamp) throws InterruptedException, ExecutionException{
+    public ArrayList<Headers> calculatedHeaders(Map<String,Headers> subsurfaceTimestamp) throws InterruptedException, ExecutionException{
         calculateSubsurfaceLines(subsurfaceTimestamp);
        
        /* for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
@@ -151,7 +152,8 @@ public class DugioHeaderValuesExtractor {
         return headers;
     }
     
-    private void calculateSubsurfaceLines(Map<String,String> subsurfaceTimestamp){
+    private void calculateSubsurfaceLines(Map<String,Headers> subsurfaceTimestamp){
+        headers.clear();
         try{
             ExecutorService executorService= Executors.newFixedThreadPool(1);
             executorService.submit(new Callable<Void>() {
@@ -170,10 +172,16 @@ public class DugioHeaderValuesExtractor {
                         String lineName= line.substring(line.indexOf(" ")+1,line.length());
                         String seq=line.substring(line.indexOf("_")-3,line.indexOf("_"));
                         Headers hdr=new Headers();
-                        if(subsurfaceTimestamp.get(lineName).equals(time)){
+                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
+                        
+                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
+                        if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
+                            
                         continue;
                         }
+                       System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+lineName);
+
                         hdr.setSubsurface(lineName);
                         hdr.setTimeStamp(time);
                         hdr.setSequenceNumber(Long.valueOf(seq));
@@ -206,7 +214,7 @@ public class DugioHeaderValuesExtractor {
                      for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
                          Headers hdr = iterator.next();
                          //if(hdr.getTimeStamp().)
-                         System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface());
+                         System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
                          
                        // Long traceCount=Long.valueOf(forEachKey(hdr,dmh.traceCount));
                        //  System.out.println("Value from forTraces:"+forTraces(hdr));
