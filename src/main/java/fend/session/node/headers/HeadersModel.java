@@ -28,7 +28,7 @@ public class HeadersModel {
     }
 
     public void setSequenceListInHeaders(ObservableList<Sequences> sequenceListInHeaders) {
-        this.sequenceListInHeaders = sequenceListInHeaders;
+        this.sequenceListInHeaders = FXCollections.observableList(sequenceListInHeaders);
     }
     
     

@@ -125,8 +125,8 @@ public class DugioHeaderValuesExtractor {
     
     
     
-    public ArrayList<Headers> calculatedHeaders(Map<String,Headers> subsurfaceTimestamp) throws InterruptedException, ExecutionException{
-        calculateSubsurfaceLines(subsurfaceTimestamp);
+    public ArrayList<Headers> calculatedHeaders(Map<String,Headers> subsurfaceTimestamp,List<Headers> existingHeaders) throws InterruptedException, ExecutionException{
+        calculateSubsurfaceLines(subsurfaceTimestamp,existingHeaders);
        
        /* for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
             Headers next = iterator.next();
@@ -152,7 +152,7 @@ public class DugioHeaderValuesExtractor {
         return headers;
     }
     
-    private void calculateSubsurfaceLines(Map<String,Headers> subsurfaceTimestamp){
+    private void calculateSubsurfaceLines(Map<String,Headers> subsurfaceTimestamp,List<Headers> existingHeaders){
         headers.clear();
         try{
             ExecutorService executorService= Executors.newFixedThreadPool(1);
@@ -187,6 +187,7 @@ public class DugioHeaderValuesExtractor {
                             Long ver=h.getVersion();
                             h.setVersion(++ver);
                             h.setTimeStamp(time);
+                            existingHeaders.remove(h);
                             headers.add(h);
                             continue;
                         //continue; //Comment this out later when implementing
