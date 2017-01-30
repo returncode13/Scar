@@ -100,12 +100,24 @@ public class Headers implements Serializable{
     @Column(name="CmpInc")
     private Long cmpInc;
 
+    @Column(name="Modified")
+    private Boolean modified;
+    
+    @Column(name="Deleted")
+    private Boolean deleted; 
+    
+    @Column(name="Version")
+    private Long version;
+    
     public Headers() {
+        this.modified=Boolean.FALSE;
+        this.deleted=Boolean.FALSE;
+        this.version=0L;
     }
 
     
 
-    public Headers(Long idHeaders, Volume volume, Long sequenceNumber, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc) {
+    public Headers(Long idHeaders, Volume volume, Long sequenceNumber, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
         this.idHeaders = idHeaders;
         this.volume = volume;
         this.sequenceNumber = sequenceNumber;
@@ -130,6 +142,9 @@ public class Headers implements Serializable{
         this.cmpMax = cmpMax;
         this.cmpMin = cmpMin;
         this.cmpInc = cmpInc;
+        this.modified=modified;
+        this.deleted=deleted;
+        this.version=version;
     }
 
     
@@ -159,6 +174,9 @@ public class Headers implements Serializable{
         hash = 97 * hash + Objects.hashCode(this.cmpMax);
         hash = 97 * hash + Objects.hashCode(this.cmpMin);
         hash = 97 * hash + Objects.hashCode(this.cmpInc);
+        hash = 97 * hash + Objects.hashCode(this.modified);
+        hash = 97 * hash + Objects.hashCode(this.deleted);
+        hash = 97 * hash + Objects.hashCode(this.version);
         return hash;
     }
 
@@ -241,6 +259,15 @@ public class Headers implements Serializable{
             return false;
         }
         if (!Objects.equals(this.cmpInc, other.cmpInc)) {
+            return false;
+        }
+        if (!Objects.equals(this.modified, other.modified)) {
+            return false;
+        }
+        if (!Objects.equals(this.deleted, other.deleted)) {
+            return false;
+        }
+        if (!Objects.equals(this.version, other.version)) {
             return false;
         }
         return true;
@@ -443,8 +470,32 @@ public class Headers implements Serializable{
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
-    
 
+    public Boolean getModified() {
+        return modified;
+    }
+
+    public void setModified(Boolean modified) {
+        this.modified = modified;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+    
+    
    
    
     

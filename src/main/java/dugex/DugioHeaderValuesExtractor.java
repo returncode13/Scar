@@ -180,6 +180,17 @@ public class DugioHeaderValuesExtractor {
                             
                         continue;
                         }
+                        if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+subsurfaceTimestamp.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
+                           Headers h=subsurfaceTimestamp.get(lineName);
+                            h.setModified(Boolean.TRUE);
+                            Long ver=h.getVersion();
+                            h.setVersion(++ver);
+                            h.setTimeStamp(time);
+                            headers.add(h);
+                            continue;
+                        //continue; //Comment this out later when implementing
+                        }
                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+lineName);
 
                         hdr.setSubsurface(lineName);

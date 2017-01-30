@@ -82,7 +82,7 @@ public class HeaderCollector {
                 existingHeaders=hdrServ.getHeadersFor(dbVolume);
                 for(Headers h:existingHeaders){
                     subsurfaceHeaderMap.put(h.getSubsurface(), h);
-                }
+                } 
                 
                 
                 
@@ -109,9 +109,14 @@ public class HeaderCollector {
                 next.setVolume(dbVolume);
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
-                
+                if(next.getModified()) 
+                {
+                    System.out.println(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
+                    hdrServ.updateHeaders(next.getIdHeaders(), next);       
+                }
+                else{
                 hdrServ.createHeaders(next);                             //commit to the db
-                
+                }
                 
                 SubSurface s= new SubSurface();
           
@@ -154,7 +159,9 @@ public class HeaderCollector {
                 s.setXlineInc(next.getXlineInc());
                 s.setXlineMax(next.getXlineMax());
                 s.setXlineMin(next.getXlineMin());
-                
+                s.setModified(next.getModified());
+                s.setDeleted(next.getDeleted());
+                s.setVersion(next.getVersion());
                 
           
                 seqSubMap.put(s.getSequenceNumber(), s);
