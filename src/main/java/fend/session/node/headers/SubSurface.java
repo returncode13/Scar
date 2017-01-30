@@ -51,6 +51,8 @@ public class SubSurface extends Sequences implements Serializable{
     private   StringProperty insightVersion=new SimpleStringProperty("to be implemented");             //get from notes.txt
             
     private   BooleanProperty alert=new SimpleBooleanProperty();
+    private   BooleanProperty modified=new SimpleBooleanProperty();
+    private   BooleanProperty deleted=new SimpleBooleanProperty();
     
     private Long id;
 

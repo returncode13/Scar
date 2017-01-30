@@ -73,22 +73,25 @@ public class HeaderCollector {
     private void calculateAndCommitHeaders(){
         try {
             File volume=feVolumeSelModel.getVolumeChosen();
-            List<Headers> existingHeaders;
-            Map<String,String> subsurfaceTimestamp=new HashMap<>();
+            List<Headers> existingHeaders=null;
+            Map<String,Headers> subsurfaceHeaderMap=new HashMap<>();
             System.out.println("collector.HeaderCollector: calculating headers for "+volume.getAbsolutePath());
             dugHve.setVolume(volume);
             if(dbVolume.getHeaderExtracted()){
                 System.out.println("collector.HeaderCollector: Headers have been extracted for Volume: "+dbVolume.getNameVolume());
                 existingHeaders=hdrServ.getHeadersFor(dbVolume);
                 for(Headers h:existingHeaders){
-                    subsurfaceTimestamp.put(h.getSubsurface(), h.getTimeStamp());
+                    subsurfaceHeaderMap.put(h.getSubsurface(), h);
                 }
                 
                 
                 
             }
             
-            ArrayList<Headers> headerList=dugHve.calculatedHeaders(subsurfaceTimestamp);     //  <<<<  The workhorse
+            ArrayList<Headers> headerList=dugHve.calculatedHeaders(subsurfaceHeaderMap);     //  <<<<  The workhorse . get fresh header list here
+            if(existingHeaders!=null){
+                headerList.addAll(existingHeaders);                                                         //append any old headers
+            }
             if (headerList.isEmpty()){
                 System.out.println("collector.HeaderCollector: headerList is empty");
                 return;
