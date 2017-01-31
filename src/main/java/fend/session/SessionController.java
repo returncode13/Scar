@@ -809,6 +809,7 @@ public class SessionController implements Initializable {
       * call to set the pending job flag in each jobStepModel
       */
      private void setPendingJobsFlag(JobStepModel parent,JobStepModel child){
+         child.setPendingFlagProperty(Boolean.FALSE);
          if(parent.getId().equals(child.getId())){
              System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
              return;
@@ -879,7 +880,7 @@ public class SessionController implements Initializable {
      }
 
     private void setQCFlag(JobStepModel parent,JobStepModel child){
-        
+        child.setQcFlagProperty(Boolean.FALSE);
         //If Child has been traversed then return.   Create a "traversed" flag in JobStepModel and set in each time the node is returning "upwards". i.e it and all of its descendants have been traversed, set its "traversed" flag to True
         
          if(parent.getId().equals(child.getId())){
