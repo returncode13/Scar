@@ -13,8 +13,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
@@ -50,6 +53,22 @@ public class HeadersViewController extends Stage implements Initializable {
     void setModel(HeadersModel lsm) {
       hmodel=lsm;  
      seqListObs=hmodel.getSequenceListInHeaders();
+     
+     treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
+            @Override
+            protected void updateItem(Sequences item,boolean empty){
+                super.updateItem(item,empty);
+                if(item==null || empty){
+                    setText(null);
+                    setStyle("");
+                }else if(item.getAlert()){
+                    setStyle("-fx-background-color:tomato");
+                }else
+                {
+                    setStyle("-fx-background-color:green");
+                }
+            }
+        });
      
      
         TreeTableColumn<Sequences,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
@@ -107,6 +126,50 @@ public class HeadersViewController extends Stage implements Initializable {
         version.setCellValueFactory(new TreeItemPropertyValueFactory<>("version"));
         modified.setCellValueFactory(new TreeItemPropertyValueFactory<>("modified"));
         deleted.setCellValueFactory(new TreeItemPropertyValueFactory<>("deleted"));
+        
+        version.setCellFactory((TreeTableColumn<Sequences,Long> p)->{
+            TreeTableCell cell=new TreeTableCell<Sequences,Long>(){
+               
+                @Override
+                protected void updateItem(Long item, boolean empty){
+                  super.updateItem(item, empty);
+                    TreeTableRow<Sequences> seqTreeRow=getTreeTableRow();
+                    if(item==null || empty ){
+                        setText(null);
+                        seqTreeRow.setStyle("");
+                        setStyle("");
+                    }else{
+                        seqTreeRow.setStyle(item.longValue() > 0 ? "":"");
+                        setText(item.toString());
+                        setStyle(item.longValue() > 0 ? "-fx-background-color:orange":"");
+                    }
+              }  
+            };
+                    return cell;
+        });
+        
+        alert.setCellFactory((TreeTableColumn<Sequences,Boolean> p)->{
+            TreeTableCell cell=new TreeTableCell<Sequences,Boolean>(){
+               
+                @Override
+                protected void updateItem(Boolean item, boolean empty){
+                  super.updateItem(item, empty);
+                    TreeTableRow<Sequences> seqTreeRow=getTreeTableRow();
+                    if(item==null || empty ){
+                        setText(null);
+                        seqTreeRow.setStyle("");
+                        setStyle("");
+                    }else{
+                        seqTreeRow.setStyle(item ? "-fx-background-color:red":"");
+                        setText(item.toString());
+                        setStyle(item? "-fx-background-color:red":"-fx-background-color:green");
+                    }
+              }  
+            };
+                    return cell;
+        });
+        
+        
         
         treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,version,modified,deleted,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
         

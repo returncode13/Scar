@@ -44,7 +44,7 @@ public class Sequences implements Serializable{
     private Long cmpMin;
     private Long cmpInc;
     private String insightVersion;
-    private Boolean alert;
+    private BooleanProperty alert= new SimpleBooleanProperty(Boolean.FALSE);
     private Boolean modified;
     private Boolean deleted;
     private Long version;
@@ -247,11 +247,11 @@ public class Sequences implements Serializable{
     }
 
     public Boolean getAlert() {
-        return alert;
+        return alert.get();
     }
 
     public void setAlert(Boolean alert) {
-        this.alert = alert;
+        this.alert.set(alert);
     }
 
     public Boolean getModified() {
