@@ -25,6 +25,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import watcher.VolumeTimerTask;
 
 /**
  *
@@ -45,7 +46,7 @@ public class VolumeSelectionModel {
     private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
     private MultiMap<Long,SubSurface> seqSubsMap=new MultiValueMap<>();
     private String insightVersionUsed;
-    
+    private VolumeTimerTask volTimerTask;
     //for Debug
 
     private Long id;
@@ -149,6 +150,7 @@ public class VolumeSelectionModel {
 
     public void setVolumeChosen(File volumeChosen) {
         this.volumeChosen = volumeChosen;
+        startVolumeWatching();
     }
 
      public boolean isAlert() {
@@ -185,6 +187,9 @@ public class VolumeSelectionModel {
     }
     
     
-   
+   public void startVolumeWatching(){
+       System.out.println("fend.session.node.volumes.VolumeSelectionModel:  started a new VolumeTimerTask");
+       volTimerTask=new VolumeTimerTask(volumeChosen.getAbsolutePath());
+   }
     
 }

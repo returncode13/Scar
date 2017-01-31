@@ -895,7 +895,11 @@ public class SessionController implements Initializable {
          Set<SubSurface> csubs=child.getSubsurfacesInJob();
          
          List<VolumeSelectionModel> cVolList=child.getVolList();
-         
+         for (Iterator<VolumeSelectionModel> iterator = cVolList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModel next = iterator.next();
+            next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
+            
+        }
         
          
          

@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -38,6 +39,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.swing.JFileChooser;
+import watcher.VolumeTimerTask;
 
 /**
  *
@@ -96,15 +98,19 @@ public class VolumeSelectionController  {
     private VolumeSelectionModel model;
      private  TableView<SubSurface> table;
      
+     
+     private List<TimerTask> volumeTimerTask=new ArrayList<>();
+     
     @FXML
     void handleSelectVolumeButton(ActionEvent event) {
         final File f=dirChooser.showDialog(selectVolumeButton.getScene().getWindow());
        
             if(f!=null) {
-             model.setVolumeChosen(f);
+             model.setVolumeChosen(f);                    //start watching here
              model.setLabel(f.getName());
              model.setHeaderButtonStatus(Boolean.FALSE);                    //Counter intuitive !:(
-             
+                System.out.println("fend.session.node.volumes.VolumeSelectionController: starting the volume watch");
+          //   model.startVolumeWatching();
             }
            // System.out.println("VSC: "+model.getId()+" label is "+model.getLabel());
     }
