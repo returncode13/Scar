@@ -88,7 +88,7 @@ public class HeaderCollector {
                 
             }
             
-            ArrayList<Headers> headerList=dugHve.calculatedHeaders(subsurfaceHeaderMap);     //  <<<<  The workhorse . get fresh header list here
+            ArrayList<Headers> headerList=dugHve.calculatedHeaders(subsurfaceHeaderMap,existingHeaders);     //  <<<<  The workhorse . get fresh header list here
             if(existingHeaders!=null){
                 headerList.addAll(existingHeaders);                                                         //append any old headers
             }

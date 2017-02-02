@@ -23,6 +23,7 @@ public class DugioScripts implements Serializable{
     private File dugioHeaderValues;
     private File getTimeSubsurfaces;
     private File dugioGetTraces;
+    private File subsurfaceLog;
     
   
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
@@ -48,8 +49,11 @@ public class DugioScripts implements Serializable{
      private String getTimeSubsurfacesContent="#!/bin/bash\n"
     + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \".[[:digit:]].single.idx\" | grep -o \"[[:digit:]]\\{14\\}.[_[:alnum:]-]*[^.]\" | sed s/2D-//\n";
      
-     
+     /*private String subsurfaceLogContent ="#!/bin/bash\n" +
+     "grep -A 0 lineName $1 | awk '{ print $1\" \"$2\" \"$7}'";*/
     
+     private String subsurfaceLogContent ="#!/bin/bash\n" +
+"for i in $1/*; do  grep -A 0 lineName $i /dev/null  ; done | awk '{ print $1 \" \" $2 \" \"  $7}' | sort -k 1,2";
     
     public DugioScripts()
     {
@@ -118,11 +122,23 @@ public class DugioScripts implements Serializable{
             dugioGetTraces.setExecutable(true,false);
             
             
-            //dugioGetTraces.deleteOnExit();
+            dugioGetTraces.deleteOnExit();
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        try {
+            subsurfaceLog=File.createTempFile("subsurfaceLog", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(subsurfaceLog));
+            bw.write(subsurfaceLogContent);
+            bw.close();
+            subsurfaceLog.setExecutable(true,false);
+            
+            
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     
@@ -143,6 +159,11 @@ public class DugioScripts implements Serializable{
     public File getDugioGetTraces() {
         return dugioGetTraces;
     }
+
+    public File getSubsurfaceLog() {
+        return subsurfaceLog;
+    }
+    
     
      
     

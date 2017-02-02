@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+
 /**
  *
  * @author naila0152
@@ -54,6 +55,12 @@ public class SubSurface extends Sequences implements Serializable{
     private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
     private   LongProperty version=new SimpleLongProperty(0L);
+    
+    
+            
+    
+    
+    
     
     private Long id;
 
@@ -284,6 +291,7 @@ public class SubSurface extends Sequences implements Serializable{
         this.version.set(version);
     }
 
+    
     
     
     
