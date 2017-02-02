@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import db.model.Headers;
 import db.model.Volume;
+import fend.session.node.headers.SubSurface;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -305,6 +306,26 @@ public class HeadersDAOImpl implements HeadersDAO{
         
         return volumeSet;
         
+    }
+
+    @Override
+    public List<Headers> getHeadersFor(Volume v, String s) {
+       Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Headers> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Headers.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("subsurface", s));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
     
 }

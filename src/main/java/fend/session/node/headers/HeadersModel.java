@@ -7,6 +7,7 @@ package fend.session.node.headers;
 
 import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import db.model.Headers;
+import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -22,6 +23,7 @@ public class HeadersModel {
     private List<Sequences> seqList=new ArrayList<>();
     private ObservableList<Sequences> sequenceListInHeaders=FXCollections.observableList(seqList);
     private Long id;
+    private VolumeSelectionModel volmodel;
 
     public ObservableList<Sequences> getSequenceListInHeaders() {
         return sequenceListInHeaders;
@@ -30,6 +32,10 @@ public class HeadersModel {
     public void setSequenceListInHeaders(ObservableList<Sequences> sequenceListInHeaders) {
         this.sequenceListInHeaders = FXCollections.observableList(sequenceListInHeaders);
     }
+
+    public HeadersModel(VolumeSelectionModel volmodel) {
+        this.volmodel = volmodel;
+    }
     
     
     
@@ -37,6 +43,18 @@ public class HeadersModel {
     void setId(Long id) {
         this.id=id;
     }
+
+    public VolumeSelectionModel getVolmodel() {
+        if(volmodel==null){
+            System.out.println("fend.session.node.headers.HeadersModel.getVolmodel()  NULL returned");
+        }
+        return volmodel;
+    }
+
+    public void setVolmodel(VolumeSelectionModel volmodel) {
+        this.volmodel = volmodel;
+    }
+    
     
     
     

@@ -39,7 +39,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.swing.JFileChooser;
-import watcher.VolumeTimerTask;
+import watcher.VolumeWatcher;
 
 /**
  *

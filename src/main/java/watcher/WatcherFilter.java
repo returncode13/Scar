@@ -12,15 +12,15 @@ import java.io.FileFilter;
  *
  * @author naila0152
  */
-class VolumeFilterWatcher implements FileFilter{
+class WatcherFilter implements FileFilter{
 
     public String filter;
     
-    public VolumeFilterWatcher(){
+    public WatcherFilter(){
         this.filter="";
     }
     
-    public VolumeFilterWatcher(String filter) {
+    public WatcherFilter(String filter) {
         this.filter=filter;
     }
 

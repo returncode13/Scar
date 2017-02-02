@@ -514,12 +514,29 @@ public class LandingController implements Initializable,Serializable {
                             s.setDeleted(beH.getDeleted());
                             s.setVersion(beH.getVersion());
                 
+                            
+          
+                            //
+                            //
+                            //
+                            //}
+                            /*
+                            List<Logs> logslist=logserv.getLogsFor(beh);
+                            LogsModel lm=new LogsModel()
+                            for(Logs l:logslist){
+                                Long v=l.getVersion();
+                                String logPath=l.getLogpath();
+                                File logfile=new File(logPath);
+                                lm.addToVersionLogFileMap(v,logfile);
+                            }
+                            s.setLogsModel(lm);
+                            */
+                            
+                            
                             seqSubMap.put(s.getSequenceNumber(), s);
 
 
                             sl.add(s);
-          
-          
           
                         }
       
@@ -547,7 +564,7 @@ public class LandingController implements Initializable,Serializable {
                 fv.setInflated(true);
                 fv.setSubsurfaces(sl);
                 
-                            HeadersModel hmod=new HeadersModel();
+                            HeadersModel hmod=new HeadersModel(fv);
                             ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
                             hmod.setSequenceListInHeaders(obseq);
                 

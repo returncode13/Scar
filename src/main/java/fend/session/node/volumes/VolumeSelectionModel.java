@@ -25,7 +25,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
-import watcher.VolumeTimerTask;
+import watcher.LogWatcher;
+import watcher.VolumeWatcher;
 
 /**
  *
@@ -42,21 +43,24 @@ public class VolumeSelectionModel {
     private boolean alert=false;
     private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     
-    private HeadersModel headersModel=new HeadersModel();                                    // the headers corresponding to this particular volume.
+    private HeadersModel headersModel=new HeadersModel(this);                                    // the headers corresponding to this particular volume.
     private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
     private MultiMap<Long,SubSurface> seqSubsMap=new MultiValueMap<>();
     private String insightVersionUsed;
-    private VolumeTimerTask volTimerTask;
+    private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
+    private LogWatcher logTimerTask=null;                                   //watch for any new logs in ../000scratch/logs
     //for Debug
 
     private Long id;
 
     public HeadersModel getHeadersModel() {
+        
         return headersModel;
     }
 
     public void setHeadersModel(HeadersModel headersModel) {
         this.headersModel = headersModel;
+        //this.headersModel.setVolmodel(this);
     }
 
     
@@ -76,17 +80,20 @@ public class VolumeSelectionModel {
         ++i;
         this.volumeSelectionLabel = new SimpleStringProperty(i+" "+volumeSelectionLabel);
         
-        
+         
         this.Inflated=toBeInflated;
      
     }
     
      public VolumeSelectionModel(Boolean toBeinflated) {
+        
         this(new String ("choose vol: "),toBeinflated);
+       //  this.headersModel.setVolmodel(this);
     }
     
     public VolumeSelectionModel(){
         this(new String ("choose vol: "),false);
+         //this.headersModel.setVolmodel(this);
         
         
     }
@@ -150,7 +157,7 @@ public class VolumeSelectionModel {
 
     public void setVolumeChosen(File volumeChosen) {
         this.volumeChosen = volumeChosen;
-        startVolumeWatching();
+        
     }
 
      public boolean isAlert() {
@@ -188,8 +195,25 @@ public class VolumeSelectionModel {
     
     
    public void startVolumeWatching(){
-       System.out.println("fend.session.node.volumes.VolumeSelectionModel:  started a new VolumeTimerTask");
-       volTimerTask=new VolumeTimerTask(volumeChosen.getAbsolutePath());
+       System.out.println("fend.session.node.volumes.VolumeSelectionModel.startVolumeWatching():  starting to watch the Volume");
+       if(volTimerTask==null){
+           volTimerTask=new VolumeWatcher(volumeChosen.getAbsolutePath(),"idx");
+       }
+       
    }
+
+    private void startLogWatching() {
+        System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  starting to watch logs");
+        String logPath=volumeChosen.getAbsolutePath();
+        logPath=logPath+"/../../000scratch/logs";
+        if(logTimerTask==null) {
+            logTimerTask=new LogWatcher(logPath,"",this,Boolean.FALSE);
+        }
+    }
+
+    public void startWatching() {
+        startVolumeWatching();
+        startLogWatching();
+    }
     
 }

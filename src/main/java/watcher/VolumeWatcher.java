@@ -6,72 +6,35 @@
 package watcher;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Date;
+import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  *
  * @author naila0152
  */
-public abstract class VolumeWatcher extends TimerTask{
-    private String volumePath;
-    private File[] subsArray;
-    private HashMap volume=new HashMap();
-    private VolumeFilterWatcher volumeFilterWatcher;
+public class VolumeWatcher {
     
-    
-    
-    public VolumeWatcher(String volumePath){
-        this.volumePath=volumePath;
-    }
-    
-    public VolumeWatcher(String volumePath,String filter){
-        this.volumePath=volumePath;
-        volumeFilterWatcher=new VolumeFilterWatcher(filter);
-        subsArray=new File(volumePath).listFiles(volumeFilterWatcher);
-        
-        
-        
-        for(File sub:subsArray){
-            volume.put(sub, new Long(sub.lastModified()));
-        }
-        
-    }
-    
-    
-    public final void run(){
-        HashSet checkedsubs=new HashSet();
-        subsArray=new File(volumePath).listFiles(volumeFilterWatcher);
-        
-        
-        for(File sub:subsArray){
-            Long currentList=(Long) volume.get(sub);
-            checkedsubs.add(sub);
+    private String volume;          // path to the dugio volume
+    TimerTask task;
+    Timer timer;
+    final private String filter;
+    public VolumeWatcher(String volume,String filter)
+    {
+        System.out.println("watcher.VolumeTimerTask: started to watch");
+        this.volume=volume;
+        this.filter=filter;
+        task=new Watcher(volume, filter) {
             
-            if(currentList==null){
-                volume.put(sub,new Long(sub.lastModified()));
-                onChange(sub,"Added");
+            @Override
+            protected void onChange(File sub, String action) {
+                System.out.println("Volume? "+sub.getParentFile().getName()+" : sub: "+sub.getName().split("\\.")[0].split("-")[1]+" was "+action+" completeName: "+sub.getName());
             }
-            else if(currentList.longValue() != sub.lastModified()){
-                volume.put(sub, new Long(sub.lastModified()));
-                onChange(sub, "Modified");
-            }
-        }
+        };
         
-        
-        
-        Set reference= ((HashMap)volume.clone()).keySet();
-        reference.removeAll((Set)checkedsubs);
-        for (Iterator iterator = reference.iterator(); iterator.hasNext();) {
-            File deletedFile = (File) iterator.next();
-            volume.remove(deletedFile);
-            onChange(deletedFile, "Deleted");
-            
-        }
+     timer=new Timer();
+     timer.schedule(task,new Date(),1000);                          //every second.
     }
-
-    protected abstract void onChange(File sub, String added);
+    
 }

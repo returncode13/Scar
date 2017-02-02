@@ -297,6 +297,7 @@ public class Collector {
         //
        createAllAncestors();
         createAllDescendants();
+        startWatching();
     }
    
      private void createAllAncestors() {
@@ -539,6 +540,20 @@ public class Collector {
           
       }
     }
+
+    private void startWatching() {
+        for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
+            JobStepModel jsm = jit.next();
+            ObservableList<VolumeSelectionModel> vsmlist= jsm.getVolList();
+            for (Iterator<VolumeSelectionModel> iterator = vsmlist.iterator(); iterator.hasNext();) {
+                VolumeSelectionModel next = iterator.next();
+                next.startWatching();
+                
+            }
+        }
+    }
+
+    
      
      
     

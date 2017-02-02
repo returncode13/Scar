@@ -65,5 +65,10 @@ public class HeadersServiceImpl implements HeadersService{
         System.out.println("sub: "+subsurface);
         return hDao.getVolumesContaining(subsurface);
     }
+
+    @Override
+    public List<Headers> getHeadersFor(Volume v, String subsurface) {
+        return hDao.getHeadersFor(v, subsurface);
+    }
     
 }

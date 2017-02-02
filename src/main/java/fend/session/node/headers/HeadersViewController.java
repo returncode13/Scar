@@ -5,14 +5,29 @@
  */
 package fend.session.node.headers;
 
+import db.model.Headers;
+import db.model.Logs;
+import db.model.Volume;
+import db.services.HeadersService;
+import db.services.HeadersServiceImpl;
+import db.services.LogsService;
+import db.services.LogsServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
+import fend.session.node.headers.logger.LogsModel;
+import fend.session.node.headers.logger.LogsNode;
+import fend.session.node.headers.logger.VersionLogsModel;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
@@ -21,6 +36,7 @@ import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
+import watcher.LogWatcher;
 
 /**
  * FXML Controller class
@@ -33,6 +49,10 @@ public class HeadersViewController extends Stage implements Initializable {
     private HeadersModel hmodel;
     private HeadersNode hnode;
     ObservableList<Sequences> seqListObs;
+    HeadersService hdserv=new HeadersServiceImpl();
+    VolumeService vserv=new VolumeServiceImpl();
+    LogsService lserv=new LogsServiceImpl();
+            
     
        @FXML
     private TreeTableView<Sequences> treetableView;
@@ -51,24 +71,99 @@ public class HeadersViewController extends Stage implements Initializable {
     }    
 
     void setModel(HeadersModel lsm) {
+        if(lsm==null){
+            System.out.println("fend.session.node.headers.setModel: lsm is NULL");
+        }
       hmodel=lsm;  
      seqListObs=hmodel.getSequenceListInHeaders();
-     
+     /*
      treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
-            @Override
+     @Override
+     protected void updateItem(Sequences item,boolean empty){
+     super.updateItem(item,empty);
+     if(item==null || empty){
+     setText(null);
+     setStyle("");
+     }else if(item.getAlert()){
+     setStyle("-fx-background-color:tomato");
+     }else
+     {
+     setStyle("-fx-background-color:green");
+     }
+     }
+     });
+     */
+     
+     treetableView.setRowFactory(ttv->{
+         ContextMenu contextMenu = new ContextMenu();
+         MenuItem menuItem=new MenuItem("Show Logs");
+         contextMenu.getItems().add(menuItem);
+         TreeTableRow<Sequences> row=new TreeTableRow<Sequences>(){
+             
+             @Override
             protected void updateItem(Sequences item,boolean empty){
                 super.updateItem(item,empty);
                 if(item==null || empty){
                     setText(null);
                     setStyle("");
+                    setContextMenu(null);
                 }else if(item.getAlert()){
                     setStyle("-fx-background-color:tomato");
+                    setContextMenu(contextMenu);
                 }else
                 {
                     setStyle("-fx-background-color:green");
+                    setContextMenu(contextMenu);
                 }
             }
-        });
+         };
+         
+         menuItem.setOnAction(evt->{
+             Sequences seq=row.getItem();
+             List<VersionLogsModel> verslogsmodel=new ArrayList<>();
+             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
+             System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
+             Volume v=vserv.getVolume(lsm.getVolmodel().getId());
+             List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());
+             if(h.size()==1){
+                 
+                 System.out.println("fend.session.node.headers.setRowFactory(): Headers : sub: "+h.get(0).getSubsurface()+" id: "+h.get(0).getIdHeaders());
+                 List<Logs> loglist=lserv.getLogsFor(h.get(0));
+                 if(loglist.isEmpty()){
+                     String logLocation=v.getPathOfVolume();
+                     logLocation= logLocation+"/../../000scratch/logs";
+                     
+                   LogWatcher lw=  new LogWatcher(logLocation,"", lsm.getVolmodel(),Boolean.TRUE);
+                     
+                     
+                 }
+                 else{
+                     String logLocation=v.getPathOfVolume();
+                     logLocation= logLocation+"/../../000scratch/logs";
+                     LogWatcher lw=  new LogWatcher(logLocation,"", lsm.getVolmodel(),Boolean.TRUE);
+                     System.out.println("fend.session.node.headers.setRowFactory(): non empty log list!");
+                     for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
+                         Logs logs = iterator.next();
+                         Long version=logs.getVersion();
+                         String timestamp=logs.getTimestamp();
+                         String logfilePath=logs.getLogpath();
+                         VersionLogsModel lmod=new VersionLogsModel(version,timestamp,logfilePath);
+                         verslogsmodel.add(lmod);
+                     }
+                     
+                     
+                 }
+                 
+                       
+                 
+             }
+             LogsModel logsmodel=new LogsModel();
+             logsmodel.setLogsmodel(verslogsmodel);
+             LogsNode logsnode=new LogsNode(logsmodel);
+             
+         });
+                 return row;
+     });
      
      
         TreeTableColumn<Sequences,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
