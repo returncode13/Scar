@@ -15,9 +15,9 @@ import fend.session.node.jobs.JobStepModel;
  * @author naila0152
  */
 public class LinksModel implements Serializable{
-    private AnchorModel mStart;
-    private AnchorModel mEnd;
-    private CubCurveModel mCurve;
+    private AnchorModel mStart=new AnchorModel();
+    private AnchorModel mEnd=new AnchorModel();
+    private CubCurveModel mCurve=new CubCurveModel();
     
     private JobStepModel parent;
     private JobStepModel child;
@@ -32,7 +32,8 @@ public class LinksModel implements Serializable{
         mStart=ms;
         mEnd=me;
         mCurve=cm;
-        
+        ms.setLmodel(this);
+        me.setLmodel(this);
         
         
       
@@ -84,10 +85,12 @@ public class LinksModel implements Serializable{
 
     public void setParent(JobStepModel parent) {
         this.parent = parent;
+        this.mStart.setJob(this.parent);
     }
 
     public void setChild(JobStepModel child) {
         this.child = child;
+        this.mEnd.setJob(this.child);
     }
     
     

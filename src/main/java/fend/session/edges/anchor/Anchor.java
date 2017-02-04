@@ -42,9 +42,10 @@ public class Anchor extends Circle{
               setStrokeWidth(1);
               setStrokeType(StrokeType.OUTSIDE);
               
-              this.model.getCenterX().bindBidirectional(centerXProperty());
-              this.model.getCenterY().bindBidirectional(centerYProperty());
-              
+              /*this.model.getCenterX().bindBidirectional(centerXProperty());
+              this.model.getCenterY().bindBidirectional(centerYProperty());*/
+              this.model.getCenterX().bind(centerXProperty());
+              this.model.getCenterY().bind(centerYProperty());
               //model.bindBidirectional(centerXProperty());
               //y.bindBidirectional(centerYProperty());
               enableDrag();
@@ -170,7 +171,7 @@ public class Anchor extends Circle{
                   @Override
                   public void handle(MouseDragEvent event) {
                   //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                      System.out.println(" ArrowsAndCurves: MouseDrag Released: "+event.getScreenX()+","+event.getScreenY());
+                      System.out.println(" Anchore. ArrowsAndCurves: MouseDrag Released: "+event.getScreenX()+","+event.getScreenY());
                   }
                   
               }); 
@@ -180,7 +181,8 @@ public class Anchor extends Circle{
                   @Override
                   public void handle(DragEvent event) {
                //       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                 System.out.println(" ArrowsAndCurves: DragEntered: "+event.getScreenX()+","+event.getScreenY());
+                 System.out.println(" "
+                         + "Anchor. ArrowsAndCurves: DragEntered: "+event.getScreenX()+","+event.getScreenY());
                   }
               });
                
@@ -190,7 +192,8 @@ public class Anchor extends Circle{
                   @Override
                   public void handle(MouseEvent event) {
                      // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                       System.out.println(" ArrowsAndCurves: Drag Detected: "+event.getScreenX()+","+event.getScreenY()+ ": eventype: "+event.getEventType());
+                       System.out.println("Anchor.  ArrowsAndCurves: Drag Detected: "+event.getScreenX()+","+event.getScreenY()+ ": eventype: "+event.getEventType());
+                       System.out.println("Anchor.  Anchor is at the end of the link whose parent is "+Anchor.this.getLink().getLmodel().getParent().getJobStepText());
                        startFullDrag();
                        
                        

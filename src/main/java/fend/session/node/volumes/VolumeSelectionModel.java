@@ -194,7 +194,7 @@ public class VolumeSelectionModel {
     }
     
     
-   public void startVolumeWatching(){
+   private void startVolumeWatching(){
        System.out.println("fend.session.node.volumes.VolumeSelectionModel.startVolumeWatching():  starting to watch the Volume");
        if(volTimerTask==null){
            volTimerTask=new VolumeWatcher(volumeChosen.getAbsolutePath(),"idx");

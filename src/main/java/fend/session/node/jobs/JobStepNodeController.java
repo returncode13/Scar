@@ -365,6 +365,22 @@ public class JobStepNodeController {
     }
     
     
+    public void startNewLink(JobStepModel jmod){
+        List<LinksModel> lmList = jmod.getListOfLinkModels();
+        LinksModel lm=lmList.get(lmList.size()-1);
+        obsLinkList.add(lm);
+        Links link=new Links(lm);
+        CubCurve curve=link.getCurve();
+        curve.startXProperty().bind(Bindings.add(jsn.layoutXProperty(),jsn.boundsInLocalProperty().get().getMaxX()));
+        curve.startYProperty().bind(Bindings.add(jsn.layoutYProperty(),jsn.boundsInLocalProperty().get().getMaxY()/2));
+        curve.setEndX(basePane.getScene().getX()+100.0);
+        curve.setEndY(basePane.getScene().getY()+100.0);
+        
+        basePane.getChildren().add(0,link);
+       
+                
+    };
+    
     /*Dummy test
     */
  

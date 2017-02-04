@@ -41,6 +41,12 @@ public class CubCurve extends CubicCurve{
         endXProperty().bindBidirectional(cm.getmEndXProperty());
         endYProperty().bindBidirectional(cm.getmEndYProperty());
         
+        /*startXProperty().bind(cm.getmStartXProperty());
+        startYProperty().bind(cm.getmStartYProperty());
+        endXProperty().bind(cm.getmEndXProperty());
+        endYProperty().bind(cm.getmEndYProperty());
+        */
+        
         controlX1Property().bindBidirectional(cm.getmControlDirectionX1());
         controlX2Property().bindBidirectional(cm.getmControlDirectionX2());
         controlY1Property().bindBidirectional(cm.getmControlDirectionY1());

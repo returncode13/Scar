@@ -5,6 +5,7 @@
  */
 package fend.session.edges.anchor;
 
+import fend.session.edges.LinksModel;
 import java.io.Serializable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -23,6 +24,7 @@ public class AnchorModel implements Serializable{
     private Color color;
     private Long id;
     private JobStepModel job;                                               //the job step on which this anchor lies
+    private LinksModel lmodel;
     
     public AnchorModel() {
         centerX=new SimpleDoubleProperty();
@@ -84,6 +86,14 @@ public class AnchorModel implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LinksModel getLmodel() {
+        return lmodel;
+    }
+
+    public void setLmodel(LinksModel lmodel) {
+        this.lmodel = lmodel;
     }
           
     

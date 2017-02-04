@@ -61,6 +61,10 @@ public class SessionModel implements Serializable{
     public void setListOfJobs(ObservableList<JobStepModel> listOfJobs) {
         this.listOfJobs = listOfJobs;
     }
+    
+    public void removeJobfromSession(JobStepModel jobToBeDeleted){
+        listOfJobs.remove(jobToBeDeleted);
+    }
 
     
 

@@ -208,7 +208,7 @@ public class SessionController implements Initializable {
             System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
             
         }
-        obsModelList.add(new JobStepModel());
+        obsModelList.add(new JobStepModel(model));
         jsn=new JobStepNode(obsModelList.get(obsModelList.size()-1));
         System.out.println("Value of numCols: "+numCols+" numRows: "+numRows);
         
@@ -254,7 +254,7 @@ public class SessionController implements Initializable {
              System.out.println("JGVC: Drag dropped on basePane mouse entered in row# "+rowNo+" colume#"+ ColNo);
          //interactiveAnchorPane.getChildren().add(node);
          
-          jsn.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
+            jsn.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
             success=true;
         }
         event.setDropCompleted(success);
@@ -324,7 +324,12 @@ public class SessionController implements Initializable {
     public void setObsModelList(ObservableList<JobStepModel> obsModelList) {
         this.obsModelList = obsModelList;
         System.out.println("Inside fend.session.SessionController.setObsModelList()");
-        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+        printGraph(obsModelList);
+        
+        
+        
+     /*   System.out.println("Inside fend.session.SessionController.setObsModelList()");
+       for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
             JobStepModel next = iterator.next();
             List<JobStepModel> children=next.getJsChildren();
                 for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
@@ -341,13 +346,63 @@ public class SessionController implements Initializable {
                 
             }
             
-        }
+        }*/
     }
 
     
+    private void printGraph(List<JobStepModel> jlist){
+        ArrayList<JobStepModel> rootList=new ArrayList<>();
+        for (Iterator<JobStepModel> iterator = jlist.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            if(next.getJsParents().size()==1 && next.getJsParents().get(0).getId().equals(next.getId())){
+                rootList.add(next);
+            }
+            
+        }
+        
+        for (Iterator<JobStepModel> iterator = rootList.iterator(); iterator.hasNext();) {
+            JobStepModel root = iterator.next();
+            List<JobStepModel> children=root.getJsChildren();
+            System.out.println(root.getJobStepText()+"--|");
+        //    System.out.print(printSpace(root.getJobStepText().length()+2)+"|--");
+            for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
+                JobStepModel next = iterator1.next();
+                //System.out.print(next.getJobStepText());
+               
+                walk(root,next,root.getJobStepText().length()+2);
+            }
+            
+        }
+                
+    }
 
+    private String printSpace(int n){
+        String c=new String();
+        for(int i=0;i<n;i++)c+=" ";
+        return c;
+    }
     
     
+    private void walk(JobStepModel parent,JobStepModel child,int ii){
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(0).getId().equals(parent.getId())){return;}
+        else{
+            
+            System.out.println(printSpace(ii)+"|--"+child.getJobStepText());
+            ii+=child.getJobStepText().length();
+            List<JobStepModel> children=child.getJsChildren();
+            for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
+                JobStepModel next = iterator.next();
+                if(!next.getId().equals(child.getId())){
+                    //System.out.println(printSpace(ii)+"|--"+next.getJobStepText());
+                    ii+=next.getJobStepText().length();
+                }
+                
+                       
+                walk(child,next,ii);
+            }
+        }
+        
+    }
     public ObservableList<JobStepModel> getObsModelList() {
         return obsModelList;
     }
@@ -391,6 +446,7 @@ public class SessionController implements Initializable {
             
             
         }
+            //obsModelList=model.getListOfJobs();
             
        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
            JobStepModel next = iterator.next();
@@ -535,9 +591,10 @@ public class SessionController implements Initializable {
         
         JobStepModel jsmod=next.getJsnc().getModel();
         AnchorModel mstart=new AnchorModel();
-         Double centerX=next.boundsInLocalProperty().getValue().getMinX()+310;
-            Double centerY=next.boundsInLocalProperty().getValue().getMinY()+72;
-          
+        /*Double centerX=next.boundsInLocalProperty().getValue().getMinX()+310;
+        Double centerY=next.boundsInLocalProperty().getValue().getMinY()+72;*/
+          Double centerX=next.boundsInLocalProperty().getValue().getMaxX();
+            Double centerY=next.boundsInLocalProperty().getValue().getMaxY()/2;
          // Double centerX=next.layoutXProperty().doubleValue();
          // Double centerY=next.layoutYProperty().doubleValue();//next.getHeight();
             
@@ -572,7 +629,7 @@ public class SessionController implements Initializable {
                 for (Map.Entry<JobStepNode, AnchorModel> entry : jsnAnchorMap.entrySet()) {
                 JobStepNode key = entry.getKey();
                 AnchorModel mEnd = entry.getValue();
-                
+               // AnchorModel mEnd= new AnchorModel();
                 Long keyId=Long.parseLong(key.getId());         //since jobstepnodes id is a string
                    // System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " id of node: "+keyId);
                 
@@ -584,15 +641,15 @@ public class SessionController implements Initializable {
                     System.out.println("fend.session.SessionController.drawCurve() MAYlayoutY: "+key.getParent().boundsInLocalProperty().getValue().getMaxY());
                     System.out.println("fend.session.SessionController.drawCurve() "+key.getProperties().toString());
                   double sx=key.boundsInLocalProperty().getValue().getMaxX();
-                 double sy=key.boundsInLocalProperty().getValue().getMinY()+144;
-                  
+                // double sy=key.boundsInLocalProperty().getValue().getMinY()+144;
+                  double sy=key.boundsInLocalProperty().getValue().getMaxY()/2;
                   //double sx=key.getLayoutX();
                   //double sy=key.getLayoutY();
                   
                    mEnd.setJob(next1);
-                   mEnd.setCenterX(sx);
+                  // mEnd.setCenterX(sx);
                    
-                   mEnd.setCenterY(sy);                    //redundant but for the sake of uniformity..   :(
+                   //mEnd.setCenterY(sy);                    //redundant but for the sake of uniformity..   :(
                    
                    
                     CubCurveModel cmod=new CubCurveModel();
@@ -617,12 +674,33 @@ public class SessionController implements Initializable {
                     
                  //   System.out.println("fend.session.SessionController.drawCurve():  for: "+next.getJsnc().getModel().getJobStepText()+" : child: "+key.getJsnc().getModel().getJobStepText());
                     
-                   curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMinX()+310));         //next is the parent node
-                   curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72));
-                    
+                    curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMinX()+515));         //next is the parent node
+                    curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72));
+                    /*curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMaxX()));         //next is the parent node
+                    curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMaxY()/2));*/
                     curve.endXProperty().bind(Bindings.add(key.layoutXProperty(),key.boundsInLocalProperty().get().getMinX()));           //key in the child node
                     curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getMinY()+72));       // this is HARDCODED!!! find a way to get the height of the node!
-                   // curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getHeight()/2));
+                   
+                    /*curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getMinY()));
+                    System.out.println("Next MaxX(): "+next.boundsInLocalProperty().get().getMaxX());
+                    System.out.println("Next MinX(): "+next.boundsInLocalProperty().get().getMinX());
+                    System.out.println("Next MaxY(): "+next.boundsInLocalProperty().get().getMaxY());
+                    System.out.println("Next MinY(): "+next.boundsInLocalProperty().get().getMinY());
+                    System.out.println("Next PHeight(): "+next.boundsInLocalProperty().get().getHeight());
+                    System.out.println("Next PWidth(): "+next.boundsInParentProperty().get().getWidth());
+                    System.out.println("Next PMaxX(): "+next.boundsInParentProperty().get().getMaxX());
+                    System.out.println("Next PMinX(): "+next.boundsInParentProperty().get().getMinX());
+                    System.out.println("Next PMaxY(): "+next.boundsInParentProperty().get().getMaxY());
+                    System.out.println("Next PMinY(): "+next.boundsInParentProperty().get().getMinY());
+                    
+                    System.out.println("Key MaxX(): "+key.boundsInLocalProperty().get().getMaxX());
+                    System.out.println("Key MinX(): "+key.boundsInLocalProperty().get().getMinX());
+                    System.out.println("Key MaxY(): "+key.boundsInLocalProperty().get().getMaxY());
+                    System.out.println("Key MinY(): "+key.boundsInLocalProperty().get().getMinY());
+                    System.out.println("Key Height(): "+key.boundsInLocalProperty().get().getHeight());
+                    System.out.println("Key Width(): "+key.boundsInLocalProperty().get().getWidth());*/
+                    
+                    // curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getHeight()/2));
                   //  System.out.println("fend.session.SessionController.drawCurve(): for parent "+next.getJsnc().getModel().getJobStepText()+"   :Setting startX : :next.boundsInLocalProperty().get().getMaxX():  "+next.boundsInLocalProperty().get().getMaxX());
                   //  System.out.println("fend.session.SessionController.drawCurve(): for child  "+key.getJsnc().getModel().getJobStepText() +"   :Setting  endX  : :next.boundsInLocalProperty().get().getMaxX():  "+key.boundsInLocalProperty().get().getMaxX());
                     rightInteractivePane.getChildren().add(0,ln);
@@ -1031,6 +1109,20 @@ public class SessionController implements Initializable {
          
          
          
+    }
+
+    public void startWatching() {
+        
+        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepModel next = iterator.next();
+            List<VolumeSelectionModel> volList=next.getVolList();
+                
+                for (Iterator<VolumeSelectionModel> iterator1 = volList.iterator(); iterator1.hasNext();) {
+                VolumeSelectionModel vol = iterator1.next();
+                vol.startWatching();
+                
+            }
+        }
     }
    
     

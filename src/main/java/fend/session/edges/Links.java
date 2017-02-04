@@ -41,7 +41,10 @@ public class Links extends Group{
         curve.endXProperty().bindBidirectional(end.centerXProperty());
         curve.endYProperty().bindBidirectional(end.centerYProperty());
         
-        
+        /* curve.startXProperty().bind(start.centerXProperty());
+        curve.startYProperty().bind(start.centerYProperty());
+        curve.endXProperty().bind(end.centerXProperty());
+        curve.endYProperty().bind(end.centerYProperty());*/
         
         getChildren().addAll(start,curve,end);
         setId(UUID.randomUUID().getMostSignificantBits()+"");
