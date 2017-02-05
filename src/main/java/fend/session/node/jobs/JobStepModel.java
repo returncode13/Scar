@@ -119,7 +119,13 @@ public class JobStepModel {
     }
  
     
+    public void addSelfToParent(){
+        jsParents.add(this);
+    }
     
+    public void addSelfToChild(){
+        jsChildren.add(this);
+    }
     
     
     
@@ -133,7 +139,7 @@ public class JobStepModel {
             jsParents.remove(this);
         jsParents.add(parent);
         }
-        System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Parents of "+this.getJobStepText());
+        System.out.println("fend.session.node.jobs.JobStepModel.addToParent(): Parents of "+this.getJobStepText());
         for (Iterator<JobStepModel> iterator = jsParents.iterator(); iterator.hasNext();) {
             JobStepModel next = iterator.next();
             System.out.println(next.getJobStepText());

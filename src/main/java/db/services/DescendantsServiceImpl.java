@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Set;
 import db.model.Descendants;
 import db.model.SessionDetails;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -48,9 +51,78 @@ public class DescendantsServiceImpl implements DescendantsService{
     public void deleteDescendants(Long did) {
         descDao.deleteDescendants(did);
     }
-
+    
+    
     @Override
-    public void getInitialDescendantsListFor(SessionDetails fkid, Set<Long> listOfDescendants) {
+    public void getInitialDescendantsListFor(SessionDetails fkid, Set<Long> listOfDescendants){
+        List<Child> childrenList=getChildrenList();
+        getInitialDescendantsListFor(fkid, listOfDescendants,childrenList);
+    } 
+    
+    
+    
+    private List<Child> getChildrenList() {
+        Session sess = HibernateUtil.getSessionFactory().openSession();
+        List<Child> results=null;
+        Transaction transaction=null;
+        try{
+        transaction=sess.beginTransaction();
+        
+        Criteria criteria=sess.createCriteria(Child.class);
+        results=criteria.list();                           //get all the Parent entries;
+        transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sess.close();
+        }
+        return results;
+    }
+    
+    
+    
+    private void getInitialDescendantsListFor(SessionDetails s,Set<Long> listOfAncestors,List<Child> childrenList){
+        List<Child> shortList=new ArrayList<>();
+        
+        for (Iterator<Child> iterator = childrenList.iterator(); iterator.hasNext();) {
+            Child child = iterator.next();
+            if(child.getSessionDetails().getIdSessionDetails().equals(s.getIdSessionDetails())){
+                shortList.add(child);                         //shortlist will now contain the list of all children where FK=s .i.e list of all jobs belonging to the same session
+                
+            }
+        }
+        
+        
+        for (Child ancs:shortList) {
+                SessionDetails sdAnc=ssdServ.getSessionDetails(ancs.getChild());
+                if(Objects.equals(s.getIdSessionDetails(), sdAnc.getIdSessionDetails()))
+                    {
+                        System.out.println(s.getJobStep().getNameJobStep()+ ": root Or a standalone node...eitherways a root");
+                    listOfAncestors.add(s.getIdSessionDetails());
+                        
+                    return;
+                    }
+                listOfAncestors.add(s.getIdSessionDetails());
+                getInitialDescendantsListFor(sdAnc,listOfAncestors,childrenList);   
+            }
+                
+        
+    }
+    
+    
+
+    
+    private void getInitialDescendantsListFor(SessionDetails fkid, Set<Long> listOfDescendants,Session session) {
+        
+         if(session!=null && session.isOpen()){
+            
+            session.getTransaction().commit();
+            session.close();
+           
+        
+        }
+        
+        
           Session sess = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=sess.beginTransaction();
         try{
@@ -77,17 +149,18 @@ public class DescendantsServiceImpl implements DescendantsService{
                         return;
                     }
                    listOfDescendants.add(fkid.getIdSessionDetails());
-                    getInitialDescendantsListFor(sdDesc,listOfDescendants);
+                    getInitialDescendantsListFor(sdDesc,listOfDescendants,sess);
                       
                        
             }
-           
-            transaction.commit();
+            
+            if(sess.isOpen() && sess.isConnected())
+          transaction.commit();
             
         }catch(Exception e){
             e.printStackTrace();
         }finally{
-            sess.close();
+         if(sess.isOpen())sess.close();
         }
          //list.add(s);
     }
@@ -178,5 +251,7 @@ public class DescendantsServiceImpl implements DescendantsService{
     public Descendants getDescendantsFor(SessionDetails fkid, Long descendant) {
       return  descDao.getDescendantsFor(fkid,descendant);
     }
+
+    
     
 }

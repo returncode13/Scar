@@ -330,20 +330,20 @@ public class Collector {
          
          for (Iterator<SessionDetails> sli = sL.iterator(); sli.hasNext();) {
              SessionDetails sdn = sli.next();
-             
+             System.out.println("collector.Collector.createAllAncestors(): Searching for parent of sessionDetails: "+sdn.getIdSessionDetails());
              List<Parent> pl=pServ.getParentsFor(sdn);
              
                 for (Iterator<Parent> pit = pl.iterator(); pit.hasNext();) {
                  Parent pan = pit.next();
                  Long pin=pan.getIdParent();
-                 
+                 System.out.println("collector.Collector.createAllAncestors(): deleting parent id: "+pin);
                  pServ.deleteParent(pin);
                  
              }
              
          }
          
-         
+         System.out.println("collector.Collector.createAllAncestors(): Done deleting parents");
          
          
          //load the dbAncestor List
@@ -359,7 +359,7 @@ public class Collector {
                    // System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
                       ArrayList<JobStepModel> listOfParents=jsm.getJsParents();
                  
-                 for (Iterator<JobStepModel> pit = listOfParents.iterator(); pit.hasNext();) {
+                 for(Iterator<JobStepModel> pit = listOfParents.iterator(); pit.hasNext();) {
                      JobStepModel par = pit.next();
               //       System.out.println("collector.Collector.createAllAncestors(): "+par.getJobStepText());
                      
@@ -371,7 +371,7 @@ public class Collector {
                //      System.out.println("collector.Collector.createAllAncestors()  ParentJobStep: "+parJs.getNameJobStep());
                //      System.out.println("collector.Collector.createAllAncestors() CurrentSession: "+currentSession.getNameSessions());
                      SessionDetails parSSd=ssdServ.getSessionDetails(parJs, currentSession);
-                     parent.setParent(parSSd.getIdSessionDetails());
+                    if(parSSd!=null)parent.setParent(parSSd.getIdSessionDetails());
                     
                      if(pServ.getParentFor(parent.getSessionDetails(), parent.getParent())==null){dbParent.add(parent);}
               

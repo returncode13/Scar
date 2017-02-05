@@ -47,6 +47,12 @@ public class SessionDetails implements Serializable{
    @OneToMany(mappedBy = "sessionDetails",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<Ancestors> ancestors;
 
+    @OneToMany(mappedBy = "sessionDetails",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Parent> parents;
+    
+     @OneToMany(mappedBy = "sessionDetails",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Child> children;
+    
     public SessionDetails() {
     }
 
@@ -135,6 +141,22 @@ public class SessionDetails implements Serializable{
 
     public void setSessions(Sessions sessions) {
         this.sessions = sessions;
+    }
+
+    public Set<Parent> getParents() {
+        return parents;
+    }
+
+    public void setParents(Set<Parent> parents) {
+        this.parents = parents;
+    }
+
+    public Set<Child> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Child> children) {
+        this.children = children;
     }
 
     

@@ -8,11 +8,13 @@ package fend.session;
 import collector.Collector;
 import db.model.Acquisition;
 import db.model.Ancestors;
+import db.model.Child;
 import db.model.Descendants;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
 import db.model.OrcaView;
+import db.model.Parent;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
@@ -20,6 +22,8 @@ import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
+import db.services.ChildService;
+import db.services.ChildServiceImpl;
 import db.services.DescendantsService;
 import db.services.DescendantsServiceImpl;
 import db.services.HeadersService;
@@ -30,6 +34,8 @@ import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
 import db.services.OrcaViewService;
 import db.services.OrcaViewServiceImpl;
+import db.services.ParentService;
+import db.services.ParentServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.VolumeService;
@@ -150,7 +156,8 @@ public class SessionController implements Initializable {
     private DescendantsService descServ=new DescendantsServiceImpl();
     private VolumeService volServ=new VolumeServiceImpl();
     private HeadersService hdrServ=new HeadersServiceImpl();
-            
+    private ParentService pserv=new ParentServiceImpl();
+    private ChildService cserv=new ChildServiceImpl();
     
 
     @FXML
@@ -314,18 +321,18 @@ public class SessionController implements Initializable {
             {
                 Links ln=(Links) next;
                 
-                obsLinksModelList.add(ln.getLmodel());
+               // obsLinksModelList.add(ln.getLmodel());
             }
             
             
-            
+            obsLinksModelList=FXCollections.observableArrayList(model.getListOfLinks());
             
         }
             
             //model.setListOfJobs(obsModelList);
-            model.setListOfLinks(linksModelList);
+            //model.setListOfLinks(linksModelList);
             
-                System.out.println("JGVC: Set the last model");
+                System.out.println("fend.sessions.SessionController.commit: Set the last model");
 
              //   collector.setCurrentSession(model.getId());
             //collector.setFeJobGraphModel(model);
@@ -470,7 +477,8 @@ public class SessionController implements Initializable {
             {
                 Links ln=(Links) next;
                 
-                obsLinksModelList.add(ln.getLmodel());
+                //obsLinksModelList.add(ln.getLmodel());
+                obsLinksModelList=FXCollections.observableArrayList(model.getListOfLinks());
             }
             
             
@@ -485,7 +493,33 @@ public class SessionController implements Initializable {
                System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode: job found with id: "+jsd.getIdJobStep()+" : name: "+jsd.getNameJobStep());
            List<SessionDetails> sessionDetailsList=ssdServ.getSessionDetails(jsd);        // all the sessions to which this job belongs to.
            List<JobVolumeDetails> jobvolumeDetailsList=jvdServ.getJobVolumeDetails(jsd);  //list of volumes that belong to this job
-          
+           /*
+           for (Iterator<SessionDetails> iterator1 = sessionDetailsList.iterator(); iterator1.hasNext();) {
+           SessionDetails sessionDetails = iterator1.next();
+           Sessions session=sessionDetails.getSessions();                           //get one of the sessions
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode:  DELETING sessiondetails with id: "+sessionDetails.getIdSessionDetails()+" : session:  "+sessionDetails.getSessions().getNameSessions()+"  :job: "+sessionDetails.getJobStep().getNameJobStep() );
+           List<Parent> pl=pserv.getParentsFor(sessionDetails);
+           for (Iterator<Parent> pit = pl.iterator(); pit.hasNext();) {
+           Parent pan = pit.next();
+           Long pin=pan.getIdParent();
+           pserv.deleteParent(pin);
+           }
+           
+           List<Child> cl=cserv.getChildrenFor(sessionDetails);
+           for (Iterator<Child> cin = cl.iterator(); cin.hasNext();) {
+           Child chan = cin.next();
+           Long cid=chan.getIdChild();
+           cserv.deleteChild(cid);
+           
+           }
+           
+           
+           //ssdServ.deleteSessionDetails(sessionDetails.getIdSessionDetails());
+           }
+           */
+           
+           
+           
            System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode: DELETING job with id: "+jsd.getIdJobStep()+" : name: "+jsd.getNameJobStep());
            jServ.deleteJobStep(jsd.getIdJobStep());
            
@@ -507,12 +541,7 @@ public class SessionController implements Initializable {
            }
            
             
-           for (Iterator<SessionDetails> iterator1 = sessionDetailsList.iterator(); iterator1.hasNext();) {
-               SessionDetails sessionDetails = iterator1.next();
-               Sessions session=sessionDetails.getSessions();                           //get one of the sessions
-               System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode:  DELETING sessiondetails with id: "+sessionDetails.getIdSessionDetails()+" : session:  "+sessionDetails.getSessions().getNameSessions()+"  :job: "+sessionDetails.getJobStep().getNameJobStep() ); 
-               //ssdServ.deleteSessionDetails(sessionDetails.getIdSessionDetails());
-           }
+          
             
            
          
@@ -552,7 +581,7 @@ public class SessionController implements Initializable {
            
        }
             
-            model.setListOfLinks(linksModelList);
+            //model.setListOfLinks(linksModelList);
             
             System.out.println("SC: model has ID: "+model.getId());
    }
@@ -971,10 +1000,14 @@ public class SessionController implements Initializable {
       */
      private void setPendingJobsFlag(JobStepModel parent,JobStepModel child){
          
-         if(parent.getId().equals(child.getId())){
+         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){
              System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
              return;
          }
+         /*if(parent.getId().equals(child.getId())){
+         System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
+         return;
+         }*/
          child.setPendingFlagProperty(Boolean.FALSE);
          
          System.out.println("fend.session.SessionController.setPendingJobsFlag(): called for Parent: "+parent.getJobStepText()+" :child: "+child.getJobStepText());
@@ -1044,10 +1077,15 @@ public class SessionController implements Initializable {
        
         //If Child has been traversed then return.   Create a "traversed" flag in JobStepModel and set in each time the node is returning "upwards". i.e it and all of its descendants have been traversed, set its "traversed" flag to True
         
-         if(parent.getId().equals(child.getId())){
-             System.out.println("collector.Collector.setQCFlag():  ROOT/LEAF found: "+parent.getJobStepText());
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+             System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
              return;
          }
+        
+        /*if(parent.getId().equals(child.getId())){
+        System.out.println("collector.Collector.setQCFlag():  ROOT/LEAF found: "+parent.getJobStepText());
+        return;
+        }*/
           child.setQcFlagProperty(Boolean.FALSE);
          
          //Set<SubSurface> csubs= calculateSubsInJob(child);
