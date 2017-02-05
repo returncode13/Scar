@@ -171,7 +171,7 @@ public class LogWatcher {
                                                 
                                                 List<Logs>logsList=lserv.getLogsFor(h);
                                                 if(logsList.isEmpty()){
-                                                    System.out.println("Loglist is EMPTY");
+                                                    System.out.println("watcher.LogWatcher: Loglist is EMPTY");
                                                     
                                                     newLog=true;
                                                     Long preVersion=0L;
@@ -203,6 +203,19 @@ public class LogWatcher {
                                                     l.setTimestamp(next.date);
                                                     lserv.createLogs(l);
                                                     newLog=false;*/
+                                                    ////
+                                                    
+                                                   
+                                                    
+                                                    
+                                                    
+                                                    //////
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
                                                 }
                                                 else{
                                                     System.out.println("Loglist is NOT empty");
@@ -369,6 +382,23 @@ public class LogWatcher {
                                     l.setTimestamp(next.date);
                                     lserv.createLogs(l);
                                     newLog=false;*/
+                                    
+                                    /////
+                                    
+                                   
+                                    
+                                    
+                                        
+                                        
+                                        
+                                    
+                                  
+                                    
+                                    
+                                    /////
+                                    
+                                    
+                                    
                                 }
                                 else{
                                     System.out.println("Loglist is NOT empty");
@@ -410,6 +440,8 @@ public class LogWatcher {
                             }
                             else if(hlist.size()>1){
                                 //Error
+                                
+                                System.out.println("watcher.LogWatcher: "+next.linename+" has more than one entry for the volume : "+v.getNameVolume());
                             }
                         }
                         

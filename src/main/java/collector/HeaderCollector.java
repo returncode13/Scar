@@ -34,6 +34,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import watcher.LogWatcher;
 
 /**
  *
@@ -58,7 +59,9 @@ public class HeaderCollector {
     final private static HeadersService hdrServ=new HeadersServiceImpl();
     final private static VolumeService volServ=new VolumeServiceImpl();
     private Volume dbVolume;
-
+    private String logLocation;
+    
+    
     public void setFeVolumeSelModel(VolumeSelectionModel feVolumeSelModel) {
         this.feVolumeSelModel = feVolumeSelModel;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
@@ -67,6 +70,9 @@ public class HeaderCollector {
         
         System.out.println("HeaderColl: Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("HeaderColl: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
+        logLocation=dbVolume.getPathOfVolume()+"/../../000scratch/logs";
+                
+        System.out.println("collector.HeaderCollector: looking for logs in "+logLocation);
         calculateAndCommitHeaders();
     }
     
@@ -117,6 +123,8 @@ public class HeaderCollector {
                 else{
                 hdrServ.createHeaders(next);                             //commit to the db
                 }
+                
+                
                 
                 SubSurface s= new SubSurface();
           
@@ -187,6 +195,7 @@ public class HeaderCollector {
           seqList.add(sq);
       }
             
+      LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
      feVolumeSelModel.setSubsurfaces(sl);
        //feVolumeSelModel.setSeqSubsMap(seqSubMap);
        

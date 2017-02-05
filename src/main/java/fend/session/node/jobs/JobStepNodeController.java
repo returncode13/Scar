@@ -414,7 +414,7 @@ public class JobStepNodeController {
        
       curve.setEndX(basePane.getScene().getX()+100.0);
       curve.setEndY(basePane.getScene().getY()+100.0);
-       basePane.getChildren().add(0, ln);
+      basePane.getChildren().add(0, ln);
         
        
     }
