@@ -501,7 +501,7 @@ public class SessionController implements Initializable {
                }
                
                System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode:  DELETING Jobvolumedetails with id: "+jvd.getIdJobVolumeDetails()+" : job:  "+jvd.getJobStep().getNameJobStep()+" :volume: "+jvd.getVolume().getNameVolume() ); 
-               jvdServ.deleteJobVolumeDetails(jvd.getIdJobVolumeDetails());
+               //jvdServ.deleteJobVolumeDetails(jvd.getIdJobVolumeDetails());
                System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode:  DELETING volume with id: "+v.getIdVolume()+" : name:  "+v.getNameVolume() ); 
                volServ.deleteVolume(v.getIdVolume());
            }

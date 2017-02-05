@@ -24,11 +24,11 @@ import javax.persistence.Table;
 
 public class Logs implements Serializable{
     @Id
-   // @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long idLogs;
     
     @ManyToOne
-    @JoinColumn(name="headers_fk",nullable = false)
+    @JoinColumn(name="headers_fk",nullable = true)
     private Headers headers;
     
     @Column(name="version")
