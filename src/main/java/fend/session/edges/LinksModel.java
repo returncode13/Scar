@@ -9,6 +9,8 @@ import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurveModel;
 import java.io.Serializable;
 import fend.session.node.jobs.JobStepModel;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -18,7 +20,7 @@ public class LinksModel implements Serializable{
     private AnchorModel mStart=new AnchorModel();
     private AnchorModel mEnd=new AnchorModel();
     private CubCurveModel mCurve=new CubCurveModel();
-    
+    private BooleanProperty visibility=new SimpleBooleanProperty(Boolean.TRUE);
     private JobStepModel parent;
     private JobStepModel child;
        
@@ -91,6 +93,14 @@ public class LinksModel implements Serializable{
     public void setChild(JobStepModel child) {
         this.child = child;
         this.mEnd.setJob(this.child);
+    }
+
+    public BooleanProperty getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Boolean visibility) {
+        this.visibility.set(visibility);
     }
     
     

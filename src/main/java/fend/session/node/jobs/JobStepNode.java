@@ -31,6 +31,7 @@ import fend.session.edges.anchor.Anchor;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import java.util.Iterator;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.scene.input.ContextMenuEvent;
@@ -187,7 +188,7 @@ static int i=0;
 //                System.out.println("Link # "+link.getId()+ "now connects Parent : "+link.getStart().getModel().getJob().getJsId() +" to Child :"+link.getEnd().getModel().getJob().getJsId());
            
                 CubCurveModel curveModel=curve.getModel();
-                LinksModel lmod=new LinksModel(ancModel, ancModel, curveModel);
+                //LinksModel lmod=new LinksModel(ancModel, ancModel, curveModel);
                 
                System.out.println("JSN: Link # "+link.getId()+ "now connects Parent : "+link.getLmodel().getParent().getId() +" to Child :"+link.getLmodel().getChild().getId());
            
@@ -299,6 +300,47 @@ static int i=0;
                  System.out.println("fend.session.node.jobs.JobStepNode. This will delete this node with id: "+JobStepNode.this.getId()+" session: "+JobStepNode.this.jmodel.getSessionModel().getName()+" : with sessionID: "+JobStepNode.this.jmodel.getSessionModel().getId());
                  JobStepNode.this.jmodel.getSessionModel().removeJobfromSession(jmodel);
                  JobStepNode.this.jmodel.getSessionModel().addToDeleteList(jmodel);
+                 List<LinksModel> lmlist=JobStepNode.this.jmodel.getListOfLinkModels();
+                 
+                 List<JobStepModel> parents=JobStepNode.this.jmodel.getJsParents();
+                 for (Iterator<JobStepModel> iterator = parents.iterator(); iterator.hasNext();) {
+                     JobStepModel parent = iterator.next();
+                     List<LinksModel> lmodp=parent.getListOfLinkModels();
+                     for (Iterator<LinksModel> iterator1 = lmodp.iterator(); iterator1.hasNext();) {
+                         LinksModel lmp = iterator1.next();
+                         if(lmp.getChild().getId().equals(JobStepNode.this.jmodel.getId()))
+                         {
+                             lmp.setVisibility(Boolean.FALSE);
+                         }
+                     }
+                     
+                     
+                 }
+                 
+                 
+                 
+                 List<JobStepModel> children=JobStepNode.this.jmodel.getJsChildren();
+                 for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
+                     JobStepModel child = iterator.next();
+                     List<LinksModel> lmodc=child.getListOfLinkModels();
+                     for (Iterator<LinksModel> iterator1 = lmodc.iterator(); iterator1.hasNext();) {
+                         LinksModel lmc = iterator1.next();
+                         if(lmc.getChild().getId().equals(JobStepNode.this.jmodel.getId()))
+                         {
+                             lmc.setVisibility(Boolean.FALSE);
+                         }
+                         
+                     }
+                 }
+                 
+                 
+                 
+                 for (Iterator<LinksModel> iterator = lmlist.iterator(); iterator.hasNext();) {
+                     LinksModel next = iterator.next();
+                     
+                     
+                     next.setVisibility(Boolean.FALSE);
+                 }
                  JobStepNode.this.setVisible(false);
              }
          });

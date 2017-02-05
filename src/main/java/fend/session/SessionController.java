@@ -740,7 +740,8 @@ public class SessionController implements Initializable {
                     Links ln=new Links(lm);
                     
                     CubCurve curve=ln.getCurve();
-                    
+                    next.getJsnc().getModel().addToListOfLinksModel(lm);
+                    key.getJsnc().getModel().addToListOfLinksModel(lm);
                     
                    
                     // DoubleProperty d= new SimpleDoubleProperty(next.layoutXProperty().get()+310);

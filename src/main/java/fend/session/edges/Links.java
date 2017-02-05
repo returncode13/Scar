@@ -6,6 +6,10 @@ import fend.session.edges.anchor.Anchor;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -26,7 +30,7 @@ public class Links extends Group{
     Anchor end;
     CubCurve curve;
     LinksModel lmodel;
-    
+    BooleanProperty visibility=new SimpleBooleanProperty(Boolean.TRUE);
    
     public Links(LinksModel lm)
     {
@@ -40,6 +44,16 @@ public class Links extends Group{
         curve.startYProperty().bindBidirectional(start.centerYProperty());
         curve.endXProperty().bindBidirectional(end.centerXProperty());
         curve.endYProperty().bindBidirectional(end.centerYProperty());
+        visibility.bindBidirectional(lmodel.getVisibility());
+        visibility.addListener(new ChangeListener<Boolean>(){
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                
+                updateVisibility();
+            }
+        });
+        curve.setVisible(visibility.get());
         
         /* curve.startXProperty().bind(start.centerXProperty());
         curve.startYProperty().bind(start.centerYProperty());
@@ -79,6 +93,11 @@ public class Links extends Group{
         return curve;
     }
     
+    private void updateVisibility() {
+                curve.setVisible(lmodel.getVisibility().get());
+                start.setVisible(lmodel.getVisibility().get());
+                end.setVisible(lmodel.getVisibility().get());
+            }
     
     
     
