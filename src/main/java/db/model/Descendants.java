@@ -60,9 +60,9 @@ public class Descendants implements Serializable{
         return idDescendants;
     }
 
-    public void setIdDescendants(Long idDescendants) {
-        this.idDescendants = idDescendants;
-    }
+    /* public void setIdDescendants(Long idDescendants) {
+    this.idDescendants = idDescendants;
+    }*/
 
     public SessionDetails getSessionDetails() {
         return sessionDetails;

@@ -134,7 +134,7 @@ public class Collector {
     
     private void setupEntries(){
         
-        
+        dbSessionDetails.clear();
         dbJobSteps.clear();                         //clear previous jobmodel array. set current entries here
        dbVolumes.clear();
         dbJobVolumeDetails.clear();
@@ -145,12 +145,28 @@ public class Collector {
             
            //for each jobStep from fe
             for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
-                JobStepModel jsm = jit.next();
-                 JobStep jobStep=new JobStep();
-                 jobStep.setNameJobStep(jsm.getJobStepText());
-                 jobStep.setIdJobStep(jsm.getId());
-                 //System.out.println("Coll: JSM ID: "+jsm.getId());
-                 jobStep.setAlert(Boolean.FALSE);
+                
+                JobStepModel jsm=jit.next();
+                JobStep jobstep;
+                /*if((jobstep=jsServ.getJobStep(jsm.getId()))==null){
+                jobstep=new JobStep();
+                jobstep.setNameJobStep(jsm.getJobStepText());
+                jobstep.setAlert(Boolean.FALSE);
+                }*/
+                //else{
+                    jobstep=new JobStep();
+                    jobstep.setNameJobStep(jsm.getJobStepText());
+                    jobstep.setIdJobStep(jsm.getId());
+
+                    jobstep.setAlert(Boolean.FALSE);
+                    //jsServ.updateJobStep(jobstep.getIdJobStep(), jobstep);
+               // }
+                //JobStepModel jsm = jit.next();
+                /*JobStep jobStep=new JobStep();
+                jobStep.setNameJobStep(jsm.getJobStepText());
+                jobStep.setIdJobStep(jsm.getId());
+                //System.out.println("Coll: JSM ID: "+jsm.getId());
+                jobStep.setAlert(Boolean.FALSE);*/
                  /*jobStep.setPending(Boolean.);*/
                  List<String> insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
                  String versionString="";                                                              //this string will be of form v1;v2;v3;.. where v1,v2.. are the chosen versions
@@ -160,10 +176,10 @@ public class Collector {
                      versionString=versionString.concat(next+";");
                 }
                  System.out.println("collector.Collector.setupEntries()  Concatenated String : "+versionString); 
-                 jobStep.setInsightVersions(versionString);
+                 jobstep.setInsightVersions(versionString);
                  
                  
-                 System.out.println("collector.Collector.setupEntries(): jobStep: "+jobStep.getNameJobStep()+" :ID: "+jobStep.getIdJobStep());
+                 System.out.println("collector.Collector.setupEntries(): jobStep: "+jobstep.getNameJobStep()+" :ID: "+jobstep.getIdJobStep());
                  
                  //add to db
                  //if(!dbJobSteps.contains(jobStep))dbJobSteps.add(jobStep);
@@ -171,16 +187,17 @@ public class Collector {
                //  dbJobSteps.clear();
                  
                //  if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
-                     System.out.println("collector.Collector.setupEntries(): New / Existing jobStep: Adding to dbJobSteps: "+jobStep.getNameJobStep());
-                     dbJobSteps.add(jobStep);
+                     System.out.println("collector.Collector.setupEntries(): New / Existing jobStep: Adding to dbJobSteps: "+jobstep.getNameJobStep());
+                     dbJobSteps.add(jobstep);
                  //}
                  
                  
                  
                  
                  //setup SessionJob details. and add to db
-                 SessionDetails sd=new SessionDetails(jobStep, sess);
-                 if(ssdServ.getSessionDetails(jobStep, sess)==null){dbSessionDetails.add(sd);}
+                 SessionDetails sd=new SessionDetails(jobstep, sess);
+                 if(ssdServ.getSessionDetails(jobstep, sess)==null){
+                     System.out.println("collector.Collector.setupEntries(): Adding to dbSessionDetails: ");dbSessionDetails.add(sd);}
                //  if(!dbSessions.contains(sd))dbSessionDetails.add(sd);
                  
                  
@@ -211,7 +228,7 @@ public class Collector {
                     
                    // if(!dbVolumes.contains(vp))dbVolumes.add(vp);
                     
-                    JobVolumeDetails jvd=new JobVolumeDetails(jobStep, vp);
+                    JobVolumeDetails jvd=new JobVolumeDetails(jobstep, vp);
                     
                    // if(!dbJobVolumeDetails.contains(jvd))dbJobVolumeDetails.add(jvd);
                    // if(jvdServ.getJobVolumeDetails(jobStep, vp)==null){dbJobVolumeDetails.add(jvd);}
@@ -272,6 +289,7 @@ public class Collector {
         //add to the SessionDetails Table
         for (Iterator<SessionDetails> iterator = dbSessionDetails.iterator(); iterator.hasNext();) {
             SessionDetails next = iterator.next();
+            System.out.println("collector.Collector.commitEntries(): About to create SessionDetails for: job: "+next.getJobStep().getNameJobStep() +" with id: "+next.getJobStep().getIdJobStep()+" :for session: "+next.getSessions().getNameSessions()+" id: "+next.getSessions().getIdSessions());
             if(ssdServ.getSessionDetails(next.getJobStep(), next.getSessions())==null)ssdServ.createSessionDetails(next);
         }
        /* 

@@ -72,7 +72,19 @@ public class SessionDetailsDAOImpl implements SessionDetailsDAO{
 
     @Override
     public void deleteSessionDetails(Long sdId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+            SessionDetails h= (SessionDetails) session.get(SessionDetails.class, sdId);
+            session.delete(h);
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            
+            session.close();
+        }
     }
 
     @Override

@@ -94,7 +94,8 @@ public class JobStepDAOImpl implements JobStepDAO{
         try{
             transaction= session.beginTransaction();
             
-            JobStep js = (JobStep) session.get(JobStep.class, jobId);
+            JobStep js = (JobStep) session.get(JobStep.class, jobId);  //try using criteria instead
+            System.out.println((js==null)?"db.dao.JobStepDAOImpl.deleteJobStep: NULL found!":"Deleting job:  "+js.getNameJobStep()+" id: "+js.getIdJobStep());
             session.delete(js);
             transaction.commit();
         }catch(Exception e){

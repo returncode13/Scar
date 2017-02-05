@@ -298,6 +298,7 @@ static int i=0;
              public void handle(ActionEvent event) {
                  System.out.println("fend.session.node.jobs.JobStepNode. This will delete this node with id: "+JobStepNode.this.getId()+" session: "+JobStepNode.this.jmodel.getSessionModel().getName()+" : with sessionID: "+JobStepNode.this.jmodel.getSessionModel().getId());
                  JobStepNode.this.jmodel.getSessionModel().removeJobfromSession(jmodel);
+                 JobStepNode.this.jmodel.getSessionModel().addToDeleteList(jmodel);
                  JobStepNode.this.setVisible(false);
              }
          });

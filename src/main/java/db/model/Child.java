@@ -47,9 +47,9 @@ public class Child implements Serializable{
         return idChild;
     }
 
-    public void setIdChild(Long idChild) {
-        this.idChild = idChild;
-    }
+    /* public void setIdChild(Long idChild) {
+    this.idChild = idChild;
+    }*/
 
     public SessionDetails getSessionDetails() {
         return sessionDetails;

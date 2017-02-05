@@ -24,7 +24,7 @@ import javax.persistence.Table;
 
 public class Logs implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idLogs;
     
     @ManyToOne

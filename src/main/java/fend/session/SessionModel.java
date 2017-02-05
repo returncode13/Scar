@@ -10,6 +10,8 @@ import fend.session.node.jobs.JobStepModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -21,6 +23,7 @@ public class SessionModel implements Serializable{
     ObservableList<JobStepModel> listOfJobs=FXCollections.observableArrayList();
     //ArrayList<VolumeSelectionModel> listOfVolumes=new ArrayList<>();   // all volume information is held by the JobStepModel.
     ArrayList<LinksModel> listOfLinks=new ArrayList<>();
+    ArrayList<JobStepModel> jobsToBeDeleted = new ArrayList<>();
     Long Id;
     String name;
 
@@ -35,6 +38,7 @@ public class SessionModel implements Serializable{
     
     
     public ObservableList<JobStepModel> getListOfJobs() {
+        System.out.println("fend.session.SessionModel.getListOfJobs(): size of list: "+listOfJobs.size());
         return listOfJobs;
     }
 /*
@@ -63,7 +67,31 @@ public class SessionModel implements Serializable{
     }
     
     public void removeJobfromSession(JobStepModel jobToBeDeleted){
+        
         listOfJobs.remove(jobToBeDeleted);
+        
+        for (Iterator<JobStepModel> iterator = listOfJobs.iterator(); iterator.hasNext();) {
+            JobStepModel job = iterator.next();
+            
+            job.getJsChildren().remove(jobToBeDeleted);
+            job.getJsParents().remove(jobToBeDeleted);
+            
+        }
+        
+        
+         System.out.println("fend.session.SessionModel:  job "+jobToBeDeleted.getJobStepText()+" removed from session model . size of list: "+listOfJobs.size());
+    }
+    public void addJobToSession(JobStepModel jobToBeAdded){
+        listOfJobs.add(jobToBeAdded);
+        System.out.println("fend.session.SessionModel:  job "+jobToBeAdded.getJobStepText()+" added to session model");
+    }
+
+    List<JobStepModel> getJobsToBeDeleted() {
+        return jobsToBeDeleted;
+    }
+
+    public void addToDeleteList(JobStepModel jmodel) {
+        jobsToBeDeleted.add(jmodel);
     }
 
     
