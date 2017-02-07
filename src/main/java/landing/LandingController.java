@@ -361,7 +361,7 @@ public class LandingController implements Initializable,Serializable {
             
             js.add(beJobStep);
             
-            JobStepModel fejsm=new JobStepModel();
+            JobStepModel fejsm=new JobStepModel(null);
             fejsm.setJobStepText(beJobStep.getNameJobStep());
             fejsm.setId(beJobStep.getIdJobStep());
             
@@ -599,7 +599,7 @@ public class LandingController implements Initializable,Serializable {
             
             Sessions beSessions=next.getSessions();
             JobStep beJobStep=next.getJobStep();                                    //beJobstep belongs to beSessions
-            JobStepModel fejsm=new JobStepModel();
+            JobStepModel fejsm=new JobStepModel(null);
             
             for (Iterator<JobStepModel> iterator1 = jmodList.iterator(); iterator1.hasNext();) {
                 JobStepModel next1 = iterator1.next();
@@ -696,19 +696,22 @@ public class LandingController implements Initializable,Serializable {
             for (Iterator<JobStepModel> iterator1 = parentList.iterator(); iterator1.hasNext();) {
                 JobStepModel next1 = iterator1.next();
                 
-                LinksModel lm=new LinksModel();
-                lm.setParent(next1);
+                
                 
                     for (Iterator<JobStepModel> iterator2 = childList.iterator(); iterator2.hasNext();) {
                     JobStepModel next2 = iterator2.next();
+                    LinksModel lm=new LinksModel();
+                    lm.setParent(next1);
                     lm.setChild(next2);
-                    
+                    next2.addToListOfLinksModel(lm);
+                    next1.addToListOfLinksModel(lm);
+                    oLink.add(lm);
                 }
                 
                  
                  
                     
-                 oLink.add(lm);
+                 
                 
             }
             
@@ -727,6 +730,11 @@ public class LandingController implements Initializable,Serializable {
        smodel.setName(sessionFromDB.getNameSessions());            //front end sessionModel name is the same as the backends
        smodel.setId(sessionFromDB.getIdSessions());                //front end sessionModel id is the same as the backends
        ObservableList<JobStepModel> otemp=FXCollections.observableArrayList(jmodList);
+        for (Iterator<JobStepModel> iterator = otemp.iterator(); iterator.hasNext();) {
+            JobStepModel jsmodel = iterator.next();
+            jsmodel.setSessionModel(smodel);
+            
+        }
        smodel.setListOfJobs(otemp);
        snode=new SessionNode(smodel);                               //same id as the one in the database
        scontr=snode.getSessionController();
@@ -746,7 +754,7 @@ public class LandingController implements Initializable,Serializable {
        scontr.setObsModelList(obj);
        scontr.setAllModelsForFrontEndDisplay();
        scontr.setAllLinksForFrontEnd();
-        
+       scontr.startWatching(); 
         /*
         
         

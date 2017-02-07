@@ -26,8 +26,13 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.CubicCurve;
 import fend.session.edges.Links;
+import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.Anchor;
+import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
+import fend.session.edges.curves.CubCurveModel;
+import java.util.Iterator;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.scene.input.ContextMenuEvent;
 
@@ -38,6 +43,7 @@ import javafx.scene.input.ContextMenuEvent;
 public class JobStepNode extends AnchorPane {
 static int i=0;
     public JobStepNode(JobStepModel item) {
+        this.jmodel=item;
         this.location=getClass().getClassLoader().getResource("nodeResources/jobs/JobStepNodeView_1_1_1_1.fxml"); 
         //URL location = JobStepNodeController.class.getResource("JobStepNodeView.fxml");
           
@@ -158,20 +164,33 @@ static int i=0;
                
                 
               //  System.out.println("JobStepNode :setOnMouseDragReleased: ");
+               List<LinksModel> llm=JobStepNode.this.jmodel.getListOfLinkModels(); 
+                
+               
                Anchor anc=(Anchor) event.getGestureSource();
+               AnchorModel ancModel=anc.getModel();
+               
+               LinksModel lm=ancModel.getLmodel();
+               lm.setChild(JobStepNode.this.jmodel);                        //the node the anchor is dropped on
+               
                JobStepNode jsource=(JobStepNode) event.getSource();
                
-               anc.getModel().setJob(JobStepNode.this.getJsnc().getModel());            //set child job
+              // anc.getModel().setJob(JobStepNode.this.getJsnc().getModel());            //set child job
                
                
              //  System.out.println("JSN: Mouse Drag Released on "+getId()+ " source "+event.getSource().getClass().getSimpleName()+ " SourceID: "+ jsource.getId()+" GSource: "+event.getGestureSource().getClass().getSimpleName()+ " Target: "+event.getTarget().getClass().getSimpleName());
+               
                Links link=anc.getLink();
                CubCurve curve=link.getCurve();
                curve.endXProperty().bind(Bindings.add(JobStepNode.this.layoutXProperty(),JobStepNode.this.boundsInLocalProperty().get().getMinX()));// JobStepNode.this.getWidth()/2.0));
                curve.endYProperty().bind(Bindings.add(JobStepNode.this.layoutYProperty(),JobStepNode.this.boundsInLocalProperty().get().getMaxY()/2));//JobStepNode.this.getWidth()/2.0));
              //  System.out.println("JSN: the anchor dropped has the id "+anc.getAId());
 //                System.out.println("Link # "+link.getId()+ "now connects Parent : "+link.getStart().getModel().getJob().getJsId() +" to Child :"+link.getEnd().getModel().getJob().getJsId());
-           System.out.println("JSN: Link # "+link.getId()+ "now connects Parent : "+link.getLmodel().getParent().getId() +" to Child :"+link.getLmodel().getChild().getId());
+           
+                CubCurveModel curveModel=curve.getModel();
+                //LinksModel lmod=new LinksModel(ancModel, ancModel, curveModel);
+                
+               System.out.println("JSN: Link # "+link.getId()+ "now connects Parent : "+link.getLmodel().getParent().getId() +" to Child :"+link.getLmodel().getChild().getId());
            
            
             //    System.out.println("JSN: Adding to current job as a parent");
@@ -231,7 +250,7 @@ static int i=0;
 
              @Override
              public void handle(ContextMenuEvent event) {
-                System.out.println("context menu requested for "+jsnc.getModel().getId());
+                System.out.println("fend.session.node.jobs.JobStepNode: context menu requested for "+jsnc.getModel().getId());
             menu.show(JobStepNode.this, event.getScreenX(), event.getScreenY());
             
              }
@@ -249,11 +268,80 @@ static int i=0;
                 // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                  double startX=getScene().getX();
                     double startY=getScene().getY();
-                   System.out.println("fend.session.node.jobs.JobStepNode.<init>() MAXY: "+JobStepNode.this.boundsInLocalProperty().get().getMaxY());
+                   System.out.println("fend.session.node.jobs.JobStepNode.   MAXY: "+JobStepNode.this.boundsInLocalProperty().get().getMaxY());
                    System.out.println("Curve will start @(x,y) = ("+startX+","+startY+")");
-                 
                    
-                   jsnc.testIfButtonCanBeAdded(startX, startY);
+                   
+                    AnchorModel mStart=new AnchorModel();
+                    mStart.setCenterX(startX);
+                    mStart.setCenterY(startY);
+                    mStart.setJob(JobStepNode.this.jmodel);
+       
+                    AnchorModel mEnd=new AnchorModel();
+                    mEnd.setCenterX(startX+10.0);
+                    mEnd.setCenterY(startY);
+       
+                    CubCurveModel cmod=new CubCurveModel();
+
+                    LinksModel lm = new LinksModel(mStart, mEnd, cmod);
+                   
+                   JobStepModel jmod=JobStepNode.this.jmodel;
+                   jmod.addToListOfLinksModel(lm);
+                   
+                   jsnc.startNewLink(jmod);
+             //      jsnc.testIfButtonCanBeAdded(startX, startY);
+             }
+         });
+        
+        deleteThisJob.setOnAction(new EventHandler<ActionEvent>() {
+
+             @Override
+             public void handle(ActionEvent event) {
+                 System.out.println("fend.session.node.jobs.JobStepNode. This will delete this node with id: "+JobStepNode.this.getId()+" session: "+JobStepNode.this.jmodel.getSessionModel().getName()+" : with sessionID: "+JobStepNode.this.jmodel.getSessionModel().getId());
+                 JobStepNode.this.jmodel.getSessionModel().removeJobfromSession(jmodel);
+                 JobStepNode.this.jmodel.getSessionModel().addToDeleteList(jmodel);
+                 List<LinksModel> lmlist=JobStepNode.this.jmodel.getListOfLinkModels();
+                 
+                 List<JobStepModel> parents=JobStepNode.this.jmodel.getJsParents();
+                 for (Iterator<JobStepModel> iterator = parents.iterator(); iterator.hasNext();) {
+                     JobStepModel parent = iterator.next();
+                     List<LinksModel> lmodp=parent.getListOfLinkModels();
+                     for (Iterator<LinksModel> iterator1 = lmodp.iterator(); iterator1.hasNext();) {
+                         LinksModel lmp = iterator1.next();
+                         if(lmp.getChild().getId().equals(JobStepNode.this.jmodel.getId()))
+                         {
+                             lmp.setVisibility(Boolean.FALSE);
+                         }
+                     }
+                     
+                     
+                 }
+                 
+                 
+                 
+                 List<JobStepModel> children=JobStepNode.this.jmodel.getJsChildren();
+                 for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
+                     JobStepModel child = iterator.next();
+                     List<LinksModel> lmodc=child.getListOfLinkModels();
+                     for (Iterator<LinksModel> iterator1 = lmodc.iterator(); iterator1.hasNext();) {
+                         LinksModel lmc = iterator1.next();
+                         if(lmc.getChild().getId().equals(JobStepNode.this.jmodel.getId()))
+                         {
+                             lmc.setVisibility(Boolean.FALSE);
+                         }
+                         
+                     }
+                 }
+                 
+                 
+                 
+                 for (Iterator<LinksModel> iterator = lmlist.iterator(); iterator.hasNext();) {
+                     LinksModel next = iterator.next();
+                     
+                     
+                     next.setVisibility(Boolean.FALSE);
+                 }
+                 JobStepNode.this.setVisible(false);
              }
          });
         /*
@@ -305,7 +393,8 @@ static int i=0;
     private EventHandler<MouseEvent> mOnDragDetected;
    private EventHandler<DragEvent> mOnDragOver;
    private EventHandler<DragEvent> mOnDragDropped;
-
+   private JobStepModel jmodel;
+   
     public JobStepNodeController getJsnc() {                                                            //for debug only ..remove 
         return jsnc;
     }

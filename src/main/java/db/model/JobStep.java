@@ -30,7 +30,7 @@ import javax.persistence.UniqueConstraint;
 public class JobStep implements Serializable{
     
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
     
     @Column(name = "idJobStep",nullable = false,unique = true,length = 10)
     private Long idJobStep;
@@ -74,9 +74,9 @@ public class JobStep implements Serializable{
     }
 
     public void setIdJobStep(Long idJobStep) {
-        this.idJobStep = idJobStep;
+    this.idJobStep = idJobStep;
     }
-
+    
     public String getNameJobStep() {
         return nameJobStep;
     }

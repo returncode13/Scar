@@ -47,9 +47,9 @@ public class Parent implements Serializable{
         return idParent;
     }
 
-    public void setIdParent(Long idParent) {
-        this.idParent = idParent;
-    }
+    /*public void setIdParent(Long idParent) {
+    this.idParent = idParent;
+    }*/
 
     public SessionDetails getSessionDetails() {
         return sessionDetails;

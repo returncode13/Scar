@@ -101,6 +101,8 @@ public class ParentDAOImpl implements ParentDAO{
             if(result.size()==1) return result.get(0);
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            sess.close();
         }
         
         
@@ -123,6 +125,8 @@ public class ParentDAOImpl implements ParentDAO{
           
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            sess.close();
         }
      return result;
     }

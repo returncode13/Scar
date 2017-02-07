@@ -17,7 +17,10 @@ import db.model.Parent;
 import db.model.SessionDetails;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -52,8 +55,77 @@ public class AncestorsServiceImpl implements AncestorsService{
     }
 
     @Override
-    public void  getInitialAncestorsListFor(SessionDetails s,Set<Long> listOfAncestors){
+    public void getInitialAncestorsListFor(SessionDetails s,Set<Long> listOfAncestors){
+        System.out.println("db.services.AncestorsServiceImpl.getInitialAncestorsListFor: Asking me to find: "+s.getIdSessionDetails()+" which contains: "+s.getJobStep().getNameJobStep()+" inside session: "+s.getSessions().getNameSessions());
+        List<Parent> parentList=getParentList();
+    getInitialAncestorsListFor(s,listOfAncestors,parentList);
+    }
+    
+    
+    private List<Parent> getParentList(){
+        Session sess = HibernateUtil.getSessionFactory().openSession();
+        List<Parent> results=null;
+        Transaction transaction=null;
+        try{
+        transaction=sess.beginTransaction();
+        
+        Criteria criteria=sess.createCriteria(Parent.class);
+        System.out.println("db.services.AncestorsServiceImpl.getParentList(): about to extract the whole list");
+        results=criteria.list();                           //get all the Parent entries;
+        for (Iterator<Parent> iterator = results.iterator(); iterator.hasNext();) {
+                Parent next = iterator.next();
+                System.out.println("db.services.AncestorsServiceImpl.getParentList(): found Parent: id: "+next.getIdParent()+" SessionsDetails ID: "+next.getSessionDetails().getIdSessionDetails()+" ParentId: "+next.getParent());
+            }
+        transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sess.close();
+        }
+        return results;
+    }
+    
+   
+    
+    private void getInitialAncestorsListFor(SessionDetails s,Set<Long> listOfAncestors,List<Parent> parentList){
+        List<Parent> shortList=new ArrayList<>();
+        
+        for (Iterator<Parent> iterator = parentList.iterator(); iterator.hasNext();) {
+            Parent parent = iterator.next();
+            if(parent.getSessionDetails().getIdSessionDetails().equals(s.getIdSessionDetails())){
+                shortList.add(parent);                         //shortlist will now contain the list of all parents where FK=s .i.e list of all jobs belonging to the same session
+                
+            }
+        }
+        
+        
+        for (Parent ancs:shortList) {
+                SessionDetails sdAnc=ssdServ.getSessionDetails(ancs.getParent());
+                if(Objects.equals(s.getIdSessionDetails(), sdAnc.getIdSessionDetails()))
+                    {
+                        System.out.println(s.getJobStep().getNameJobStep()+ ": root Or a standalone node...eitherways a root");
+                    listOfAncestors.add(s.getIdSessionDetails());
+                        
+                    return;
+                    }
+                listOfAncestors.add(s.getIdSessionDetails());
+                getInitialAncestorsListFor(sdAnc,listOfAncestors,parentList);   
+            }
+                
+        
+    }
+    
+    
+    
+    private void  getInitialAncestorsListFor(SessionDetails s,Set<Long> listOfAncestors,Session session){
             
+        if(session!=null && session.isOpen()){
+            
+            session.getTransaction().commit();
+            session.close();
+           
+        
+        }
         Session sess = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=sess.beginTransaction();
         try{
@@ -84,17 +156,17 @@ public class AncestorsServiceImpl implements AncestorsService{
                     }
                    listOfAncestors.add(s.getIdSessionDetails());
                    
-                    getInitialAncestorsListFor(sdAnc,listOfAncestors);
+                    getInitialAncestorsListFor(sdAnc,listOfAncestors,sess);
                       
                        
             }
-           
-            transaction.commit();
+           if(sess.isOpen() && sess.isConnected())
+          transaction.commit();
             
         }catch(Exception e){
             e.printStackTrace();
         }finally{
-            sess.close();
+           if(sess.isOpen())sess.close();
         }
          //list.add(s);
        

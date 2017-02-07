@@ -7,6 +7,8 @@ package fend.session.node.jobs;
 
 
 import com.sun.org.apache.xpath.internal.axes.SubContextList;
+import fend.session.SessionModel;
+import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import java.util.ArrayList;
@@ -51,21 +53,22 @@ public class JobStepModel {
     private Long id;
     
     private Set<SubSurface> subsurfacesInJob=new HashSet<>();
-    
+    private SessionModel sessionModel;
     
 
-    
+    private List<LinksModel> listOfLinkModels=new ArrayList<>();
     
    
 
    
     
 
-    public JobStepModel(String jobStepText) {
+    public JobStepModel(String jobStepText,SessionModel smodel) {
    
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
        ObservableList<VolumeSelectionModel> obs=FXCollections.observableArrayList();
         this.volListProperty = new SimpleListProperty<>(obs);
+        this.sessionModel=smodel;
         
         jsParents.add(this);                                                        //provision for root
         jsChildren.add(this);                                                       //provision for leaf
@@ -86,8 +89,8 @@ public class JobStepModel {
     
     
 
-    public JobStepModel() {
-        this("Enter a name");
+    public JobStepModel(SessionModel smodel) {
+        this("Enter a name",smodel);
     }
 
     public ListProperty<VolumeSelectionModel> getVolListProperty() {
@@ -116,7 +119,13 @@ public class JobStepModel {
     }
  
     
+    public void addSelfToParent(){
+        jsParents.add(this);
+    }
     
+    public void addSelfToChild(){
+        jsChildren.add(this);
+    }
     
     
     
@@ -130,7 +139,7 @@ public class JobStepModel {
             jsParents.remove(this);
         jsParents.add(parent);
         }
-        System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Parents of "+this.getJobStepText());
+        System.out.println("fend.session.node.jobs.JobStepModel.addToParent(): Parents of "+this.getJobStepText());
         for (Iterator<JobStepModel> iterator = jsParents.iterator(); iterator.hasNext();) {
             JobStepModel next = iterator.next();
             System.out.println(next.getJobStepText());
@@ -232,7 +241,25 @@ public class JobStepModel {
         this.subsurfacesInJob = subsurfacesInJob;
     }
 
+    public SessionModel getSessionModel() {
+        return sessionModel;
+    }
+
+    public void setSessionModel(SessionModel sessionModel) {
+        this.sessionModel = sessionModel;
+    }
+
+    public List<LinksModel> getListOfLinkModels() {
+        return listOfLinkModels;
+    }
+
+    public void addToListOfLinksModel(LinksModel lm){
+        listOfLinkModels.add(lm);
+    }
     
+    public void removeFromListOfLinksModel(LinksModel lm){
+        listOfLinkModels.remove(lm);
+    }
     
     
      

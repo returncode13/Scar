@@ -26,7 +26,7 @@ import javax.persistence.Table;
 @Table(name = "Ancestors",schema = "obpmanager")
 public class Ancestors implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idAncestors;
     
     @ManyToOne
@@ -95,9 +95,9 @@ public class Ancestors implements Serializable{
         return idAncestors;
     }
 
-    public void setIdAncestors(Long idAncestors) {
-        this.idAncestors = idAncestors;
-    }
+    /* public void setIdAncestors(Long idAncestors) {
+    this.idAncestors = idAncestors;
+    }*/
 
     public SessionDetails getSessionDetails() {
         return sessionDetails;
