@@ -54,7 +54,7 @@ public class HeadersViewController extends Stage implements Initializable {
     HeadersService hdserv=new HeadersServiceImpl();
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
-            
+    String vname=new String();        
     
        @FXML
     private TreeTableView<Sequences> treetableView;
@@ -77,6 +77,7 @@ public class HeadersViewController extends Stage implements Initializable {
             System.out.println("fend.session.node.headers.setModel: lsm is NULL");
         }
       hmodel=lsm;  
+      vname=hmodel.getVolmodel().getVolumeChosen().getName();
      seqListObs=hmodel.getSequenceListInHeaders();
      /*
      treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
@@ -400,10 +401,12 @@ public class HeadersViewController extends Stage implements Initializable {
      treetableView.setRoot(rootOfAllseq);
      treetableView.setShowRoot(false);
      
+     
     }
 
     void setView(HeadersNode aThis) {
         hnode=aThis;
+        this.setTitle("Results for "+vname);
         this.setScene(new Scene(hnode));
         this.showAndWait();
     }
