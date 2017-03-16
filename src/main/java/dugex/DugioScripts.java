@@ -52,10 +52,17 @@ public class DugioScripts implements Serializable{
      /*private String subsurfaceLogContent ="#!/bin/bash\n" +
      "grep -A 0 lineName $1 | awk '{ print $1\" \"$2\" \"$7}'";*/
     
-     private String subsurfaceLogContent ="#!/bin/bash\n" +
-"for i in $1/*; do  grep -A 0 lineName $i /dev/null  ; done | awk '{ print $1 \" \" $2 \" \"  $7}' | sort -k 1,2";
+     /*private String subsurfaceLogContent ="#!/bin/bash\n" +
+     "for i in $1/*; do  grep -A 0 lineName $i /dev/null  ; done | awk '{ print $1 \" \" $2 \" \"  $7}' | sort -k 1,2";*/
     
-    public DugioScripts()
+     
+     /*private String subsurfaceLogContent="#!/bin/bash\n" +
+     "for i in $1/*; do awk '/lineName/VERSION/ {print FILENAME \" \"$0}' ORS=\" \" $i | awk '{print $1\" \"$2\" \"$3\" \"$8\" Version=\"$15\"-\"$16}'; done | sort -k 2,3";*/
+    
+     private String subsurfaceLogContent="#!/bin/bash\n" +
+"for i in $1/*; do awk '/lineName/VERSION/ { print FILENAME\" \" $0}' ORS=\" \" $i | awk '{$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}';done | sort -k 2,3";
+     
+     public DugioScripts()
     {
         try {
             getTimeSubsurfaces=File.createTempFile("getTimeSubsurfaces", ".sh");

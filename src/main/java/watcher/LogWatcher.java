@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,19 +52,30 @@ class LogWatchHolder{
     String date;
     String filename;
     String linename;
+    String insightVersion;
 
-    public LogWatchHolder(String date, String filename, String linename) {
+    public LogWatchHolder(String date, String filename, String linename,String insightVersion) {
         this.date = date;
         this.filename = filename;
         this.linename = linename;
+        this.insightVersion=insightVersion;
     }
+
+    public String getInsightVersion() {
+        return insightVersion;
+    }
+
+    public void setInsightVersion(String insightVersion) {
+        this.insightVersion = insightVersion;
+    }
+    
     
     
 }
 
 public class LogWatcher {
     private String logsLocation;          // path to the dugio volume logs folder
-    
+    private Long numberOfruns;
     TimerTask task;
     Timer timer;
     private static int counter=0;
@@ -75,6 +87,8 @@ public class LogWatcher {
     LogsService lserv=new LogsServiceImpl();
     List<LogWatchHolder> lwatchHolderList=new ArrayList<>();
     MultiMap<String, LogWatchHolder> maplineLog=new MultiValueMap<>();
+    Map<String,String> mapSubInsightVersion=new HashMap<>();                //map that will contain the Insight version number extracted from the latest log for the subsurface
+    
     public LogWatcher(){
     }
     
@@ -119,20 +133,31 @@ public class LogWatcher {
                                         while((value=br.readLine())!=null){
                                             Long maxVersion=0L;
                                             
-                                            String[] parts=value.split("\\s");
+                                            /*String[] parts=value.split("\\s");
                                             String date=parts[0].substring(parts[0].indexOf(":")+1);
                                             
                                             String time=parts[1];
                                             DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
                                             Date convjdate=jdate.parse(date+":"+time);
                                             String filename=parts[0].substring(parts[0].lastIndexOf("/")+1,parts[0].indexOf(":"));
-                                            String linename=parts[2].split("=")[1];
+                                            String linename=parts[2].split("=")[1];*/
                                             
-
                                             
+                                            //New script results
+                                            String[] parts=value.split("\\s");
+                                            String filename=parts[0];
+                                            String date=parts[1];                                            
+                                            String time=parts[2];
+                                            DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+                                            Date convjdate=jdate.parse(date+":"+time);
+                                            
+                                            String linename=parts[3].split("=")[1];
+                                            String baseInsVersion=parts[5];
+                                            String revInsVersion=parts[6];
+                                            String insVersion=baseInsVersion.concat(revInsVersion);
                                             //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
                                             
-                                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename);
+                                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
                                             lwatchHolderList.add(lwatchholder);
                                             
                                             
@@ -156,17 +181,23 @@ public class LogWatcher {
                                         
                                         for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
                                             LogWatchHolder next = iterator.next();
-                                            List<Headers> hlist=hserv.getHeadersFor(v, next.linename);
+                                            List<Headers> hlist=null;
+                                            hlist=hserv.getHeadersFor(v, next.linename);
                                             
                                             
                                             
                                             Boolean newLog=false;
                                             Long maxVersion=0L;
                                             
-                                            if(hlist.size()==0){
+                                            if(hlist==null||hlist.size()==0){           //Headers are yet to be extracted
+                                                System.out.println("watcher.LogWatcher: Headers are yet to be extracted");
+                                                
+                                                 List<LogWatchHolder> logwList=(List<LogWatchHolder>) maplineLog.get(next.linename);
+                                                 System.out.println("watcher.LogWatcher: The number of logs present for "+next.linename+" : "+logwList.size());
+                                                 numberOfruns=Long.valueOf(logwList.size());
                                                 
                                             }
-                                            else if(hlist.size()==1){
+                                            else if(hlist.size()==1){                   //Headers have already been extracted
                                                 Headers h=hlist.get(0);
                                                 
                                                 List<Logs>logsList=lserv.getLogsFor(h);
@@ -248,6 +279,7 @@ public class LogWatcher {
                                                         l.setTimestamp(next.date);
                                                         lserv.createLogs(l);
                                                         exists=true;
+                                                        numberOfruns=maxVersion;
                                                     }
                                                     
                                                     
@@ -282,7 +314,8 @@ public class LogWatcher {
                         timer.schedule(task,new Date(),2000);                          //every second.
                     }
                     
-                    else{System.out.println("Inside tableExtraction=true block");
+                    else{
+                        System.out.println("Inside tableExtraction=true block");
                     
                     
                     
@@ -298,20 +331,34 @@ public class LogWatcher {
                         while((value=br.readLine())!=null){
                             Long maxVersion=0L;
                             
-                            String[] parts=value.split("\\s");
+                            /* String[] parts=value.split("\\s");
                             String date=parts[0].substring(parts[0].indexOf(":")+1);
-                           
+                            
                             String time=parts[1];
                             DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
                             Date convjdate=jdate.parse(date+":"+time);
                             String filename=parts[0].substring(parts[0].lastIndexOf("/")+1,parts[0].indexOf(":"));
-                            String linename=parts[2].split("=")[1];
+                            String linename=parts[2].split("=")[1];*/
                             
                             
                             
                             //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
                             
-                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename);
+                             //New script results
+                                            String[] parts=value.split("\\s");
+                                            String filename=parts[0];
+                                            String date=parts[1];                                            
+                                            String time=parts[2];
+                                            DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+                                            Date convjdate=jdate.parse(date+":"+time);
+                                            
+                                            String linename=parts[3].split("=")[1];
+                                            String baseInsVersion=parts[5];
+                                            String revInsVersion=parts[6];
+                                            String insVersion=baseInsVersion.concat(revInsVersion);
+                                            //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
+                            
+                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
                             lwatchHolderList.add(lwatchholder);
                             
                             
@@ -431,6 +478,7 @@ public class LogWatcher {
                                         l.setTimestamp(next.date);
                                         lserv.createLogs(l);
                                         exists=true;
+                                        numberOfruns=maxVersion;
                                     }
                                     
                                     
@@ -473,6 +521,32 @@ public class LogWatcher {
         
         
         
+    }
+
+    public Map<String, String> getsubInsightVersionMap() throws ParseException {
+                        Set<String> keys=maplineLog.keySet();
+                        for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
+                            String linename = iterator.next();
+                            List<LogWatchHolder> lgwl=(List<LogWatchHolder>)maplineLog.get(linename);
+                            String insver=new String();
+                            Date date=new Date(2010,1,1,0,0);                   // date set to 201001010000
+                            for (Iterator<LogWatchHolder> iterator1 = lgwl.iterator(); iterator1.hasNext();) {   //loop to find the insight version from the latest log
+                                LogWatchHolder lgw = iterator1.next();
+                                Date d=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss").parse(lgw.date);
+                                if(d.after(date)){
+                                    date=d;
+                                    insver=lgw.insightVersion;
+                                }
+                            }
+                            
+                            mapSubInsightVersion.put(linename, insver);
+                        }
+     return mapSubInsightVersion;
+    }
+
+    public Long getNumberOfruns(String linename) {
+        List<LogWatchHolder> logwatchList= (List<LogWatchHolder>) maplineLog.get(linename);
+        return numberOfruns=Long.valueOf(logwatchList.size());
     }
     
     

@@ -513,6 +513,7 @@ public class LandingController implements Initializable,Serializable {
                             s.setModified(beH.getModified());
                             s.setDeleted(beH.getDeleted());
                             s.setVersion(beH.getVersion());
+                            s.setInsightVersion(beH.getInsightVersion());
                 
                             
           

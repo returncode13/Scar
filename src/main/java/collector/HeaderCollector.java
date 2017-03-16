@@ -20,6 +20,7 @@ import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,9 +111,17 @@ public class HeaderCollector {
             MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
             int aci=0;
             
+            LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.FALSE);
+
+            Map<String,String> subInsightVersionFromLogMap=logForSub.getsubInsightVersionMap();
+            
             for (Iterator<Headers> iterator = headerList.iterator(); iterator.hasNext();) {
                 Headers next = iterator.next();
                 next.setVolume(dbVolume);
+                String lineN=next.getSubsurface();
+                next.setInsightVersion(subInsightVersionFromLogMap.get(lineN));
+                next.setVersion(logForSub.getNumberOfruns(lineN));
+                
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
                 if(next.getModified()) 
@@ -170,6 +179,7 @@ public class HeaderCollector {
                 s.setModified(next.getModified());
                 s.setDeleted(next.getDeleted());
                 s.setVersion(next.getVersion());
+                s.setInsightVersion(next.getInsightVersion());
                 
           
                 seqSubMap.put(s.getSequenceNumber(), s);
@@ -195,7 +205,7 @@ public class HeaderCollector {
           seqList.add(sq);
       }
             
-      LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
+//      LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
      feVolumeSelModel.setSubsurfaces(sl);
        //feVolumeSelModel.setSeqSubsMap(seqSubMap);
        
@@ -207,6 +217,8 @@ public class HeaderCollector {
         } catch (InterruptedException ex) {
             Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
+            Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         }
         
