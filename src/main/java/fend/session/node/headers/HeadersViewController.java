@@ -19,8 +19,10 @@ import fend.session.node.headers.logger.LogsNode;
 import fend.session.node.headers.logger.VersionLogsModel;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -52,7 +54,7 @@ public class HeadersViewController extends Stage implements Initializable {
     HeadersService hdserv=new HeadersServiceImpl();
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
-            
+    String vname=new String();        
     
        @FXML
     private TreeTableView<Sequences> treetableView;
@@ -75,6 +77,7 @@ public class HeadersViewController extends Stage implements Initializable {
             System.out.println("fend.session.node.headers.setModel: lsm is NULL");
         }
       hmodel=lsm;  
+      vname=hmodel.getVolmodel().getVolumeChosen().getName();
      seqListObs=hmodel.getSequenceListInHeaders();
      /*
      treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
@@ -108,11 +111,12 @@ public class HeadersViewController extends Stage implements Initializable {
                     setStyle("");
                     setContextMenu(null);
                 }else if(item.getAlert()){
-                    setStyle("-fx-background-color:tomato");
+                    setStyle("-fx-background-color:orange");
                     setContextMenu(contextMenu);
                 }else
                 {
-                    setStyle("-fx-background-color:green");
+                    //setStyle("-fx-background-color:green");
+                   // setStyle(../landingResources/landing.css)
                     setContextMenu(contextMenu);
                 }
             }
@@ -132,9 +136,11 @@ public class HeadersViewController extends Stage implements Initializable {
                  if(loglist.isEmpty()){
                      String logLocation=v.getPathOfVolume();
                      logLocation= logLocation+"/../../000scratch/logs";
-                     
+                     try{
                    LogWatcher lw=  new LogWatcher(logLocation,"", lsm.getVolmodel(),Boolean.TRUE);
-                     
+                     }catch(NullPointerException npe){
+                         System.out.println("fend.session.node.headers.setRowFactory(): unable to find logs!!!");
+                     }
                      
                  }
                  else{
@@ -271,16 +277,119 @@ public class HeadersViewController extends Stage implements Initializable {
      
      
      List<TreeItem<Sequences>> treeSeq = new ArrayList<>();
+     Map<String,Long> gunShotMap;
+     
      
      for(Sequences s:seqListObs){
+         gunShotMap=new HashMap<>();
          List<SubSurface> subs=s.getSubsurfaces();
-         TreeItem<Sequences> seqroot=new TreeItem<>(s);
-         
+        TreeItem<Sequences> seqroot=new TreeItem<>(s);
+        String tempTimeStamp=subs.get(0).getTimeStamp();
+        Long tempTrcCnt=0L;
+        Long tempInlineMax=subs.get(0).getInlineMax();
+        Long tempInlineMin=subs.get(0).getInlineMin();
+        Long tempXlineMin=subs.get(0).getXlineMin();
+        Long tempXlineMax=subs.get(0).getXlineMax();
+        Long tempDugShotMax=subs.get(0).getDugShotMax();
+        Long tempDugShotMin=subs.get(0).getDugShotMin();
+        Long tempDugShotInc=subs.get(0).getDugShotInc();
+        Long tempDugChannelMax=subs.get(0).getDugChannelMax();
+        Long tempDugChannelMin=subs.get(0).getDugChannelMin();
+        Long tempDugChannelInc=subs.get(0).getDugChannelInc();
+        Long tempOffsetMax=subs.get(0).getOffsetMax();
+        Long tempOffsetMin=subs.get(0).getOffsetMin();
+        Long tempOffsetInc=subs.get(0).getOffsetInc();
+        Long tempCmpMin=subs.get(0).getCmpMin();
+        Long tempCmpMax=subs.get(0).getCmpMax();
+        Long tempCmpInc=subs.get(0).getCmpInc();
+        
+        
+        
          for(SubSurface sub:subs){
              TreeItem<Sequences> subItem=new TreeItem<>(sub);
+             tempTrcCnt+=sub.getTraceCount();
              
+             if(Long.valueOf(tempTimeStamp).longValue()<=Long.valueOf(sub.getTimeStamp()).longValue()){
+             tempTimeStamp=sub.getTimeStamp();
+             }
+            
+             
+             if(tempInlineMin>=sub.getInlineMin()){
+                 tempInlineMin=sub.getInlineMin();
+             }
+             if(tempInlineMax<=sub.getInlineMax()){
+                 tempInlineMax=sub.getInlineMax();
+             }
+             
+             if(tempXlineMin>=sub.getXlineMin()){
+                 tempXlineMin=sub.getXlineMin();
+             }
+             if(tempXlineMax<=sub.getXlineMax()){
+                 tempXlineMax=sub.getXlineMax();
+             }
+             
+             String subname=sub.getSubsurface();
+             String gun=subname.substring(subname.lastIndexOf("_")+1,subname.length());
+             
+             
+             
+             Long shots=(sub.getDugShotMax()-sub.getDugShotMin()+sub.getDugShotInc())/sub.getDugShotInc();
+           //  System.out.println("fend.session.node.headers.setRowFactory():  shots = "+shots+" for gun: "+gun);
+             if(gunShotMap.containsKey(gun)&& gunShotMap.get(gun)<=shots){
+                 gunShotMap.put(gun, shots);
+             }else{
+                 if(!gunShotMap.containsKey(gun)){
+                    gunShotMap.put(gun, shots); 
+                 }
+                 
+             }
+             
+             
+             if(tempOffsetMin>=sub.getOffsetMin()){
+                 tempOffsetMin=sub.getOffsetMin();
+             }
+             if(tempOffsetMax<=sub.getOffsetMax()){
+                 tempOffsetMax=sub.getOffsetMax();
+             }
+             
+             if(tempOffsetInc!=sub.getOffsetInc()){
+                 System.out.println("fend.session.node.headers.setRowFactory(): Offset inc is not the same across the sequence!: check the table");
+             };
+             
+             
+             if(tempCmpMin>=sub.getCmpMin()){
+                 tempCmpMin=sub.getCmpMin();
+             }
+             if(tempCmpMax<=sub.getCmpMax()){
+                 tempCmpMax=sub.getCmpMax();
+             }
+             if(tempCmpInc!=sub.getCmpInc()){
+                 System.out.println("fend.session.node.headers.setRowFactory(): CMP inc is not the same across the sequence!: check the table");
+
+             }
              seqroot.getChildren().add(subItem);
          }
+         
+         Long totalShots=0L;
+         for (Map.Entry<String, Long> entrySet : gunShotMap.entrySet()) {
+             String key = entrySet.getKey();
+             Long value = entrySet.getValue();
+           //  System.out.println(key+": "+value);
+             totalShots+=value;
+         }
+         
+         s.setTimeStamp(tempTimeStamp);
+         s.setCmpMax(tempCmpMax);
+         s.setCmpMin(tempCmpMin);
+         s.setCmpInc(tempCmpInc);
+         s.setDugShotInc(tempDugShotInc);
+         s.setDugShotMax(totalShots);
+         
+         s.setInlineMax(tempInlineMax);
+         s.setInlineMin(tempInlineMin);
+         s.setXlineMax(tempXlineMax);
+         s.setXlineMin(tempXlineMin);
+         s.setTraceCount(tempTrcCnt);
          treeSeq.add(seqroot);
      }
      
@@ -292,10 +401,12 @@ public class HeadersViewController extends Stage implements Initializable {
      treetableView.setRoot(rootOfAllseq);
      treetableView.setShowRoot(false);
      
+     
     }
 
     void setView(HeadersNode aThis) {
         hnode=aThis;
+        this.setTitle("Results for "+vname);
         this.setScene(new Scene(hnode));
         this.showAndWait();
     }

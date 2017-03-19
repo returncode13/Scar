@@ -217,25 +217,132 @@ public class DugioHeaderValuesExtractor {
     
     private Void calculateRemainingHeaders(){
         try{
-         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+         ExecutorService executorService = Executors.newFixedThreadPool(10);
          executorService.submit(new Callable<Void>() {
 
              @Override
              public Void call() throws Exception {
                  synchronized(this){
                      for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
-                         Headers hdr = iterator.next();
-                         //if(hdr.getTimeStamp().)
-                         System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
                          
                        // Long traceCount=Long.valueOf(forEachKey(hdr,dmh.traceCount));
                        //  System.out.println("Value from forTraces:"+forTraces(hdr));
                          
-                         Long traceCount=Long.valueOf(forTraces(hdr));
+                         
+//ExecutorService executorService1 = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+ //        executorService1.submit(new Callable<Void>() {
+
+           //  @Override
+            // public Void call() throws Exception {
+             
+                 Headers hdr = iterator.next();
+                         //if(hdr.getTimeStamp().)
+                         System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
+                         
+                 Long traceCount=Long.valueOf(forTraces(hdr));
+                                     
+                                     /* Long[] values=new Long[dmh.metaHeaders.length];
+                                     keyValueExtractor(hdr, values);*/
+                                     
+                                     Long cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                                     Long cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                                     Long cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                                     
+                                     Long inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                                     Long inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                                     Long inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                                     Long xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                                     Long xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                                     Long xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                                     Long dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                                     Long dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                                     Long dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                                     Long dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                                     Long dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                                     Long dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                                     Long offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                                     Long offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                                     Long offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                                     
+                                     
+                                     
+                                     /*Long inlineMax=values[0];
+                                     Long inlineMin=values[1];
+                                     Long inlineInc=values[2];
+                                     Long xlineMax=values[3];
+                                     Long xlineMin=values[4];
+                                     Long xlineInc=values[5];
+                                     Long dugShotMax=values[6];
+                                     Long dugShotMin=values[7];
+                                     Long dugShotInc=values[8];
+                                     Long dugChannelMax=values[9];
+                                     Long dugChannelMin=values[10];
+                                     Long dugChannelInc=values[11];
+                                     Long offsetMax=values[12];
+                                     Long offsetMin=values[13];
+                                     Long offsetInc=values[14];
+                                     Long cmpMax=values[15];
+                                     Long cmpMin=values[16];
+                                     Long cmpInc=values[17];
+                                     
+                                     
+                                     
+                                     Long inlineMax=new Long(0);
+                                     Long inlineMin=new Long(0);
+                                     Long inlineInc=new Long(0);
+                                     Long xlineMax=new Long(0);
+                                     Long xlineMin=new Long(0);
+                                     Long xlineInc=new Long(0);
+                                     Long dugShotMax=new Long(0);
+                                     Long dugShotMin=new Long(0);
+                                     Long dugShotInc=new Long(0);
+                                     Long dugChannelMax=new Long(0);
+                                     Long dugChannelMin=new Long(0);
+                                     Long dugChannelInc=new Long(0);
+                                     Long offsetMax=new Long(0);
+                                     Long offsetMin=new Long(0);
+                                     Long offsetInc=new Long(0);
+                                     Long cmpMax=new Long(0);
+                                     Long cmpMin=new Long(0);
+                                     Long cmpInc=new Long(0);
+                                     */
+                                     /*LongHolder lholder=new LongHolder();
+                                     keyValueThreadExtractor(hdr,lholder);*/
+                                     hdr.setTraceCount(traceCount);
+                                     hdr.setCmpMax(cmpMax);
+                                     hdr.setCmpMin(cmpMin);
+                                     hdr.setCmpInc(cmpInc);
+                                     hdr.setInlineMax(inlineMax);
+                                     hdr.setInlineMin(inlineMin);
+                                     hdr.setInlineInc(inlineInc);
+                                     hdr.setXlineMax(xlineMax);
+                                     hdr.setXlineMin(xlineMin);
+                                     hdr.setXlineInc(xlineInc);
+                                     hdr.setDugShotMax(dugShotMax);
+                                     hdr.setDugShotMin(dugShotMin);
+                                     hdr.setDugShotInc(dugShotInc);
+                                     hdr.setDugChannelMax(dugChannelMax);
+                                     hdr.setDugChannelMin(dugChannelMin);
+                                     hdr.setDugChannelInc(dugChannelInc);
+                                     hdr.setOffsetMax(offsetMax);
+                                     hdr.setOffsetMin(offsetMin);
+                                     hdr.setOffsetInc(offsetInc);
+                                
+                         
+             
+         //    return null;
+        //     }
+       //  });//.get();
+         
+                            
+                                 
+                                 
+                                     
+                        /* Long traceCount=Long.valueOf(forTraces(hdr));*/
                          
                          /* Long[] values=new Long[dmh.metaHeaders.length];
                          keyValueExtractor(hdr, values);*/
-                        
+                        /*
                          Long cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
                          Long cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
                          Long cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
@@ -254,7 +361,7 @@ public class DugioHeaderValuesExtractor {
                          Long dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
                          Long offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
                          Long offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
-                         Long offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                         Long offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));*/
                          
                         
                         
@@ -300,7 +407,8 @@ public class DugioHeaderValuesExtractor {
                          */
                          /*LongHolder lholder=new LongHolder();
                          keyValueThreadExtractor(hdr,lholder);*/
-                        hdr.setTraceCount(traceCount);
+                        
+                         /*hdr.setTraceCount(traceCount);
                         hdr.setCmpMax(cmpMax);
                         hdr.setCmpMin(cmpMin);
                         hdr.setCmpInc(cmpInc);
@@ -318,7 +426,7 @@ public class DugioHeaderValuesExtractor {
                         hdr.setDugChannelInc(dugChannelInc);
                         hdr.setOffsetMax(offsetMax);
                         hdr.setOffsetMin(offsetMin);
-                        hdr.setOffsetInc(offsetInc);
+                        hdr.setOffsetInc(offsetInc);*/
                         
                         /*hdr.setCmpMax(lholder.cmpMax);
                         hdr.setCmpMin(lholder.cmpMin);

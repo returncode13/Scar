@@ -171,7 +171,7 @@ public class LogWatcher {
                                                 
                                                 List<Logs>logsList=lserv.getLogsFor(h);
                                                 if(logsList.isEmpty()){
-                                                    System.out.println("watcher.LogWatcher: Loglist is EMPTY");
+                                                    //System.out.println("watcher.LogWatcher: Loglist is EMPTY");
                                                     
                                                     newLog=true;
                                                     Long preVersion=0L;
@@ -218,7 +218,7 @@ public class LogWatcher {
                                                     
                                                 }
                                                 else{
-                                                    System.out.println("Loglist is NOT empty");
+                                                    //System.out.println("Loglist is NOT empty");
                                                     
                                                     Boolean exists=false;
                                                     for (Iterator<Logs> iterator1 = logsList.iterator(); iterator1.hasNext();) {
@@ -233,7 +233,7 @@ public class LogWatcher {
                                                             maxVersion=currentVersion;
                                                         }
                                                         
-                                                        System.out.println("Contents: ");
+                                                       // System.out.println("Contents: ");
                                                         
                                                     }
                                                     
@@ -350,7 +350,7 @@ public class LogWatcher {
                                 
                                 List<Logs>logsList=lserv.getLogsFor(h);
                                 if(logsList.isEmpty()){
-                                    System.out.println("Loglist is EMPTY");
+                                //    System.out.println("Loglist is EMPTY");
                                     
                                     newLog=true;
                                     Long preVersion=0L;
@@ -401,7 +401,7 @@ public class LogWatcher {
                                     
                                 }
                                 else{
-                                    System.out.println("Loglist is NOT empty");
+                              //      System.out.println("Loglist is NOT empty");
                                     
                                     Boolean exists=false;
                                     for (Iterator<Logs> iterator1 = logsList.iterator(); iterator1.hasNext();) {

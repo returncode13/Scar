@@ -44,6 +44,9 @@ import fend.overview.OverviewController;
 import fend.overview.OverviewItem;
 import fend.overview.OverviewModel;
 import fend.overview.OverviewNode;
+import fend.overview.PendingJobsController;
+import fend.overview.PendingJobsModel;
+import fend.overview.PendingJobsNode;
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
@@ -126,7 +129,7 @@ public class SessionController implements Initializable {
     private ArrayList<LinksModel> linksModelList=new ArrayList<>();
     private ObservableList<LinksModel> obsLinksModelList=FXCollections.observableList(linksModelList);
     
-    
+    private List<String> pendingarray;
     private SessionNode snn;
     
     
@@ -201,6 +204,10 @@ public class SessionController implements Initializable {
          OverviewModel ovModel=new OverviewModel();
                  
          List<JobStepModel> jobs=obsModelList;
+         PendingJobsModel pmodel=new PendingJobsModel();
+         pmodel.setPendingjobs(pendingarray);
+         PendingJobsNode pnode=new PendingJobsNode(pmodel);
+         PendingJobsController pcontr=new PendingJobsController();
          
          for (Iterator<JobStepModel> iterator = jobs.iterator(); iterator.hasNext();) {
              JobStepModel job = iterator.next();
@@ -981,6 +988,7 @@ public class SessionController implements Initializable {
                             System.out.println("fend.session.SessionController.tracking(): child: "+child.getJobStepText()+" : has child: "+next.getJobStepText());
                         
                     }
+                        pendingarray=new ArrayList<>();
                  setPendingJobsFlag(root,child);
                     setQCFlag(root, child);
              }
@@ -1051,6 +1059,7 @@ public class SessionController implements Initializable {
          child.setPendingFlagProperty(Boolean.TRUE);
          
          System.out.println("fend.session.SessionController.setPendingJobsFlag():  child :"+child.getJobStepText()+" has pending subs "+remaining);
+         pendingarray.addAll(remaining);
          System.out.println("fend.session.SessionController.setPendingJobsFlag(): Pending flag set in model");
          }else     //child has no pending subs
          {
