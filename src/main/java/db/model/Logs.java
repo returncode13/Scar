@@ -34,10 +34,10 @@ public class Logs implements Serializable{
     @Column(name="version")
     private Long version;
 
-    @Column(name="logPath")
+    @Column(name="logPath",length=4096)
     private String logpath;
     
-    @Column(name="timeStamp")
+    @Column(name="timeStamp",length =1024)
     private String timestamp;
     
     public Long getVersion() {
@@ -65,9 +65,9 @@ public class Logs implements Serializable{
         return idLogs;
     }
 
-    public void setIdLogs(Long idLogs) {
-        this.idLogs = idLogs;
-    }
+    /* public void setIdLogs(Long idLogs) {
+    this.idLogs = idLogs;
+    }*/
 
     public String getTimestamp() {
         return timestamp;

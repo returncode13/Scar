@@ -111,7 +111,7 @@ public class HeaderCollector {
             MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
             int aci=0;
             
-            LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.FALSE);
+            LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
 
             Map<String,String> subInsightVersionFromLogMap=logForSub.getsubInsightVersionMap();
             

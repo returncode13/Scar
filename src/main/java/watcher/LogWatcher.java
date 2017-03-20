@@ -110,7 +110,7 @@ public class LogWatcher {
                     LogWatcher.this.filter=filter;
                     
                     
-                    if(!tableExtraction){
+                    if(false&&!tableExtraction){
                         task=new Watcher(LogWatcher.this.logsLocation, filter) {
                             
                             @Override
@@ -151,9 +151,9 @@ public class LogWatcher {
                                             DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
                                             Date convjdate=jdate.parse(date+":"+time);
                                             
-                                            String linename=parts[3].split("=")[1];
-                                            String baseInsVersion=parts[5];
-                                            String revInsVersion=parts[6];
+                                            String linename=parts[7].split("=")[1];
+                                            String baseInsVersion=parts[14];
+                                            String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
                                             //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
                                             
@@ -219,7 +219,7 @@ public class LogWatcher {
                                                         l.setLogpath(logfile.getParentFile().getAbsolutePath()+"/"+lgw.filename);
                                                         l.setVersion(preVersion);
                                                         l.setTimestamp(lgw.date);
-                                                        lserv.createLogs(l);
+                                                        //lserv.createLogs(l);   //Logs are extracted when the headers are been extracted.
                                                         
                                                         preVersion++;
                                                     }
@@ -277,7 +277,7 @@ public class LogWatcher {
                                                         l.setLogpath(logfile.getParentFile().getAbsolutePath()+"/"+next.filename);
                                                         l.setVersion(maxVersion);
                                                         l.setTimestamp(next.date);
-                                                        lserv.createLogs(l);
+                                                        //lserv.createLogs(l);
                                                         exists=true;
                                                         numberOfruns=maxVersion;
                                                     }
@@ -346,17 +346,20 @@ public class LogWatcher {
                             
                              //New script results
                                             String[] parts=value.split("\\s");
+                                            for(int iii=0;iii<parts.length;iii++){
+                                                System.out.println("wacther.Logwatcher():  "+iii+" = "+parts[iii]);
+                                            }
                                             String filename=parts[0];
                                             String date=parts[1];                                            
                                             String time=parts[2];
                                             DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
                                             Date convjdate=jdate.parse(date+":"+time);
                                             
-                                            String linename=parts[3].split("=")[1];
-                                            String baseInsVersion=parts[5];
-                                            String revInsVersion=parts[6];
+                                            String linename=parts[7].split("=")[1];
+                                            String baseInsVersion=parts[14];
+                                            String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
-                                            //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
+                                               System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
                             
                             LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
                             lwatchHolderList.add(lwatchholder);
@@ -369,36 +372,37 @@ public class LogWatcher {
                         
                         for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
                             LogWatchHolder next = iterator.next();
-                            //  System.out.println("Inside for loop: "+"got: "+next.linename+" logsLocation: "+next.filename+" "+next.date);
+                              System.out.println("watcher.LogWatcher.: Inside for loop: "+"got: "+next.linename+" logsLocation: "+next.filename+" "+next.date);
                             maplineLog.put(next.linename, next);
                         }
                         
                         Set<String> keys=maplineLog.keySet();
                         for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
                             String next = iterator.next();
-                            //  System.out.println("Keys: "+next);
+                              System.out.println("watcher.LogWatcher.: Keys: "+next);
                         }
                         
                         
                         for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
                             LogWatchHolder next = iterator.next();
-                            List<Headers> hlist=hserv.getHeadersFor(v, next.linename);
+                            List<Headers> hlist=null;
+                            hlist=hserv.getHeadersFor(v, next.linename);
                             
                             
                             
                             Boolean newLog=false;
                             Long maxVersion=0L;
                             
-                            if(hlist.size()==0){
-                                
+                            if(hlist==null||hlist.isEmpty()){
+                                System.out.println("watcher.Logwatcher(): hlist is  empty");
                             }
                             else if(hlist.size()==1){
                                 Headers h=hlist.get(0);
-                                
+                                System.out.println("watcher.Logwatcher(): hlist is not empty");
                                 List<Logs>logsList=lserv.getLogsFor(h);
                                 if(logsList.isEmpty()){
                                 //    System.out.println("Loglist is EMPTY");
-                                    
+                                    System.out.println("watcher.Logwatcher(): LogList is empty");
                                     newLog=true;
                                     Long preVersion=0L;
                                     
@@ -408,11 +412,13 @@ public class LogWatcher {
                                     
                                     for (Iterator<LogWatchHolder> iterator1 = logwList.iterator(); iterator1.hasNext();) {
                                         LogWatchHolder lgw = iterator1.next();
-                                        // System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+ " with version: "+preVersion);
+                                         System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+ " with version: "+preVersion);
                                         Logs l=new Logs();
                                         l.setHeaders(h);
-                                        l.setLogpath(logpath+"/"+lgw.filename);
+                                      //  l.setLogpath(logpath+"/"+lgw.filename);
+                                      l.setLogpath(lgw.filename);
                                         l.setVersion(preVersion);
+                                      // l.setVersion(h.getVersion());
                                         l.setTimestamp(lgw.date);
                                         lserv.createLogs(l);
                                         
@@ -449,7 +455,7 @@ public class LogWatcher {
                                 }
                                 else{
                               //      System.out.println("Loglist is NOT empty");
-                                    
+                                    System.out.println("watcher.Logwatcher(): LogList in not empty");
                                     Boolean exists=false;
                                     for (Iterator<Logs> iterator1 = logsList.iterator(); iterator1.hasNext();) {
                                         Logs log = iterator1.next();
@@ -473,10 +479,12 @@ public class LogWatcher {
                                         maxVersion++;
                                         Logs l=new Logs();
                                         l.setHeaders(h);
-                                        l.setLogpath(logpath+"/"+next.filename);
+                                        //l.setLogpath(logpath+"/"+next.filename);
+                                        l.setLogpath(next.filename);
                                         l.setVersion(maxVersion);
+                                        //l.setVersion(h.getVersion());
                                         l.setTimestamp(next.date);
-                                        lserv.createLogs(l);
+                                      //  lserv.createLogs(l);
                                         exists=true;
                                         numberOfruns=maxVersion;
                                     }
@@ -525,17 +533,21 @@ public class LogWatcher {
 
     public Map<String, String> getsubInsightVersionMap() throws ParseException {
                         Set<String> keys=maplineLog.keySet();
+                        mapSubInsightVersion.clear();
                         for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
                             String linename = iterator.next();
                             List<LogWatchHolder> lgwl=(List<LogWatchHolder>)maplineLog.get(linename);
                             String insver=new String();
-                            Date date=new Date(2010,1,1,0,0);                   // date set to 201001010000
+                            String oldDate="Mon Jan 01 01:01:01 UTC 2001";
+                            Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(oldDate);                   // date set to 201001010000
                             for (Iterator<LogWatchHolder> iterator1 = lgwl.iterator(); iterator1.hasNext();) {   //loop to find the insight version from the latest log
                                 LogWatchHolder lgw = iterator1.next();
-                                Date d=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss").parse(lgw.date);
+                                System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+lgw.date);
+                                Date d=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(lgw.date);
                                 if(d.after(date)){
                                     date=d;
                                     insver=lgw.insightVersion;
+                                    System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+date+"  inv: "+insver);
                                 }
                             }
                             

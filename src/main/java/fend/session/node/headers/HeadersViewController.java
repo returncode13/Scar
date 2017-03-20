@@ -135,32 +135,42 @@ public class HeadersViewController extends Stage implements Initializable {
                  List<Logs> loglist=lserv.getLogsFor(h.get(0));
                  if(loglist.isEmpty()){
                      String logLocation=v.getPathOfVolume();
+                     System.out.println("fend.session.node.headers.setRowFactory(): LogList is empty");
                      logLocation= logLocation+"/../../000scratch/logs";
                      try{
                    LogWatcher lw=  new LogWatcher(logLocation,"", lsm.getVolmodel(),Boolean.TRUE);
+                   
                      }catch(NullPointerException npe){
                          System.out.println("fend.session.node.headers.setRowFactory(): unable to find logs!!!");
                      }
                      
                  }
                  else{
-                     String logLocation=v.getPathOfVolume();
+                     /* String logLocation=v.getPathOfVolume();
                      logLocation= logLocation+"/../../000scratch/logs";
+                     //System.out.println("fend.session.node.headers.setRowFactory(): Nonempty LogList");
                      LogWatcher lw=  new LogWatcher(logLocation,"", lsm.getVolmodel(),Boolean.TRUE);
                      System.out.println("fend.session.node.headers.setRowFactory(): non empty log list!");
                      for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
+                     Logs logs = iterator.next();
+                     Long version=logs.getVersion();
+                     String timestamp=logs.getTimestamp();
+                     String logfilePath=logs.getLogpath();
+                     VersionLogsModel lmod=new VersionLogsModel(version,timestamp,logfilePath);
+                     verslogsmodel.add(lmod);
+                     }*/
+                     
+                     
+                 }
+                 
+                 for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
                          Logs logs = iterator.next();
                          Long version=logs.getVersion();
                          String timestamp=logs.getTimestamp();
                          String logfilePath=logs.getLogpath();
                          VersionLogsModel lmod=new VersionLogsModel(version,timestamp,logfilePath);
                          verslogsmodel.add(lmod);
-                     }
-                     
-                     
-                 }
-                 
-                       
+                     }      
                  
              }
              LogsModel logsmodel=new LogsModel();

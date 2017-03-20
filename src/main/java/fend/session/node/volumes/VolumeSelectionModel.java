@@ -207,7 +207,7 @@ public class VolumeSelectionModel {
         String logPath=volumeChosen.getAbsolutePath();
         logPath=logPath+"/../../000scratch/logs";
         if(logTimerTask==null) {
-            logTimerTask=new LogWatcher(logPath,"",this,Boolean.FALSE);
+           // logTimerTask=new LogWatcher(logPath,"",this,Boolean.FALSE);
         }
     }
 
