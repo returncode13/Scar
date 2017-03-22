@@ -55,7 +55,7 @@ public class SubSurface extends Sequences implements Serializable{
     private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
     private   LongProperty version=new SimpleLongProperty(0L);
-    
+    private   StringProperty errorMessage=new SimpleStringProperty();
     
             
     
@@ -258,6 +258,15 @@ public class SubSurface extends Sequences implements Serializable{
         this.alert=new SimpleBooleanProperty(alert);
     }
 
+    public String getErrorMessage() {
+        return errorMessage.get();
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage.set(errorMessage);
+    }
+
+    
     
     /*public String getInsightVersion() {
     return insightVersion.get();

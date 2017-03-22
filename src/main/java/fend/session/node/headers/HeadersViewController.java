@@ -17,6 +17,7 @@ import db.services.VolumeServiceImpl;
 import fend.session.node.headers.logger.LogsModel;
 import fend.session.node.headers.logger.LogsNode;
 import fend.session.node.headers.logger.VersionLogsModel;
+import fend.session.node.volumes.VolumeSelectionModel;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +25,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +38,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -112,6 +120,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     setContextMenu(null);
                 }else if(item.getAlert()){
                     setStyle("-fx-background-color:orange");
+                    setTooltip(new Tooltip(item.getErrorMessage()));
                     setContextMenu(contextMenu);
                 }else
                 {
@@ -137,11 +146,26 @@ public class HeadersViewController extends Stage implements Initializable {
                      String logLocation=v.getPathOfVolume();
                      System.out.println("fend.session.node.headers.setRowFactory(): LogList is empty");
                      logLocation= logLocation+"/../../000scratch/logs";
+                     ExecutorService execService=Executors.newFixedThreadPool(1);
+                     final VolumeSelectionModel vmd=lsm.getVolmodel();
+                     final String lloc=new String(logLocation);
                      try{
-                   LogWatcher lw=  new LogWatcher(logLocation,"", lsm.getVolmodel(),Boolean.TRUE);
+                        execService.submit(new Callable<Void>(){
+                           
+                            @Override
+                            public Void call() throws Exception {
+                                LogWatcher lw=  new LogWatcher(lloc,"", vmd,Boolean.TRUE);
+                                return null;
+                            }
+                        }).get();
+                   loglist=lserv.getLogsFor(h.get(0));
                    
                      }catch(NullPointerException npe){
                          System.out.println("fend.session.node.headers.setRowFactory(): unable to find logs!!!");
+                     } catch (InterruptedException ex) {
+                         Logger.getLogger(HeadersViewController.class.getName()).log(Level.SEVERE, null, ex);
+                     } catch (ExecutionException ex) {
+                         Logger.getLogger(HeadersViewController.class.getName()).log(Level.SEVERE, null, ex);
                      }
                      
                  }

@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -48,6 +50,7 @@ public class Sequences implements Serializable{
     private Boolean modified;
     private Boolean deleted;
     private Long version;
+    private StringProperty errorMessage=new SimpleStringProperty();
     
     public ArrayList<SubSurface> getSubsurfaces() {
         return subsurfaces;
@@ -281,7 +284,13 @@ public class Sequences implements Serializable{
    
 
    
-    
+    public String getErrorMessage() {
+        return errorMessage.get();
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage.set(errorMessage);
+    }
     
     
     

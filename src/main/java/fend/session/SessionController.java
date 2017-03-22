@@ -110,6 +110,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
 
 /**
@@ -1217,7 +1218,85 @@ public class SessionController implements Initializable {
                                 targetVol.printQC();
                                 targetSeq.setAlert(Boolean.TRUE);
                                 targetSub.setAlert(Boolean.TRUE);
+                                targetSeq.setErrorMessage("tracecount mismatch");
+                                targetSub.setErrorMessage("tracecount mismatch");
                                 }
+                        
+                        
+                        List<String> versionsSelectedInChild=child.getInsightVersionsModel().getCheckedVersions();
+                        MultiValueMap<String,String> baseRevisionFromJobMap=new MultiValueMap<>();
+                        
+                        String baseVersionFromSub=refSub.getInsightVersion().split("\\(")[0];
+                        String revisionOfVersionFromSub=refSub.getInsightVersion().split("\\(")[1].split("\\)")[0];
+                            
+                        for (String s:versionsSelectedInChild){
+                           
+                            String[] parts=s.split("-");
+                            String base=parts[0];
+                            String rev=parts[1];
+                            
+                             
+                            baseRevisionFromJobMap.put(base, rev);
+                            
+                            System.out.println("fend.session.SessionController.setQCFlag(): Sub: base"+baseVersionFromSub+" rev:"+revisionOfVersionFromSub);
+                            
+                            
+                        }
+                        
+                       
+                        
+                        Set<String> baseKeys=baseRevisionFromJobMap.keySet();
+                        /*for (Iterator<String> iterator1 = baseKeys.iterator(); iterator1.hasNext();) {
+                        String next = iterator1.next();
+                        List<String> revs=(List<String>) baseRevisionFromJobMap.get(next);
+                        
+                        
+                        for (Iterator<String> iterator2 = revs.iterator(); iterator2.hasNext();) {
+                        String next1 = iterator2.next();
+                        System.out.println("fend.session.SessionController.setQCFlag() Job: base: "+next+" rev: "+next1);
+                        }
+                        }*/
+                        
+                        if(!baseKeys.contains(baseVersionFromSub)){
+                            //Turn the sub and job QC flag =true;
+                                child.setQcFlagProperty(Boolean.TRUE);
+                                targetVol.setQcFlagProperty(Boolean.TRUE);
+                                System.out.println("After entering loop");
+                                targetVol.printQC();
+                                targetSeq.setAlert(Boolean.TRUE);
+                                targetSeq.setErrorMessage("version mismatch");
+                                targetSub.setAlert(Boolean.TRUE);
+                                targetSub.setErrorMessage("version mismatch");
+                            
+                        }
+                        else 
+                        {
+                            List<String> revList=(List<String>) baseRevisionFromJobMap.get(baseVersionFromSub);
+                            System.out.println("fend.session.SessionController.setQCFlag(): found base: "+baseVersionFromSub);
+                            
+                            if(!revList.contains(revisionOfVersionFromSub)){
+                                 System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSub+" missing from the list");
+                                 child.setQcFlagProperty(Boolean.TRUE);
+                                targetVol.setQcFlagProperty(Boolean.TRUE);
+                                System.out.println("After entering loop");
+                                targetVol.printQC();
+                                targetSeq.setAlert(Boolean.TRUE);
+                                targetSub.setAlert(Boolean.TRUE);
+                            }
+                        }
+                        
+                        
+                        /*if(child.getInsightVersionsModel().){                             //Change this to a computed hash.
+                        
+                        System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing InisghtVersions! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
+                        System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True : on volume : "+targetVol.getLabel()+" : Seq: "+targetSeq.getSequenceNumber()+" : "+targetSub.getSubsurface());
+                        child.setQcFlagProperty(Boolean.TRUE);
+                        targetVol.setQcFlagProperty(Boolean.TRUE);
+                        System.out.println("After entering loop");
+                        targetVol.printQC();
+                        targetSeq.setAlert(Boolean.TRUE);
+                        targetSub.setAlert(Boolean.TRUE);
+                        }*/
                         
                                
                         
