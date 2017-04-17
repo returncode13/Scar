@@ -2,7 +2,7 @@
 <settings id="0">
     <dbPassword></dbPassword>
     <dbUser>fgeo</dbUser>
-    <sshHost>10.11.1.39</sshHost>
-    <sshPassword>rdV9BPk9WS</sshPassword>
-    <sshUser>irdb</sshUser>
+    <sshHost>10.102.1.80</sshHost>
+    <sshPassword>Polarcus123</sshPassword>
+    <sshUser>fgeo</sshUser>
 </settings>

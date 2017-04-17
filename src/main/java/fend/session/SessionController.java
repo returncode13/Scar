@@ -1088,7 +1088,150 @@ public class SessionController implements Initializable {
         //If Child has been traversed then return.   Create a "traversed" flag in JobStepModel and set in each time the node is returning "upwards". i.e it and all of its descendants have been traversed, set its "traversed" flag to True
         
         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
-             System.out.println("collector.Collector.mismatch():  ROOT/LEAF found: "+parent.getJobStepText());
+            
+            //check for Insight Version mismatch
+            Set<SubSurface> csubq=child.getSubsurfacesInJob();
+            
+            List<VolumeSelectionModel> cVolList=child.getVolList();
+         for (Iterator<VolumeSelectionModel> iterator = cVolList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModel next = iterator.next();
+            next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
+            
+        }
+            
+             child.setQcFlagProperty(Boolean.FALSE);
+            
+            List<String> versionsSelectedInChildQ=child.getInsightVersionsModel().getCheckedVersions();
+                        MultiValueMap<String,String> baseRevisionFromJobMapQ=new MultiValueMap<>();
+                        
+                      for (Iterator<SubSurface> iterator = csubq.iterator(); iterator.hasNext();) {
+                        SubSurface refSubQ = iterator.next();
+                        String baseVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[0];
+                        String revisionOfVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[1].split("\\)")[0];
+                           
+                       
+            VolumeSelectionModel targetVolQ=new VolumeSelectionModel();
+            Sequences targetSeqQ=new Sequences();
+            SubSurface targetSubQ=refSubQ;
+                        
+                           for (Iterator<VolumeSelectionModel> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
+                            VolumeSelectionModel vc = iterator1.next();
+                            Set<SubSurface> vcSub=vc.getSubsurfaces();
+                           // System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
+                            if(vcSub.contains(targetSubQ)){
+                              //  System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
+                                targetVolQ=vc;
+                                break;
+                            }
+                 
+                        }
+                        
+                        if(targetVolQ!=null){
+                            HeadersModel hmod=targetVolQ.getHeadersModel();
+                            List<Sequences> seqList=hmod.getSequenceListInHeaders();
+                            
+                for (Sequences seq : seqList) {
+                    if(targetSubQ.getSequenceNumber().equals(seq.getSequenceNumber())){
+                        targetSeqQ=seq;
+                        //  System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                        break;
+                    }
+                    
+                    
+                    /* List<SubSurface> seqSubs=seq.getSubsurfaces();
+                    System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                    if(seqSubs.contains(targetSub)){
+                    targetSeq=seq;
+                    System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                    targetSub.setSequenceNumber(seq.getSequenceNumber());
+                    break;
+                    }*/
+                }
+                            
+                        }else
+                        {
+                                try {
+                                    throw new Exception("Subline: "+targetSubQ.getSubsurface()+" :not found in any of the child job: "+child.getJobStepText()+" : volumes!!");
+                                } catch (Exception ex) {
+                                    Logger.getLogger(SessionController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                        }
+                        
+                        
+                        for (String s:versionsSelectedInChildQ){
+                           
+                            String[] parts=s.split("-");
+                            String base=parts[0];
+                            String rev=parts[1];
+                            
+                             
+                            baseRevisionFromJobMapQ.put(base, rev);
+                            
+                            System.out.println("fend.session.SessionController.setQCFlag(): Sub: base"+baseVersionFromSubQ+" rev:"+revisionOfVersionFromSubQ);
+                            
+                            
+                        }
+                         Set<String> baseKeysQ=baseRevisionFromJobMapQ.keySet();
+                        /*for (Iterator<String> iterator1 = baseKeys.iterator(); iterator1.hasNext();) {
+                        String next = iterator1.next();
+                        List<String> revs=(List<String>) baseRevisionFromJobMap.get(next);
+                        
+                        
+                        for (Iterator<String> iterator2 = revs.iterator(); iterator2.hasNext();) {
+                        String next1 = iterator2.next();
+                        System.out.println("fend.session.SessionController.setQCFlag() Job: base: "+next+" rev: "+next1);
+                        }
+                        }*/
+                        
+                        if(!baseKeysQ.contains(baseVersionFromSubQ)){
+                            //Turn the sub and job QC flag =true;
+                                child.setQcFlagProperty(Boolean.TRUE);
+                                targetVolQ.setQcFlagProperty(Boolean.TRUE);
+                                System.out.println("After entering loop");
+                                targetVolQ.printQC();
+                                targetSeqQ.setAlert(Boolean.TRUE);
+                                targetSeqQ.setErrorMessage("version mismatch");
+                                targetSubQ.setAlert(Boolean.TRUE);
+                                targetSubQ.setErrorMessage("version mismatch");
+                            
+                        }
+                        else 
+                        {
+                            List<String> revList=(List<String>) baseRevisionFromJobMapQ.get(baseVersionFromSubQ);
+                            System.out.println("fend.session.SessionController.setQCFlag(): found base: "+baseVersionFromSubQ);
+                            
+                            if(!revList.contains(revisionOfVersionFromSubQ)){
+                                 System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSubQ+" missing from the list");
+                                 child.setQcFlagProperty(Boolean.TRUE);
+                                targetVolQ.setQcFlagProperty(Boolean.TRUE);
+                                System.out.println("After entering loop");
+                                targetVolQ.printQC();
+                                targetSeqQ.setAlert(Boolean.TRUE);
+                                targetSeqQ.setErrorMessage("version mismatch");
+                                targetSubQ.setAlert(Boolean.TRUE);
+                                targetSubQ.setErrorMessage("version mismatch");
+                            }
+                            else{
+                                System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSubQ+" missing from the list");
+                                 child.setQcFlagProperty(Boolean.FALSE);
+                                targetVolQ.setQcFlagProperty(Boolean.FALSE);
+                                System.out.println("After entering loop");
+                                targetVolQ.printQC();
+                                targetSeqQ.setAlert(Boolean.FALSE);
+                                targetSeqQ.setErrorMessage("");
+                                targetSubQ.setAlert(Boolean.FALSE);
+                                targetSubQ.setErrorMessage("");
+                            }
+                        }
+                        
+                        }  
+                        
+                        
+                        
+                  //end checking for insight version       
+                        
+                        
+            System.out.println("collector.Collector.setQCFlag():  ROOT/LEAF found: "+parent.getJobStepText());
              return;
          }
         
@@ -1281,8 +1424,23 @@ public class SessionController implements Initializable {
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
                                 targetSeq.setAlert(Boolean.TRUE);
+                                targetSeq.setErrorMessage("version mismatch");
                                 targetSub.setAlert(Boolean.TRUE);
+                                targetSub.setErrorMessage("version mismatch");
                             }
+                            // TO BE ENABLE AFTER CHECKING
+                            else{
+                                System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSub+" missing from the list");
+                                 child.setQcFlagProperty(Boolean.FALSE);
+                                targetVol.setQcFlagProperty(Boolean.FALSE);
+                                System.out.println("After entering loop");
+                                targetVol.printQC();
+                                targetSeq.setAlert(Boolean.FALSE);
+                                targetSeq.setErrorMessage("");
+                                targetSub.setAlert(Boolean.FALSE);
+                                targetSub.setErrorMessage("");
+                            }
+                            
                         }
                         
                         
