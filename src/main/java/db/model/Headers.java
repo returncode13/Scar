@@ -117,7 +117,12 @@ public class Headers implements Serializable{
     private Boolean deleted; 
     
     @Column(name="Version")
-    private Long version;
+    private Long version;                                               //number of times the subsurface was run
+    
+        
+    @Column(name="InsightVersion")
+    private String insightVersion;                                        //version of insight as derived from the latest log.
+    
     
     public Headers() {
         this.modified=Boolean.FALSE;
@@ -187,6 +192,7 @@ public class Headers implements Serializable{
         hash = 97 * hash + Objects.hashCode(this.modified);
         hash = 97 * hash + Objects.hashCode(this.deleted);
         hash = 97 * hash + Objects.hashCode(this.version);
+        hash = 97 * hash + Objects.hashCode(this.insightVersion);
         return hash;
     }
 
@@ -280,6 +286,10 @@ public class Headers implements Serializable{
         if (!Objects.equals(this.version, other.version)) {
             return false;
         }
+        if (!Objects.equals(this.insightVersion, other.insightVersion)) {
+            return false;
+        }
+        
         return true;
     }
 
@@ -503,6 +513,14 @@ public class Headers implements Serializable{
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public String getInsightVersion() {
+        return insightVersion;
+    }
+
+    public void setInsightVersion(String insightVersion) {
+        this.insightVersion = insightVersion;
     }
     
     

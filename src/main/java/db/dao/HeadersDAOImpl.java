@@ -97,7 +97,7 @@ public class HeadersDAOImpl implements HeadersDAO{
                 System.out.println("db.dao.HeadersDAOImpl: updating entry for subsurface : "+newH.getSubsurface()+" with id: "+newH.getIdHeaders() );
             }
             else{
-                throw new Exception("The id belongs to a different seq/subsurface compared to the ones that the new header value refers to!!. ");
+                throw new Exception("db.dao.HeadersDAOImpl: The id belongs to a different seq/subsurface compared to the ones that the new header value refers to!!. ");
             }
           
             transaction.commit();
