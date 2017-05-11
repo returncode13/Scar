@@ -117,6 +117,7 @@ public class VolumeSelectionModel {
     }
 
 
+    
     public BooleanProperty getHeaderButtonDisabledStatusProperty() {
         return headerButtonDisabledStatusProperty;
     }
@@ -212,7 +213,7 @@ public class VolumeSelectionModel {
     }
 
     public void startWatching() {
-        startVolumeWatching();
+        //startVolumeWatching();
         startLogWatching();
     }
     

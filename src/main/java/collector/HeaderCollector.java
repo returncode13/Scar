@@ -61,6 +61,7 @@ public class HeaderCollector {
     final private static VolumeService volServ=new VolumeServiceImpl();
     private Volume dbVolume;
     private String logLocation;
+    LogWatcher logForSub;
     
     
     public void setFeVolumeSelModel(VolumeSelectionModel feVolumeSelModel) {
@@ -75,15 +76,31 @@ public class HeaderCollector {
                 
         System.out.println("collector.HeaderCollector: looking for logs in "+logLocation);
         calculateAndCommitHeaders();
+        logForSub.commitToDb();
     }
     
     private void calculateAndCommitHeaders(){
-        try {
+                        
+
+        
+            
+            
+           
+               
+           
+            
+            
+            
             File volume=feVolumeSelModel.getVolumeChosen();
+            dugHve.setVolume(volume);
+            logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
+       //     while(true)
+      //  {
+        try {
             List<Headers> existingHeaders=null;
             Map<String,Headers> subsurfaceHeaderMap=new HashMap<>();
             System.out.println("collector.HeaderCollector: calculating headers for "+volume.getAbsolutePath());
-            dugHve.setVolume(volume);
+            
             if(dbVolume.getHeaderExtracted()){
                 System.out.println("collector.HeaderCollector: Headers have been extracted for Volume: "+dbVolume.getNameVolume());
                 existingHeaders=hdrServ.getHeadersFor(dbVolume);
@@ -101,7 +118,7 @@ public class HeaderCollector {
             }
             if (headerList.isEmpty()){
                 System.out.println("collector.HeaderCollector: headerList is empty");
-                return;
+                return;                     // the while loop will break when there are no more headers to process.
             }
             else
                 System.out.println("collector.HeaderCollector: headerList is NOT empty");                    
@@ -111,10 +128,10 @@ public class HeaderCollector {
             MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
             int aci=0;
             
-            LogWatcher logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
-
+           
+                    
             Map<String,String> subInsightVersionFromLogMap=logForSub.getsubInsightVersionMap();
-            
+            System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): committing headers to the database");
             for (Iterator<Headers> iterator = headerList.iterator(); iterator.hasNext();) {
                 Headers next = iterator.next();
                 next.setVolume(dbVolume);
@@ -221,7 +238,8 @@ public class HeaderCollector {
         } catch (ParseException ex) {
             Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+       // feVolumeSelModel.setHeaderButtonStatus(Boolean.TRUE);
+   // }
     }
 
   public List<Sequences> getHeaderListForVolume(VolumeSelectionModel vm){

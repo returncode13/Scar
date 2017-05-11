@@ -148,7 +148,7 @@ public class DugioHeaderValuesExtractor {
         System.out.println("Time Taken: "+deltaTime);
          
          
-         
+        
         return headers;
     }
     
@@ -172,6 +172,9 @@ public class DugioHeaderValuesExtractor {
                         String lineName= line.substring(line.indexOf(" ")+1,line.length());
                         String seq=line.substring(line.indexOf("_")-3,line.indexOf("_"));
                         Headers hdr=new Headers();
+                        
+                       // if(headers.size()==1) break;
+                        
                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
                         
                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
