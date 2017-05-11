@@ -360,7 +360,7 @@ public class LogWatcher {
                                             String baseInsVersion=parts[14];
                                             String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
-                                               System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
+                                              // System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
                             
                             LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
                             lwatchHolderList.add(lwatchholder);
@@ -549,7 +549,7 @@ public class LogWatcher {
                             Long maxVersion=0L;
                             
                             if(hlist==null||hlist.isEmpty()){
-                                System.out.println("watcher.Logwatcher(): hlist is  empty");
+                              //  System.out.println("watcher.Logwatcher(): hlist is  empty");
                             }
                             else if(hlist.size()==1){
                                 Headers h=hlist.get(0);

@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -125,7 +126,7 @@ public class DugioHeaderValuesExtractor {
     
     
     
-    public ArrayList<Headers> calculatedHeaders(Map<String,Headers> subsurfaceTimestamp,List<Headers> existingHeaders) throws InterruptedException, ExecutionException{
+    public ArrayList<Headers> calculatedHeaders(final Map<String,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders) throws InterruptedException, ExecutionException{
         calculateSubsurfaceLines(subsurfaceTimestamp,existingHeaders);
        
        /* for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
@@ -133,26 +134,29 @@ public class DugioHeaderValuesExtractor {
             System.out.println("DHVEx: for volume "+volume+" sub: "+next.getSubsurface()+" time: "+next.getTimeStamp());
         }*/
         
+       System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in "+Thread.currentThread().getName()+"joining");
        Long startTime=System.currentTimeMillis();
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.submit(new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {
+                System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders ..calling calculateRemainingHeaders in "+Thread.currentThread().getName()+" forking");
                 return calculateRemainingHeaders();
+               // System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in"+Thread.currentThread().getName()+"joining");
             }
         }).get();
-        
+        System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in "+Thread.currentThread().getName()+"joining");
         Long endTime=System.currentTimeMillis();
         Long deltaTime=endTime-startTime;
-        System.out.println("Time Taken: "+deltaTime);
+        System.out.println("Time Taken: "+deltaTime+" headers.size(): "+headers.size());
          
          
         
         return headers;
     }
     
-    private void calculateSubsurfaceLines(Map<String,Headers> subsurfaceTimestamp,List<Headers> existingHeaders){
+    private void calculateSubsurfaceLines(final Map<String,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders){
         headers.clear();
         try{
             ExecutorService executorService= Executors.newFixedThreadPool(1);
@@ -175,7 +179,7 @@ public class DugioHeaderValuesExtractor {
                         
                        // if(headers.size()==1) break;
                         
-                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
+                       // System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
                         
                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
                         if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
@@ -209,38 +213,47 @@ public class DugioHeaderValuesExtractor {
                 }
             }).get();
         }catch(ExecutionException ex){
-            ex.printStackTrace();
-            
+        ex.printStackTrace();
+        
         } catch (InterruptedException ex) {
-            Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
     
     
     
     private Void calculateRemainingHeaders(){
         try{
-         ExecutorService executorService = Executors.newFixedThreadPool(10);
-         executorService.submit(new Callable<Void>() {
-
-             @Override
-             public Void call() throws Exception {
-                 synchronized(this){
+            /*  ExecutorService executorService = Executors.newFixedThreadPool(1);
+            executorService.submit(new Callable<Void>() {
+            
+            @Override
+            public Void call() throws Exception {
+            synchronized(this){*/
+           // synchronized(this){
+           List<Future> futures=new ArrayList<>();
+           int count=0;
                      for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
-                         
+                         count++;
                        // Long traceCount=Long.valueOf(forEachKey(hdr,dmh.traceCount));
                        //  System.out.println("Value from forTraces:"+forTraces(hdr));
                          
-                         
-//ExecutorService executorService1 = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
- //        executorService1.submit(new Callable<Void>() {
+                    
+                      
+                       
+ExecutorService executorService1 = Executors.newFixedThreadPool(50);
+futures.add(
+         executorService1.submit(new Callable<Void>() {
 
-           //  @Override
-            // public Void call() throws Exception {
+             @Override
+             public Void call() throws Exception {
              
+                 
+                // synchronized(this){
                  Headers hdr = iterator.next();
                          //if(hdr.getTimeStamp().)
-                         System.out.println("DHVEx: Inside calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
                          
                  Long traceCount=Long.valueOf(forTraces(hdr));
                                      
@@ -331,11 +344,20 @@ public class DugioHeaderValuesExtractor {
                                      hdr.setOffsetMin(offsetMin);
                                      hdr.setOffsetInc(offsetInc);
                                 
-                         
-             
-         //    return null;
-        //     }
-       //  });//.get();
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): finished storing headers for : "+hdr.getSubsurface()+" on Thread: "+Thread.currentThread().getName());
+                           return null;
+             }
+        }));//.get();
+               if(count%50==0){
+                   for(Future f:futures){
+                       f.get();
+                   }
+               }         
+             }
+       // }
+                 /*return null;
+                 }
+                 }).get();*/
          
                             
                                  
@@ -449,24 +471,41 @@ public class DugioHeaderValuesExtractor {
                         hdr.setOffsetMax(lholder.offsetMax);
                         hdr.setOffsetMin(lholder.offsetMin);
                         hdr.setOffsetInc(lholder.offsetInc);*/
+                  
                         
                         
+                        
+                        for(Future f: futures){
+                            f.get();
+                        }
                          
-                     }
-                    
-                        
-                     
-                 }
-                return null; 
-             }
-         }).get();
-         
-        } catch (InterruptedException ex) {
-            Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        } /*catch (InterruptedException ex) {
+        Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
-            Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        }*/catch (Exception ex) {
+        Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+             
+                    
+                     /*
+                     
+                     }
+                     return null;
+                     }
+                     }).get();*/
+         
+                     /*} catch (InterruptedException ex) {
+                     Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+                     } catch (ExecutionException ex) {
+                     Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+                     }
+                     return null;*/
+                     
+                     
+                     
+                     
+                     return null;
     }
     
     private String forEachKey(Headers hdr,String key) throws IOException {

@@ -1086,7 +1086,8 @@ public class SessionController implements Initializable {
     private void setQCFlag(JobStepModel parent,JobStepModel child){
        
         //If Child has been traversed then return.   Create a "traversed" flag in JobStepModel and set in each time the node is returning "upwards". i.e it and all of its descendants have been traversed, set its "traversed" flag to True
-        
+        Boolean traceFail=false;            //defualt QC status is false
+        Boolean insightFail=false;
         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
             
             //check for Insight Version mismatch
@@ -1106,8 +1107,14 @@ public class SessionController implements Initializable {
                         
                       for (Iterator<SubSurface> iterator = csubq.iterator(); iterator.hasNext();) {
                         SubSurface refSubQ = iterator.next();
-                        String baseVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[0];
-                        String revisionOfVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[1].split("\\)")[0];
+                        /*String baseVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[0];
+                        String revisionOfVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[1].split("\\)")[0];*/
+                        String baseVersionFromSubQ=new String();
+                        String revisionOfVersionFromSubQ=new String();
+                        if(refSubQ.getInsightVersion()!=null){
+                            baseVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[0];
+                            revisionOfVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[1].split("\\)")[0];
+                        }
                            
                        
             VolumeSelectionModel targetVolQ=new VolumeSelectionModel();
@@ -1183,16 +1190,33 @@ public class SessionController implements Initializable {
                         }
                         }*/
                         
+                        String errorMessage=targetSubQ.getErrorMessage();
+                          System.out.println("fend.session.SessionController.setQCFlag() OldErrorMessage: "+errorMessage);
+                        if(errorMessage.contains("version")){
+                            insightFail=true;
+                        }else
+                        {
+                            insightFail=false;
+                        }
+                        if(errorMessage.contains("tracecount")){ 
+                            traceFail=true;
+                        }else
+                        {
+                            traceFail=false;
+                        }
+                        
                         if(!baseKeysQ.contains(baseVersionFromSubQ)){
                             //Turn the sub and job QC flag =true;
-                                child.setQcFlagProperty(Boolean.TRUE);
+                                insightFail=true;
+                                //errorMessage="version mismatch";
+                                /*child.setQcFlagProperty(Boolean.TRUE);
                                 targetVolQ.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVolQ.printQC();
                                 targetSeqQ.setAlert(Boolean.TRUE);
                                 targetSeqQ.setErrorMessage("version mismatch");
                                 targetSubQ.setAlert(Boolean.TRUE);
-                                targetSubQ.setErrorMessage("version mismatch");
+                                targetSubQ.setErrorMessage("version mismatch");*/
                             
                         }
                         else 
@@ -1201,28 +1225,54 @@ public class SessionController implements Initializable {
                             System.out.println("fend.session.SessionController.setQCFlag(): found base: "+baseVersionFromSubQ);
                             
                             if(!revList.contains(revisionOfVersionFromSubQ)){
-                                 System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSubQ+" missing from the list");
-                                 child.setQcFlagProperty(Boolean.TRUE);
+                                insightFail=true;
+                                //errorMessage="version mismatch";
+                                /*System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSubQ+" missing from the list");
+                                child.setQcFlagProperty(Boolean.TRUE);
                                 targetVolQ.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVolQ.printQC();
                                 targetSeqQ.setAlert(Boolean.TRUE);
                                 targetSeqQ.setErrorMessage("version mismatch");
                                 targetSubQ.setAlert(Boolean.TRUE);
-                                targetSubQ.setErrorMessage("version mismatch");
+                                targetSubQ.setErrorMessage("version mismatch");*/
                             }
                             else{
-                                System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSubQ+" missing from the list");
-                                 child.setQcFlagProperty(Boolean.FALSE);
+                                insightFail=false;
+                                /*System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSubQ+" missing from the list");
+                                child.setQcFlagProperty(Boolean.FALSE);
                                 targetVolQ.setQcFlagProperty(Boolean.FALSE);
                                 System.out.println("After entering loop");
                                 targetVolQ.printQC();
                                 targetSeqQ.setAlert(Boolean.FALSE);
                                 targetSeqQ.setErrorMessage("");
                                 targetSubQ.setAlert(Boolean.FALSE);
-                                targetSubQ.setErrorMessage("");
+                                targetSubQ.setErrorMessage("");*/
                             }
                         }
+                        
+                            Boolean QCFailure=traceFail || insightFail;
+                            System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
+                            child.setQcFlagProperty(QCFailure);
+                            targetVolQ.setQcFlagProperty(QCFailure);
+                            targetSeqQ.setAlert(QCFailure);
+                            targetSubQ.setAlert(QCFailure);
+                              if(insightFail && !traceFail){
+                                   errorMessage="version mismatch";
+                               }
+                               if(traceFail && !insightFail){
+                                   errorMessage="tracecount mismatch";
+                               }
+                               if(insightFail &&  traceFail){
+                                   errorMessage="version and tracecount mismatch";
+                               }
+                               if(!traceFail && !insightFail)
+                               {
+                                   errorMessage="";
+                               }
+                            targetSeqQ.setErrorMessage(errorMessage);
+                            targetSubQ.setErrorMessage(errorMessage);
+                            
                         
                         }  
                         
@@ -1350,27 +1400,41 @@ public class SessionController implements Initializable {
                           }*/
                         }
                         
-                         
+                         String errorMessage=new String();
                         if(!refSub.getTraceCount().equals(targetSub.getTraceCount())){                                //Change this to a computed hash.
-                        
+                                traceFail=true;
+                               // errorMessage="tracecount mismatch";
                                 System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
                                 System.out.println("fend.session.SessionController.setQCFlag(): TRUE:: Setting QC flags to True : on volume : "+targetVol.getLabel()+" : Seq: "+targetSeq.getSequenceNumber()+" : "+targetSub.getSubsurface());
-                                child.setQcFlagProperty(Boolean.TRUE);
+                                /*child.setQcFlagProperty(Boolean.TRUE);
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
                                 targetSeq.setAlert(Boolean.TRUE);
                                 targetSub.setAlert(Boolean.TRUE);
                                 targetSeq.setErrorMessage("tracecount mismatch");
-                                targetSub.setErrorMessage("tracecount mismatch");
+                                targetSub.setErrorMessage("tracecount mismatch");*/
                                 }
+                        else{
+                            traceFail=false;
+                            
+                        }
                         
                         
                         List<String> versionsSelectedInChild=child.getInsightVersionsModel().getCheckedVersions();
                         MultiValueMap<String,String> baseRevisionFromJobMap=new MultiValueMap<>();
+                        String baseVersionFromSub=new String();
+                        String revisionOfVersionFromSub=new String();
+                        if(refSub.getInsightVersion()!=null){
+                            baseVersionFromSub=refSub.getInsightVersion().split("\\(")[0];
+                            revisionOfVersionFromSub=refSub.getInsightVersion().split("\\(")[1].split("\\)")[0];
+                        }
+                        //System.out.println("fend.session.SessionController.setQCFlag(): InsightVersions for sub: "+refSub.getSubsurface()+" vers: "+refSub.getInsightVersion());
+                        /* else
+                        {
                         
-                        String baseVersionFromSub=refSub.getInsightVersion().split("\\(")[0];
-                        String revisionOfVersionFromSub=refSub.getInsightVersion().split("\\(")[1].split("\\)")[0];
+                        }
+                        */
                             
                         for (String s:versionsSelectedInChild){
                            
@@ -1382,7 +1446,7 @@ public class SessionController implements Initializable {
                             baseRevisionFromJobMap.put(base, rev);
                             
                             System.out.println("fend.session.SessionController.setQCFlag(): Sub: base"+baseVersionFromSub+" rev:"+revisionOfVersionFromSub);
-                            
+                           
                             
                         }
                         
@@ -1402,14 +1466,16 @@ public class SessionController implements Initializable {
                         
                         if(!baseKeys.contains(baseVersionFromSub)){
                             //Turn the sub and job QC flag =true;
-                                child.setQcFlagProperty(Boolean.TRUE);
+                                insightFail=true;
+                               // errorMessage+="version mismatch";
+                                /*child.setQcFlagProperty(Boolean.TRUE);
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
                                 targetSeq.setAlert(Boolean.TRUE);
                                 targetSeq.setErrorMessage("version mismatch");
                                 targetSub.setAlert(Boolean.TRUE);
-                                targetSub.setErrorMessage("version mismatch");
+                                targetSub.setErrorMessage("version mismatch");*/
                             
                         }
                         else 
@@ -1418,27 +1484,31 @@ public class SessionController implements Initializable {
                             System.out.println("fend.session.SessionController.setQCFlag(): found base: "+baseVersionFromSub);
                             
                             if(!revList.contains(revisionOfVersionFromSub)){
-                                 System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSub+" missing from the list");
-                                 child.setQcFlagProperty(Boolean.TRUE);
+                                insightFail=true;
+                                //errorMessage+="version mismatch";
+                                /*System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSub+" missing from the list");
+                                child.setQcFlagProperty(Boolean.TRUE);
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
                                 targetSeq.setAlert(Boolean.TRUE);
                                 targetSeq.setErrorMessage("version mismatch");
                                 targetSub.setAlert(Boolean.TRUE);
-                                targetSub.setErrorMessage("version mismatch");
+                                targetSub.setErrorMessage("version mismatch");*/
                             }
                             // TO BE ENABLE AFTER CHECKING
                             else{
-                                System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSub+" missing from the list");
-                                 child.setQcFlagProperty(Boolean.FALSE);
+                                insightFail=false;
+                               // errorMessage="version mismatch";
+                                /*System.out.println("fend.session.SessionController.setQCFlag(): rev: "+revisionOfVersionFromSub+" missing from the list");
+                                child.setQcFlagProperty(Boolean.FALSE);
                                 targetVol.setQcFlagProperty(Boolean.FALSE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
                                 targetSeq.setAlert(Boolean.FALSE);
                                 targetSeq.setErrorMessage("");
                                 targetSub.setAlert(Boolean.FALSE);
-                                targetSub.setErrorMessage("");
+                                targetSub.setErrorMessage("");*/
                             }
                             
                         }
@@ -1456,7 +1526,31 @@ public class SessionController implements Initializable {
                         targetSub.setAlert(Boolean.TRUE);
                         }*/
                         
+                               Boolean QCFailure=insightFail || traceFail;
                                
+                               System.out.println("fend.session.SessionController.setQCFlag(): trace Flag: "+traceFail);
+                               System.out.println("fend.session.SessionController.setQCFlag(): insight Flag: "+insightFail);
+                               System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
+                               child.setQcFlagProperty(QCFailure);
+                               targetVol.setQcFlagProperty(QCFailure);
+                               targetSeq.setAlert(QCFailure);
+                               targetSub.setAlert(QCFailure);
+                               if(insightFail && !traceFail){
+                                   errorMessage="version mismatch";
+                               }
+                               if(traceFail && !insightFail){
+                                   errorMessage="tracecount mismatch";
+                               }
+                               if(insightFail &&  traceFail){
+                                   errorMessage="version and tracecount mismatch";
+                               }
+                               if(!traceFail && !insightFail)
+                               {
+                                   errorMessage="";
+                               }
+                               System.out.println("fend.session.SessionController.setQCFlag(): ErrorMessage "+errorMessage);
+                               targetSeq.setErrorMessage(errorMessage);
+                               targetSub.setErrorMessage(errorMessage);
                         
                         
                        

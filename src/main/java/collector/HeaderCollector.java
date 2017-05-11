@@ -5,6 +5,7 @@
  */
 package collector;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import db.model.Acquisition;
 import db.model.Headers;
 import db.model.Volume;
@@ -28,7 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -41,6 +45,20 @@ import watcher.LogWatcher;
  *
  * @author sharath nair
  */
+
+class TempArrayHolder{
+    ArrayList<Headers> hdrlist=new ArrayList();
+
+    public ArrayList<Headers> getHdrlist() {
+        return hdrlist;
+    }
+
+    public void setHdrlist(ArrayList<Headers> hdrlist) {
+        this.hdrlist = hdrlist;
+    }
+    
+    
+}
 public class HeaderCollector {
     //from frontEnd. user
     
@@ -49,7 +67,7 @@ public class HeaderCollector {
     Set<SubSurface> sl;                                                                                     // the SET of subsurfaces in the volume. Note this DOES NOT account for more than one occurrence of the sub
     List<Sequences> seqList;
     private AcquisitionService acqServ=new AcquisitionServiceImpl();
-    
+    private TempArrayHolder headerholder=new TempArrayHolder();
     
     private DugioHeaderValuesExtractor dugHve=new DugioHeaderValuesExtractor();
     
@@ -75,8 +93,18 @@ public class HeaderCollector {
         logLocation=dbVolume.getPathOfVolume()+"/../../000scratch/logs";
                 
         System.out.println("collector.HeaderCollector: looking for logs in "+logLocation);
-        calculateAndCommitHeaders();
-        logForSub.commitToDb();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+         executorService.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               calculateAndCommitHeaders();
+            logForSub.commitToDb();
+            return null;
+            }
+            
+        });
+                 
+        
     }
     
     private void calculateAndCommitHeaders(){
@@ -97,6 +125,7 @@ public class HeaderCollector {
        //     while(true)
       //  {
         try {
+           
             List<Headers> existingHeaders=null;
             Map<String,Headers> subsurfaceHeaderMap=new HashMap<>();
             System.out.println("collector.HeaderCollector: calculating headers for "+volume.getAbsolutePath());
@@ -111,17 +140,34 @@ public class HeaderCollector {
                 
                 
             }
-            
-            ArrayList<Headers> headerList=dugHve.calculatedHeaders(subsurfaceHeaderMap,existingHeaders);     //  <<<<  The workhorse . get fresh header list here
-            if(existingHeaders!=null){
-                headerList.addAll(existingHeaders);                                                         //append any old headers
+             ArrayList<Headers> headerList=new ArrayList<>();
+            ExecutorService exec=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            final Map<String,Headers> finalsubMap=subsurfaceHeaderMap;
+            final List<Headers> finalExistingHeaders=existingHeaders;
+             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
+          
+                       
+                       ExecutorService exec1=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+                       exec1.submit(new Callable<ArrayList<Headers>>(){
+                           @Override
+                           public ArrayList<Headers> call() throws Exception {
+                               System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() about to call dugHve.calculateHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
+                               headerList.addAll(dugHve.calculatedHeaders(finalsubMap, finalExistingHeaders));
+                               return headerList;
+                           }
+                       }).get();
+                       
+                   
+            System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" joining");
+            if(finalExistingHeaders!=null){
+                headerList.addAll(finalExistingHeaders);                                                         //append any old headers
             }
             if (headerList.isEmpty()){
                 System.out.println("collector.HeaderCollector: headerList is empty");
-                return;                     // the while loop will break when there are no more headers to process.
+               // return null;                     // the while loop will break when there are no more headers to process.
             }
             else
-                System.out.println("collector.HeaderCollector: headerList is NOT empty");                    
+                System.out.println("collector.HeaderCollector: headerList is NOT empty : size: "+headerList.size());                    
             /*sl=new ArrayList<>();*/
             sl=new HashSet<>();
            seqList=new ArrayList<>();
@@ -230,14 +276,16 @@ public class HeaderCollector {
       headersModel.setSequenceListInHeaders(obseq);                                     //set the headersModel that will be used to launch the header table
       dbVolume.setHeaderExtracted(Boolean.TRUE);
       volServ.setHeaderExtractionFlag(dbVolume);
-            
+          
         } catch (InterruptedException ex) {
-            Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
-            Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
-            Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
        // feVolumeSelModel.setHeaderButtonStatus(Boolean.TRUE);
    // }
     }
