@@ -7,11 +7,13 @@ package db.dao;
 
 import db.model.Headers;
 import db.model.Logs;
+import db.model.Volume;
 import hibUtil.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -51,7 +53,26 @@ public class LogsDAOImpl implements LogsDAO{
 
     @Override
     public void updateLogs(Long lid, Logs newL) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+            Logs ll=(Logs) session.get(Logs.class,lid);
+            ll.setHeaders(newL.getHeaders());
+            ll.setSubsurfaces(newL.getSubsurfaces());
+            ll.setInsightVersion(newL.getInsightVersion());
+            ll.setLogpath(newL.getLogpath());
+            ll.setTimestamp(newL.getTimestamp());
+            ll.setVolume(newL.getVolume());
+            session.update(ll);
+            
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }    
     }
 
     @Override
@@ -87,6 +108,66 @@ public class LogsDAOImpl implements LogsDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v, String subline) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("subsurfaces", subline));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public Logs getLatestLogFor(Volume v, String subline) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("subsurfaces", subline));
+            criteria.addOrder(Order.desc("timestamp"));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
     }
     
 }

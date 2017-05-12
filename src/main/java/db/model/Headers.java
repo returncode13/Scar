@@ -116,8 +116,8 @@ public class Headers implements Serializable{
     @Column(name="Deleted")
     private Boolean deleted; 
     
-    @Column(name="Version")
-    private Long version;                                               //number of times the subsurface was run
+    @Column(name="NumberOfRuns")
+    private Long numberOfRuns;                                               //number of times the subsurface was run
     
         
     @Column(name="InsightVersion")
@@ -127,7 +127,7 @@ public class Headers implements Serializable{
     public Headers() {
         this.modified=Boolean.FALSE;
         this.deleted=Boolean.FALSE;
-        this.version=0L;
+        this.numberOfRuns=0L;
     }
 
     
@@ -159,7 +159,7 @@ public class Headers implements Serializable{
         this.cmpInc = cmpInc;
         this.modified=modified;
         this.deleted=deleted;
-        this.version=version;
+        this.numberOfRuns=version;
     }
 
     
@@ -191,7 +191,7 @@ public class Headers implements Serializable{
         hash = 97 * hash + Objects.hashCode(this.cmpInc);
         hash = 97 * hash + Objects.hashCode(this.modified);
         hash = 97 * hash + Objects.hashCode(this.deleted);
-        hash = 97 * hash + Objects.hashCode(this.version);
+        hash = 97 * hash + Objects.hashCode(this.numberOfRuns);
         hash = 97 * hash + Objects.hashCode(this.insightVersion);
         return hash;
     }
@@ -283,7 +283,7 @@ public class Headers implements Serializable{
         if (!Objects.equals(this.deleted, other.deleted)) {
             return false;
         }
-        if (!Objects.equals(this.version, other.version)) {
+        if (!Objects.equals(this.numberOfRuns, other.numberOfRuns)) {
             return false;
         }
         if (!Objects.equals(this.insightVersion, other.insightVersion)) {
@@ -507,12 +507,12 @@ public class Headers implements Serializable{
         this.deleted = deleted;
     }
 
-    public Long getVersion() {
-        return version;
+    public Long getNumberOfRuns() {
+        return numberOfRuns;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setNumberOfRuns(Long version) {
+        this.numberOfRuns = version;
     }
 
     public String getInsightVersion() {

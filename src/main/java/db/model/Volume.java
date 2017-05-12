@@ -59,7 +59,8 @@ public class Volume implements Serializable {
    @OneToMany(mappedBy="volume",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<JobVolumeDetails> jobVolumeDetails;
    
-   
+   @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Logs> logs;
    
    
    public Volume(){}
@@ -198,6 +199,14 @@ public class Volume implements Serializable {
 
     public void setHeaderExtracted(Boolean headerExtracted) {
         this.headerExtracted = headerExtracted;
+    }
+
+    public Set<Logs> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(Set<Logs> logs) {
+        this.logs = logs;
     }
    
     

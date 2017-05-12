@@ -191,8 +191,8 @@ public class DugioHeaderValuesExtractor {
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+subsurfaceTimestamp.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
                            Headers h=subsurfaceTimestamp.get(lineName);
                             h.setModified(Boolean.TRUE);
-                            Long ver=h.getVersion();
-                            h.setVersion(++ver);
+                            Long ver=h.getNumberOfRuns();
+                            h.setNumberOfRuns(++ver);
                             h.setTimeStamp(time);
                             existingHeaders.remove(h);
                             headers.add(h);

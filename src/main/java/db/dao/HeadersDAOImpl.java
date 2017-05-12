@@ -88,7 +88,7 @@ public class HeadersDAOImpl implements HeadersDAO{
             h.setOffsetMin(newH.getOffsetMin());
             
             h.setTraceCount(newH.getTraceCount());
-            h.setVersion(newH.getVersion());
+            h.setNumberOfRuns(newH.getNumberOfRuns());
             h.setModified(newH.getModified());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
