@@ -88,7 +88,7 @@ public class LogWatcher {
     List<LogWatchHolder> lwatchHolderList=new ArrayList<>();
     MultiMap<String, LogWatchHolder> maplineLog=new MultiValueMap<>();
     Map<String,String> mapSubInsightVersion=new HashMap<>();                //map that will contain the Insight version number extracted from the latest log for the subsurface
-    
+     Volume v;
     public LogWatcher(){
     }
     
@@ -103,7 +103,7 @@ public class LogWatcher {
                 @Override
                 public Void call() throws Exception {
                     LogWatcher.this.volume=vmod;
-                    Volume v=vserv.getVolume(volume.getId());
+                     v=vserv.getVolume(volume.getId());
                     
                     System.out.println("watcher.LogWatcher: started to watch");
                     LogWatcher.this.logsLocation=logsLocation;
@@ -322,6 +322,7 @@ public class LogWatcher {
                     try {
                         String logpath=logsLocation;                                     //../000scratch/logs
                         System.out.println("watcher.LogWatcher: LogLocation: "+logpath);
+                        System.out.println("watcher.Logwatcher: Processing logs");
                         Process process=new ProcessBuilder(new DugioScripts().getSubsurfaceLog().getAbsolutePath(),logpath).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
@@ -346,9 +347,9 @@ public class LogWatcher {
                             
                              //New script results
                                             String[] parts=value.split("\\s");
-                                            for(int iii=0;iii<parts.length;iii++){
-                                                System.out.println("wacther.Logwatcher():  "+iii+" = "+parts[iii]);
-                                            }
+                                            /* for(int iii=0;iii<parts.length;iii++){
+                                            System.out.println("wacther.Logwatcher():  "+iii+" = "+parts[iii]);
+                                            }*/
                                             String filename=parts[0];
                                             String date=parts[1];                                            
                                             String time=parts[2];
@@ -359,7 +360,7 @@ public class LogWatcher {
                                             String baseInsVersion=parts[14];
                                             String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
-                                               System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
+                                              // System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
                             
                             LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
                             lwatchHolderList.add(lwatchholder);
@@ -381,7 +382,8 @@ public class LogWatcher {
                             String next = iterator.next();
                               System.out.println("watcher.LogWatcher.: Keys: "+next);
                         }
-                        
+                       
+                        /*
                         
                         for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
                             LogWatchHolder next = iterator.next();
@@ -452,7 +454,7 @@ public class LogWatcher {
                                     
                                     
                                     
-                                }
+                                /*}
                                 else{
                               //      System.out.println("Loglist is NOT empty");
                                     System.out.println("watcher.Logwatcher(): LogList in not empty");
@@ -501,7 +503,7 @@ public class LogWatcher {
                             }
                         }
                         
-                        
+                        */
                         
                         
                         
@@ -531,6 +533,136 @@ public class LogWatcher {
         
     }
 
+    
+    public void commitToDb(){
+        
+        
+        
+        for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
+                            LogWatchHolder next = iterator.next();
+                            List<Headers> hlist=null;
+                            hlist=hserv.getHeadersFor(v, next.linename);
+                            
+                            
+                            
+                            Boolean newLog=false;
+                            Long maxVersion=0L;
+                            
+                            if(hlist==null||hlist.isEmpty()){
+                              //  System.out.println("watcher.Logwatcher(): hlist is  empty");
+                            }
+                            else if(hlist.size()==1){
+                                Headers h=hlist.get(0);
+                                System.out.println("watcher.Logwatcher(): hlist is not empty");
+                                List<Logs>logsList=lserv.getLogsFor(h);
+                                if(logsList.isEmpty()){
+                                //    System.out.println("Loglist is EMPTY");
+                                    System.out.println("watcher.Logwatcher(): LogList is empty");
+                                    newLog=true;
+                                    Long preVersion=0L;
+                                    
+                                    
+                                    
+                                    List<LogWatchHolder> logwList=(List<LogWatchHolder>) maplineLog.get(next.linename);
+                                    
+                                    for (Iterator<LogWatchHolder> iterator1 = logwList.iterator(); iterator1.hasNext();) {
+                                        LogWatchHolder lgw = iterator1.next();
+                                         System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+ " with version: "+preVersion);
+                                        Logs l=new Logs();
+                                        l.setHeaders(h);
+                                      //  l.setLogpath(logpath+"/"+lgw.filename);
+                                      l.setLogpath(lgw.filename);
+                                        l.setVersion(preVersion);
+                                      // l.setVersion(h.getVersion());
+                                        l.setTimestamp(lgw.date);
+                                        lserv.createLogs(l);
+                                        
+                                        preVersion++;
+                                    }
+                                    
+                                    newLog=false;
+                                    
+                                    
+                                    /*Logs l=new Logs();
+                                    l.setHeaders(h);
+                                    l.setLogpath(logfile.getParentFile().getAbsolutePath()+"/"+next.filename);
+                                    l.setVersion(maxVersion);
+                                    l.setTimestamp(next.date);
+                                    lserv.createLogs(l);
+                                    newLog=false;*/
+                                    
+                                    /////
+                                    
+                                   
+                                    
+                                    
+                                        
+                                        
+                                        
+                                    
+                                  
+                                    
+                                    
+                                    /////
+                                    
+                                    
+                                    
+                                }
+                                else{
+                              //      System.out.println("Loglist is NOT empty");
+                                    System.out.println("watcher.Logwatcher(): LogList in not empty");
+                                    Boolean exists=false;
+                                    for (Iterator<Logs> iterator1 = logsList.iterator(); iterator1.hasNext();) {
+                                        Logs log = iterator1.next();
+                                        Long currentVersion=log.getVersion();
+                                        String filenameInDb=log.getLogpath();
+                                        if(filenameInDb.equals(this.logsLocation+"/"+next.filename)){
+                                            exists=true;
+                                            continue;
+                                        }
+                                        if(currentVersion>=maxVersion){                              
+                                            maxVersion=currentVersion;
+                                        }
+                                        
+                                        System.out.println("Contents: ");
+                                        
+                                    }
+                                    
+                                    if(!exists){
+                                        
+                                        
+                                        maxVersion++;
+                                        Logs l=new Logs();
+                                        l.setHeaders(h);
+                                        //l.setLogpath(logpath+"/"+next.filename);
+                                        l.setLogpath(next.filename);
+                                        l.setVersion(maxVersion);
+                                        //l.setVersion(h.getVersion());
+                                        l.setTimestamp(next.date);
+                                      //  lserv.createLogs(l);
+                                        exists=true;
+                                        numberOfruns=maxVersion;
+                                    }
+                                    
+                                    
+                                    
+                                }
+                                
+                            }
+                            else if(hlist.size()>1){
+                                //Error
+                                
+                                System.out.println("watcher.LogWatcher: "+next.linename+" has more than one entry for the volume : "+v.getNameVolume());
+                            }
+                        }
+        
+        
+        
+        
+        
+    }
+    
+    
     public Map<String, String> getsubInsightVersionMap() throws ParseException {
                         Set<String> keys=maplineLog.keySet();
                         mapSubInsightVersion.clear();
@@ -542,12 +674,12 @@ public class LogWatcher {
                             Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(oldDate);                   // date set to 201001010000
                             for (Iterator<LogWatchHolder> iterator1 = lgwl.iterator(); iterator1.hasNext();) {   //loop to find the insight version from the latest log
                                 LogWatchHolder lgw = iterator1.next();
-                                System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+lgw.date);
+                               // System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+lgw.date);
                                 Date d=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(lgw.date);
                                 if(d.after(date)){
                                     date=d;
                                     insver=lgw.insightVersion;
-                                    System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+date+"  inv: "+insver);
+                                 //   System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+date+"  inv: "+insver);
                                 }
                             }
                             
@@ -558,7 +690,12 @@ public class LogWatcher {
 
     public Long getNumberOfruns(String linename) {
         List<LogWatchHolder> logwatchList= (List<LogWatchHolder>) maplineLog.get(linename);
-        return numberOfruns=Long.valueOf(logwatchList.size());
+        try{
+            numberOfruns=Long.valueOf(logwatchList.size());
+        }catch(NullPointerException npe){
+            numberOfruns=0L;
+        }
+        return numberOfruns;
     }
     
     

@@ -29,7 +29,9 @@ public class VolumeWatcher {
             
             @Override
             protected void onChange(File sub, String action) {
+                 if(action.equals("Added")){
                 System.out.println("Volume? "+sub.getParentFile().getName()+" : sub: "+sub.getName().split("\\.")[0].split("-")[1]+" was "+action+" completeName: "+sub.getName());
+                 }
             }
         };
         

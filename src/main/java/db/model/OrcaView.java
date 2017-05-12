@@ -30,19 +30,33 @@ public class OrcaView implements Serializable{
     @Column(name="preplot_name")
     private String preplotNames;
     
-    @Column(name="fgsp")
-    private Integer fgsp;
+    @Column(name="first_ffid")
+    private Integer firstFFID;
     
-    @Column(name="lgsp")
-    private Integer lgsp;
+    @Column(name="first_shot")
+    private Integer firstSHOT;
     
     @Column(name="fg_ffid")
     private Integer fgFFID;
     
+    @Column(name="fgsp")
+    private Integer fgsp;
+    
+    @Column(name="last_ffid")
+    private Integer lastFFID;
+    
+    @Column(name="last_shot")
+    private Integer lastSHOT;
+    
+    @Column(name="lgsp")
+    private Integer lgsp;
+    
+    
+    
     @Column(name="lg_ffid")
     private Integer lgFFID;
     
-    @Column(name="to_char")
+    @Column(name="start_data")
     private String date;
 
     public Long getSeq() {
@@ -110,6 +124,39 @@ public class OrcaView implements Serializable{
     public void setDate(String date) {
         this.date = date;
     }
+
+    public Integer getFirstFFID() {
+        return firstFFID;
+    }
+
+    public void setFirstFFID(Integer firstFFID) {
+        this.firstFFID = firstFFID;
+    }
+
+    public Integer getFirstSHOT() {
+        return firstSHOT;
+    }
+
+    public void setFirstSHOT(Integer firstSHOT) {
+        this.firstSHOT = firstSHOT;
+    }
+
+    public Integer getLastFFID() {
+        return lastFFID;
+    }
+
+    public void setLastFFID(Integer lastFFID) {
+        this.lastFFID = lastFFID;
+    }
+
+    public Integer getLastSHOT() {
+        return lastSHOT;
+    }
+
+    public void setLastSHOT(Integer lastSHOT) {
+        this.lastSHOT = lastSHOT;
+    }
+    
     
    
     public OrcaView() {

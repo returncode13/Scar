@@ -59,8 +59,12 @@ public class DugioScripts implements Serializable{
      /*private String subsurfaceLogContent="#!/bin/bash\n" +
      "for i in $1/*; do awk '/lineName/VERSION/ {print FILENAME \" \"$0}' ORS=\" \" $i | awk '{print $1\" \"$2\" \"$3\" \"$8\" Version=\"$15\"-\"$16}'; done | sort -k 2,3";*/
     
-     private String subsurfaceLogContent="#!/bin/bash\n" +
-"for i in $1/*; do awk '/lineName|VERSION/ { print FILENAME\" \" $0}' ORS=\" \" $i | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}';done | sort -k 2,3";
+   /*  private String subsurfaceLogContent="#!/bin/bash\n" +
+"for i in $1/*; do awk '/lineName|VERSION/ { print FILENAME\" \" $0}' ORS=\" \" $i | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}';done | sort -k 2,3";*/
+     
+     
+      private String subsurfaceLogContent="#!/bin/bash\n" +
+"for i in $1/*; do sed '30q;2,30p;d' $i | awk '/lineName|VERSION/ {print  \"'$i' \"$0}' ORS=\" \"  | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}' ;done";
      
      public DugioScripts()
     {

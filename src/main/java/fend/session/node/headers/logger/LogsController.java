@@ -20,12 +20,14 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -53,18 +55,28 @@ public class LogsController extends Stage implements Initializable{
         for (Iterator<VersionLogsModel> iterator = tabContents.iterator(); iterator.hasNext();) {
             VersionLogsModel versionsTab = iterator.next();
             File logfile=versionsTab.getLogfile();
-            System.out.println("fend.session.node.headers.logger:  Am trying to read the logfile  "+logfile.getAbsolutePath());
+            System.out.println("fend.session.node.headers.logger.LogsController.setModel:  Am trying to read the logfile  "+logfile.getAbsolutePath());
             FileReader fr=null;
             BufferedReader br= null;
-            List<String> contents=new ArrayList<>();
+            int max=100;
+            List<String> contentsList=new ArrayList<>();
+            String contents=new String();
             try {
-                br = new BufferedReader(new BufferedReader(new FileReader(logfile)));
+              //  br = new BufferedReader(new BufferedReader(new FileReader(logfile),8056));
+              br=new BufferedReader(new InputStreamReader(new FileInputStream(logfile)));
                 
                 String lines;
+                int count=0;
                 while((lines=br.readLine())!=null){
-                    contents.add(lines+"\n");
+                    contentsList.add(lines+"\n");
+                    //contents+=lines+"\n";
+                    /*if(count==max){
+                        contentsList.add(contents);
+                        contents=new String();
+                    }*/
                 };
                 
+                System.out.println("fend.session.node.headers.logger.LogsController.setModel(): contents.size(): "+contents.length());
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(LogsController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -84,19 +96,24 @@ public class LogsController extends Stage implements Initializable{
             HBox hbox=new HBox();
             //hbox.getChildren().add(new Label(""+contents));
             TextArea ta=new TextArea();
-            
-            ta.wrapTextProperty().setValue(Boolean.TRUE);
-            String ss=new String();
-            for(String s:contents){
+            ListView<String> lview=new ListView<>(FXCollections.observableList(contentsList));
+            //ta.wrapTextProperty().setValue(Boolean.TRUE);
+           // String ss=new String();
+           // System.out.println("fend.session.node.headers.logger.LogsController.setModel(): about to enter the for loop to set string");
+           /* for(String s:contentsList){
                 //if(s.matches("\\d{4}-\\d{2}-\\d{2}"))ss+="\n";
                 ss+=s;
-            }
-            ta.setText(ss);
-            ta.setEditable(Boolean.FALSE);
-            ta.prefHeightProperty().bind(hbox.heightProperty());
-            ta.prefWidthProperty().bind(hbox.widthProperty());
-            hbox.getChildren().add(ta);
-            ta.prefHeightProperty().bind(hbox.heightProperty());
+            }*/
+            System.out.println("fend.session.node.headers.logger.LogsController.setModel(): about to set textArea contents: ");
+           // ta.setText(contentsList.toString());
+           // ta.setEditable(Boolean.FALSE);
+          //  ta.prefHeightProperty().bind(hbox.heightProperty());
+           // ta.prefWidthProperty().bind(hbox.widthProperty());
+           // hbox.getChildren().add(ta);
+           hbox.getChildren().add(lview);
+           lview.prefHeightProperty().bind(hbox.heightProperty());
+           lview.prefWidthProperty().bind(hbox.widthProperty());
+          //  ta.prefHeightProperty().bind(hbox.heightProperty());
             hbox.setAlignment(Pos.CENTER);
             tab.setContent(hbox);
             tabPane.getTabs().add(tab);
