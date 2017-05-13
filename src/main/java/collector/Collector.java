@@ -46,6 +46,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -316,8 +322,23 @@ public class Collector {
         }
         
         //
-       createAllAncestors();
-        createAllDescendants();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try {
+            executorService.submit(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    createAllAncestors();
+                    createAllDescendants();
+                    return null;
+                }
+                
+            }).get();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Collector.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(Collector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
         startWatching();
     }
    
@@ -568,6 +589,7 @@ public class Collector {
             ObservableList<VolumeSelectionModel> vsmlist= jsm.getVolList();
             for (Iterator<VolumeSelectionModel> iterator = vsmlist.iterator(); iterator.hasNext();) {
                 VolumeSelectionModel next = iterator.next();
+                System.out.println("collector.Collector.startWatching(): "+next.getLabel());
                 next.startWatching();
                 
             }

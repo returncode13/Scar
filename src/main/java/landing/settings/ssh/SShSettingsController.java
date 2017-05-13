@@ -1,4 +1,4 @@
-package landing.settings;
+package landing.settings.ssh;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -25,7 +25,7 @@ import javafx.stage.Stage;
  *
  * @author sharath
  */
-public class SettingsController extends Stage {
+public class SShSettingsController extends Stage {
 
    
     
@@ -37,8 +37,8 @@ public class SettingsController extends Stage {
     private String NdbU;
     private String NdbPass;
     
-    private SettingsNode snode;
-    private Settings smodel;
+    private SShSettingsNode snode;
+    private SShSettings smodel;
     
      @FXML
     private TextField sshUserName;
@@ -82,7 +82,7 @@ public class SettingsController extends Stage {
 
     @FXML
     void cancel(ActionEvent event) {
-        System.out.println("landing.settings.SettingsController.cancel(): Existingsettings");
+        System.out.println("landing.settings.ssh.SShSettingsController.cancel(): Use Existing settings");
         close();    
     }
 
@@ -248,11 +248,11 @@ public class SettingsController extends Stage {
         // TODO
     }    
 
-    void setModel(Settings lsm) {
+    void setModel(SShSettings lsm) {
         this.smodel=lsm;
     }
 
-    void setView(SettingsNode aThis) {
+    void setView(SShSettingsNode aThis) {
         this.snode=aThis;
         if(smodel.isPopulated()){
             sshUserName.setText(smodel.getSshUser());

@@ -13,7 +13,7 @@
     <class>db.model.Sessions</class>
     <class>db.model.Volume</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/proj_adi034516"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/"/>
       <property name="javax.persistence.jdbc.user" value="fgeo"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value=""/>

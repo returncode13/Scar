@@ -22,68 +22,29 @@ import javafx.collections.ObservableList;
  */
 public interface JobStepType0Model {
 
-    public String getJobStepText(); /*{
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }*/
-
-    public Long getId() ;/*{
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }*/
-
-    public List<JobStepType0Model> getJsChildren(); /*{
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }*/
-
-    public void addToChildren(JobStepType0Model model);/* {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }*/
-
-    public List<LinksModel> getListOfLinkModels(); /*{
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                            }*/
-
-    public List<JobStepType0Model> getJsParents(); /*{
-                                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                                    }*/
-
-    public void addSelfToParent();; /*{
-                                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                                            }*/
-
-    public void addSelfToChild(); /*{
-                                                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                                                    }*/
-
+    public String getJobStepText();
+    public Long getId() ;
+    public List<JobStepType0Model> getJsChildren();
+    public void addToChildren(JobStepType0Model model);
+    public List<LinksModel> getListOfLinkModels();
+    public List<JobStepType0Model> getJsParents(); 
+    public void addSelfToParent();
+    public void addSelfToChild(); 
     public void setJobStepText(String nameJobStep);
-
     public void setId(Long idJobStep);
-
     public void setInsightVersionsModel(InsightVersionsModel ivm);
-
     public void setVolList(ObservableList<VolumeSelectionModel> obv);
-
     public void addToParent(JobStepType0Model next2);
-
     public void addToListOfLinksModel(LinksModel lm);
-
     public void setSessionModel(SessionModel smodel);
-
     public BooleanProperty getPendingFlagProperty();
-
     public BooleanProperty getQcFlagProperty();
-
     public InsightVersionsModel getInsightVersionsModel();
-
     public Long getType();
-
     public ObservableList getVolList();
-
     public void setSubsurfacesInJob(Set<SubSurface> subsInJob);
-
     public void setPendingFlagProperty(Boolean TRUE);
-
     public Set<SubSurface> getSubsurfacesInJob();
-
     public void setQcFlagProperty(Boolean FALSE);
 
     

@@ -98,10 +98,13 @@ import landing.loadingSession.LoadSessionNode;
 import landing.saveSession.SaveSessionController;
 import landing.saveSession.SaveSessionModel;
 import landing.saveSession.SaveSessionNode;
-import landing.settings.Settings;
-import landing.settings.SettingsController;
-import landing.settings.SettingsNode;
-import landing.settings.SettingsWrapper;
+import landing.settings.database.DataBaseSettings;
+import landing.settings.database.DataBaseSettingsController;
+import landing.settings.database.DataBaseSettingsNode;
+import landing.settings.ssh.SShSettings;
+import landing.settings.ssh.SShSettingsController;
+import landing.settings.ssh.SShSettingsNode;
+import landing.settings.ssh.SShSettingsWrapper;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
@@ -117,10 +120,15 @@ public class LandingController implements Initializable,Serializable {
      * Initializes the controller class.
      */
     
-    private static final String settingXml="src/main/resources/landingResources/settings/settings.xml";
+    private static final String sshSettingXml="src/main/resources/landingResources/settings/ssh/settings.xml";
+    private static final String dbSettingXml="src/main/resources/landingResources/settings/database/databaseSettings.xml";
 
-    public static String getSettingXml() {
-        return settingXml;
+    public static String getSshSettingXml() {
+        return sshSettingXml;
+    }
+    
+    public static String getDbSettingXml(){
+        return dbSettingXml;
     }
     
     private Long id;
@@ -134,8 +142,8 @@ public class LandingController implements Initializable,Serializable {
     private SessionController scontr;
     
     
-    private Settings settingsModel;
-    
+    private SShSettings settingsModel;
+    private DataBaseSettings databaseSettingsModel;
     
      @FXML
     private StackPane basePane;
@@ -162,20 +170,52 @@ public class LandingController implements Initializable,Serializable {
     @FXML
     private MenuItem settings;
 
-    
-    @FXML
-    void settings(ActionEvent event) {
-        
-         settingsModel=new Settings();
-         File sFile=new File(settingXml);
+     @FXML
+    private MenuItem dbsettings;
+     
+     @FXML
+    void dbsettings(ActionEvent event) {
+        databaseSettingsModel=new DataBaseSettings();
+        File dbFile=new File(dbSettingXml);
         
         try {
-            JAXBContext contextObj = JAXBContext.newInstance(Settings.class);
+            JAXBContext contextObj = JAXBContext.newInstance(DataBaseSettings.class);
             
             //try unmarshalling the file. if the fields are not null. populate settingsmodel
             
             Unmarshaller unm=contextObj.createUnmarshaller();
-            Settings sett=(Settings) unm.unmarshal(sFile);
+            DataBaseSettings dbsett=(DataBaseSettings) unm.unmarshal(dbFile);
+            System.out.println("landing.LandingController.settings():  unmarshalled: "+dbsett.getChosenDatabase());
+            
+            databaseSettingsModel.setDbUser(dbsett.getDbUser());
+            databaseSettingsModel.setDbPassword(dbsett.getDbPassword());
+            databaseSettingsModel.setChosenDatabase(dbsett.getChosenDatabase());
+            
+            DataBaseSettingsNode dbnode=new DataBaseSettingsNode(databaseSettingsModel);
+            DataBaseSettingsController dcontrl=dbnode.getDataBaseSettingsController();
+            
+            Marshaller marshallerObj = contextObj.createMarshaller();
+            marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshallerObj.marshal(databaseSettingsModel, new File(dbSettingXml));
+            
+        } catch (JAXBException ex) {
+            Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @FXML
+    void settings(ActionEvent event) {
+        
+         settingsModel=new SShSettings();
+         File sFile=new File(sshSettingXml);
+        
+        try {
+            JAXBContext contextObj = JAXBContext.newInstance(SShSettings.class);
+            
+            //try unmarshalling the file. if the fields are not null. populate settingsmodel
+            
+            Unmarshaller unm=contextObj.createUnmarshaller();
+            SShSettings sett=(SShSettings) unm.unmarshal(sFile);
             System.out.println("landing.LandingController.settings():  unmarshalled: "+sett.getSshHost() );
             
             
@@ -189,15 +229,15 @@ public class LandingController implements Initializable,Serializable {
                 settingsModel.setSshUser(sett.getSshUser());
             }
             
-            SettingsNode setnode=new SettingsNode(settingsModel);
-            SettingsController sc=new SettingsController();
+            SShSettingsNode setnode=new SShSettingsNode(settingsModel);
+            SShSettingsController sc=new SShSettingsController();
             
             //save the xml
             
             
             Marshaller marshallerObj = contextObj.createMarshaller();
             marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshallerObj.marshal(settingsModel, new File(settingXml));
+            marshallerObj.marshal(settingsModel, new File(sshSettingXml));
             
            
         } catch (JAXBException ex) {

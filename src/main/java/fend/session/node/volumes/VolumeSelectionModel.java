@@ -209,11 +209,11 @@ public class VolumeSelectionModel {
    }
 
     private void startLogWatching() {
-        System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  starting to watch logs");
+        System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  starting to watch logs for:  "+volumeChosen.getName());
         String logPath=volumeChosen.getAbsolutePath();
         logPath=logPath+"/../../000scratch/logs";
         if(logTimerTask==null) {
-            
+            System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  initiating logwatcher for :  "+volumeChosen.getName());
             logTimerTask=new LogWatcher(logPath,"",this);
         }
     }
@@ -225,6 +225,7 @@ public class VolumeSelectionModel {
             @Override
             public Void call() throws Exception {
                 //startVolumeWatching();
+                
                 startLogWatching();
             return null;
             }

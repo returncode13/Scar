@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package landing.settings;
+package landing.settings.ssh;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,17 +12,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author sharath
  */
-@XmlRootElement(name="settings")
-public class SettingsWrapper {
-    private Settings settings;
+@XmlRootElement(name="sshSettings")
+public class SShSettingsWrapper {
+    private SShSettings settings;
     
-    @XmlElement(name="setting")
+    @XmlElement(name="sshSetting")
     
-    public Settings getSettings(){
+    public SShSettings getSettings(){
         return settings;
     }
     
-    public void setSettings(Settings settings){
+    public void setSettings(SShSettings settings){
         this.settings=settings;
     }
 }

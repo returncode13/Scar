@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package landing.settings;
+package landing.settings.database;
 
 import java.io.IOException;
 import java.net.URL;
@@ -13,19 +13,18 @@ import javafx.scene.layout.AnchorPane;
 
 /**
  *
- * @author sharath
+ * @author adira0150
  */
-public class SettingsNode extends AnchorPane{
-    
-    private FXMLLoader fXMLLoader;
+public class DbListNode extends AnchorPane{
+      private FXMLLoader fXMLLoader;
     private final URL location;
-    private SettingsController lsc;
+    private DbListController lsc;
     
-    public SettingsNode(Settings lsm)
+    public DbListNode(DbListModel lsm)
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("landingResources/settings/settings.fxml"); 
+        this.location=getClass().getClassLoader().getResource("landingResources/settings/database/databaseList.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -39,7 +38,7 @@ public class SettingsNode extends AnchorPane{
                 fXMLLoader.load(location.openStream());
                 
                 
-                lsc=(SettingsController)fXMLLoader.getController();
+                lsc=(DbListController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
@@ -51,7 +50,6 @@ public class SettingsNode extends AnchorPane{
                 
                
                
-                System.out.println("landing.loadingSession.LoadSessionNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);
@@ -60,7 +58,7 @@ public class SettingsNode extends AnchorPane{
 
 
 
-    public SettingsController getSettingsController() {
+    public DbListController getDbListController() {
         return lsc;
     }
     

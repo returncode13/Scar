@@ -73,7 +73,7 @@ class LogWatchHolder{
     
 }
 
-public class LogWatcher {
+public  class LogWatcher {
     private String logsLocation;          // path to the dugio volume logs folder
     private Long numberOfruns;
     TimerTask task;
@@ -97,6 +97,7 @@ public class LogWatcher {
     
     public LogWatcher(String logsLocation,String filter,VolumeSelectionModel vmod) 
     {
+        System.out.println("watcher.LogWatcher.<init>(): called for : "+vmod.getLabel());
         counter++;
         
         /*See if any logs are already present in the database.
@@ -153,7 +154,7 @@ public class LogWatcher {
                         
                         
                         timer=new Timer();
-                        timer.schedule(task,new Date(),2000);                          //every second.
+                        timer.schedule(task,new Date(),2000);                          //every 2 seconds
                    //}
                     
                    
@@ -267,8 +268,9 @@ public class LogWatcher {
                     
     }
     
-    public void commitToDb(){
+    private void commitToDb(){
         
+        System.out.println("watcher.LogWatcher.commitToDb(): Committing logs");
          List<Logs>logsList=lserv.getLogsFor(volume);
          Set<String> keys=maplineLog.keySet();
         for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
