@@ -137,36 +137,39 @@ public class HeadersViewController extends Stage implements Initializable {
              System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
+            
              List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());
+             // List<Logs> logs=lserv.getLogsFor(h.get(0));
              if(h.size()==1){
                  
                  System.out.println("fend.session.node.headers.setRowFactory(): Headers : sub: "+h.get(0).getSubsurface()+" id: "+h.get(0).getIdHeaders());
                  List<Logs> loglist=lserv.getLogsFor(h.get(0));
                  if(loglist.isEmpty()){
-                     String logLocation=v.getPathOfVolume();
+                     /* String logLocation=v.getPathOfVolume();
                      System.out.println("fend.session.node.headers.setRowFactory(): LogList is empty");
                      logLocation= logLocation+"/../../000scratch/logs";
                      ExecutorService execService=Executors.newFixedThreadPool(1);
                      final VolumeSelectionModel vmd=lsm.getVolmodel();
                      final String lloc=new String(logLocation);
                      try{
-                        execService.submit(new Callable<Void>(){
-                           
-                            @Override
-                            public Void call() throws Exception {
-                                LogWatcher lw=  new LogWatcher(lloc,"", vmd,Boolean.TRUE);
-                                return null;
-                            }
-                        }).get();
-                   loglist=lserv.getLogsFor(h.get(0));
-                   
-                     }catch(NullPointerException npe){
-                         System.out.println("fend.session.node.headers.setRowFactory(): unable to find logs!!!");
-                     } catch (InterruptedException ex) {
-                         Logger.getLogger(HeadersViewController.class.getName()).log(Level.SEVERE, null, ex);
-                     } catch (ExecutionException ex) {
-                         Logger.getLogger(HeadersViewController.class.getName()).log(Level.SEVERE, null, ex);
+                     execService.submit(new Callable<Void>(){
+                     
+                     @Override
+                     public Void call() throws Exception {
+                     // LogWatcher lw=  new LogWatcher(lloc,"", vmd,Boolean.TRUE);
+                     LogWatcher lw=  new LogWatcher(lloc,"", vmd);
+                     return null;
                      }
+                     }).get();
+                     loglist=lserv.getLogsFor(h.get(0));
+                     
+                     }catch(NullPointerException npe){
+                     System.out.println("fend.session.node.headers.setRowFactory(): unable to find logs!!!");
+                     } catch (InterruptedException ex) {
+                     Logger.getLogger(HeadersViewController.class.getName()).log(Level.SEVERE, null, ex);
+                     } catch (ExecutionException ex) {
+                     Logger.getLogger(HeadersViewController.class.getName()).log(Level.SEVERE, null, ex);
+                     }*/
                      
                  }
                  else{
@@ -189,7 +192,7 @@ public class HeadersViewController extends Stage implements Initializable {
                  
                  for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
                          Logs logs = iterator.next();
-                         Long version=logs.getVersion();
+                         Long version=logs.getHeaders().getNumberOfRuns();
                          String timestamp=logs.getTimestamp();
                          String logfilePath=logs.getLogpath();
                          VersionLogsModel lmod=new VersionLogsModel(version,timestamp,logfilePath);

@@ -44,6 +44,21 @@ public class LogsServiceImpl implements LogsService{
         return ldao.getLogsFor(h);
     }
 
+    @Override
+    public List<Logs> getLogsFor(Volume v) {
+        return ldao.getLogsFor(v);
+    }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v, String subline) {
+        return ldao.getLogsFor(v, subline);
+    }
+
+    @Override
+    public Logs getLatestLogFor(Volume v, String subline) {
+        return ldao.getLatestLogFor(v, subline);
+    }
+
    
     
 }

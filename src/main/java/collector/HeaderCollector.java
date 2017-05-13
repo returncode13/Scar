@@ -8,11 +8,14 @@ package collector;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import db.model.Acquisition;
 import db.model.Headers;
+import db.model.Logs;
 import db.model.Volume;
 import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
+import db.services.LogsService;
+import db.services.LogsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioHeaderValuesExtractor;
@@ -79,7 +82,8 @@ public class HeaderCollector {
     final private static VolumeService volServ=new VolumeServiceImpl();
     private Volume dbVolume;
     private String logLocation;
-    LogWatcher logForSub;
+    //LogWatcher logForSub;
+    final private static LogsService lserv=new LogsServiceImpl();
     
     
     public void setFeVolumeSelModel(VolumeSelectionModel feVolumeSelModel) {
@@ -98,7 +102,7 @@ public class HeaderCollector {
             @Override
             public Void call() throws Exception {
                calculateAndCommitHeaders();
-            logForSub.commitToDb();
+            //logForSub.commitToDb();
             return null;
             }
             
@@ -121,7 +125,7 @@ public class HeaderCollector {
             
             File volume=feVolumeSelModel.getVolumeChosen();
             dugHve.setVolume(volume);
-            logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
+         //   logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
        //     while(true)
       //  {
         try {
@@ -176,14 +180,19 @@ public class HeaderCollector {
             
            
                     
-            Map<String,String> subInsightVersionFromLogMap=logForSub.getsubInsightVersionMap();
+           // Map<String,String> subInsightVersionFromLogMap=logForSub.getsubInsightVersionMap();
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): committing headers to the database");
             for (Iterator<Headers> iterator = headerList.iterator(); iterator.hasNext();) {
                 Headers next = iterator.next();
                 next.setVolume(dbVolume);
+                
                 String lineN=next.getSubsurface();
-                next.setInsightVersion(subInsightVersionFromLogMap.get(lineN));
-                next.setVersion(logForSub.getNumberOfruns(lineN));
+                List<Logs> logs=lserv.getLogsFor(dbVolume, lineN);
+                Logs latestLog=lserv.getLatestLogFor(dbVolume, lineN);
+                    //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
+                next.setInsightVersion(latestLog.getInsightVersion());
+                next.setNumberOfRuns(new Long(logs.size()));
                 
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
@@ -197,7 +206,11 @@ public class HeaderCollector {
                 }
                 
                 
-                
+                for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
+                    Logs next1 = iterator1.next();
+                    next1.setHeaders(next);
+                    lserv.updateLogs(next1.getIdLogs(), next1);
+                }
                 SubSurface s= new SubSurface();
           
                 s.setSequenceNumber(next.getSequenceNumber());
@@ -241,7 +254,7 @@ public class HeaderCollector {
                 s.setXlineMin(next.getXlineMin());
                 s.setModified(next.getModified());
                 s.setDeleted(next.getDeleted());
-                s.setVersion(next.getVersion());
+                s.setVersion(next.getNumberOfRuns());
                 s.setInsightVersion(next.getInsightVersion());
                 
           
@@ -281,9 +294,7 @@ public class HeaderCollector {
         Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
         Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-        Logger.getLogger(HeaderCollector.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
         
         
        // feVolumeSelModel.setHeaderButtonStatus(Boolean.TRUE);

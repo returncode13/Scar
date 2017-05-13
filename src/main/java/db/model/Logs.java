@@ -31,8 +31,12 @@ public class Logs implements Serializable{
     @JoinColumn(name="headers_fk",nullable = true)
     private Headers headers;
     
-    @Column(name="version")
-    private Long version;
+    @ManyToOne
+    @JoinColumn(name="volume_headers_fk",nullable = false)
+    private Volume volume;
+    
+    /* @Column(name="numberOfRuns")
+    private Long numberOfRuns;*/
 
     @Column(name="logPath",length=4096)
     private String logpath;
@@ -40,13 +44,41 @@ public class Logs implements Serializable{
     @Column(name="timeStamp",length =1024)
     private String timestamp;
     
-    public Long getVersion() {
-        return version;
+    @Column(name="subsurfaces",length=1024)
+    private String subsurfaces;
+
+    
+    @Column(name="insightVersion",length=1024)
+    private String insightVersion;
+    
+    public String getInsightVersion() {
+        return insightVersion;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setInsightVersion(String insightVersion) {
+        this.insightVersion = insightVersion;
     }
+    
+    
+    
+    
+    public String getSubsurfaces() {
+        return subsurfaces;
+    }
+
+    public void setSubsurfaces(String sublines) {
+        this.subsurfaces = sublines;
+    }
+    
+    
+    
+    /*public Long getNumberOfRuns() {
+    return numberOfRuns;
+    }
+    
+    public void setNumberOfRuns(Long version) {
+    this.numberOfRuns = version;
+    }*/
 
     public String getLogpath() {
         return logpath;
@@ -54,6 +86,14 @@ public class Logs implements Serializable{
 
     public void setLogpath(String logpath) {
         this.logpath = logpath;
+    }
+
+    public Volume getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Volume volume) {
+        this.volume = volume;
     }
     
     

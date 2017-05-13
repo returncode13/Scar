@@ -1192,6 +1192,9 @@ public class SessionController implements Initializable {
                         
                         String errorMessage=targetSubQ.getErrorMessage();
                           System.out.println("fend.session.SessionController.setQCFlag() OldErrorMessage: "+errorMessage);
+                          if(errorMessage==null){
+                              errorMessage=new String();
+                          }
                         if(errorMessage.contains("version")){
                             insightFail=true;
                         }else

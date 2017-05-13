@@ -21,6 +21,8 @@ public interface LogsDAO {
     public void deleteLogs(Long lid);
     
     public List<Logs> getLogsFor(Headers h);  //get the logs for which the foreign key=h.id
-
+    public List<Logs> getLogsFor(Volume v);
+    public List<Logs> getLogsFor(Volume v,String subline);
+    public Logs getLatestLogFor(Volume v, String subline);
     
 }

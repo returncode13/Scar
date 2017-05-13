@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -208,13 +211,27 @@ public class VolumeSelectionModel {
         String logPath=volumeChosen.getAbsolutePath();
         logPath=logPath+"/../../000scratch/logs";
         if(logTimerTask==null) {
-           // logTimerTask=new LogWatcher(logPath,"",this,Boolean.FALSE);
+            
+            logTimerTask=new LogWatcher(logPath,"",this);
         }
     }
 
     public void startWatching() {
-        //startVolumeWatching();
-        startLogWatching();
+        
+         ExecutorService executorService = Executors.newFixedThreadPool(10);
+         executorService.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                //startVolumeWatching();
+                startLogWatching();
+            return null;
+            }
+            
+        });
+        
+        
+        
+       
     }
     
 }
