@@ -325,7 +325,7 @@ public class SessionController implements Initializable {
         boolean success=false;
         if(dragboard.hasString()){
             String nodeId=dragboard.getString();
-            jsn=(JobStepType1Node) rightInteractivePane.lookup("#"+nodeId);
+            jsn=(JobStepType0Node) rightInteractivePane.lookup("#"+nodeId);
              System.out.println("JGVC: Drag dropped on basePane mouse entered in row# "+rowNo+" colume#"+ ColNo);
          //interactiveAnchorPane.getChildren().add(node);
          

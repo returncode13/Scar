@@ -52,7 +52,7 @@ import javafx.util.Callback;
  *
  * @author adira0150
  */
-class JobStepType2NodeController implements JobStepType0NodeController{
+public class JobStepType2NodeController implements JobStepType0NodeController{
      // public static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
     public static File insightLocation=new File("/d/sw/Insight");    
     final private ChangeListener<String> JOBSTEP_TEXT_FIELD_CHANGE_LISTENER=new ChangeListener<String>() {
