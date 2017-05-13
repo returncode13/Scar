@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs;
+package fend.session.node.jobs.type1;
 
 
 import com.sun.javafx.scene.input.DragboardHelper;
@@ -59,6 +59,7 @@ import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.insightVersions.InsightVersionsController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
+import fend.session.node.jobs.type0.JobStepType0Model;
 
 import fend.session.node.volumes.VolumeSelectionCell;
 import fend.session.node.volumes.VolumeSelectionModel;
@@ -71,13 +72,14 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxListCell;
+import fend.session.node.jobs.type0.JobStepType0NodeController;
 
 
 /**
  *
  * @author naila0152
  */
-public class JobStepNodeController {
+public class JobStepType1NodeController implements JobStepType0NodeController {
     
    // public static File insightLocation=new File("/home/sharath/programming/polarcus/insight");    
     public static File insightLocation=new File("/d/sw/Insight");    
@@ -131,8 +133,8 @@ public class JobStepNodeController {
     private List<VolumeSelectionModel> volSelectionList=new ArrayList<>();
     private ObservableList<VolumeSelectionModel> obsList=FXCollections.observableList(volSelectionList);
     private int show=0;
-    private JobStepModel model;
-    private JobStepNode jsn;                                //the real node is jsn.getJobStepNode()
+    private JobStepType1Model model;
+    private JobStepType1Node jsn;                                //the real node is jsn.getJobStepNode()
     private ArrayList<Links> links=new ArrayList<Links>();
     
     
@@ -199,7 +201,7 @@ public class JobStepNodeController {
         }
              
         
-                obsList.add(new VolumeSelectionModel(true));
+                obsList.add(new VolumeSelectionModel(true,1L));
                  volumeSelView.setItems(obsList);
                
                
@@ -288,7 +290,7 @@ public class JobStepNodeController {
         
         
         //event.acceptTransferModes(TransferMode.LINK);
-       jsn=(JobStepNode) event.getGestureTarget();
+       jsn=(JobStepType1Node) event.getGestureTarget();
         System.out.println("Linked to "+jsn.getJsnc().getModel().getJobStepText());
         event.setDropCompleted(true);
         event.consume();
@@ -360,12 +362,12 @@ public class JobStepNodeController {
         return obsList;
     }
 
-    public void setObsList(ObservableList<VolumeSelectionModel> obsList) {
-        this.obsList = obsList;
-    }
+    /* public void setObsList(ObservableList<VolumeSelectionModel> obsList) {
+    this.obsList = obsList;
+    }*/
     
     
-    public void startNewLink(JobStepModel jmod){
+    public void startNewLink(JobStepType1Model jmod){
         List<LinksModel> lmList = jmod.getListOfLinkModels();
         LinksModel lm=lmList.get(lmList.size()-1);
         obsLinkList.add(lm);
@@ -422,11 +424,11 @@ public class JobStepNodeController {
     
     
 
-    public JobStepModel getModel() {
+    public JobStepType1Model getModel() {
         return model;
     }
 
-    public void setModel(JobStepModel model) {
+    public void setModel(JobStepType1Model model) {
         if(this.model!=null) removeModelListeners();
         this.model=model;
         this.model.setId(id);
@@ -539,7 +541,7 @@ public class JobStepNodeController {
         this.obsLinks = obsLinks;
     }
 */
-    public JobStepNodeController() {
+    public JobStepType1NodeController() {
         // System.out.println("Constructor called");
         
          
@@ -549,7 +551,7 @@ public class JobStepNodeController {
     
 
     
-    void setView(JobStepNode aThis) {
+    void setView(JobStepType1Node aThis) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         jsn=aThis;
         
@@ -564,7 +566,7 @@ public class JobStepNodeController {
         });
     }
 
-    void addToLineage(JobStepModel parent) {
+    void addToLineage(JobStepType0Model parent) {
       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         System.out.println("JSNC: AddtoLineage ParentId: "+parent.getId());
         System.out.println("JSNC: AddtoLineage Child Id: "+model.getId());
@@ -642,6 +644,11 @@ public class JobStepNodeController {
 
     public void setInsightVersionsModel(InsightVersionsModel insVerModel) {
         ismod=insVerModel;
+    }
+
+    @Override
+    public void setObsList(ObservableList obsList) {
+        this.obsList = obsList;
     }
 
    

@@ -40,9 +40,13 @@ import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
-import fend.session.node.jobs.JobStepModel;
-import fend.session.node.jobs.JobStepNodeController;
+//import fend.session.node.jobs.type1.JobStepType1Model;
+//import fend.session.node.jobs.type1.JobStepType1NodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.type0.JobStepType0NodeController;
+import fend.session.node.jobs.type1.JobStepType1Model;
+import fend.session.node.jobs.type2.JobStepType2Model;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.File;
 import java.io.FileFilter;
@@ -235,10 +239,10 @@ public class LandingController implements Initializable,Serializable {
         System.out.println("LC: Saving session with Id: "+smodel.getId()+" and name: "+smodel.getName());
             scontr.setAllLinksAndJobsForCommit();
             
-            ObservableList<JobStepModel> ajs= smodel.getListOfJobs();
+            ObservableList<JobStepType0Model> ajs= smodel.getListOfJobs();
             
-            for (Iterator<JobStepModel> iterator = ajs.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
+            for (Iterator<JobStepType0Model> iterator = ajs.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
                 System.out.println("LC: Job id# "+next.getId()+" text: "+next.getJobStepText());
             
         }
@@ -277,7 +281,7 @@ public class LandingController implements Initializable,Serializable {
             String  regex=".\\d*.\\d*-[a-zA-Z0-9_-]*";  
         Pattern pattern=Pattern.compile(regex);
         
-       File[] versions= JobStepNodeController.insightLocation.listFiles(new FileFilter() {
+       File[] versions= JobStepType0NodeController.insightLocation.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pattern.matcher(pathname.getName()).matches();
@@ -300,7 +304,7 @@ public class LandingController implements Initializable,Serializable {
        
         
         
-        ArrayList<JobStepModel> jmodList=new ArrayList<>();
+        ArrayList<JobStepType0Model> jmodList=new ArrayList<>();
         
         
         
@@ -361,7 +365,14 @@ public class LandingController implements Initializable,Serializable {
             
             js.add(beJobStep);
             
-            JobStepModel fejsm=new JobStepModel(null);
+            JobStepType0Model fejsm=null;//=new JobStepType0Model(null);
+            Long type=beJobStep.getType();
+            if(type.equals(1L)){
+                fejsm=new JobStepType1Model(null);
+            }
+            if(type.equals(2L)){
+                fejsm=new JobStepType2Model(null);
+            }
             fejsm.setJobStepText(beJobStep.getNameJobStep());
             fejsm.setId(beJobStep.getIdJobStep());
             
@@ -555,12 +566,13 @@ public class LandingController implements Initializable,Serializable {
       
                 
                 
-                VolumeSelectionModel fv=new VolumeSelectionModel();
+                VolumeSelectionModel fv=new VolumeSelectionModel(beV.getVolumeType());
                 fv.setVolumeChosen(new File(beV.getPathOfVolume()));
                 fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
                 fv.setAlert(beV.getAlert());
                 fv.setLabel(beV.getNameVolume());
                 fv.setId(beV.getIdVolume());
+                fv.setVolumeType(beV.getVolumeType());
                 System.out.println("landing.LandingController.loadSession(): Volume name: "+beV.getNameVolume()+" : Volume Id: "+beV.getIdVolume());
                 fv.setInflated(true);
                 fv.setSubsurfaces(sl);
@@ -600,10 +612,18 @@ public class LandingController implements Initializable,Serializable {
             
             Sessions beSessions=next.getSessions();
             JobStep beJobStep=next.getJobStep();                                    //beJobstep belongs to beSessions
-            JobStepModel fejsm=new JobStepModel(null);
+            Long type=beJobStep.getType();
             
-            for (Iterator<JobStepModel> iterator1 = jmodList.iterator(); iterator1.hasNext();) {
-                JobStepModel next1 = iterator1.next();
+            JobStepType0Model fejsm=null;
+            if(type.equals(1L)){
+                fejsm=new JobStepType1Model(null);
+            }if(type.equals(2L)){
+                fejsm=new JobStepType2Model(null);
+            }
+           
+            
+            for (Iterator<JobStepType0Model> iterator1 = jmodList.iterator(); iterator1.hasNext();) {
+                JobStepType0Model next1 = iterator1.next();
                 if(next1.getId().equals(beJobStep.getIdJobStep())){
                     fejsm=next1;
                 }
@@ -625,8 +645,8 @@ public class LandingController implements Initializable,Serializable {
                 //in jmodList find the job that has the same id as the childId
                
                 
-                    for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
-                    JobStepModel next2 = iterator2.next();
+                    for (Iterator<JobStepType0Model> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepType0Model next2 = iterator2.next();
                     if(next2.getId().equals(childId))
                     {
                        
@@ -653,8 +673,8 @@ public class LandingController implements Initializable,Serializable {
                 
               
                 
-                for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
-                    JobStepModel next2 = iterator2.next();
+                for (Iterator<JobStepType0Model> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
+                    JobStepType0Model next2 = iterator2.next();
                     if(next2.getId().equals(parentId)){
                        
                         fejsm.addToParent(next2);
@@ -667,17 +687,17 @@ public class LandingController implements Initializable,Serializable {
             
         }
         
-        for (Iterator<JobStepModel> iterator = jmodList.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
-            List<JobStepModel> children=next.getJsChildren();
-            for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
-                JobStepModel next1 = iterator1.next();
+        for (Iterator<JobStepType0Model> iterator = jmodList.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
+            List<JobStepType0Model> children=next.getJsChildren();
+            for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
+                JobStepType0Model next1 = iterator1.next();
                 System.out.println("landing.LandingController.loadSession(): job : "+next.getJobStepText()+" :has child: "+next1.getJobStepText());
             }
             
-            List<JobStepModel> parents=next.getJsParents();
-            for (Iterator<JobStepModel> iterator1 = parents.iterator(); iterator1.hasNext();) {
-                JobStepModel next1 = iterator1.next();
+            List<JobStepType0Model> parents=next.getJsParents();
+            for (Iterator<JobStepType0Model> iterator1 = parents.iterator(); iterator1.hasNext();) {
+                JobStepType0Model next1 = iterator1.next();
                 System.out.println("landing.LandingController.loadSession(): job : "+next.getJobStepText()+" :has parent: "+next1.getJobStepText());
             }
         }
@@ -688,19 +708,19 @@ public class LandingController implements Initializable,Serializable {
         
         ObservableList<LinksModel> oLink=FXCollections.observableArrayList();
         
-        for (Iterator<JobStepModel> iterator = jmodList.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
+        for (Iterator<JobStepType0Model> iterator = jmodList.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
             
-            List<JobStepModel> parentList = next.getJsParents();
-            List<JobStepModel> childList = next.getJsChildren();
+            List<JobStepType0Model> parentList = next.getJsParents();
+            List<JobStepType0Model> childList = next.getJsChildren();
             
-            for (Iterator<JobStepModel> iterator1 = parentList.iterator(); iterator1.hasNext();) {
-                JobStepModel next1 = iterator1.next();
+            for (Iterator<JobStepType0Model> iterator1 = parentList.iterator(); iterator1.hasNext();) {
+                JobStepType0Model next1 = iterator1.next();
                 
                 
                 
-                    for (Iterator<JobStepModel> iterator2 = childList.iterator(); iterator2.hasNext();) {
-                    JobStepModel next2 = iterator2.next();
+                    for (Iterator<JobStepType0Model> iterator2 = childList.iterator(); iterator2.hasNext();) {
+                    JobStepType0Model next2 = iterator2.next();
                     LinksModel lm=new LinksModel();
                     lm.setParent(next1);
                     lm.setChild(next2);
@@ -730,9 +750,9 @@ public class LandingController implements Initializable,Serializable {
        smodel = new SessionModel();
        smodel.setName(sessionFromDB.getNameSessions());            //front end sessionModel name is the same as the backends
        smodel.setId(sessionFromDB.getIdSessions());                //front end sessionModel id is the same as the backends
-       ObservableList<JobStepModel> otemp=FXCollections.observableArrayList(jmodList);
-        for (Iterator<JobStepModel> iterator = otemp.iterator(); iterator.hasNext();) {
-            JobStepModel jsmodel = iterator.next();
+       ObservableList<JobStepType0Model> otemp=FXCollections.observableArrayList(jmodList);
+        for (Iterator<JobStepType0Model> iterator = otemp.iterator(); iterator.hasNext();) {
+            JobStepType0Model jsmodel = iterator.next();
             jsmodel.setSessionModel(smodel);
             
         }
@@ -744,10 +764,10 @@ public class LandingController implements Initializable,Serializable {
        basePane.getChildren().clear();                              //clear previous setup... this will not save! fix this. Save the current session before loading a new one.
        //saveCurrentSession(event);
        basePane.getChildren().add(snode);
-       ObservableList<JobStepModel> obj=FXCollections.observableArrayList(jmodList);
+       ObservableList<JobStepType0Model> obj=FXCollections.observableArrayList(jmodList);
        
-        for (Iterator<JobStepModel> iterator = obj.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
+        for (Iterator<JobStepType0Model> iterator = obj.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
             System.out.println("landing.LandingController.loadSession(): jobs to be loaded "+next.getJobStepText());
             
         }

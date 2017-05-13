@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root fx:id="rootPane" onDragOver="#handleOnDragOver" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.session.SessionController">
+<fx:root fx:id="rootPane" onDragOver="#handleOnDragOver" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.session.SessionController">
    <children>
       <SplitPane fx:id="basePane" dividerPositions="0.101620029455081" prefHeight="490.0" prefWidth="681.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <items>
@@ -18,7 +18,15 @@
                <children>
                   <VBox fx:id="buttonHolderVBox" alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Button fx:id="addJobStepButton" layoutX="8.0" mnemonicParsing="false" onAction="#handleAddJobStepButton" prefHeight="258.0" prefWidth="16.0" style="-fx-background-color: #52585e;" text="+" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+                        <Button fx:id="addJobStepButton1" mnemonicParsing="false" onAction="#handleAddJobStepType1Button" prefHeight="50.0" prefWidth="38.0" style="-fx-background-color: #52585e;" text="1">
+                           <font>
+                              <Font name="DejaVu LGC Sans Mono Bold" size="19.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Button fx:id="addJobStepButton2" layoutX="8.0" mnemonicParsing="false" onAction="#handleAddJobStepType2Button" prefHeight="50.0" prefWidth="38.0" style="-fx-background-color: #52585e;" text="2" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
                            <font>
                               <Font name="DejaVu LGC Sans Mono Bold" size="19.0" />
                            </font></Button>

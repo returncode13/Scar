@@ -45,6 +45,9 @@ public class JobStep implements Serializable{
     @Column(name = "alert",nullable = true)
     private Boolean alert;
     
+    @Column(name = "type",nullable=false)
+    private Long type;
+    
     /*@Column(name = "pending",nullable = true)
     private Boolean pending;*/
     @OneToMany(mappedBy = "jobStep",cascade = CascadeType.ALL,orphanRemoval = true)                              //create a member named "jobStep" in the JobVolumeDetails class definition
@@ -53,10 +56,11 @@ public class JobStep implements Serializable{
     @OneToMany(mappedBy = "jobStep",cascade = CascadeType.ALL,orphanRemoval = true)                             //create a member named "jobStep" in the SessionDetails class definition
     private Set<SessionDetails> sessionDetails;
 
-    public JobStep(String nameJobStep, Boolean alert,String insightVersion) {
+    public JobStep(String nameJobStep, Boolean alert,String insightVersion,Long type) {
         this.nameJobStep = nameJobStep;
         this.alert = alert;
         this.insightVersions=insightVersion;
+        this.type=type;
     }
 
     public JobStep() {
@@ -136,6 +140,18 @@ public class JobStep implements Serializable{
     }
     */
 
+    public Long getType() {
+        return type;
+    }
+
+    public void setType(Long type) {
+        this.type = type;
+    }
+
+    
+
+    
+    
     
     
     

@@ -3,39 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs;
+package fend.session.node.jobs.type2;
 
-
-import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.type1.JobStepType1Model;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import fend.session.node.volumes.VolumeSelectionModel;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import org.apache.commons.collections4.MultiMap;
-import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  *
- * @author naila0152
+ * @author adira0150
  */
-public class JobStepModel {
+public class JobStepType2Model implements JobStepType0Model{
+    
+    private final Long type=2L;
     private final StringProperty jobStepTextProperty;
     private final ListProperty<VolumeSelectionModel>volListProperty;
     private InsightVersionsModel insightVersionsModel;
@@ -43,8 +40,8 @@ public class JobStepModel {
     private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     
-    private ArrayList<JobStepModel> jsParents=new ArrayList<>();
-    private ArrayList<JobStepModel> jsChildren=new ArrayList<>();
+    private ArrayList<JobStepType0Model> jsParents=new ArrayList<>();
+    private ArrayList<JobStepType0Model> jsChildren=new ArrayList<>();
     
     private Boolean leaf=true;
     private Boolean root=true;
@@ -58,13 +55,16 @@ public class JobStepModel {
 
     private List<LinksModel> listOfLinkModels=new ArrayList<>();
     
-   
+    /* public JobStepType1Model(String jobStepText, SessionModel smodel) {
+    super(jobStepText, smodel);
+    }*/
+    
 
    
     
 
-    public JobStepModel(String jobStepText,SessionModel smodel) {
-   
+    public JobStepType2Model(String jobStepText,SessionModel smodel) {
+       
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
        ObservableList<VolumeSelectionModel> obs=FXCollections.observableArrayList();
         this.volListProperty = new SimpleListProperty<>(obs);
@@ -89,7 +89,7 @@ public class JobStepModel {
     
     
 
-    public JobStepModel(SessionModel smodel) {
+    public JobStepType2Model(SessionModel smodel) {
         this("Enter a name",smodel);
     }
 
@@ -129,7 +129,7 @@ public class JobStepModel {
     
     
     
-    public void addToParent(JobStepModel parent){
+    public void addToParent(JobStepType0Model parent){
        /* if(jsParents.contains(this)) {
             System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from parent");
             jsParents.remove(this);
@@ -140,35 +140,35 @@ public class JobStepModel {
         jsParents.add(parent);
         }
         System.out.println("fend.session.node.jobs.JobStepModel.addToParent(): Parents of "+this.getJobStepText());
-        for (Iterator<JobStepModel> iterator = jsParents.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
+        for (Iterator<JobStepType0Model> iterator = jsParents.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
             System.out.println(next.getJobStepText());
             
         }
     }
     
     
-    public void addToChildren(JobStepModel child){
+    public void addToChildren(JobStepType0Model child){
        /* if(jsChildren.contains(this)) {
         System.out.println("JSM: contains "+this.getJobStepText()+" ..removing from Children");
             jsChildren.remove(this);
         }*/
         System.out.println("fend.session.node.jobs.JobStepModel.addToChildren()   "+child.getId()+"=="+this.id+ "     :  "+child.getId().equals(this.id));
         if(!child.getId().equals(this.id)){
-            System.out.println("JSM: in "+this.getJobStepText()+" :ID: "+this.getId()+" setting child: "+child.getJobStepText()+" :ID: "+child.id);
+            System.out.println("JSM: in "+this.getJobStepText()+" :ID: "+this.getId()+" setting child: "+child.getJobStepText()+" :ID: "+child.getId());
             jsChildren.remove(this);
         jsChildren.add(child);
         }
         
         System.out.println("fend.session.node.jobs.JobStepModel.addToChildren(): Children of "+this.getJobStepText()+"  :id: "+this.id);
-        for (Iterator<JobStepModel> iterator = jsChildren.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
+        for (Iterator<JobStepType0Model> iterator = jsChildren.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
             System.out.println(next.getJobStepText() + " : id: "+next.getId());
             
-            List<JobStepModel> gchildren=next.getJsChildren();
+            List<JobStepType0Model> gchildren=next.getJsChildren();
             System.out.println("children of "+next.getJobStepText());
-                for (Iterator<JobStepModel> iterator1 = gchildren.iterator(); iterator1.hasNext();) {
-                JobStepModel next1 = iterator1.next();
+                for (Iterator<JobStepType0Model> iterator1 = gchildren.iterator(); iterator1.hasNext();) {
+                JobStepType0Model next1 = iterator1.next();
                     System.out.println(next1.getJobStepText()+" :id: "+next1.getId());
                 
             }
@@ -178,19 +178,19 @@ public class JobStepModel {
         
     }
 
-    public ArrayList<JobStepModel> getJsParents() {
+    public ArrayList<JobStepType0Model> getJsParents() {
         return jsParents;
     }
 
-    public ArrayList<JobStepModel> getJsChildren() {
+    public ArrayList<JobStepType0Model> getJsChildren() {
         return jsChildren;
     }
 
-    public void setJsParents(ArrayList<JobStepModel> jsParents) {
+    public void setJsParents(ArrayList<JobStepType0Model> jsParents) {
         this.jsParents = jsParents;
     }
 
-    public void setJsChildren(ArrayList<JobStepModel> jsChildren) {
+    public void setJsChildren(ArrayList<JobStepType0Model> jsChildren) {
         this.jsChildren = jsChildren;
     }
 
@@ -198,6 +198,7 @@ public class JobStepModel {
         this.id=id;
     }
     
+    @Override
      public Long getId() {
         return id;
     }
@@ -260,8 +261,12 @@ public class JobStepModel {
     public void removeFromListOfLinksModel(LinksModel lm){
         listOfLinkModels.remove(lm);
     }
+
+   
+    public Long getType() {
+        return this.type;
+    }
     
     
-     
-     
+   
 }

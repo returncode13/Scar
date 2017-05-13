@@ -36,7 +36,8 @@ import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
 import fend.session.node.headers.SubSurface;
-import fend.session.node.jobs.JobStepModel;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.type1.JobStepType1Model;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class Collector {
     
     private SessionModel feSessionModel;
     //private ArrayList<JobStepModel> feJobModel=new ArrayList<>();
-    ObservableList<JobStepModel> feJobModel=FXCollections.observableArrayList();
+    ObservableList<JobStepType0Model> feJobModel=FXCollections.observableArrayList();
     private ArrayList<VolumeSelectionModel> feVolume=new ArrayList<>();
        
     
@@ -116,8 +117,8 @@ public class Collector {
         
         feJobModel=feSessionModel.getListOfJobs();
         
-         for (Iterator<JobStepModel> iterator = feJobModel.iterator(); iterator.hasNext();) {
-             JobStepModel next = iterator.next();
+         for (Iterator<JobStepType0Model> iterator = feJobModel.iterator(); iterator.hasNext();) {
+             JobStepType0Model next = iterator.next();
              System.out.println("collector.Collector.saveCurrentSession(): List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
          }
         dbSessions.add(currentSession);
@@ -144,9 +145,9 @@ public class Collector {
            Sessions sess = currentSession;//iterator.next();
             
            //for each jobStep from fe
-            for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
+            for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
                 
-                JobStepModel jsm=jit.next();
+                JobStepType0Model jsm=jit.next();
                 JobStep jobstep;
                 /*if((jobstep=jsServ.getJobStep(jsm.getId()))==null){
                 jobstep=new JobStep();
@@ -159,6 +160,7 @@ public class Collector {
                     jobstep.setIdJobStep(jsm.getId());
 
                     jobstep.setAlert(Boolean.FALSE);
+                    jobstep.setType(jsm.getType());
                     //jsServ.updateJobStep(jobstep.getIdJobStep(), jobstep);
                // }
                 //JobStepModel jsm = jit.next();
@@ -215,6 +217,7 @@ public class Collector {
                      System.out.println("collector.Collector.setupEntries(): Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
                     vp.setIdVolume(vsm.getId());
                     vp.setNameVolume(vsm.getLabel());
+                    vp.setVolumeType(vsm.getVolumeType());
                     vp.setAlert(Boolean.FALSE);
                     //vp.setHeaderExtracted(Boolean.FALSE);
                     vp.setHeaderExtracted(vsm.getHeaderButtonStatus());
@@ -347,8 +350,8 @@ public class Collector {
          
          
          //load the dbAncestor List
-            for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
-                JobStepModel jsm = jit.next();
+            for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
+                JobStepType0Model jsm = jit.next();
               //  System.out.println("collector.Collector.createAllAncestors()  :JobStepModel: "+jsm.getJobStepText()+" id: "+jsm.getId());
                 JobStep js=jsServ.getJobStep(jsm.getId());
                // dbAncestors=new ArrayList<>();
@@ -357,10 +360,10 @@ public class Collector {
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
                    // System.out.println("collector.Collector.createAllAncestors(): CurrentSession: "+currentSession.getNameSessions());
                    // System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
-                      ArrayList<JobStepModel> listOfParents=jsm.getJsParents();
+                      ArrayList<JobStepType0Model> listOfParents=(ArrayList<JobStepType0Model>) jsm.getJsParents();
                  
-                 for(Iterator<JobStepModel> pit = listOfParents.iterator(); pit.hasNext();) {
-                     JobStepModel par = pit.next();
+                 for(Iterator<JobStepType0Model> pit = listOfParents.iterator(); pit.hasNext();) {
+                     JobStepType0Model par = pit.next();
               //       System.out.println("collector.Collector.createAllAncestors(): "+par.getJobStepText());
                      
                    //  Ancestors ancestor=new Ancestors();  //
@@ -430,12 +433,12 @@ public class Collector {
          Debug
          */
          
-         for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();){
-             JobStepModel jsm = jit.next();
+         for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();){
+             JobStepType0Model jsm = jit.next();
              
-             ArrayList<JobStepModel> children=jsm.getJsChildren();
-             for (Iterator<JobStepModel> iterator = children.iterator(); iterator.hasNext();) {
-                 JobStepModel ch = iterator.next();
+             ArrayList<JobStepType0Model> children=(ArrayList<JobStepType0Model>) jsm.getJsChildren();
+             for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                 JobStepType0Model ch = iterator.next();
              //    System.out.println("Coll: FE Parent : "+jsm.getJobStepText()+ "  has child : "+ch.getJobStepText() +" is Leaf: "+jsm.isLeaf());
                  
              }
@@ -481,18 +484,18 @@ public class Collector {
          
          
          
-         for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
-                JobStepModel jsm = jit.next();
+         for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
+                JobStepType0Model jsm = jit.next();
                 JobStep js=jsServ.getJobStep(jsm.getId());
                // dbDescendants=new ArrayList<>();
                 dbChild=new ArrayList<>();
             
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
                    // System.out.println("collector.Collector.createAllDescendants(): CurrentSession: "+currentSession.getNameSessions());
-                      ArrayList<JobStepModel> listOfChildren=jsm.getJsChildren();
+                      ArrayList<JobStepType0Model> listOfChildren=(ArrayList<JobStepType0Model>) jsm.getJsChildren();
                  
-                 for (Iterator<JobStepModel> cit = listOfChildren.iterator(); cit.hasNext();) {
-                     JobStepModel child = cit.next();
+                 for (Iterator<JobStepType0Model> cit = listOfChildren.iterator(); cit.hasNext();) {
+                     JobStepType0Model child = cit.next();
                    //  System.out.println("collector.Collector.createAllDescendants() :" +jsm.getJobStepText()+" : has child: "+child.getJobStepText() );
                    
                      Child c=new Child();
@@ -560,8 +563,8 @@ public class Collector {
     }
 
     private void startWatching() {
-        for (Iterator<JobStepModel> jit = feJobModel.iterator(); jit.hasNext();) {
-            JobStepModel jsm = jit.next();
+        for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
+            JobStepType0Model jsm = jit.next();
             ObservableList<VolumeSelectionModel> vsmlist= jsm.getVolList();
             for (Iterator<VolumeSelectionModel> iterator = vsmlist.iterator(); iterator.hasNext();) {
                 VolumeSelectionModel next = iterator.next();

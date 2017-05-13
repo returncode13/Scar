@@ -55,7 +55,8 @@ public class VolumeSelectionModel {
     //for Debug
 
     private Long id;
-
+    private Long volumeType;
+    
     public HeadersModel getHeadersModel() {
         
         return headersModel;
@@ -79,23 +80,24 @@ public class VolumeSelectionModel {
         
     
     
-    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated) {
+    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated,Long volumeType) {
         ++i;
         this.volumeSelectionLabel = new SimpleStringProperty(i+" "+volumeSelectionLabel);
         
          
         this.Inflated=toBeInflated;
+        this.volumeType=volumeType;
      
     }
     
-     public VolumeSelectionModel(Boolean toBeinflated) {
+     public VolumeSelectionModel(Boolean toBeinflated,long volumeType) {
         
-        this(new String ("choose vol: "),toBeinflated);
+        this(new String ("choose vol: "),toBeinflated,volumeType);
        //  this.headersModel.setVolmodel(this);
     }
     
-    public VolumeSelectionModel(){
-        this(new String ("choose vol: "),false);
+    public VolumeSelectionModel(Long volumeType){
+        this(new String ("choose vol: "),false,volumeType);
          //this.headersModel.setVolmodel(this);
         
         
@@ -233,5 +235,15 @@ public class VolumeSelectionModel {
         
        
     }
+
+    public Long getVolumeType() {
+        return volumeType;
+    }
+
+    public void setVolumeType(Long volumeType) {
+        this.volumeType = volumeType;
+    }
+
+    
     
 }

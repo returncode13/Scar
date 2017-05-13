@@ -6,11 +6,12 @@
 package fend.session.edges.anchor;
 
 import fend.session.edges.LinksModel;
+import fend.session.node.jobs.type0.JobStepType0Model;
 import java.io.Serializable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
-import fend.session.node.jobs.JobStepModel;
+import fend.session.node.jobs.type1.JobStepType1Model;
 
 /**
  *
@@ -23,7 +24,7 @@ public class AnchorModel implements Serializable{
     final private DoubleProperty radius;
     private Color color;
     private Long id;
-    private JobStepModel job;                                               //the job step on which this anchor lies
+    private JobStepType0Model job;                                               //the job step on which this anchor lies
     private LinksModel lmodel;
     
     public AnchorModel() {
@@ -71,11 +72,11 @@ public class AnchorModel implements Serializable{
         radius.set(d);
     }
 
-    public JobStepModel getJob() {
+    public JobStepType0Model getJob() {
         return job;
     }
 
-    public void setJob(JobStepModel job) {
+    public void setJob(JobStepType0Model job) {
         System.out.println("fend.session.edges.anchor.AnchorModel.setJob(): setting job: "+job.getJobStepText());
         this.job = job;
     }

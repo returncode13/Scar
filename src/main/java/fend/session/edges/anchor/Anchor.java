@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
-import fend.session.node.jobs.JobStepNode;
+import fend.session.node.jobs.type1.JobStepType1Node;
 import fend.session.edges.Links;
 
 

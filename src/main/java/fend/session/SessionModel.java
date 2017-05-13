@@ -6,7 +6,8 @@
 package fend.session;
 
 import fend.session.edges.LinksModel;
-import fend.session.node.jobs.JobStepModel;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.type1.JobStepType1Model;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ import javafx.collections.ObservableList;
  * @author naila0152
  */
 public class SessionModel implements Serializable{
-    ObservableList<JobStepModel> listOfJobs=FXCollections.observableArrayList();
+    ObservableList<JobStepType0Model> listOfJobs=FXCollections.observableArrayList();
     //ArrayList<VolumeSelectionModel> listOfVolumes=new ArrayList<>();   // all volume information is held by the JobStepModel.
     ArrayList<LinksModel> listOfLinks=new ArrayList<>();
-    ArrayList<JobStepModel> jobsToBeDeleted = new ArrayList<>();
+    ArrayList<JobStepType0Model> jobsToBeDeleted = new ArrayList<>();
     Long Id;
     String name;
 
@@ -37,7 +38,7 @@ public class SessionModel implements Serializable{
     
     
     
-    public ObservableList<JobStepModel> getListOfJobs() {
+    public ObservableList<JobStepType0Model> getListOfJobs() {
         System.out.println("fend.session.SessionModel.getListOfJobs(): size of list: "+listOfJobs.size());
         return listOfJobs;
     }
@@ -62,16 +63,16 @@ public class SessionModel implements Serializable{
         this.Id = Id;
     }
 
-    public void setListOfJobs(ObservableList<JobStepModel> listOfJobs) {
+    public void setListOfJobs(ObservableList<JobStepType0Model> listOfJobs) {
         this.listOfJobs = listOfJobs;
     }
     
-    public void removeJobfromSession(JobStepModel jobToBeDeleted){
+    public void removeJobfromSession(JobStepType0Model jobToBeDeleted){
         
         listOfJobs.remove(jobToBeDeleted);
         
-        for (Iterator<JobStepModel> iterator = listOfJobs.iterator(); iterator.hasNext();) {
-            JobStepModel job = iterator.next();
+        for (Iterator<JobStepType0Model> iterator = listOfJobs.iterator(); iterator.hasNext();) {
+            JobStepType0Model job = iterator.next();
             
             job.getJsChildren().remove(jobToBeDeleted);
             job.getJsParents().remove(jobToBeDeleted);
@@ -100,7 +101,7 @@ public class SessionModel implements Serializable{
         
          System.out.println("fend.session.SessionModel:  job "+jobToBeDeleted.getJobStepText()+" removed from session model . size of list: "+listOfJobs.size());
     }
-    public void addJobToSession(JobStepModel jobToBeAdded){
+    public void addJobToSession(JobStepType0Model jobToBeAdded){
         listOfJobs.add(jobToBeAdded);
         List<LinksModel> llmodel=jobToBeAdded.getListOfLinkModels();
         
@@ -112,11 +113,11 @@ public class SessionModel implements Serializable{
         System.out.println("fend.session.SessionModel:  job "+jobToBeAdded.getJobStepText()+" added to session model");
     }
 
-    List<JobStepModel> getJobsToBeDeleted() {
+    List<JobStepType0Model> getJobsToBeDeleted() {
         return jobsToBeDeleted;
     }
 
-    public void addToDeleteList(JobStepModel jmodel) {
+    public void addToDeleteList(JobStepType0Model jmodel) {
         jobsToBeDeleted.add(jmodel);
     }
 

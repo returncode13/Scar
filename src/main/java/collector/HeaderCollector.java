@@ -124,6 +124,7 @@ public class HeaderCollector {
             
             
             File volume=feVolumeSelModel.getVolumeChosen();
+            Long volumeType=feVolumeSelModel.getVolumeType();
             dugHve.setVolume(volume);
          //   logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
        //     while(true)
@@ -189,10 +190,21 @@ public class HeaderCollector {
                 String lineN=next.getSubsurface();
                 List<Logs> logs=lserv.getLogsFor(dbVolume, lineN);
                 Logs latestLog=lserv.getLatestLogFor(dbVolume, lineN);
-                    //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
+                if(latestLog!=null){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
-                next.setInsightVersion(latestLog.getInsightVersion());
-                next.setNumberOfRuns(new Long(logs.size()));
+                    next.setInsightVersion(latestLog.getInsightVersion());
+                }else{
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
+                    next.setInsightVersion(new String("no logs found"));
+                }
+                    //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
+                    
+                    if(logs!=null){
+                        next.setNumberOfRuns(new Long(logs.size()));
+                    }else{
+                        next.setNumberOfRuns(-1L);
+                    }
+                
                 
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
