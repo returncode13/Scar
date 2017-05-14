@@ -22,7 +22,9 @@ public interface LogsDAO {
     
     public List<Logs> getLogsFor(Headers h);  //get the logs for which the foreign key=h.id
     public List<Logs> getLogsFor(Volume v);
+    public List<Logs> getLogsFor(Volume v,Boolean completed,Boolean running,Boolean errored,Boolean cancelled);
     public List<Logs> getLogsFor(Volume v,String subline);
+    public List<Logs> getLogsFor(Volume v,String subline,Boolean completed,Boolean running,Boolean errored,Boolean cancelled);
     public Logs getLatestLogFor(Volume v, String subline);
     
 }

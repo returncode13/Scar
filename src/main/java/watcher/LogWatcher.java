@@ -91,6 +91,7 @@ public  class LogWatcher {
      private Volume volume;
      private List<LogWatchHolder> listOfExistingLogs=new ArrayList<>();
      private Map<String,LogWatchHolder> mapOfExistingLogs=new HashMap<>();
+     LogStatusWatcher logstatuswatcher=null;
      
     public LogWatcher(){
     }
@@ -405,7 +406,9 @@ public  class LogWatcher {
                         
         
         
-        
+        if(logstatuswatcher==null){
+            logstatuswatcher=new LogStatusWatcher(volumeModel);
+        }
         
         
     }

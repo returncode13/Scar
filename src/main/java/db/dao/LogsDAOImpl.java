@@ -64,6 +64,10 @@ public class LogsDAOImpl implements LogsDAO{
             ll.setLogpath(newL.getLogpath());
             ll.setTimestamp(newL.getTimestamp());
             ll.setVolume(newL.getVolume());
+            ll.setCompletedsuccessfully(newL.getCompletedsuccessfully());
+            ll.setErrored(newL.getErrored());
+            ll.setRunning(newL.getRunning());
+            ll.setCancelled(newL.getCancelled());
             session.update(ll);
             
             
@@ -168,6 +172,55 @@ public class LogsDAOImpl implements LogsDAO{
             session.close();
         }
         return result.get(0);
+    }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("completedsuccessfully", completed));
+            criteria.add(Restrictions.eq("running", running));
+            criteria.add(Restrictions.eq("errored", errored));
+            criteria.add(Restrictions.eq("cancelled", cancelled));
+            
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v, String subline, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("subsurfaces", subline));
+            criteria.add(Restrictions.eq("completedsuccessfully", completed));
+            criteria.add(Restrictions.eq("running", running));
+            criteria.add(Restrictions.eq("errored", errored));
+            criteria.add(Restrictions.eq("cancelled", cancelled));
+            
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
     
 }

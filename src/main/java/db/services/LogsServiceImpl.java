@@ -59,6 +59,16 @@ public class LogsServiceImpl implements LogsService{
         return ldao.getLatestLogFor(v, subline);
     }
 
+    @Override
+    public List<Logs> getLogsFor(Volume v, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+        return ldao.getLogsFor(v, completed, running, errored, cancelled);
+    }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v, String subline, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+        return ldao.getLogsFor(v, subline, completed, running, errored, cancelled);
+    }
+
    
     
 }
