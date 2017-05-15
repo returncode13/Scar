@@ -54,8 +54,10 @@ public class SubSurface extends Sequences implements Serializable{
     private   BooleanProperty alert=new SimpleBooleanProperty();
     private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
-    private   LongProperty version=new SimpleLongProperty(0L);
+    private   LongProperty numberOfRuns=new SimpleLongProperty(0L);
     private   StringProperty errorMessage=new SimpleStringProperty();
+    private LongProperty workflowVersion=new SimpleLongProperty(0L);
+    
     
             
     
@@ -292,14 +294,23 @@ public class SubSurface extends Sequences implements Serializable{
         this.deleted.set(deleted);
     }
 
-    public Long getVersion() {
-        return version.get();
+    public Long getNumberOfRuns() {
+        return numberOfRuns.get();
     }
 
-    public void setVersion(Long version) {
-        this.version.set(version);
+    public void setNumberOfRuns(Long version) {
+        this.numberOfRuns.set(version);
     }
 
+    public Long getWorkflowVersion() {
+        return workflowVersion.get();
+    }
+
+    public void setWorkflowVersion(Long workflowVersions) {
+        this.workflowVersion.set(workflowVersions);
+    }
+
+    
     
     
     

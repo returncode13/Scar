@@ -180,10 +180,10 @@ public class HeadersViewController extends Stage implements Initializable {
                      System.out.println("fend.session.node.headers.setRowFactory(): non empty log list!");
                      for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
                      Logs logs = iterator.next();
-                     Long version=logs.getVersion();
+                     Long numberOfRuns=logs.getVersion();
                      String timestamp=logs.getTimestamp();
                      String logfilePath=logs.getLogpath();
-                     VersionLogsModel lmod=new VersionLogsModel(version,timestamp,logfilePath);
+                     VersionLogsModel lmod=new VersionLogsModel(numberOfRuns,timestamp,logfilePath);
                      verslogsmodel.add(lmod);
                      }*/
                      
@@ -233,9 +233,10 @@ public class HeadersViewController extends Stage implements Initializable {
         TreeTableColumn<Sequences,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
         TreeTableColumn<Sequences,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
         TreeTableColumn<Sequences,Boolean>  alert=new TreeTableColumn<>("alert");
-        TreeTableColumn<Sequences,Long>  version=new TreeTableColumn<>("version");
+        TreeTableColumn<Sequences,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
         TreeTableColumn<Sequences,Boolean>  modified=new TreeTableColumn<>("modified");
         TreeTableColumn<Sequences,Boolean>  deleted=new TreeTableColumn<>("deleted");
+        TreeTableColumn<Sequences,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
      
         sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
         subsurfaceName.setCellValueFactory(new TreeItemPropertyValueFactory<>("subsurface"));
@@ -261,11 +262,11 @@ public class HeadersViewController extends Stage implements Initializable {
         cmpInc.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpInc"));
         insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
         alert.setCellValueFactory(new TreeItemPropertyValueFactory<>("alert"));
-        version.setCellValueFactory(new TreeItemPropertyValueFactory<>("version"));
+        numberOfRuns.setCellValueFactory(new TreeItemPropertyValueFactory<>("numberOfRuns"));
         modified.setCellValueFactory(new TreeItemPropertyValueFactory<>("modified"));
         deleted.setCellValueFactory(new TreeItemPropertyValueFactory<>("deleted"));
-        
-        version.setCellFactory((TreeTableColumn<Sequences,Long> p)->{
+        workflowVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("workflowVersion"));
+        numberOfRuns.setCellFactory((TreeTableColumn<Sequences,Long> p)->{
             TreeTableCell cell=new TreeTableCell<Sequences,Long>(){
                
                 @Override
@@ -309,7 +310,7 @@ public class HeadersViewController extends Stage implements Initializable {
         
         
         
-        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,version,modified,deleted,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
+        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,numberOfRuns,modified,deleted,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,workflowVersion);
         
      
      

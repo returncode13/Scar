@@ -10,6 +10,7 @@ import db.model.Acquisition;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.model.Workflow;
 import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.HeadersService;
@@ -204,8 +205,17 @@ public class HeaderCollector {
                     }else{
                         next.setNumberOfRuns(-1L);
                     }
-                
-                
+                Long wfMaxVersion=0L;
+                for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
+                    Logs logsForLineN = iterator1.next();
+                    Workflow wf=logsForLineN.getWorkflow();
+                    Long version=wf.getWfversion();
+                    if(version>wfMaxVersion){
+                        wfMaxVersion=version;
+                    }
+                    
+                }
+                next.setWorkflowVersion(wfMaxVersion);
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
                 if(next.getModified()) 
@@ -266,9 +276,9 @@ public class HeaderCollector {
                 s.setXlineMin(next.getXlineMin());
                 s.setModified(next.getModified());
                 s.setDeleted(next.getDeleted());
-                s.setVersion(next.getNumberOfRuns());
+                s.setNumberOfRuns(next.getNumberOfRuns());
                 s.setInsightVersion(next.getInsightVersion());
-                
+                s.setWorkflowVersion(next.getWorkflowVersion());
           
                 seqSubMap.put(s.getSequenceNumber(), s);
                 

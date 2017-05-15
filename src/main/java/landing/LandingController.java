@@ -574,7 +574,7 @@ public class LandingController implements Initializable,Serializable {
                             s.setXlineMin(beH.getXlineMin());
                             s.setModified(beH.getModified());
                             s.setDeleted(beH.getDeleted());
-                            s.setVersion(beH.getNumberOfRuns());
+                            s.setNumberOfRuns(beH.getNumberOfRuns());
                             s.setInsightVersion(beH.getInsightVersion());
                 
                             

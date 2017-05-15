@@ -90,6 +90,7 @@ public class HeadersDAOImpl implements HeadersDAO{
             h.setTraceCount(newH.getTraceCount());
             h.setNumberOfRuns(newH.getNumberOfRuns());
             h.setModified(newH.getModified());
+            h.setWorkflowVersion(newH.getWorkflowVersion());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/

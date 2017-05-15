@@ -123,6 +123,8 @@ public class Headers implements Serializable{
     @Column(name="InsightVersion")
     private String insightVersion;                                        //version of insight as derived from the latest log.
     
+    @Column(name="workflowVersion")                                       //version of workflow
+    private Long workflowVersion;
     
     public Headers() {
         this.modified=Boolean.FALSE;
@@ -193,6 +195,7 @@ public class Headers implements Serializable{
         hash = 97 * hash + Objects.hashCode(this.deleted);
         hash = 97 * hash + Objects.hashCode(this.numberOfRuns);
         hash = 97 * hash + Objects.hashCode(this.insightVersion);
+        hash = 97 * hash + Objects.hashCode(this.workflowVersion);
         return hash;
     }
 
@@ -287,6 +290,9 @@ public class Headers implements Serializable{
             return false;
         }
         if (!Objects.equals(this.insightVersion, other.insightVersion)) {
+            return false;
+        }
+        if (!Objects.equals(this.workflowVersion, other.workflowVersion)) {
             return false;
         }
         
@@ -521,6 +527,14 @@ public class Headers implements Serializable{
 
     public void setInsightVersion(String insightVersion) {
         this.insightVersion = insightVersion;
+    }
+
+    public Long getWorkflowVersion() {
+        return workflowVersion;
+    }
+
+    public void setWorkflowVersion(Long workflowVersion) {
+        this.workflowVersion = workflowVersion;
     }
     
     

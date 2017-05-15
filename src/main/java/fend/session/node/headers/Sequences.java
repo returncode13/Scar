@@ -49,8 +49,9 @@ public class Sequences implements Serializable{
     private BooleanProperty alert= new SimpleBooleanProperty(Boolean.FALSE);
     private Boolean modified;
     private Boolean deleted;
-    private Long version;
+    private Long numberOfRuns;
     private StringProperty errorMessage=new SimpleStringProperty();
+    private Long workflowVersion;
     
     public ArrayList<SubSurface> getSubsurfaces() {
         return subsurfaces;
@@ -274,12 +275,12 @@ public class Sequences implements Serializable{
     }
 
     
-    public Long getVersion() {
-        return version;
+    public Long getNumberOfRuns() {
+        return numberOfRuns;
     }
 
-    public void setVersion(Long version) {
-        this.version=version;
+    public void setNumberOfRuns(Long numberOfRuns) {
+        this.numberOfRuns=numberOfRuns;
     }
    
 
@@ -290,6 +291,14 @@ public class Sequences implements Serializable{
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage.set(errorMessage);
+    }
+
+    public Long getWorkflowVersion() {
+        return workflowVersion;
+    }
+
+    public void setWorkflowVersion(Long workflowVersion) {
+        this.workflowVersion = workflowVersion;
     }
     
     

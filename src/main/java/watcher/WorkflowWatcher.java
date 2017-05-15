@@ -74,7 +74,7 @@ public class WorkflowWatcher {
       };
       
       timer=new Timer();
-      timer.schedule(task, new Date(),30000);
+      timer.schedule(task, new Date(),10000);
           
     }
     
