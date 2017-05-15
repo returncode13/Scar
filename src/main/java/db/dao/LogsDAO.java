@@ -8,6 +8,7 @@ package db.dao;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.model.Workflow;
 import java.util.List;
 
 /**
@@ -26,5 +27,6 @@ public interface LogsDAO {
     public List<Logs> getLogsFor(Volume v,String subline);
     public List<Logs> getLogsFor(Volume v,String subline,Boolean completed,Boolean running,Boolean errored,Boolean cancelled);
     public Logs getLatestLogFor(Volume v, String subline);
+    public List<Logs> getLogsFor(Volume v, Workflow workflow);
     
 }

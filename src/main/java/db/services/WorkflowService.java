@@ -1,0 +1,25 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package db.services;
+
+import db.model.Volume;
+import db.model.Workflow;
+import java.util.List;
+
+/**
+ *
+ * @author sharath nair
+ */
+public interface WorkflowService {
+    public void createWorkFlow(Workflow W );
+    public Workflow getWorkflow(Long wid);
+    public void updateWorkFlow(Long wid,Workflow newW);
+    public void deleteWorkFlow(Long wid);
+    
+    public List<Workflow> getWorkFlowsFor(Volume v);
+    public List<Workflow> getWorkFlowWith(String md5,Volume vol);          //return list of workflows having the md5sumchecks=md5
+    public Workflow getWorkFlowVersionFor(Volume v);            //highest workflow version for the given volume
+}

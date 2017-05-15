@@ -8,7 +8,9 @@ package db.dao;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.model.Workflow;
 import hibUtil.HibernateUtil;
+import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -68,6 +70,7 @@ public class LogsDAOImpl implements LogsDAO{
             ll.setErrored(newL.getErrored());
             ll.setRunning(newL.getRunning());
             ll.setCancelled(newL.getCancelled());
+            ll.setWorkflow(newL.getWorkflow());
             session.update(ll);
             
             
@@ -214,6 +217,31 @@ public class LogsDAOImpl implements LogsDAO{
             criteria.add(Restrictions.eq("cancelled", cancelled));
             
             result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+    
+    @Override
+    public List<Logs> getLogsFor(Volume v, Workflow workflow) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        List<Workflow> reswf=null;
+        try{
+            transaction=session.beginTransaction();
+           
+                Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            //criteria.add(Restrictions.eq("workflow", workflow));
+            criteria.add(Restrictions.or(Restrictions.isNull("workflow"),Restrictions.eq("workflow", workflow)));
+            result=criteria.list();
+            
+            
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

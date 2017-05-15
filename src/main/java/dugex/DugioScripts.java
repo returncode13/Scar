@@ -27,6 +27,7 @@ public class DugioScripts implements Serializable{
     private File logStatusCompletedSuccessfully;
     private File logStatusErrored;
     private File logStatusCancelled;
+    private File workflowExtractor;
     
   
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
@@ -77,6 +78,9 @@ public class DugioScripts implements Serializable{
       
       private String logstatusContentCancelled="#!/bin/bash\n" +
 " tail -100 $1 |awk '/CANCELLED/ {count++} END {if(count>0) print \"'$1' \"count}' ";
+      
+      private String workflowExtractorContents="#!/bin/bash\n" +
+"sed -n '/Process parameters:/,/Executing/p'  $1 |  awk '{$1=$2=$3=\"\";print $0}'";
      
      public DugioScripts()
     {
@@ -158,7 +162,7 @@ public class DugioScripts implements Serializable{
             subsurfaceLog.setExecutable(true,false);
             
             
-           //subsurfaceLog.deleteOnExit();
+           subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -170,7 +174,7 @@ public class DugioScripts implements Serializable{
             bw.close();
             logStatusCompletedSuccessfully.setExecutable(true,false);
             
-            
+            logStatusCompletedSuccessfully.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
@@ -183,7 +187,7 @@ public class DugioScripts implements Serializable{
             bw.close();
             logStatusErrored.setExecutable(true,false);
             
-            
+            logStatusErrored.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
@@ -196,7 +200,21 @@ public class DugioScripts implements Serializable{
             bw.close();
             logStatusCancelled.setExecutable(true,false);
             
+            logStatusCancelled.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        try {
+            workflowExtractor=File.createTempFile("workflowExtractor", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(workflowExtractor));
+            bw.write(workflowExtractorContents);
+            bw.close();
+            workflowExtractor.setExecutable(true,false);
             
+            //workflowExtractor.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
@@ -238,6 +256,10 @@ public class DugioScripts implements Serializable{
 
     public File getLogStatusCancelled() {
         return logStatusCancelled;
+    }
+
+    public File getWorkflowExtractor() {
+        return workflowExtractor;
     }
     
     

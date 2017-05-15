@@ -50,7 +50,7 @@ public class LogStatusWatcher {
     private VolumeService volserv=new VolumeServiceImpl();
     private VolumeSelectionModel volselmodel;
     private Volume volume;
-    
+    private DugioScripts dugioscripts;
     
     TimerTask task;
     Timer timer;
@@ -58,6 +58,7 @@ public class LogStatusWatcher {
     
     public LogStatusWatcher(VolumeSelectionModel volselmod){
         this.volselmodel=volselmod;
+        dugioscripts=new DugioScripts();
         volume = volserv.getVolume(this.volselmodel.getId());
         
         ExecutorService executorserv= Executors.newFixedThreadPool(1);
@@ -142,13 +143,13 @@ public class LogStatusWatcher {
                                 String logpath=log.getLogpath();
                                 String linename=log.getSubsurfaces();
                                 //Start of green block
-                                Process processg=new ProcessBuilder(new DugioScripts().getLogStatusCompletedSuccessfully().getAbsolutePath(),logpath).start();
+                                Process processg=new ProcessBuilder(dugioscripts.getLogStatusCompletedSuccessfully().getAbsolutePath(),logpath).start();
                                 InputStream isg = processg.getInputStream();
                                 InputStreamReader isrg=new InputStreamReader(isg);
                                 BufferedReader brg=new BufferedReader(isrg);
                                 String valuesg;
                                 while((valuesg=brg.readLine())!=null){
-                                    System.out.println("watcher.LogStatusWatcher().init<>().call(): "+(valuesg!=null?valuesg+" : "+linename:" Values are null for "+linename));
+                                    System.out.println("watcher.LogStatusWatcher().init<>().call() Green: "+(valuesg!=null?valuesg+" : "+linename:" Values are null for "+linename));
                                     log.setCompletedsuccessfully(Boolean.TRUE);
                                     log.setErrored(Boolean.FALSE);
                                     log.setRunning(Boolean.FALSE);
@@ -156,13 +157,13 @@ public class LogStatusWatcher {
                                 }
                                 //End of green block
                                 //Start of red block
-                                Process processr=new ProcessBuilder(new DugioScripts().getLogStatusErrored().getAbsolutePath(),logpath).start();
+                                Process processr=new ProcessBuilder(dugioscripts.getLogStatusErrored().getAbsolutePath(),logpath).start();
                                 InputStream isr = processr.getInputStream();
                                 InputStreamReader isrr=new InputStreamReader(isr);
                                 BufferedReader brr=new BufferedReader(isrr);
                                 String valuesr;
                                 while((valuesr=brr.readLine())!=null){
-                                    System.out.println("watcher.LogStatusWatcher().init<>().call(): "+(valuesr!=null?valuesr+" : "+linename:" Values are null for "+linename));
+                                    System.out.println("watcher.LogStatusWatcher().init<>().call() Red: "+(valuesr!=null?valuesr+" : "+linename:" Values are null for "+linename));
                                     log.setCompletedsuccessfully(Boolean.FALSE);
                                     log.setErrored(Boolean.TRUE);
                                     log.setRunning(Boolean.FALSE);
@@ -172,13 +173,13 @@ public class LogStatusWatcher {
                                 //End of red block
                                 
                                 //Start of purple block
-                                Process processp=new ProcessBuilder(new DugioScripts().getLogStatusCancelled().getAbsolutePath(),logpath).start();
+                                Process processp=new ProcessBuilder(dugioscripts.getLogStatusCancelled().getAbsolutePath(),logpath).start();
                                 InputStream isp = processp.getInputStream();
                                 InputStreamReader isrp=new InputStreamReader(isp);
                                 BufferedReader brp=new BufferedReader(isrp);
                                 String valuesp;
                                 while((valuesp=brp.readLine())!=null){
-                                    System.out.println("watcher.LogStatusWatcher().init<>().call(): "+(valuesp!=null?valuesp+" : "+linename:" Values are null for "+linename));
+                                    System.out.println("watcher.LogStatusWatcher().init<>().call() Purple: "+(valuesp!=null?valuesp+" : "+linename:" Values are null for "+linename));
                                     log.setCompletedsuccessfully(Boolean.FALSE);
                                     log.setErrored(Boolean.FALSE);
                                     log.setRunning(Boolean.FALSE);
@@ -207,7 +208,7 @@ public class LogStatusWatcher {
                     };
                         
                         timer=new Timer();
-                        timer.schedule(task,new Date(),10000);       
+                        timer.schedule(task,new Date(),30000);       
                     
                    
                     

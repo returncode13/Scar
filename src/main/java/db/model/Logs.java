@@ -35,6 +35,9 @@ public class Logs implements Serializable{
     @JoinColumn(name="volume_headers_fk",nullable = false)
     private Volume volume;
     
+    @ManyToOne
+    @JoinColumn(name="workflow_fk",nullable = true)
+    private Workflow workflow=null;
     /* @Column(name="numberOfRuns")
     private Long numberOfRuns;*/
 
@@ -62,6 +65,9 @@ public class Logs implements Serializable{
     
     @Column(name="cancelled")
     private Boolean cancelled=false;
+    
+    
+    
     
     public String getInsightVersion() {
         return insightVersion;
@@ -167,6 +173,14 @@ public class Logs implements Serializable{
 
     public void setCancelled(Boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
     }
     
     

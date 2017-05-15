@@ -64,6 +64,9 @@ public class Volume implements Serializable {
    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<Logs> logs;
    
+   @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Workflow> workflows;
+   
    
    public Volume(){}
 
@@ -87,6 +90,8 @@ public class Volume implements Serializable {
         hash = 73 * hash + Objects.hashCode(this.headers);
         hash = 73 * hash + Objects.hashCode(this.jobVolumeDetails);
         hash = 73 * hash + Objects.hashCode(this.volumeType);
+        hash = 73 * hash + Objects.hashCode(this.logs);
+        hash = 73 * hash + Objects.hashCode(this.workflows);
         return hash;
     }
 
@@ -124,6 +129,12 @@ public class Volume implements Serializable {
             return false;
         }
         if (!Objects.equals(this.volumeType, other.volumeType)) {
+            return false;
+        }
+        if (!Objects.equals(this.logs, other.logs)) {
+            return false;
+        }
+        if (!Objects.equals(this.workflows, other.workflows)) {
             return false;
         }
         return true;
@@ -223,8 +234,16 @@ public class Volume implements Serializable {
         this.volumeType = volumeType;
     }
 
-    
+    public Set<Workflow> getWorkflows() {
+        return workflows;
+    }
 
+    public void setWorkflows(Set<Workflow> workflows) {
+        this.workflows = workflows;
+    }
+
+    
+    
     
    
     

@@ -264,33 +264,44 @@ public class LandingController implements Initializable,Serializable {
 
     @FXML
     void saveCurrentSession(ActionEvent event) {
+        if(smodel.getName()==null || smodel.getName().isEmpty()){
+            SaveSessionModel ssm=new SaveSessionModel();
+            SaveSessionNode sessnode=new SaveSessionNode(ssm);
+            SaveSessionController sc=sessnode.getSaveSessionController();
+            
+                      
+            String name=ssm.getName();
+            smodel.setName(name);
+        }
+         
         
         System.out.println("landing.LandingController.saveCurrentSession(): sessionName: "+smodel.getName());
                 
         
         //if smodel.name==null or empty open a dialogue box to save name. i.e call saveSessionAs(event)
         if(smodel.getName()==null || smodel.getName().isEmpty()){
-            saveSessionAs(event);
+        //    saveSessionAs(event);
+        return;
         }
         else{
             
         }
         
-        System.out.println("LC: Saving session with Id: "+smodel.getId()+" and name: "+smodel.getName());
+        System.out.println("landing.LandingController.saveCurrentSession(): Saving session with Id: "+smodel.getId()+" and name: "+smodel.getName());
             scontr.setAllLinksAndJobsForCommit();
             
             ObservableList<JobStepType0Model> ajs= smodel.getListOfJobs();
             
             for (Iterator<JobStepType0Model> iterator = ajs.iterator(); iterator.hasNext();) {
             JobStepType0Model next = iterator.next();
-                System.out.println("LC: Job id# "+next.getId()+" text: "+next.getJobStepText());
+                System.out.println("landing.LandingController.saveCurrentSession(): Job id# "+next.getId()+" text: "+next.getJobStepText());
             
         }
             ArrayList<LinksModel> alk =smodel.getListOfLinks();
             
             for (Iterator<LinksModel> iterator = alk.iterator(); iterator.hasNext();) {
             LinksModel next = iterator.next();
-            System.out.println("LC: Job id# "+next.getId()+" Parent:" +next.getParent().getJobStepText()+ " Child: "+next.getChild().getJobStepText());
+            System.out.println("landing.LandingController.saveCurrentSession(): Job id# "+next.getId()+" Parent:" +next.getParent().getJobStepText()+ " Child: "+next.getChild().getJobStepText());
             
         }
             collector.saveCurrentSession(smodel);
