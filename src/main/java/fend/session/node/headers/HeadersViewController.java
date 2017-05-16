@@ -8,6 +8,7 @@ package fend.session.node.headers;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.model.Workflow;
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
@@ -17,14 +18,19 @@ import db.services.VolumeServiceImpl;
 import fend.session.node.headers.logger.LogsModel;
 import fend.session.node.headers.logger.LogsNode;
 import fend.session.node.headers.logger.VersionLogsModel;
+import fend.session.node.headers.workflows.WorkflowVersionModel;
+import fend.session.node.headers.workflows.WorkflowVersionNode;
+import fend.session.node.headers.workflows.WorkflowVersionTabModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +52,7 @@ import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
+import org.hibernate.annotations.common.util.impl.Log;
 import watcher.LogWatcher;
 
 /**
@@ -107,8 +114,10 @@ public class HeadersViewController extends Stage implements Initializable {
      
      treetableView.setRowFactory(ttv->{
          ContextMenu contextMenu = new ContextMenu();
-         MenuItem menuItem=new MenuItem("Show Logs");
-         contextMenu.getItems().add(menuItem);
+         MenuItem showLogsMenuItem=new MenuItem("Logs");
+         MenuItem showWorkFlowVersion=new MenuItem("Workflow Versions");
+         contextMenu.getItems().add(showLogsMenuItem);
+         contextMenu.getItems().add(showWorkFlowVersion);
          TreeTableRow<Sequences> row=new TreeTableRow<Sequences>(){
              
              @Override
@@ -131,7 +140,7 @@ public class HeadersViewController extends Stage implements Initializable {
             }
          };
          
-         menuItem.setOnAction(evt->{
+         showLogsMenuItem.setOnAction(evt->{
              Sequences seq=row.getItem();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
              System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
@@ -205,6 +214,58 @@ public class HeadersViewController extends Stage implements Initializable {
              LogsNode logsnode=new LogsNode(logsmodel);
              
          });
+         
+         
+         
+          showWorkFlowVersion.setOnAction(evt->{
+              Sequences seq=row.getItem();
+              String subName=seq.getSubsurface();
+             List<VersionLogsModel> verslogsmodel=new ArrayList<>();
+             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
+             System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
+             Volume v=vserv.getVolume(lsm.getVolmodel().getId());
+            List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());
+            System.out.println("fend.session.node.headers.HeadersViewController.setModel(): extracting headers size: "+h.size());
+            
+            if(h.size()!=1){
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): Something's unusual. more than more header entry found for :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+            }
+            if(h!=null){
+                List<Logs> loglist=lserv.getLogsFor(h.get(0));
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): loglist size: "+loglist.size());
+                Logs latestlog= lserv.getLatestLogFor(v, subName);
+                Workflow latestwf=latestlog.getWorkflow();
+                WorkflowVersionTabModel wtabm=new WorkflowVersionTabModel();
+                wtabm.setVersion(latestwf.getWfversion());
+                wtabm.setWorkflowvContent(latestwf.getContents());
+                
+                Set<WorkflowVersionTabModel> wtabList=new HashSet<>();
+                wtabList.add(wtabm);
+                
+                List<Workflow> wflist=new ArrayList<>();
+                
+                for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
+                    Logs llog = iterator.next();
+                    Workflow wf=llog.getWorkflow();
+                    WorkflowVersionTabModel wtabm1=new WorkflowVersionTabModel();
+                    wtabm1.setVersion(wf.getWfversion());
+                    wtabm1.setWorkflowvContent(wf.getContents());
+                    wtabList.add(wtabm);
+                }
+                WorkflowVersionModel wfmodel=new WorkflowVersionModel();
+                List<WorkflowVersionTabModel> lwflist=new ArrayList<>(wtabList);
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): about to set Wf model: lwlist size: "+lwflist.size());
+                wfmodel.setWfmodel(lwflist);
+                WorkflowVersionNode wfnode=new WorkflowVersionNode(wfmodel);
+                
+            }
+            else{
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): No header entry found! :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+            }
+          });
+         
+         
+         
                  return row;
      });
      

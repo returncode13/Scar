@@ -576,7 +576,7 @@ public class LandingController implements Initializable,Serializable {
                             s.setDeleted(beH.getDeleted());
                             s.setNumberOfRuns(beH.getNumberOfRuns());
                             s.setInsightVersion(beH.getInsightVersion());
-                
+                            s.setWorkflowVersion(beH.getWorkflowVersion());
                             
           
                             //

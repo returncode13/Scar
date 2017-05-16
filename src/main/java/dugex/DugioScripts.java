@@ -214,7 +214,7 @@ public class DugioScripts implements Serializable{
             bw.close();
             workflowExtractor.setExecutable(true,false);
             
-            //workflowExtractor.deleteOnExit();
+            workflowExtractor.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);

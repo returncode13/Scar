@@ -191,12 +191,15 @@ public class HeaderCollector {
                 String lineN=next.getSubsurface();
                 List<Logs> logs=lserv.getLogsFor(dbVolume, lineN);
                 Logs latestLog=lserv.getLatestLogFor(dbVolume, lineN);
+                Long wfMaxVersion=0L;
                 if(latestLog!=null){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
                     next.setInsightVersion(latestLog.getInsightVersion());
+                    wfMaxVersion=latestLog.getWorkflow().getWfversion();
                 }else{
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
                     next.setInsightVersion(new String("no logs found"));
+                    
                 }
                     //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
                     
@@ -205,16 +208,16 @@ public class HeaderCollector {
                     }else{
                         next.setNumberOfRuns(-1L);
                     }
-                Long wfMaxVersion=0L;
-                for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
-                    Logs logsForLineN = iterator1.next();
-                    Workflow wf=logsForLineN.getWorkflow();
-                    Long version=wf.getWfversion();
-                    if(version>wfMaxVersion){
-                        wfMaxVersion=version;
-                    }
-                    
+                
+                /* for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
+                Logs logsForLineN = iterator1.next();
+                Workflow wf=logsForLineN.getWorkflow();
+                Long version=wf.getWfversion();
+                if(version>wfMaxVersion){
+                wfMaxVersion=version;
                 }
+                
+                }*/
                 next.setWorkflowVersion(wfMaxVersion);
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 

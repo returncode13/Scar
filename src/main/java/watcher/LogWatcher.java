@@ -228,7 +228,7 @@ public  class LogWatcher {
                            if(!mapOfExistingLogs.containsKey(filename)){
                                lwatchHolderList.add(lwatchholder);
                            }else{
-                               System.out.println("watcher.LogWatcher.extract(): log "+filename+" already present in database...skipping");
+                               //System.out.println("watcher.LogWatcher.extract(): log "+filename+" already present in database...skipping");
                                
                            }
                                 
