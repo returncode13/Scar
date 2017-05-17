@@ -51,7 +51,11 @@ public class Sequences implements Serializable{
     private Boolean deleted;
     private Long numberOfRuns;
     private StringProperty errorMessage=new SimpleStringProperty();
-    private Long workflowVersion;
+    private Long workflowVersion=6L;
+    private Boolean insightFlag=Boolean.FALSE;
+    private String dependencyStatus=new String("Good");
+    private String runStatus=new String("Great!");
+    private String qcStatus=new String("Amazing");
     
     public ArrayList<SubSurface> getSubsurfaces() {
         return subsurfaces;
@@ -300,6 +304,39 @@ public class Sequences implements Serializable{
     public void setWorkflowVersion(Long workflowVersion) {
         this.workflowVersion = workflowVersion;
     }
+
+    public Boolean getInsightFlag() {
+        return insightFlag;
+    }
+
+    public void setInsightFlag(Boolean insightFlag) {
+        this.insightFlag = insightFlag;
+    }
+
+    public String getDependencyStatus() {
+        return dependencyStatus;
+    }
+
+    public void setDependencyStatus(String dependencyStatus) {
+        this.dependencyStatus = dependencyStatus;
+    }
+
+    public String getRunStatus() {
+        return runStatus;
+    }
+
+    public void setRunStatus(String runStatus) {
+        this.runStatus = runStatus;
+    }
+
+    public String getQcStatus() {
+        return qcStatus;
+    }
+
+    public void setQcStatus(String qcStatus) {
+        this.qcStatus = qcStatus;
+    }
+    
     
     
     

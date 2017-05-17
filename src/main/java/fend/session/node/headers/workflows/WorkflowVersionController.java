@@ -40,11 +40,11 @@ public class WorkflowVersionController extends Stage implements Initializable{
     void setModel(WorkflowVersionModel lsm) {
         model=lsm;
         List<WorkflowVersionTabModel> tabContents=model.getWfmodel();
-        System.out.println("fend.session.node.headers.workflows.WorkflowVersionController.setModel(): tabListsize: "+tabContents.size());
+      // System.out.println("fend.session.node.headers.workflows.WorkflowVersionController.setModel(): tabListsize: "+tabContents.size());
         for (Iterator<WorkflowVersionTabModel> iterator = tabContents.iterator(); iterator.hasNext();) {
             WorkflowVersionTabModel versionsTab = iterator.next();
             String wfcontent=versionsTab.getWorkflowvContent();
-            System.out.println("fend.session.node.headers.workflows.WorkflowVersionController.setModel(): contents: "+wfcontent);
+            //System.out.println("fend.session.node.headers.workflows.WorkflowVersionController.setModel(): contents: "+wfcontent);
             Tab tab=new Tab();
             tab.setText("     "+versionsTab.getVersion().toString()+"     " );
             HBox hbox=new HBox();

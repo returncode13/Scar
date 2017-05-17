@@ -104,6 +104,8 @@ import fend.session.node.jobs.type0.JobStepType0NodeController;
 import fend.session.node.jobs.type2.JobStepType2Model;
 import fend.session.node.jobs.type2.JobStepType2Node;
 import fend.session.node.volumes.VolumeSelectionModel;
+import fend.summary.SummaryModel;
+import fend.summary.SummaryNode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -115,6 +117,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
 
@@ -203,15 +206,19 @@ public class SessionController implements Initializable {
      @FXML
     private Button overviewButton;
 
+     private MultiMap<JobStepType0Model,MultiMap<Integer,JobStepType0Model>> mapOfDepthMaps=new MultiValueMap<>();    //for multiple roots. The map will store the root job and a map of jobs keyed off their depths
+    // private MultiValueMap<JobStepType0Model,List<JobStepType0Model>> graphMap=new MultiValueMap<>();                           //for multiple roots. The map will store the root job and its corresponding adjacency list of children. this list will be the graph traversed
+             
+     
      
      @FXML
     void overviewButtonClicked(ActionEvent event) {
          System.out.println("fend.session.SessionController.overviewButtonClicked(): Click");
-        
+         mapOfDepthMaps.clear();
          tracking();
-         List<OverviewItem> overviewItems=new ArrayList<>();
+         /*List<OverviewItem> overviewItems=new ArrayList<>();
          OverviewModel ovModel=new OverviewModel();
-                 
+         
          List<JobStepType0Model> jobs=obsModelList;
          PendingJobsModel pmodel=new PendingJobsModel();
          pmodel.setPendingjobs(pendingarray);
@@ -219,20 +226,39 @@ public class SessionController implements Initializable {
          PendingJobsController pcontr=new PendingJobsController();
          
          for (Iterator<JobStepType0Model> iterator = jobs.iterator(); iterator.hasNext();) {
-             JobStepType0Model job = iterator.next();
-             OverviewItem jobOverview=new OverviewItem();
-             jobOverview.setName(job.getJobStepText());
-             jobOverview.setpFlag(job.getPendingFlagProperty().get());
-             jobOverview.setqFlag(job.getQcFlagProperty().get());
-             
-             overviewItems.add(jobOverview);
-             
+         JobStepType0Model job = iterator.next();
+         OverviewItem jobOverview=new OverviewItem();
+         jobOverview.setName(job.getJobStepText());
+         jobOverview.setpFlag(job.getPendingFlagProperty().get());
+         jobOverview.setqFlag(job.getQcFlagProperty().get());
+         
+         overviewItems.add(jobOverview);
+         
          }
          
          ovModel.setOverviewItemList(overviewItems);
          OverviewNode ovNode= new OverviewNode(ovModel);
          
          OverviewController ovContr=ovNode.getOverviewController();
+         */
+        
+         System.out.println("fend.session.SessionController.overviewButtonClicked(): starting to map");
+         mapping();
+         Set<JobStepType0Model> rootJobSteps=mapOfDepthMaps.keySet();
+         System.out.println("fend.session.SessionController.overviewButtonClicked(): size of rootJobSteps: "+rootJobSteps.size());
+         for (Iterator<JobStepType0Model> iterator = rootJobSteps.iterator(); iterator.hasNext();) {
+             JobStepType0Model rootjob = iterator.next();
+             //MultiValueMap<Integer,JobStepType0Model> depthnodemap=(MultiValueMap<Integer,JobStepType0Model>) mapOfDepthMaps.get(rootjob);              //get the map associated with this root
+             List<MultiMap<Integer,JobStepType0Model>> mapi= (List<MultiMap<Integer,JobStepType0Model>>) mapOfDepthMaps.get(rootjob);
+             for (Iterator<MultiMap<Integer, JobStepType0Model>> iterator1 = mapi.iterator(); iterator1.hasNext();) {
+                 MultiMap<Integer, JobStepType0Model> depthnodeMap = iterator1.next();
+                 SummaryModel sumModel=new SummaryModel();
+                sumModel.setDepthNodeMap(depthnodeMap);
+                SummaryNode snode=new SummaryNode(sumModel);
+             }
+             
+                     
+         }
          
          
     } 
@@ -914,6 +940,9 @@ public class SessionController implements Initializable {
                      System.out.println("fend.session.SessionController.setRoots():  "+job.getJobStepText()+" is a root..adding to list of roots");
                      /*System.out.println("fend.session.SessionController.setRoots() :  id matched for model and the single content in the list of Parents");*/
                     modelRoots.add(job);
+                    MultiValueMap<Integer,JobStepType0Model> depthZeroRoot=new MultiValueMap<>();
+                    depthZeroRoot.put(0,job);
+                    mapOfDepthMaps.put(job,depthZeroRoot);
                 }
             }
             
@@ -1011,7 +1040,9 @@ public class SessionController implements Initializable {
         // for (Iterator<JobStepModel> iteratorr = modelRoots.iterator(); iteratorr.hasNext();) {
           //   JobStepModel root = iteratorr.next();
              
-         
+            
+             
+             
              Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
               //Set<SubSurface> rootsSubSurfaces=new HashSet(root.getSeqSubsInJob().values());
              
@@ -1052,6 +1083,7 @@ public class SessionController implements Initializable {
                         pendingarray=new ArrayList<>();
                  setPendingJobsFlag(root,child);
                     setQCFlag(root, child);
+                    
              }
              
              
@@ -1059,6 +1091,66 @@ public class SessionController implements Initializable {
          
          
          
+     }
+     
+     private void mapping(){
+         
+         Set<JobStepType0Model> keys=mapOfDepthMaps.keySet();
+         System.out.println("fend.session.SessionController.mapping(): Inside the function: keys.size()==roots== : "+keys.size());
+         for (Iterator<JobStepType0Model> iterator = keys.iterator(); iterator.hasNext();) {
+             JobStepType0Model root = iterator.next();
+              List<MultiMap<Integer,JobStepType0Model>> mapi= (List<MultiMap<Integer,JobStepType0Model>>) mapOfDepthMaps.get(root);
+              System.out.println("fend.session.SessionController.mapping(): size of list: "+mapi.size());
+              
+              
+              for (Iterator<MultiMap<Integer, JobStepType0Model>> iterator1 = mapi.iterator(); iterator1.hasNext();) {
+                 MultiMap<Integer, JobStepType0Model> depthnodemap = iterator1.next();
+                 
+                 List<JobStepType0Model> children=root.getJsChildren();
+                  for (Iterator<JobStepType0Model> iterator2 = children.iterator(); iterator2.hasNext();) {
+                      JobStepType0Model child = iterator2.next();
+                       System.out.println("fend.session.SessionController.mapping(): adding child: "+child.getJobStepText());
+                      depthnodemap.put(1, child);
+                      fillmap(root,child,1,depthnodemap);
+                  }
+                 
+                 
+             }
+            // mapi.put(0,root);
+             
+             
+            /* List<JobStepType0Model> children = root.getJsChildren();
+            for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
+            JobStepType0Model child = iterator1.next();
+            System.out.println("fend.session.SessionController.mapping(): adding child: "+child.getJobStepText());
+            mapi.put(1,child);
+            
+            fillmap(root,child,1,mapi);
+            }*/
+             
+         }
+         
+         /*for (Iterator<JobStepType0Model> iterator = modelRoots.iterator(); iterator.hasNext();) {
+         JobStepType0Model root = iterator.next();
+         System.out.println("fend.session.SessionController.mapping(): Inside the function: inside for loop with root: " +root.getJobStepText());
+         /* }
+         for(JobStepType0Model root : modelRoots){*/
+        /* 
+         MultiValueMap<Integer,JobStepType0Model> mapi=(MultiValueMap<Integer,JobStepType0Model>) mapOfDepthMaps.get(root);
+         System.out.println("fend.session.SessionController.mapping(): adding root job: "+root.getJobStepText());
+         mapi.put(0,root);
+         
+         
+         List<JobStepType0Model> children = root.getJsChildren();
+         for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
+             JobStepType0Model child = iterator1.next();
+             System.out.println("fend.session.SessionController.mapping(): adding child: "+child.getJobStepText());
+             mapi.put(1,child);
+             
+             fillmap(root,child,1,mapi);
+         }
+         
+     }*/
      }
      
      /**
@@ -1649,6 +1741,23 @@ public class SessionController implements Initializable {
                 
             }
         }
+    }
+
+    private void fillmap(JobStepType0Model parent, JobStepType0Model child, int dist, MultiMap<Integer, JobStepType0Model> mapi) {
+        System.out.println("fend.session.SessionController.fillmap(): Inside the function with parent: "+parent.getJobStepText()+" to child: "+child.getJobStepText());
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){
+             System.out.println("collector.Collector.fillmap():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+        
+        List<JobStepType0Model> children = child.getJsChildren();
+              for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                     JobStepType0Model gch = iterator.next();
+                     System.out.println("fend.session.SessionController.fillmap(): from parent: "+child.getJobStepText()+" to child: "+gch.getJobStepText());
+                     mapi.put(dist+1,child);
+                    fillmap(child,gch,dist+1,mapi);
+                }
+        
     }
    
     

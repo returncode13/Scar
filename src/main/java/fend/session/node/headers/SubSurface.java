@@ -57,6 +57,9 @@ public class SubSurface extends Sequences implements Serializable{
     private   LongProperty numberOfRuns=new SimpleLongProperty(0L);
     private   StringProperty errorMessage=new SimpleStringProperty();
     private LongProperty workflowVersion=new SimpleLongProperty(0L);
+    private Boolean insightFlag;
+    private String dependencyStatus;
+    private String runStatus;
     
     
             
@@ -311,7 +314,29 @@ public class SubSurface extends Sequences implements Serializable{
     }
 
     
-    
+     public Boolean getInsightFlag() {
+        return insightFlag;
+    }
+
+    public void setInsightFlag(Boolean insightFlag) {
+        this.insightFlag = insightFlag;
+    }
+
+    public String getDependencyStatus() {
+        return dependencyStatus;
+    }
+
+    public void setDependencyStatus(String dependencyStatus) {
+        this.dependencyStatus = dependencyStatus;
+    }
+
+    public String getRunStatus() {
+        return runStatus;
+    }
+
+    public void setRunStatus(String runStatus) {
+        this.runStatus = runStatus;
+    }
     
     
     
