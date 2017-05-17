@@ -12,12 +12,15 @@ import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
@@ -36,8 +39,11 @@ public class SummaryController extends Stage{
     private SummaryModel model;
     private SummaryNode node;
     private VolumeService vserv=new VolumeServiceImpl();
-    private ObservableList<SummarySequenceModel> sumSeqModelList=FXCollections.observableArrayList();
+    private ObservableSet<SummarySequenceModel> sumSeqModelSet=FXCollections.observableSet();
+    private MultiMap<Sequences,DepthModel> mapseqDepthModel=new MultiValueMap<>();
+    private MultiMap<DepthModel,Sequences> mapDepthModelSeq=new MultiValueMap<>();                  //inverse map of mapseqDepthModel
     private DepthListModel depthListmodel;
+    
     @FXML
             TableView tableView;
     
@@ -73,6 +79,7 @@ public class SummaryController extends Stage{
             
             
             final int depindex=depth;
+            dm.setDepth(depth);
             dtc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, DepthModel>, ObservableValue<DepthModel>>() {
                 @Override
                 public ObservableValue<DepthModel> call(TableColumn.CellDataFeatures<SummarySequenceModel, DepthModel> param) {
@@ -125,7 +132,7 @@ public class SummaryController extends Stage{
                     //VolumeSelectionModel vol = iterator2.next();
                     VolumeSelectionModel vol = vomodList.get(vindex);
                     SummaryVolumeNodeModel summaryVolumeNodeModel=new SummaryVolumeNodeModel();
-                    summaryVolumeNodeModel.setVolumeSelectionModel(vol);
+                    summaryVolumeNodeModel.setVolumeSelectionModel(vol,depindex,jindex,vindex);
                     
                     
                             
@@ -141,6 +148,15 @@ public class SummaryController extends Stage{
                     HeadersModel h=vol.getHeadersModel();
                     
                     ObservableList<Sequences> seqs=h.getSequenceListInHeaders();
+                     //mapDepthModelSeq.put(dm, seqs);
+                  //  List<DepthModel>
+                  for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
+                  Sequences seq = iterator1.next();
+                  mapDepthModelSeq.put(dm, seq);
+                  
+                  
+                  }
+                    
                     
                     TableColumn<SummarySequenceModel,String> run=new TableColumn<>("Run");
                     TableColumn<SummarySequenceModel,String> dep=new TableColumn<>("Dependency");
@@ -151,36 +167,44 @@ public class SummaryController extends Stage{
                     run.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
-                          //  return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().runProperty();
-                          return  param.getValue().runProperty();
+                           // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().runProperty();
+                           return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).runProperty();
+                         // return  param.getValue().runProperty();
                         }
                     });
                     dep.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().depProperty();
-                             return  param.getValue().depProperty();
+                            //return  param.getValue().depProperty();
+                             return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).depProperty();
                         }
                     });
                     ins.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, Boolean>, ObservableValue<Boolean>>() {
                         @Override
                         public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<SummarySequenceModel, Boolean> param) {
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().insProperty();
-                             return  param.getValue().insProperty();
+                            // return  param.getValue().insProperty();
+                            // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).insightFlagProperty();
+                             return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
                         }
                     });
                     wf.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, Long>, ObservableValue<Long>>() {
                         @Override
                         public ObservableValue<Long> call(TableColumn.CellDataFeatures<SummarySequenceModel, Long> param) {
                            // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().wfversionProperty().asObject();
-                            return  param.getValue().wfversionProperty().asObject();
+                           // return  param.getValue().wfversionProperty().asObject();
+                          //  return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).workflowVersionProperty().asObject();
+                           return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).wfversionProperty().asObject();
                         }
                     });
                     qc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().qcflagProperty();
-                             return  param.getValue().qcflagProperty();
+                             //return  param.getValue().qcflagProperty();
+                            // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).qcStatusProperty();
+                             return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty();
                         }
                     });
                     
@@ -230,51 +254,136 @@ public class SummaryController extends Stage{
         tableView.getColumns().add(linenameTableColumn);
         tableView.getColumns().addAll(depthsForGraph);
         createData();
-        
-        tableView.setItems(sumSeqModelList);
+        ObservableList<SummarySequenceModel> tableList=FXCollections.observableArrayList(sumSeqModelSet);
+        tableView.setItems(tableList);
     }
     
     void createData(){
         MultiMap<Integer,JobStepType0Model> map=model.getDepthNodeMap();
         Set<Integer> keys=map.keySet();
         
-         
-         List<DepthModel> dmodelList=depthListmodel.getListOfDepthModel();
-         
-        for (Iterator<Integer> iterator = keys.iterator(); iterator.hasNext();) {
-            Integer depth = iterator.next();                                                            //for each depth
-            List<JobStepType0Model> jobList=(List<JobStepType0Model>) map.get(depth);                 //list of jobs at this depth
-            
-            for(int jindex=0;jindex<jobList.size();jindex++){
-               
-               JobStepType0Model job=jobList.get(jindex);
-               List<VolumeSelectionModel> vomodList=job.getVolList();                              //list of volumes for this job
-               
-                    for (Iterator<VolumeSelectionModel> iterator2 = vomodList.iterator(); iterator2.hasNext();) {
-                    VolumeSelectionModel vol = iterator2.next();
-                   
-                    HeadersModel h=vol.getHeadersModel();
-                    
-                    ObservableList<Sequences> seqs=h.getSequenceListInHeaders();
-                    
-                    
-                    
-                    for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
-                        Sequences seq = iterator1.next();
-                        
-                        SummarySequenceModel summarySequenceModel=new SummarySequenceModel();
-                        summarySequenceModel.setDepthlist(depthListmodel);
-                        summarySequenceModel.setSequence(seq);
-                        sumSeqModelList.add(summarySequenceModel);
-                    }
-                   
-                   
-                    
-                }
+        Set<DepthModel> depthKeys=mapDepthModelSeq.keySet();
+        for (Iterator<DepthModel> iterator = depthKeys.iterator(); iterator.hasNext();) {
+            DepthModel dd = iterator.next();
+            List<Sequences> seqinDepth=(List<Sequences>) mapDepthModelSeq.get(dd);
+            for (Iterator<Sequences> iterator1 = seqinDepth.iterator(); iterator1.hasNext();) {
+                Sequences seq = iterator1.next();
+                mapseqDepthModel.put(seq, dd);
                 
             }
-           
         }
+        
+        
+       // Map<Long,
+        
+        List<DepthModel> dmodelList=depthListmodel.getListOfDepthModel();
+        Set<Sequences> keyseq=mapseqDepthModel.keySet();
+        for (Iterator<Sequences> iterator = keyseq.iterator(); iterator.hasNext();) {
+            Sequences seq = iterator.next();
+            SummarySequenceModel seqm=new SummarySequenceModel();
+            seqm.setSequence(seq);
+            List<DepthModel> deplist=(List<DepthModel>) mapseqDepthModel.get(seq);
+            DepthListModel seqdplistmodel=new DepthListModel();
+            seqdplistmodel.setListOfDepthModel(dmodelList);
+            seqm.setDepthlist(seqdplistmodel);
+             sumSeqModelSet.add(seqm);
+        }
+        
+        /*
+         List<DepthModel> dmodelList=depthListmodel.getListOfDepthModel();
+         
+         for (Iterator<Integer> iterator = keys.iterator(); iterator.hasNext();) {
+         Integer depth = iterator.next();                                                            //for each depth
+         List<JobStepType0Model> jobList=(List<JobStepType0Model>) map.get(depth);                 //list of jobs at this depth
+         for (Iterator<JobStepType0Model> iterator1 = jobList.iterator(); iterator1.hasNext();) {
+         JobStepType0Model job = iterator1.next();
+         
+         List<VolumeSelectionModel> vomodList=job.getVolList();                              //list of volumes for this job
+         
+         for (Iterator<VolumeSelectionModel> iterator2 = vomodList.iterator(); iterator2.hasNext();) {
+         VolumeSelectionModel vol = iterator2.next();
+         
+         HeadersModel h=vol.getHeadersModel();
+         
+         ObservableList<Sequences> seqs=h.getSequenceListInHeaders();
+         
+         
+         
+         for (Iterator<Sequences> iterator3 = seqs.iterator(); iterator3.hasNext();) {
+         Sequences seq = iterator3.next();
+         
+         SummarySequenceModel summarySequenceModel=new SummarySequenceModel();
+         List<DepthModel> deplist=(List<DepthModel>) mapseqDepthModel.get(seq);
+         DepthListModel seqdplistmodel=new DepthListModel();
+         seqdplistmodel.setListOfDepthModel(dmodelList);
+         summarySequenceModel.setDepthlist(seqdplistmodel);
+         summarySequenceModel.setSequence(seq);
+             for (Iterator<DepthModel> iterator4 = deplist.iterator(); iterator4.hasNext();) {
+                 DepthModel dept = iterator4.next();
+                 System.out.println("fend.summary.SummaryController.createData(): job: "+job.getJobStepText()+" vol: "+vol.getLabel()+" seq: "+seq.getSequenceNumber()+" :in depth: "+dept.getDepth());
+             }
+             for (Iterator<DepthModel> iterator4 = dmodelList.iterator(); iterator4.hasNext();) {
+                 DepthModel dept = iterator4.next();
+                 System.out.println("fend.summary.SummaryController.createData(): job: "+job.getJobStepText()+" vol: "+vol.getLabel()+" seq: "+seq.getSequenceNumber()+" :in dmodL: "+dept.getDepth());
+             }
+         sumSeqModelSet.add(summarySequenceModel);
+         }
+         
+         
+         
+         }
+         
+         }
+         
+         } */
+  /*
+         MultiMap<Sequences,SHolder>  mmap=new MultiValueMap<>();
+         
+         for (Iterator<DepthModel> iterator = dmodelList.iterator(); iterator.hasNext();) {
+            DepthModel depth = iterator.next();
+            List<SummaryJobNodeModel> lsjnm=depth.getListOfJobs();
+            
+             for (Iterator<SummaryJobNodeModel> iterator1 = lsjnm.iterator(); iterator1.hasNext();) {
+                 SummaryJobNodeModel sjnm = iterator1.next();
+                 List<SummaryVolumeNodeModel> lvnm=sjnm.getListOfVolumes();
+                 
+                 for (Iterator<SummaryVolumeNodeModel> iterator2 = lvnm.iterator(); iterator2.hasNext();) {
+                     SummaryVolumeNodeModel svnm = iterator2.next();
+                     VolumeSelectionModel vs=svnm.getVolumeSelectionModel();
+                     HeadersModel hsm=vs.getHeadersModel();
+                     List<Sequences> seqs=hsm.getSequenceListInHeaders();
+                    // ListSHolder listsh=new ListSHolder();
+                     for (Iterator<Sequences> iterator3 = seqs.iterator(); iterator3.hasNext();) {
+                         Sequences seq = iterator3.next();
+                         SHolder sh=new SHolder();
+                         sh.d=depth;
+                         sh.j=sjnm;
+                         sh.v=svnm;
+                         mmap.put(seq, sh);
+                     }
+                     
+                 }
+             }
+            
+        }
+         
+         
+         
+         Set<Sequences> keySeqs=mmap.keySet();
+         for (Iterator<Sequences> iterator = keySeqs.iterator(); iterator.hasNext();) {
+            Sequences seq = iterator.next();
+            List<SHolder> shlist=(List<SHolder>) mmap.get(seq);
+            DepthListModel dlist=new DepthListModel();
+            List<DepthModel> dmodlist=dlist.getListOfDepthModel();
+            
+             for (Iterator<SHolder> iterator1 = shlist.iterator(); iterator1.hasNext();) {
+                 SHolder shseq = iterator1.next();
+                 SummarySequenceModel sm=new SummarySequenceModel();
+                 
+                 
+             }
+        }
+*/
     }
     
     void setView(SummaryNode sn){
@@ -283,4 +392,26 @@ public class SummaryController extends Stage{
         this.setScene(new Scene(node));
         this.showAndWait();
     }
+}
+
+class SHolder{
+    DepthModel d;
+    SummaryJobNodeModel j;
+    SummaryVolumeNodeModel v;
+}
+
+class ListSHolder{
+    List<SHolder> listSholder=new ArrayList<>();
+
+    public List<SHolder> getListSholder() {
+        return listSholder;
+    }
+
+    public void setListSholder(List<SHolder> listSholder) {
+        this.listSholder = listSholder;
+    }
+    public void addToListSholder(SHolder s){
+        this.listSholder.add(s);
+    }
+    
 }

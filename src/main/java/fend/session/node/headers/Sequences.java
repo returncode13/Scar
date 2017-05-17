@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -51,11 +53,79 @@ public class Sequences implements Serializable{
     private Boolean deleted;
     private Long numberOfRuns;
     private StringProperty errorMessage=new SimpleStringProperty();
-    private Long workflowVersion=6L;
-    private Boolean insightFlag=Boolean.FALSE;
-    private String dependencyStatus=new String("Good");
-    private String runStatus=new String("Great!");
-    private String qcStatus=new String("Amazing");
+   // private Long workflowVersion=6L;
+   //private Boolean insightFlag=Boolean.FALSE;
+    //private String dependencyStatus=new String("Good");
+    //private String runStatus=new String("Great!");
+    //private String qcStatus=new String("Amazing");
+    private final StringProperty run = new SimpleStringProperty(this,"run");
+    private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
+    private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");
+    private final LongProperty workflowVersion = new SimpleLongProperty(this,"workflowVersion");
+    private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
+
+    public String getQcStatus() {
+        return qcStatus.get();
+    }
+
+    public void setQcStatus(String value) {
+        qcStatus.set(value);
+    }
+
+    public StringProperty qcStatusProperty() {
+        return qcStatus;
+    }
+    
+
+    public long getWorkflowVersion() {
+        return workflowVersion.get();
+    }
+
+    public void setWorkflowVersion(long value) {
+        workflowVersion.set(value);
+    }
+
+    public LongProperty workflowVersionProperty() {
+        return workflowVersion;
+    }
+    
+
+    public boolean isInsightFlag() {
+        return insightFlag.get();
+    }
+
+    public void setInsightFlag(boolean value) {
+        insightFlag.set(value);
+    }
+
+    public BooleanProperty insightFlagProperty() {
+        return insightFlag;
+    }
+    
+    public String getDependency() {
+        return dependency.get();
+    }
+
+    public void setDependency(String value) {
+        dependency.set(value);
+    }
+
+    public StringProperty dependencyProperty() {
+        return dependency;
+    }
+    
+    public String getRun() {
+        return run.get();
+    }
+
+    public void setRun(String value) {
+        run.set(value);
+    }
+
+    public StringProperty runProperty() {
+        return run;
+    }
+    
     
     public ArrayList<SubSurface> getSubsurfaces() {
         return subsurfaces;
@@ -296,47 +366,51 @@ public class Sequences implements Serializable{
     public void setErrorMessage(String errorMessage) {
         this.errorMessage.set(errorMessage);
     }
-
+    /*
     public Long getWorkflowVersion() {
-        return workflowVersion;
+    return workflowVersion;
     }
-
+    
     public void setWorkflowVersion(Long workflowVersion) {
-        this.workflowVersion = workflowVersion;
+    this.workflowVersion = workflowVersion;
     }
-
+    
     public Boolean getInsightFlag() {
-        return insightFlag;
+    return insightFlag;
     }
-
+    
     public void setInsightFlag(Boolean insightFlag) {
-        this.insightFlag = insightFlag;
+    this.insightFlag = insightFlag;
     }
-
+    
     public String getDependencyStatus() {
-        return dependencyStatus;
+    return dependencyStatus;
     }
-
+    
     public void setDependencyStatus(String dependencyStatus) {
-        this.dependencyStatus = dependencyStatus;
+    this.dependencyStatus = dependencyStatus;
     }
-
+    
     public String getRunStatus() {
-        return runStatus;
+    return runStatus;
     }
-
+    
     public void setRunStatus(String runStatus) {
-        this.runStatus = runStatus;
+    this.runStatus = runStatus;
     }
-
+    
     public String getQcStatus() {
         return qcStatus;
     }
-
+    
     public void setQcStatus(String qcStatus) {
         this.qcStatus = qcStatus;
     }
-    
+    */
+
+    public boolean getInsightFlag() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
     

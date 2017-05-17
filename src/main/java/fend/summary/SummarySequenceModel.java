@@ -24,82 +24,81 @@ import javafx.beans.property.StringProperty;
 public class SummarySequenceModel {
     
     
-    private final StringProperty run = new SimpleStringProperty(this,"run");
+    /* private final StringProperty run = new SimpleStringProperty(this,"run");
     private final StringProperty dep = new SimpleStringProperty(this,"dep");
     private final BooleanProperty ins = new SimpleBooleanProperty(this,"ins");
     private final StringProperty qcflag = new SimpleStringProperty(this,"qcflag");
     private final LongProperty wfversion = new SimpleLongProperty(this,"wfversion");
-
+    
     
     
     
     public String getRun() {
-        return run.get();
-    }
+    return run.get();
+    }*/
 
     /* public void setRun(String value) {
     run.set(value);
     }*/
-
+    /*
     public StringProperty runProperty() {
-        return run;
+    return run;
     }
-        
-
+    
+    
     public String getDep() {
-        return dep.get();
-    }
+    return dep.get();
+    }*/
 
     /*public void setDep(String value) {
     dep.set(value);
     }*/
-
+    /*
     public StringProperty depProperty() {
-        return dep;
+    return dep;
     }
-   
-    
-
     
     
-
+    
+    
+    
+    
     public String getQcflag() {
-        return qcflag.get();
-    }
+    return qcflag.get();
+    }*/
 
     /*public void setQcflag(String value) {
     qcflag.set(value);
     }*/
 
-    public StringProperty qcflagProperty() {
-        return qcflag;
-    }
+    /*public StringProperty qcflagProperty() {
+    return qcflag;
+    }*/
     
-
+    /*
     public long getWfversion() {
-        return wfversion.get();
-    }
+    return wfversion.get();
+    }*/
 
     /*  public void setWfversion(long value) {
     wfversion.set(value);
     }*/
 
-    public LongProperty wfversionProperty() {
-        return wfversion;
-    }
+    /*public LongProperty wfversionProperty() {
+    return wfversion;
+    }*/
    
-    
+    /*
     public boolean isIns() {
-        return ins.get();
-    }
-
+    return ins.get();
+    }*/
     /*public void setIns(boolean value) {
     ins.set(value);
     }*/
     
-    public BooleanProperty insProperty() {
-        return ins;
-    }
+    /*public BooleanProperty insProperty() {
+    return ins;
+    }*/
     
     private Sequences sequence;
 
@@ -109,11 +108,11 @@ public class SummarySequenceModel {
 
     public void setSequence(Sequences sequence) {
         this.sequence = sequence;
-        this.run.set(this.sequence.getRunStatus());
-        this.dep.set(this.sequence.getDependencyStatus());
-        this.ins.set(this.sequence.getInsightFlag());
+        /*  this.run.set(this.sequence.getRun());
+        this.dep.set(this.sequence.getDependency());
+        this.ins.set(this.sequence.isInsightFlag());
         this.wfversion.set(this.sequence.getWorkflowVersion());
-        this.qcflag.set(this.sequence.getQcStatus());
+        this.qcflag.set(this.sequence.getQcStatus());*/
         this.seq.set(this.sequence.getSequenceNumber());
         
     }

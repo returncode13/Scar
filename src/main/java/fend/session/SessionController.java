@@ -1110,8 +1110,8 @@ public class SessionController implements Initializable {
                   for (Iterator<JobStepType0Model> iterator2 = children.iterator(); iterator2.hasNext();) {
                       JobStepType0Model child = iterator2.next();
                        System.out.println("fend.session.SessionController.mapping(): adding child: "+child.getJobStepText());
-                      depthnodemap.put(1, child);
-                      fillmap(root,child,1,depthnodemap);
+                      //depthnodemap.put(1, child);
+                      fillmap(root,child,0,depthnodemap);
                   }
                  
                  
@@ -1412,6 +1412,7 @@ public class SessionController implements Initializable {
                             child.setQcFlagProperty(QCFailure);
                             targetVolQ.setQcFlagProperty(QCFailure);
                             targetSeqQ.setAlert(QCFailure);
+                            targetSeqQ.setInsightFlag(insightFail);
                             targetSubQ.setAlert(QCFailure);
                               if(insightFail && !traceFail){
                                    errorMessage="version mismatch";

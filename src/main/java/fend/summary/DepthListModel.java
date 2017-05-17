@@ -27,7 +27,9 @@ public class DepthListModel {
     }
    
     
-    
+    public void addToDepthModel(DepthModel d){
+        this.listOfDepthModel.add(d);
+    }
     
     
     

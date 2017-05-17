@@ -20,6 +20,16 @@ import javafx.collections.ObservableList;
 public class DepthModel {
 
     private final ListProperty<JobNodeListModel> joblist = new SimpleListProperty<>(this,"joblist");
+    private int depth;
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+    
     
     public ObservableList getJoblist() {
     return joblist.get();

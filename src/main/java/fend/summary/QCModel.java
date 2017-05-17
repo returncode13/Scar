@@ -93,7 +93,6 @@ public class QCModel {
     /*public void setIns(boolean value) {
     ins.set(value);
     }*/
-    
     public BooleanProperty insProperty() {
         return ins;
     }
@@ -106,9 +105,9 @@ public class QCModel {
 
     public void setSequence(Sequences sequence) {
         this.sequence = sequence;
-        this.run.set(this.sequence.getRunStatus());
+        /*this.run.set(this.sequence.getRunStatus());
         this.dep.set(this.sequence.getDependencyStatus());
-        this.ins.set(this.sequence.getInsightFlag());
+        this.ins.set(this.sequence.getInsightFlag());*/
         this.wfversion.set(this.sequence.getWorkflowVersion());
         this.qcflag.set(this.sequence.getQcStatus());
         
