@@ -9,6 +9,7 @@ import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import db.model.Headers;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import javafx.collections.FXCollections;
@@ -55,6 +56,15 @@ public class HeadersModel {
         this.volmodel = volmodel;
     }
     
+    public Sequences getSequenceObjBySequenceNumber(Long seqno){
+        for (Iterator<Sequences> iterator = sequenceListInHeaders.iterator(); iterator.hasNext();) {
+            Sequences seq = iterator.next();
+            if(seq.getSequenceNumber().equals(seqno)){
+                return seq;
+            }
+        }
+        return null;
+    }
     
     
     

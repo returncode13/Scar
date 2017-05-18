@@ -13,6 +13,7 @@ import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,8 @@ public class SummaryController extends Stage{
     private SummaryNode node;
     private VolumeService vserv=new VolumeServiceImpl();
     private ObservableSet<SummarySequenceModel> sumSeqModelSet=FXCollections.observableSet();
-    private MultiMap<Sequences,DepthModel> mapseqDepthModel=new MultiValueMap<>();
-    private MultiMap<DepthModel,Sequences> mapDepthModelSeq=new MultiValueMap<>();                  //inverse map of mapseqDepthModel
+    private MultiMap<Long,DepthModel> mapseqDepthModel=new MultiValueMap<>();
+    private MultiMap<DepthModel,Long> mapDepthModelSeq=new MultiValueMap<>();                  //inverse map of mapseqDepthModel
     private DepthListModel depthListmodel;
     
     @FXML
@@ -67,7 +68,7 @@ public class SummaryController extends Stage{
         });
         
         Set<Integer> keys=map.keySet();
-         List<TableColumn<SummarySequenceModel,DepthModel>> depthsForGraph=new ArrayList<>();       //a list of depths for each seq
+         List<TableColumn<SummarySequenceModel,DepthModel>> depthsForGraph=new ArrayList<>();       //a jlist of depths for each seq
          depthListmodel=new DepthListModel();
          List<DepthModel> dmodelList=depthListmodel.getListOfDepthModel();
          
@@ -93,7 +94,7 @@ public class SummaryController extends Stage{
             
             
             List<JobStepType0Model> jobList=(List<JobStepType0Model>) map.get(depth);
-            List<TableColumn<SummarySequenceModel,SummaryJobNodeModel>> jobsForDepth=new ArrayList<>();                  // a list of jobs for each depth
+            List<TableColumn<SummarySequenceModel,SummaryJobNodeModel>> jobsForDepth=new ArrayList<>();                  // a jlist of jobs for each depth
             List<SummaryJobNodeModel> summaryjobnodemodelList=dm.getListOfJobs();
             
             
@@ -122,7 +123,7 @@ public class SummaryController extends Stage{
                 
                 
                 List<VolumeSelectionModel> vomodList=job.getVolList();
-                List<TableColumn<SummarySequenceModel,SummaryVolumeNodeModel>> volsForJob=new ArrayList<>();               //a list for vols for each job
+                List<TableColumn<SummarySequenceModel,SummaryVolumeNodeModel>> volsForJob=new ArrayList<>();               //a jlist for vols for each job
                 List<SummaryVolumeNodeModel> summaryVolumeNodeModelList=summaryJobNodeModel.getListOfVolumes();
                 
                 for(int vindex=0;vindex<vomodList.size();vindex++){
@@ -152,7 +153,7 @@ public class SummaryController extends Stage{
                   //  List<DepthModel>
                   for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
                   Sequences seq = iterator1.next();
-                  mapDepthModelSeq.put(dm, seq);
+                  mapDepthModelSeq.put(dm, seq.getSequenceNumber());
                   
                   
                   }
@@ -168,7 +169,24 @@ public class SummaryController extends Stage{
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
                            // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().runProperty();
-                           return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).runProperty();
+                           try{
+                              //  System.out.println(".call(): looking for seq: "+param.getValue().getSequence().getSequenceNumber()+ " job: "+jobindex+" depth: "+depindex+" volindex: "+volindex+" label: "+param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getLabel());
+                               //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).runProperty();
+                               Sequences ss=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableProperty(); 
+                               }
+                               else{
+                                   return  ss.runProperty();
+                               }
+                               
+                           }catch(ArrayIndexOutOfBoundsException ae){
+                               return param.getValue().notApplicableProperty();
+                           }catch(IndexOutOfBoundsException ie){
+                               System.out.println(".call(): looking for volindex: "+volindex+" in job: "+jobindex+" depth: "+depindex);
+                                return param.getValue().notApplicableProperty();
+                           }
+                           
                          // return  param.getValue().runProperty();
                         }
                     });
@@ -177,7 +195,22 @@ public class SummaryController extends Stage{
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().depProperty();
                             //return  param.getValue().depProperty();
-                             return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).depProperty();
+                            try{
+                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).depProperty();
+                             
+                             
+                             Sequences ss=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableProperty(); 
+                               }
+                               else{
+                                   return  ss.dependencyProperty();
+                               }
+                            }catch(ArrayIndexOutOfBoundsException ae){
+                                return param.getValue().notApplicableProperty();
+                            }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableProperty();
+                           }
                         }
                     });
                     ins.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, Boolean>, ObservableValue<Boolean>>() {
@@ -186,7 +219,20 @@ public class SummaryController extends Stage{
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().insProperty();
                             // return  param.getValue().insProperty();
                             // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).insightFlagProperty();
-                             return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                            try{ 
+                            //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                            Sequences ss=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableBooleanProperty(); 
+                               }
+                               else{
+                                   return  ss.insightFlagProperty();
+                               }
+                            }catch(ArrayIndexOutOfBoundsException ae){
+                                return param.getValue().notApplicableBooleanProperty();
+                            }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableBooleanProperty();
+                           }
                         }
                     });
                     wf.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, Long>, ObservableValue<Long>>() {
@@ -195,7 +241,21 @@ public class SummaryController extends Stage{
                            // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().wfversionProperty().asObject();
                            // return  param.getValue().wfversionProperty().asObject();
                           //  return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).workflowVersionProperty().asObject();
-                           return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).wfversionProperty().asObject();
+                           try{
+                               //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).wfversionProperty().asObject();
+                               Sequences ss=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableLongProperty().asObject(); 
+                               }
+                               else{
+                                   return  ss.workflowVersionProperty().asObject();
+                               }
+                           }catch(ArrayIndexOutOfBoundsException ae){
+                               return param.getValue().notApplicableLongProperty().asObject();
+                           }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableLongProperty().asObject();
+                           }
+                           
                         }
                     });
                     qc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
@@ -204,7 +264,21 @@ public class SummaryController extends Stage{
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().qcflagProperty();
                              //return  param.getValue().qcflagProperty();
                             // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).qcStatusProperty();
-                             return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty();
+                            try{
+                                //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty();
+                                
+                                Sequences ss=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableProperty(); 
+                               }
+                               else{
+                                   return  ss.qcStatusProperty();
+                               }
+                            }catch(ArrayIndexOutOfBoundsException ae){
+                                return param.getValue().notApplicableProperty();
+                            }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableProperty();
+                           }
                         }
                     });
                     
@@ -265,10 +339,11 @@ public class SummaryController extends Stage{
         Set<DepthModel> depthKeys=mapDepthModelSeq.keySet();
         for (Iterator<DepthModel> iterator = depthKeys.iterator(); iterator.hasNext();) {
             DepthModel dd = iterator.next();
-            List<Sequences> seqinDepth=(List<Sequences>) mapDepthModelSeq.get(dd);
-            for (Iterator<Sequences> iterator1 = seqinDepth.iterator(); iterator1.hasNext();) {
-                Sequences seq = iterator1.next();
-                mapseqDepthModel.put(seq, dd);
+            List<Long> seqinDepth=(List<Long>) mapDepthModelSeq.get(dd);
+            Set<Long> seqinDepthSet=new HashSet<>(seqinDepth);
+            for (Iterator<Long> iterator1 = seqinDepthSet.iterator(); iterator1.hasNext();) {
+                Long seqno = iterator1.next();
+                mapseqDepthModel.put(seqno, dd);
                 
             }
         }
@@ -277,15 +352,37 @@ public class SummaryController extends Stage{
        // Map<Long,
         
         List<DepthModel> dmodelList=depthListmodel.getListOfDepthModel();
-        Set<Sequences> keyseq=mapseqDepthModel.keySet();
-        for (Iterator<Sequences> iterator = keyseq.iterator(); iterator.hasNext();) {
-            Sequences seq = iterator.next();
+        Set<Long> keyseq=mapseqDepthModel.keySet();
+        
+        
+        
+        
+        
+        for (Iterator<Long> iterator = keyseq.iterator(); iterator.hasNext();) {
+            
+            Long seqno = iterator.next();
+            System.out.println("fend.summary.SummaryController.createData(): got seq: "+seqno);
             SummarySequenceModel seqm=new SummarySequenceModel();
-            seqm.setSequence(seq);
-            List<DepthModel> deplist=(List<DepthModel>) mapseqDepthModel.get(seq);
+            seqm.setSeq(seqno);
+            List<DepthModel> deplist=(List<DepthModel>) mapseqDepthModel.get(seqno);
             DepthListModel seqdplistmodel=new DepthListModel();
             seqdplistmodel.setListOfDepthModel(dmodelList);
             seqm.setDepthlist(seqdplistmodel);
+           // System.out.println("fend.summary.SummaryController.createData(): Adding: seq: "+seqm.getSequence().getSequenceNumber());
+            for (Iterator<DepthModel> iterator1 = dmodelList.iterator(); iterator1.hasNext();) {
+                DepthModel ddd = iterator1.next();
+                List<SummaryJobNodeModel> jlist=ddd.getListOfJobs();
+                for (Iterator<SummaryJobNodeModel> iterator2 = jlist.iterator(); iterator2.hasNext();) {
+                    SummaryJobNodeModel jjj = iterator2.next();
+                    List<SummaryVolumeNodeModel> vlist=jjj.getListOfVolumes();
+                    for (Iterator<SummaryVolumeNodeModel> iterator3 = vlist.iterator(); iterator3.hasNext();) {
+                        SummaryVolumeNodeModel vvv = iterator3.next();
+                       // System.out.println("\t\t\t\t\t\tseq: "+seqm.getSequence().getSequenceNumber()+" depth: "+ddd.getDepth()+" job: "+jjj.getJobsteptype0model().getJobStepText()+" vol: "+vvv.getVolumeSelectionModel().getLabel());
+                        
+                    }
+                }
+                
+            }
              sumSeqModelSet.add(seqm);
         }
         

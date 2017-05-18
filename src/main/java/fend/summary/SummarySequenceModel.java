@@ -166,6 +166,41 @@ public class SummarySequenceModel {
     public SummarySequenceModel() {
     }
     
+    private final StringProperty notApplicable = new SimpleStringProperty(this,"NA");
+
+    public String getNotApplicable() {
+        return notApplicable.get();
+    }
+
+    public StringProperty notApplicableProperty() {
+        return notApplicable;
+    }
+    private final BooleanProperty notApplicableBoolean = new SimpleBooleanProperty(this,"false");
+
+    public boolean isNotApplicableBoolean() {
+        return notApplicableBoolean.get();
+    }
+
+    
+    public BooleanProperty notApplicableBooleanProperty() {
+        return notApplicableBoolean;
+    }
+    private final LongProperty notApplicableLong = new SimpleLongProperty(this,"0L");
+
+    public long getNotApplicableLong() {
+        return notApplicableLong.get();
+    }
+
+    
+
+    public LongProperty notApplicableLongProperty() {
+        return notApplicableLong;
+    }
+   
+    
+    
+    
+    
     
     
 }
