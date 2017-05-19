@@ -66,71 +66,7 @@ public class LogStatusWatcher {
             executorserv.submit(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    /* if(listOfdbLogs!=null){
-                    for (Iterator<Logs> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
-                    Logs log = iterator.next();
-                    String logpath=log.getLogpath();
-                    String linename=log.getSubsurfaces();
-                    //Start of green block
-                    Process processg=new ProcessBuilder(new DugioScripts().getLogStatusCompletedSuccessfully().getAbsolutePath(),logpath).start();
-                    InputStream isg = processg.getInputStream();
-                    InputStreamReader isrg=new InputStreamReader(isg);
-                    BufferedReader brg=new BufferedReader(isrg);
-                    String valuesg;
-                    while((valuesg=brg.readLine())!=null){
-                    System.out.println("watcher.LogStatusWatcher().init<>().call(): "+(valuesg!=null?valuesg+" : "+linename:" Values are null for "+linename));
-                    log.setGreen(Boolean.TRUE);
-                    log.setRed(Boolean.FALSE);
-                    log.setOrange(Boolean.FALSE);
-                    log.setPurple(Boolean.FALSE);
-                    }
-                    //End of green block
-                    //Start of red block
-                    Process processr=new ProcessBuilder(new DugioScripts().getLogStatusErrored().getAbsolutePath(),logpath).start();
-                    InputStream isr = processr.getInputStream();
-                    InputStreamReader isrr=new InputStreamReader(isr);
-                    BufferedReader brr=new BufferedReader(isrr);
-                    String valuesr;
-                    while((valuesr=brr.readLine())!=null){
-                    System.out.println("watcher.LogStatusWatcher().init<>().call(): "+(valuesr!=null?valuesr+" : "+linename:" Values are null for "+linename));
-                    log.setGreen(Boolean.FALSE);
-                    log.setRed(Boolean.TRUE);
-                    log.setOrange(Boolean.FALSE);
-                    log.setPurple(Boolean.FALSE);
-                    
-                    }
-                    //End of red block
-                    
-                    //Start of purple block
-                    Process processp=new ProcessBuilder(new DugioScripts().getLogStatusCancelled().getAbsolutePath(),logpath).start();
-                    InputStream isp = processp.getInputStream();
-                    InputStreamReader isrp=new InputStreamReader(isp);
-                    BufferedReader brp=new BufferedReader(isrp);
-                    String valuesp;
-                    while((valuesp=brp.readLine())!=null){
-                    System.out.println("watcher.LogStatusWatcher().init<>().call(): "+(valuesp!=null?valuesp+" : "+linename:" Values are null for "+linename));
-                    log.setGreen(Boolean.FALSE);
-                    log.setRed(Boolean.FALSE);
-                    log.setOrange(Boolean.FALSE);
-                    log.setPurple(Boolean.TRUE);
-                    }
-                    //End of purple block
-                    
-                    //Start of orange block
-                    //End of orange block
-                    
-                    }
-                    
-                    
-                    for (Iterator<Logs> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
-                    Logs log=iterator.next();
-                    lserv.updateLogs(log.getIdLogs(), log);
-                    }
-                    
-                    
-                    }
-                    
-                    */
+                  
                     
                     task=new TimerTask() {
                         @Override
@@ -198,7 +134,14 @@ public class LogStatusWatcher {
                         
                         for (Iterator<Logs> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
                             Logs log=iterator.next();
+                            /*String logstatus=new String("Running");
+                            Boolean running=log.getRunning();
+                            Boolean errored=log.getErrored();
+                            Boolean cancelled=log.getCancelled();
+                            Boolean success=log.getCompletedsuccessfully();
+                            if()*/
                             lserv.updateLogs(log.getIdLogs(), log);
+                            //LogStatusWatcher.this.volselmodel.setLogstatusMapForSeq(log.getSeqn(),);
                         }
                         
                         

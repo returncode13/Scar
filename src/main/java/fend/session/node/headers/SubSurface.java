@@ -322,11 +322,11 @@ public class SubSurface extends Sequences implements Serializable{
         this.cmpInc.set(cmpInc);
     }
 
-    public Boolean getAlert() {
+    public Boolean getQcAlert() {
         return alert.get();
     }
 
-    public void setAlert(Boolean alert) {
+    public void setQcAlert(Boolean alert) {
         this.alert=new SimpleBooleanProperty(alert);
     }
 

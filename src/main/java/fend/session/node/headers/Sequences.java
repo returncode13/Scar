@@ -48,7 +48,8 @@ public class Sequences implements Serializable{
     private Long cmpMin;
     private Long cmpInc;
     private String insightVersion;
-    private BooleanProperty alert= new SimpleBooleanProperty(Boolean.FALSE);
+    private BooleanProperty qcalert= new SimpleBooleanProperty(Boolean.FALSE);
+    
     private Boolean modified;
     private Boolean deleted;
     private Long numberOfRuns;
@@ -63,6 +64,22 @@ public class Sequences implements Serializable{
     private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");
     private final LongProperty workflowVersion = new SimpleLongProperty(this,"workflowVersion");
     private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
+    private final BooleanProperty pendingalert = new SimpleBooleanProperty(Boolean.FALSE);
+
+    public boolean isPendingalert() {
+        return pendingalert.get();
+    }
+
+    public void setPendingalert(boolean value) {
+        pendingalert.set(value);
+    }
+
+    public BooleanProperty pendingalertProperty() {
+        return pendingalert;
+    }
+    
+    
+    
 
     public String getQcStatus() {
         return qcStatus.get();
@@ -324,12 +341,12 @@ public class Sequences implements Serializable{
         this.insightVersion = insightVersion;
     }
 
-    public Boolean getAlert() {
-        return alert.get();
+    public Boolean getQcAlert() {
+        return qcalert.get();
     }
 
-    public void setAlert(Boolean alert) {
-        this.alert.set(alert);
+    public void setQcAlert(Boolean alert) {
+        this.qcalert.set(alert);
     }
 
     public Boolean getModified() {

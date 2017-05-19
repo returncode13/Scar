@@ -75,6 +75,21 @@ public class LogsServiceImpl implements LogsService{
         return ldao.getLogsFor(v, workflow);
     }
 
+    @Override
+    public List<Logs> getLogsFor(Volume v, Long seq) {
+        return ldao.getLogsFor(v, seq);
+    }
+
+    @Override
+    public List<Logs> getSequencesFor(Volume v) {
+        return ldao.getSequencesFor(v);
+    }
+
+    @Override
+    public List<Logs> getSubsurfacesFor(Volume v, Long seq) {
+        return ldao.getSubsurfacesFor(v, seq);
+    }
+
    
     
 }

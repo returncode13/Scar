@@ -191,6 +191,25 @@ public class HeaderCollector {
                 String lineN=next.getSubsurface();
                 List<Logs> logs=lserv.getLogsFor(dbVolume, lineN);
                 Logs latestLog=lserv.getLatestLogFor(dbVolume, lineN);
+                Boolean errored=latestLog.getErrored();
+                Boolean running=latestLog.getRunning();
+                Boolean cancelled=latestLog.getCancelled();
+                Boolean success=latestLog.getCompletedsuccessfully();
+                
+                
+                String runstatus=new String("U");                   //default to unknown status;
+                if(errored){
+                    runstatus="E";
+                }
+                if(cancelled){
+                    runstatus="C";
+                }
+                if(running){
+                    runstatus="R";
+                }
+                if(success){
+                    runstatus="X";
+                }
                 Long wfMaxVersion=0L;
                 if(latestLog!=null){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());

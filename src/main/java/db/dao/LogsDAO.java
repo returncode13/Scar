@@ -28,5 +28,7 @@ public interface LogsDAO {
     public List<Logs> getLogsFor(Volume v,String subline,Boolean completed,Boolean running,Boolean errored,Boolean cancelled);
     public Logs getLatestLogFor(Volume v, String subline);
     public List<Logs> getLogsFor(Volume v, Workflow workflow);
-    
+    public List<Logs> getLogsFor(Volume v,Long seq);       //get logs for seq
+    public List<Logs> getSequencesFor(Volume v);           //get distinct sequences in volume
+    public List<Logs> getSubsurfacesFor(Volume v, Long seq); //get distinct subsurfaces for  volume,seq
 }

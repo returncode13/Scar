@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import watcher.SummaryStatusWatcher;
 
 /**
  *
@@ -23,6 +24,7 @@ import javafx.beans.property.StringProperty;
  */
 public class SummaryVolumeNodeModel {
    
+    static int count=0;
     private VolumeSelectionModel volumeSelectionModel;
     /*private final ObjectProperty<QCModel> qcmodel = new SimpleObjectProperty<>(this,"qcmodel");
     
@@ -40,9 +42,25 @@ public class SummaryVolumeNodeModel {
     
     private final StringProperty run = new SimpleStringProperty(this,"run");
     private final StringProperty dep = new SimpleStringProperty(this,"dep");
-    private final BooleanProperty ins = new SimpleBooleanProperty(this,"ins");
+    //private final BooleanProperty ins = new SimpleBooleanProperty(this,"ins");
+    
     private final StringProperty qcflag = new SimpleStringProperty(this,"qcflag");
     private final LongProperty wfversion = new SimpleLongProperty(this,"wfversion");
+    private final StringProperty ins = new SimpleStringProperty("");
+    private SummaryStatusWatcher summaryStatusWatcher;
+    
+
+    public String getIns() {
+        return ins.get();
+    }
+
+    public void setIns(String value) {
+        ins.set(value);
+    }
+
+    public StringProperty insProperty() {
+        return ins;
+    }
 
     
     
@@ -68,7 +86,7 @@ public class SummaryVolumeNodeModel {
     dep.set(value);
     }*/
 
-    public StringProperty depProperty() {
+    public StringProperty dependencyProperty() {
         return dep;
     }
    
@@ -103,17 +121,18 @@ public class SummaryVolumeNodeModel {
     }
    
     
-    public boolean isIns() {
-        return ins.get();
+    /*  public boolean isIns() {
+    return ins.get();
     }
-
+    
     /*public void setIns(boolean value) {
     ins.set(value);
     }*/
     
+    /*
     public BooleanProperty insProperty() {
         return ins;
-    }
+    }*/
     
     
     private List<QCModel> listOfQcModels=new ArrayList<>();
@@ -133,12 +152,18 @@ public class SummaryVolumeNodeModel {
 
     public void setVolumeSelectionModel(VolumeSelectionModel volumeSelectionModel, int depth,int jobind,int volin) {
         this.volumeSelectionModel = volumeSelectionModel;
-        this.qcflag.set(new Boolean(this.volumeSelectionModel.getQcFlagProperty().get()).toString()+" :d: "+depth+" :j: "+jobind+" :v: "+volin+" "+this.volumeSelectionModel.getLabel());
+      //  this.qcflag.set(new Boolean(this.volumeSelectionModel.getQcFlagProperty().get()).toString()+" :d: "+depth+" :j: "+jobind+" :v: "+volin+" "+this.volumeSelectionModel.getLabel());
+      if(summaryStatusWatcher==null){
+          System.out.println("fend.summary.SummaryVolumeNodeModel.setVolumeSelectionModel(): Starting summaryStatusWatcher : "+count);
+          count++;
+          summaryStatusWatcher=new SummaryStatusWatcher(volumeSelectionModel);
+      }
     }
     
     
     
     public SummaryVolumeNodeModel() {
+        
     }
     
     

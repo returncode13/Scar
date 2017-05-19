@@ -53,10 +53,12 @@ class LogWatchHolder{
     String filename;
     String linename;
     String insightVersion;
+    Long seqno;
 
-    public LogWatchHolder(String date, String filename, String linename,String insightVersion) {
+    public LogWatchHolder(String date, String filename,Long seqn, String linename,String insightVersion) {
         this.date = date;
         this.filename = filename;
+        this.seqno=seqn;
         this.linename = linename;
         this.insightVersion=insightVersion;
     }
@@ -112,7 +114,7 @@ public  class LogWatcher {
         if(logL!=null){
             for (Iterator<Logs> iterator = logL.iterator(); iterator.hasNext();) {
             Logs next = iterator.next();
-            LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSubsurfaces(), next.getInsightVersion());
+            LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSequence(),next.getSubsurfaces(), next.getInsightVersion());
             //listOfExistingLogs.add(lw);
             mapOfExistingLogs.put(next.getLogpath(), lw);
             }
@@ -146,6 +148,28 @@ public  class LogWatcher {
                                 if(action.equals("Added")){
                                     
                                     System.out.println("watcher.LogWatcher. "+logfile+" was added");   
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException ex) {
+                                        Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    try{
+                                        extract();
+                                        commitToDb();
+                                        
+                                    }catch(ArrayIndexOutOfBoundsException aobe){
+                                        System.out.println("I think the log is still building..Will try again after 1 min");
+                                        try {
+                                            Thread.sleep(100000);
+                                        } catch (InterruptedException ex) {
+                                            Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        //if(counter<5){
+                                            extract();
+                                            commitToDb();
+                                        //}
+                                    }
+                                    
                                     
                                 }
                             }
@@ -162,7 +186,8 @@ public  class LogWatcher {
                     return null;
                 }
             }).get();
-        } catch (InterruptedException ex) {
+        } 
+          catch (InterruptedException ex) {
             Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
             Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
@@ -217,12 +242,20 @@ public  class LogWatcher {
                                             Date convjdate=jdate.parse(date+":"+time);
                                             
                                             String linename=parts[7].split("=")[1];
+                                            String qes=new StringBuilder(linename.split("_")[0]).reverse().toString();
+                                            System.out.println("watcher.LogWatcher.extract(): qes: "+qes);
+                                            String seq=qes.substring(0,3);
+                                            System.out.println("watcher.LogWatcher.extract(): seq: "+seq);
+                                            seq=new StringBuilder(seq).reverse().toString();
+                                            Long seqno=Long.valueOf(seq);
+                                            System.out.println("watcher.LogWatcher.extract(): seqno: "+seqno);
                                             String baseInsVersion=parts[14];
                                             String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
-                                              // System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
+                                            System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" seq: "+seqno+" sub:"+linename+" insVersion: "+baseInsVersion+" insbuild: "+revInsVersion);
+                                            
                             
-                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
+                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename,seqno, linename,insVersion);
                             System.out.print(".");
                            // if(!listOfExistingSubs.contains(linename)){
                            if(!mapOfExistingLogs.containsKey(filename)){
@@ -303,7 +336,7 @@ public  class LogWatcher {
                             l.setVolume(volume);
                             l.setInsightVersion(lgw.insightVersion);
                             l.setSubsurfaces(lgw.linename);
-                            
+                           l.setSequence(lgw.seqno);
                             lserv.createLogs(l);
                             
                             //   preVersion++;

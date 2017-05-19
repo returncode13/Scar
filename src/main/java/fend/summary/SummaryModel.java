@@ -9,6 +9,7 @@ import fend.session.node.jobs.type0.JobStepType0Model;
 import java.util.Map;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import watcher.SummaryStatusWatcher;
 
 /**
  *
@@ -16,8 +17,9 @@ import org.apache.commons.collections4.map.MultiValueMap;
  */
 public class SummaryModel {
     MultiMap<Integer,JobStepType0Model> depthNodeMap;
-
+    
     public SummaryModel() {
+        
     }
 
     public MultiMap<Integer, JobStepType0Model> getDepthNodeMap() {

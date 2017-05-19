@@ -102,7 +102,7 @@ public class HeadersViewController extends Stage implements Initializable {
      if(item==null || empty){
      setText(null);
      setStyle("");
-     }else if(item.getAlert()){
+     }else if(item.getQcAlert()){
      setStyle("-fx-background-color:tomato");
      }else
      {
@@ -127,7 +127,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     setText(null);
                     setStyle("");
                     setContextMenu(null);
-                }else if(item.getAlert()){
+                }else if(item.getQcAlert()){
                     setStyle("-fx-background-color:orange");
                     setTooltip(new Tooltip(item.getErrorMessage()));
                     setContextMenu(contextMenu);
@@ -143,7 +143,7 @@ public class HeadersViewController extends Stage implements Initializable {
          showLogsMenuItem.setOnAction(evt->{
              Sequences seq=row.getItem();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
-             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
+             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
             
@@ -221,7 +221,7 @@ public class HeadersViewController extends Stage implements Initializable {
               Sequences seq=row.getItem();
               String subName=seq.getSubsurface();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
-             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
+             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
             List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());

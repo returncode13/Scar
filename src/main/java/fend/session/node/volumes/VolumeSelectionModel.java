@@ -52,10 +52,26 @@ public class VolumeSelectionModel {
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
     private LogWatcher logTimerTask=null;                                   //watch for any new logs in ../000scratch/logs
-    //for Debug
+    private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
+    //for Debug                                                             //to get the seq object use the getSequenceObjBySequenceNumber() call inside HeadersModel class
+    
 
     private Long id;
     private Long volumeType;
+
+    public Map<Long, StringProperty> getLogstatusMapForSeq() {
+        return logstatusMapForSeq;
+    }
+
+    public void setLogstatusMapForSeq(Map<Long, StringProperty> logstatusMapForSeq) {
+        this.logstatusMapForSeq = logstatusMapForSeq;
+    }
+    
+    public void setLogstatusMapForSeq(Long seq,StringProperty s){
+        logstatusMapForSeq.put(seq,s);
+    }
+    
+    
     
     public HeadersModel getHeadersModel() {
         

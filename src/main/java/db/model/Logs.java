@@ -49,7 +49,9 @@ public class Logs implements Serializable{
     
     @Column(name="subsurfaces",length=1024)
     private String subsurfaces;
-
+    
+    @Column(name="sequence")
+    private Long sequence;
     
     @Column(name="insightVersion",length=1024)
     private String insightVersion;
@@ -86,6 +88,14 @@ public class Logs implements Serializable{
 
     public void setSubsurfaces(String sublines) {
         this.subsurfaces = sublines;
+    }
+
+    public Long getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
     }
     
     

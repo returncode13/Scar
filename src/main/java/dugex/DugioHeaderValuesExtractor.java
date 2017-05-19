@@ -254,31 +254,77 @@ futures.add(
                  Headers hdr = iterator.next();
                          //if(hdr.getTimeStamp().)
                          System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
+                                     Long traceCount;
+                                     Long cmpMax;
+                                     Long cmpMin;
+                                     Long cmpInc;
+                                     
+                                     Long inlineMax;
+                                     Long inlineMin;
+                                     Long inlineInc;
+                                     Long xlineMax;
+                                     Long xlineMin;
+                                     Long xlineInc;
+                                     Long dugShotMax;
+                                     Long dugShotMin;
+                                     Long dugShotInc;
+                                     Long dugChannelMax;
+                                     Long dugChannelMin;
+                                     Long dugChannelInc;
+                                     Long offsetMax;
+                                     Long offsetMin;
+                                     Long offsetInc;
+                        try{
+                                     traceCount=Long.valueOf(forTraces(hdr));
+                                     cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                                     cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                                     cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                                     
+                                     inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                                     inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                                     inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                                     xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                                     xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                                     xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                                     dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                                     dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                                     dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                                     dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                                     dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                                     dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                                     offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                                     offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                                     offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                        
+                        }
+                        catch(NumberFormatException nfe){
+                                     traceCount=-1L;
+                                     cmpMax=-1L;
+                                     cmpMin=-1L;
+                                     cmpInc=-1L;
+                                     
+                                     inlineMax=-1L;
+                                     inlineMin=-1L;
+                                     inlineInc=-1L;
+                                     xlineMax=-1L;
+                                     xlineMin=-1L;
+                                     xlineInc=-1L;
+                                     dugShotMax=-1L;
+                                     dugShotMin=-1L;
+                                     dugShotInc=-1L;
+                                     dugChannelMax=-1L;
+                                     dugChannelMin=-1L;
+                                     dugChannelInc=-1L;
+                                     offsetMax=-1L;
+                                     offsetMin=-1L;
+                                     offsetInc=-1L;
+                        }
                          
-                 Long traceCount=Long.valueOf(forTraces(hdr));
                                      
                                      /* Long[] values=new Long[dmh.metaHeaders.length];
                                      keyValueExtractor(hdr, values);*/
                                      
-                                     Long cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
-                                     Long cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
-                                     Long cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
                                      
-                                     Long inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
-                                     Long inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
-                                     Long inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
-                                     Long xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
-                                     Long xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
-                                     Long xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
-                                     Long dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
-                                     Long dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
-                                     Long dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
-                                     Long dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
-                                     Long dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
-                                     Long dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
-                                     Long offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
-                                     Long offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
-                                     Long offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
                                      
                                      
                                      

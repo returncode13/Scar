@@ -1369,9 +1369,9 @@ public class SessionController implements Initializable {
                                 targetVolQ.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVolQ.printQC();
-                                targetSeqQ.setAlert(Boolean.TRUE);
+                                targetSeqQ.setQcAlert(Boolean.TRUE);
                                 targetSeqQ.setErrorMessage("version mismatch");
-                                targetSubQ.setAlert(Boolean.TRUE);
+                                targetSubQ.setQcAlert(Boolean.TRUE);
                                 targetSubQ.setErrorMessage("version mismatch");*/
                             
                         }
@@ -1388,9 +1388,9 @@ public class SessionController implements Initializable {
                                 targetVolQ.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVolQ.printQC();
-                                targetSeqQ.setAlert(Boolean.TRUE);
+                                targetSeqQ.setQcAlert(Boolean.TRUE);
                                 targetSeqQ.setErrorMessage("version mismatch");
-                                targetSubQ.setAlert(Boolean.TRUE);
+                                targetSubQ.setQcAlert(Boolean.TRUE);
                                 targetSubQ.setErrorMessage("version mismatch");*/
                             }
                             else{
@@ -1400,9 +1400,9 @@ public class SessionController implements Initializable {
                                 targetVolQ.setQcFlagProperty(Boolean.FALSE);
                                 System.out.println("After entering loop");
                                 targetVolQ.printQC();
-                                targetSeqQ.setAlert(Boolean.FALSE);
+                                targetSeqQ.setQcAlert(Boolean.FALSE);
                                 targetSeqQ.setErrorMessage("");
-                                targetSubQ.setAlert(Boolean.FALSE);
+                                targetSubQ.setQcAlert(Boolean.FALSE);
                                 targetSubQ.setErrorMessage("");*/
                             }
                         }
@@ -1411,9 +1411,9 @@ public class SessionController implements Initializable {
                             System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
                             child.setQcFlagProperty(QCFailure);
                             targetVolQ.setQcFlagProperty(QCFailure);
-                            targetSeqQ.setAlert(QCFailure);
+                            targetSeqQ.setQcAlert(QCFailure);
                             targetSeqQ.setInsightFlag(insightFail);
-                            targetSubQ.setAlert(QCFailure);
+                            targetSubQ.setQcAlert(QCFailure);
                               if(insightFail && !traceFail){
                                    errorMessage="version mismatch";
                                }
@@ -1533,16 +1533,16 @@ public class SessionController implements Initializable {
                                 child.setQcFlagProperty(Boolean.TRUE);
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 targetVol.printQC();
-                                targetSeq.setAlert(Boolean.TRUE);
-                                targetSub.setAlert(Boolean.TRUE);
+                                targetSeq.setQcAlert(Boolean.TRUE);
+                                targetSub.setQcAlert(Boolean.TRUE);
                                 }
                                 else{
                                   /* System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Comparing traceCounts! : "+refSub.getTraceCount()+" "+ refSub.getTraceCount().equals(targetSub.getTraceCount())+" "+targetSub.getTraceCount());
                                   System.out.println("fend.session.SessionController.setQCFlag(): FALSE:: Setting QC flags to FALSE");*/
                               /*  child.setQcFlagProperty(Boolean.FALSE);
                                 targetVol.setQcFlagProperty(Boolean.FALSE);
-                                targetSeq.setAlert(Boolean.FALSE);
-                                targetSub.setAlert(Boolean.FALSE);
+                                targetSeq.setQcAlert(Boolean.FALSE);
+                                targetSub.setQcAlert(Boolean.FALSE);
                                 }
                               */
                               
@@ -1568,8 +1568,8 @@ public class SessionController implements Initializable {
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
-                                targetSeq.setAlert(Boolean.TRUE);
-                                targetSub.setAlert(Boolean.TRUE);
+                                targetSeq.setQcAlert(Boolean.TRUE);
+                                targetSub.setQcAlert(Boolean.TRUE);
                                 targetSeq.setErrorMessage("tracecount mismatch");
                                 targetSub.setErrorMessage("tracecount mismatch");*/
                                 }
@@ -1630,9 +1630,9 @@ public class SessionController implements Initializable {
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
-                                targetSeq.setAlert(Boolean.TRUE);
+                                targetSeq.setQcAlert(Boolean.TRUE);
                                 targetSeq.setErrorMessage("version mismatch");
-                                targetSub.setAlert(Boolean.TRUE);
+                                targetSub.setQcAlert(Boolean.TRUE);
                                 targetSub.setErrorMessage("version mismatch");*/
                             
                         }
@@ -1649,9 +1649,9 @@ public class SessionController implements Initializable {
                                 targetVol.setQcFlagProperty(Boolean.TRUE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
-                                targetSeq.setAlert(Boolean.TRUE);
+                                targetSeq.setQcAlert(Boolean.TRUE);
                                 targetSeq.setErrorMessage("version mismatch");
-                                targetSub.setAlert(Boolean.TRUE);
+                                targetSub.setQcAlert(Boolean.TRUE);
                                 targetSub.setErrorMessage("version mismatch");*/
                             }
                             // TO BE ENABLE AFTER CHECKING
@@ -1663,9 +1663,9 @@ public class SessionController implements Initializable {
                                 targetVol.setQcFlagProperty(Boolean.FALSE);
                                 System.out.println("After entering loop");
                                 targetVol.printQC();
-                                targetSeq.setAlert(Boolean.FALSE);
+                                targetSeq.setQcAlert(Boolean.FALSE);
                                 targetSeq.setErrorMessage("");
-                                targetSub.setAlert(Boolean.FALSE);
+                                targetSub.setQcAlert(Boolean.FALSE);
                                 targetSub.setErrorMessage("");*/
                             }
                             
@@ -1680,8 +1680,8 @@ public class SessionController implements Initializable {
                         targetVol.setQcFlagProperty(Boolean.TRUE);
                         System.out.println("After entering loop");
                         targetVol.printQC();
-                        targetSeq.setAlert(Boolean.TRUE);
-                        targetSub.setAlert(Boolean.TRUE);
+                        targetSeq.setQcAlert(Boolean.TRUE);
+                        targetSub.setQcAlert(Boolean.TRUE);
                         }*/
                         
                                Boolean QCFailure=insightFail || traceFail;
@@ -1691,8 +1691,8 @@ public class SessionController implements Initializable {
                                System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
                                child.setQcFlagProperty(QCFailure);
                                targetVol.setQcFlagProperty(QCFailure);
-                               targetSeq.setAlert(QCFailure);
-                               targetSub.setAlert(QCFailure);
+                               targetSeq.setQcAlert(QCFailure);
+                               targetSub.setQcAlert(QCFailure);
                                if(insightFail && !traceFail){
                                    errorMessage="version mismatch";
                                }

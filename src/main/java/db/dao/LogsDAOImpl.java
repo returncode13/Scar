@@ -16,7 +16,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 /**
  *
@@ -250,5 +252,72 @@ public class LogsDAOImpl implements LogsDAO{
         }
         return result;
     }
+
+    @Override
+    public List<Logs> getLogsFor(Volume v, Long seq) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("sequence", seq));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Logs> getSequencesFor(Volume v) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.setProjection(Projections.distinct(Projections.projectionList().add(Projections.property("sequence"),"sequence")));
+            criteria.setResultTransformer(Transformers.aliasToBean(Logs.class));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Logs> getSubsurfacesFor(Volume v, Long seq) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.eq("sequence", seq));
+            criteria.setProjection(Projections.distinct(Projections.projectionList().add(Projections.property("subsurfaces"),"subsurfaces")));
+            criteria.setResultTransformer(Transformers.aliasToBean(Logs.class));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    
+
+    
     
 }

@@ -165,8 +165,26 @@ public class SummarySequenceModel {
 
     public SummarySequenceModel() {
     }
+    private final StringProperty notApplicableDependency = new SimpleStringProperty("P");
+
+    public String getNotApplicableDependency() {
+        return notApplicableDependency.get();
+    }
+
+    public void setNotApplicableDependency(String value) {
+        notApplicableDependency.set(value);
+    }
+
+    public StringProperty notApplicableDependencyProperty() {
+        return notApplicableDependency;
+    }
     
-    private final StringProperty notApplicable = new SimpleStringProperty(this,"NA");
+    
+    
+    
+    
+    
+    private final StringProperty notApplicable = new SimpleStringProperty("");
 
     public String getNotApplicable() {
         return notApplicable.get();
@@ -175,7 +193,7 @@ public class SummarySequenceModel {
     public StringProperty notApplicableProperty() {
         return notApplicable;
     }
-    private final BooleanProperty notApplicableBoolean = new SimpleBooleanProperty(this,"false");
+    private final BooleanProperty notApplicableBoolean = new SimpleBooleanProperty();
 
     public boolean isNotApplicableBoolean() {
         return notApplicableBoolean.get();
@@ -185,7 +203,7 @@ public class SummarySequenceModel {
     public BooleanProperty notApplicableBooleanProperty() {
         return notApplicableBoolean;
     }
-    private final LongProperty notApplicableLong = new SimpleLongProperty(this,"0L");
+    private final LongProperty notApplicableLong = new SimpleLongProperty();
 
     public long getNotApplicableLong() {
         return notApplicableLong.get();
