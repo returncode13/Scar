@@ -53,7 +53,7 @@ public class SummaryStatusWatcher {
     public SummaryStatusWatcher(VolumeSelectionModel volumeSelectionModel) {
         this.volumeSelectionModel = volumeSelectionModel;
         this.volume=vserv.getVolume(this.volumeSelectionModel.getId());
-           System.out.println("watcher.SummaryStatusWatcher.<init>()");
+           
         ExecutorService executorserv= Executors.newFixedThreadPool(1);
         try{
             executorserv.submit(new Callable<Void>() {
@@ -116,7 +116,7 @@ public class SummaryStatusWatcher {
                         
                     };
                     timer=new Timer();
-                    timer.schedule(task, new Date(),30000);
+                    timer.schedule(task, new Date(),100000);                        //check for log updates every ten minutes
                     
                     
                     return null;

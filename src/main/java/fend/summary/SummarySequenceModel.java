@@ -108,11 +108,7 @@ public class SummarySequenceModel {
 
     public void setSequence(Sequences sequence) {
         this.sequence = sequence;
-        /*  this.run.set(this.sequence.getRun());
-        this.dep.set(this.sequence.getDependency());
-        this.ins.set(this.sequence.isInsightFlag());
-        this.wfversion.set(this.sequence.getWorkflowVersion());
-        this.qcflag.set(this.sequence.getQcStatus());*/
+        
         this.seq.set(this.sequence.getSequenceNumber());
         
     }

@@ -162,7 +162,7 @@ public class SummaryController extends Stage{
                     TableColumn<SummarySequenceModel,String> run=new TableColumn<>("Run");
                     TableColumn<SummarySequenceModel,String> dep=new TableColumn<>("Dependency");
                     TableColumn<SummarySequenceModel,String> ins=new TableColumn<>("InsightVersion");
-                    TableColumn<SummarySequenceModel,Long> wf=new TableColumn<>("Workflow");
+                    TableColumn<SummarySequenceModel,String> wf=new TableColumn<>("Workflow");
                     TableColumn<SummarySequenceModel,String > qc=new TableColumn<>("QC");
                     
                     run.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
@@ -265,9 +265,9 @@ public class SummaryController extends Stage{
                            }
                         }
                     });
-                    wf.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, Long>, ObservableValue<Long>>() {
+                    wf.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
-                        public ObservableValue<Long> call(TableColumn.CellDataFeatures<SummarySequenceModel, Long> param) {
+                        public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
                            // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().wfversionProperty().asObject();
                            // return  param.getValue().wfversionProperty().asObject();
                           //  return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).workflowVersionProperty().asObject();
@@ -275,15 +275,15 @@ public class SummaryController extends Stage{
                                //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).wfversionProperty().asObject();
                                Sequences ss=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                                if(ss==null){
-                                   return param.getValue().notApplicableLongProperty().asObject(); 
+                                   return param.getValue().notApplicableProperty(); 
                                }
                                else{
-                                   return  ss.workflowVersionProperty().asObject();
+                                   return  ss.workflowSeqPropertyProperty();
                                }
                            }catch(ArrayIndexOutOfBoundsException ae){
-                               return param.getValue().notApplicableLongProperty().asObject();
+                               return param.getValue().notApplicableProperty();
                            }catch(IndexOutOfBoundsException ie){
-                                return param.getValue().notApplicableLongProperty().asObject();
+                                return param.getValue().notApplicableProperty();
                            }
                            
                         }
@@ -360,6 +360,8 @@ public class SummaryController extends Stage{
         createData();
         ObservableList<SummarySequenceModel> tableList=FXCollections.observableArrayList(sumSeqModelSet);
         tableView.setItems(tableList);
+        
+        
     }
     
     void createData(){
@@ -516,8 +518,13 @@ public class SummaryController extends Stage{
     void setView(SummaryNode sn){
         this.node=sn;
         this.setTitle("Summary");
+        this.setOnCloseRequest(event->{removeModelRunstatus();});
         this.setScene(new Scene(node));
         this.showAndWait();
+    }
+
+    private void removeModelRunstatus() {
+        model.destroyRunStatusThreads();
     }
 }
 

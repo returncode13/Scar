@@ -197,19 +197,7 @@ public class HeaderCollector {
                 Boolean success=latestLog.getCompletedsuccessfully();
                 
                 
-                String runstatus=new String("U");                   //default to unknown status;
-                if(errored){
-                    runstatus="E";
-                }
-                if(cancelled){
-                    runstatus="C";
-                }
-                if(running){
-                    runstatus="R";
-                }
-                if(success){
-                    runstatus="X";
-                }
+             
                 Long wfMaxVersion=0L;
                 if(latestLog!=null){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
@@ -322,6 +310,7 @@ public class HeaderCollector {
           Sequences sq=new Sequences();
           ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(next);
           sq.setSubsurfaces(ssubs);
+          
           seqList.add(sq);
       }
             

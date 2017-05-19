@@ -371,40 +371,7 @@ public class SubSurface extends Sequences implements Serializable{
     public void setNumberOfRuns(Long version) {
         this.numberOfRuns.set(version);
     }
-    /*
-    public Long getWorkflowVersion() {
-    return workflowVersion.get();
-    }
-    
-    public void setWorkflowVersion(Long workflowVersions) {
-    this.workflowVersion.set(workflowVersions);
-    }
-    
-    
-    public Boolean getInsightFlag() {
-    return insightFlag;
-    }
-    
-    public void setInsightFlag(Boolean insightFlag) {
-    this.insightFlag = insightFlag;
-    }
-    
-    public String getDependencyStatus() {
-    return dependencyStatus;
-    }
-    
-    public void setDependencyStatus(String dependencyStatus) {
-    this.dependencyStatus = dependencyStatus;
-    }
-    
-    public String getRunStatus() {
-    return runStatus;
-    }
-    
-    public void setRunStatus(String runStatus) {
-    this.runStatus = runStatus;
-    }*/
-    
+   
     
     
     

@@ -26,20 +26,7 @@ public class SummaryVolumeNodeModel {
    
     static int count=0;
     private VolumeSelectionModel volumeSelectionModel;
-    /*private final ObjectProperty<QCModel> qcmodel = new SimpleObjectProperty<>(this,"qcmodel");
-    
-    public QCModel getQcmodel() {
-    return qcmodel.get();
-    }
-    
-    public void setQcmodel(QCModel value) {
-    qcmodel.set(value);
-    }
-    
-    public ObjectProperty qcmodelProperty() {
-    return qcmodel;
-    }*/
-    
+   
     private final StringProperty run = new SimpleStringProperty(this,"run");
     private final StringProperty dep = new SimpleStringProperty(this,"dep");
     //private final BooleanProperty ins = new SimpleBooleanProperty(this,"ins");
@@ -135,16 +122,7 @@ public class SummaryVolumeNodeModel {
     }*/
     
     
-    private List<QCModel> listOfQcModels=new ArrayList<>();
-    
-    public List<QCModel> getListOfQcModels() {
-    return listOfQcModels;
-    }
-    
-    public void setListOfQcModels(List<QCModel> listOfQcModels) {
-    this.listOfQcModels = listOfQcModels;
-    }
-    
+  
 
     public VolumeSelectionModel getVolumeSelectionModel() {
         return volumeSelectionModel;

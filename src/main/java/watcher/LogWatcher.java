@@ -243,12 +243,12 @@ public  class LogWatcher {
                                             
                                             String linename=parts[7].split("=")[1];
                                             String qes=new StringBuilder(linename.split("_")[0]).reverse().toString();
-                                            System.out.println("watcher.LogWatcher.extract(): qes: "+qes);
+                                          //  System.out.println("watcher.LogWatcher.extract(): qes: "+qes);
                                             String seq=qes.substring(0,3);
-                                            System.out.println("watcher.LogWatcher.extract(): seq: "+seq);
+                                            //System.out.println("watcher.LogWatcher.extract(): seq: "+seq);
                                             seq=new StringBuilder(seq).reverse().toString();
                                             Long seqno=Long.valueOf(seq);
-                                            System.out.println("watcher.LogWatcher.extract(): seqno: "+seqno);
+                                            //System.out.println("watcher.LogWatcher.extract(): seqno: "+seqno);
                                             String baseInsVersion=parts[14];
                                             String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
