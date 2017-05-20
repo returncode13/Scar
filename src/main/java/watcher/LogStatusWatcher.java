@@ -141,7 +141,7 @@ public class LogStatusWatcher {
                             Boolean success=log.getCompletedsuccessfully();
                             if()*/
                             lserv.updateLogs(log.getIdLogs(), log);
-                            //LogStatusWatcher.this.volselmodel.setLogstatusMapForSeq(log.getSeqn(),);
+                            //LogStatusWatcher.this.volselmodel.addToLogstatusMapForSeq(log.getSeqn(),);
                         }
                         
                         

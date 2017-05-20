@@ -28,8 +28,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 /**
  *
@@ -44,7 +47,7 @@ public class SummaryStatusWatcher {
     private List<Logs> logsWithDistinctSeq;
     private List<Long> seqs=new ArrayList<>();
     private Map<Long,List<Logs>> seqSubLogsDistinct=new HashMap<>();
-    private Map<Long,String> seqrunStatus=new HashMap<>();
+    private ObservableMap<Long,String> seqrunStatus=FXCollections.observableHashMap();
     
     
     TimerTask task;
@@ -110,8 +113,12 @@ public class SummaryStatusWatcher {
                                 }
                                 
                                 StringProperty runprop=new SimpleStringProperty(runstatus);
-                                volumeSelectionModel.setLogstatusMapForSeq(seq, runprop);
+                                seqrunStatus.put(seq, runstatus);
+                                
                             }
+                            
+                            volumeSelectionModel.setLogstatusMapForSeq(seqrunStatus);
+                            
                         }
                         
                     };

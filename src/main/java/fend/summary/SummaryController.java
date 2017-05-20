@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
@@ -183,7 +184,8 @@ public class SummaryController extends Stage{
                                }*/
                                
                                
-                               return param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getLogstatusMapForSeq().get(param.getValue().getSeq());
+                               //return param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getLogstatusMapForSeq().get(param.getValue().getSeq());
+                                return param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().logstatusMapForSeqProperty().valueAt(param.getValue().getSeq());
                                
                            }catch(ArrayIndexOutOfBoundsException ae){
                                return param.getValue().notApplicableProperty();
@@ -195,6 +197,7 @@ public class SummaryController extends Stage{
                          // return  param.getValue().runProperty();
                         }
                     });
+                    
                     dep.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {

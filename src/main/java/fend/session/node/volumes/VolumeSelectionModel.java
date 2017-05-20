@@ -20,12 +20,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import watcher.LogWatcher;
@@ -52,22 +55,39 @@ public class VolumeSelectionModel {
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
     private LogWatcher logTimerTask=null;                                   //watch for any new logs in ../000scratch/logs
-    private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
+    //private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
     //for Debug                                                             //to get the seq object use the getSequenceObjBySequenceNumber() call inside HeadersModel class
     
 
     private Long id;
     private Long volumeType;
+    private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
 
-    public Map<Long, StringProperty> getLogstatusMapForSeq() {
+    public ObservableMap getLogstatusMapForSeq() {
+        return logstatusMapForSeq.get();
+    }
+
+    public void setLogstatusMapForSeq(ObservableMap value) {
+        logstatusMapForSeq.set(value);
+    }
+
+    public MapProperty logstatusMapForSeqProperty() {
         return logstatusMapForSeq;
     }
 
-    public void setLogstatusMapForSeq(Map<Long, StringProperty> logstatusMapForSeq) {
-        this.logstatusMapForSeq = logstatusMapForSeq;
+    
+    
+    
+    /*
+    public Map<Long, StringProperty> getLogstatusMapForSeq() {
+    return logstatusMapForSeq;
     }
     
-    public void setLogstatusMapForSeq(Long seq,StringProperty s){
+    public void addToLogstatusMapForSeq(Map<Long, StringProperty> logstatusMapForSeq) {
+    this.logstatusMapForSeq = logstatusMapForSeq;
+    }
+    */
+    public void addToLogstatusMapForSeq(Long seq,StringProperty s){
         logstatusMapForSeq.put(seq,s);
     }
     
