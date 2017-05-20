@@ -144,7 +144,7 @@ public class VolumeSelectionController  {
        // hmodel.setObsHList(obSeqs);
        // model.setHeadersModel(hmodel);
                                     
-        HeadersNode hnode=new HeadersNode(model.getHeadersModel()); //displays the table. see method setView();
+        HeadersNode hnode=new HeadersNode(model.getHeadersModel(),0); //displays the table. see method setView();
         HeadersViewController hvc=hnode.getHeadersViewController();   
         
 

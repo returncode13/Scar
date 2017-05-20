@@ -62,6 +62,7 @@ import watcher.LogWatcher;
  */
 public class HeadersViewController extends Stage implements Initializable {
 
+     private Map<Integer,TreeItem<Sequences>> idxForTree=new HashMap<>();
     
     private HeadersModel hmodel;
     private HeadersNode hnode;
@@ -70,7 +71,7 @@ public class HeadersViewController extends Stage implements Initializable {
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
     String vname=new String();        
-    
+   
        @FXML
     private TreeTableView<Sequences> treetableView;
        
@@ -87,7 +88,7 @@ public class HeadersViewController extends Stage implements Initializable {
         // TODO
     }    
 
-    void setModel(HeadersModel lsm) {
+    void setModel(HeadersModel lsm,int seqSelection) {
         if(lsm==null){
             System.out.println("fend.session.node.headers.setModel: lsm is NULL");
         }
@@ -377,10 +378,11 @@ public class HeadersViewController extends Stage implements Initializable {
      
      List<TreeItem<Sequences>> treeSeq = new ArrayList<>();
      Map<String,Long> gunShotMap;
-     
+     idxForTree.clear();
      
      for(Sequences s:seqListObs){
          gunShotMap=new HashMap<>();
+         
          List<SubSurface> subs=s.getSubsurfaces();
         TreeItem<Sequences> seqroot=new TreeItem<>(s);
         String tempTimeStamp=subs.get(0).getTimeStamp();
@@ -466,6 +468,12 @@ public class HeadersViewController extends Stage implements Initializable {
                  System.out.println("fend.session.node.headers.setRowFactory(): CMP inc is not the same across the sequence!: check the table");
 
              }
+             Integer seqSel=new Integer(sub.getSequenceNumber()+"");
+             if(seqSel==seqSelection){
+                 idxForTree.put(seqSel, seqroot);
+                 
+             }
+             
              seqroot.getChildren().add(subItem);
          }
          
@@ -490,6 +498,7 @@ public class HeadersViewController extends Stage implements Initializable {
          s.setXlineMin(tempXlineMin);
          s.setTraceCount(tempTrcCnt);
          treeSeq.add(seqroot);
+         
      }
      
      Sequences seqZero=new Sequences();
@@ -499,7 +508,21 @@ public class HeadersViewController extends Stage implements Initializable {
      
      treetableView.setRoot(rootOfAllseq);
      treetableView.setShowRoot(false);
+     treetableView.requestFocus();
+     if(seqSelection!=0)
+     {
+         int rww=treetableView.getRow(idxForTree.get(seqSelection));
+         treetableView.getSelectionModel().select(rww);
+         treetableView.getFocusModel().focus(rww);
+         treetableView.scrollTo(rww);
+         idxForTree.get(seqSelection).setExpanded(true);
+     }
+     else{
+         treetableView.getSelectionModel().selectFirst();
+     }
      
+     
+   
      
     }
 

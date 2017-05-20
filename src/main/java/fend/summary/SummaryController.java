@@ -8,6 +8,7 @@ package fend.summary;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.node.headers.HeadersModel;
+import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.volumes.VolumeSelectionModel;
@@ -25,7 +26,11 @@ import javafx.collections.ObservableSet;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -165,7 +170,7 @@ public class SummaryController extends Stage{
                     TableColumn<SummarySequenceModel,String> ins=new TableColumn<>("InsightVersion");
                     TableColumn<SummarySequenceModel,String> wf=new TableColumn<>("Workflow");
                     TableColumn<SummarySequenceModel,String > qc=new TableColumn<>("QC");
-                    
+                  //The values that the columns read  
                     run.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
@@ -197,6 +202,8 @@ public class SummaryController extends Stage{
                          // return  param.getValue().runProperty();
                         }
                     });
+                    
+                    
                     
                     dep.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
@@ -316,6 +323,37 @@ public class SummaryController extends Stage{
                     });
                     
                     
+                    
+                    //The context menus for each column
+                    run.setCellFactory(new Callback<TableColumn<SummarySequenceModel, String>, TableCell<SummarySequenceModel, String>>() {
+                        @Override
+                        public TableCell<SummarySequenceModel, String> call(TableColumn<SummarySequenceModel, String> col) {
+                           TableCell<SummarySequenceModel,String> cell=new TableCell<>();
+                           cell.textProperty().bind(cell.itemProperty());
+                           final ContextMenu contextMenu=new ContextMenu();
+                           final MenuItem showSeq=new MenuItem("seq information");
+                           showSeq.setOnAction(e->{
+                               String cellString=cell.getItem();
+                               SummarySequenceModel summarySequenceModel=(SummarySequenceModel) cell.getTableRow().getItem();
+                               
+                               System.out.println(".call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
+                               Sequences ss=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                           
+                           
+                           });
+                           contextMenu.getItems().add(showSeq);
+                           cell.setContextMenu(contextMenu);
+                                   
+                           return cell;
+                        }
+                    });
+                    
                     /*for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
                     Sequences seq = iterator1.next();
                     
@@ -363,8 +401,23 @@ public class SummaryController extends Stage{
         createData();
         ObservableList<SummarySequenceModel> tableList=FXCollections.observableArrayList(sumSeqModelSet);
         tableView.setItems(tableList);
+        tableView.getSelectionModel().setCellSelectionEnabled(true);
         
+        /*tableView.setRowFactory(tv->{
+        ContextMenu contextMenu=new ContextMenu();
+        MenuItem showSequence= new MenuItem("sequence information");
+        contextMenu.getItems().add(showSequence);
+        TableRow<SummarySequenceModel> row=new TableRow<SummarySequenceModel>(){
         
+        @Override
+        protected void updateItem(SummarySequenceModel item,boolean empty){
+        super.updateItem(item, empty);
+        setContextMenu(contextMenu);
+        
+        }
+        };
+        return null;
+        });*/
     }
     
     void createData(){

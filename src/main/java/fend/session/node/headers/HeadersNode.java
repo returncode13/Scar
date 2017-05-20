@@ -21,7 +21,7 @@ public class HeadersNode extends AnchorPane{
     private final URL location;
     private HeadersViewController lsc;
     
-    public HeadersNode(HeadersModel lsm)
+    public HeadersNode(HeadersModel lsm,int selectionrow)
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
@@ -46,7 +46,7 @@ public class HeadersNode extends AnchorPane{
                
                // sc.setId(Long.valueOf(getId()));
                 
-                lsc.setModel(lsm);
+                lsc.setModel(lsm,selectionrow);
                 lsc.setView(this) ;
                 
                

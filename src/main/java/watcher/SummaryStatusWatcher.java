@@ -47,6 +47,7 @@ public class SummaryStatusWatcher {
     private List<Logs> logsWithDistinctSeq;
     private List<Long> seqs=new ArrayList<>();
     private Map<Long,List<Logs>> seqSubLogsDistinct=new HashMap<>();
+    private Map<Long,String> seqstat=new HashMap<>();
     private ObservableMap<Long,String> seqrunStatus=FXCollections.observableHashMap();
     
     
@@ -113,6 +114,16 @@ public class SummaryStatusWatcher {
                                 }
                                 
                                 StringProperty runprop=new SimpleStringProperty(runstatus);
+                                if(seqrunStatus==null){
+                                    System.out.println("watcher.SummaryStatusWatcher.<init>().run(): seqrunStatus"+seqrunStatus==null?" is NULL":"");
+                                }
+                                if(seq==null){
+                                    System.out.println(".watcher.SummaryStatusWatcher.<init>().run(): value of seq: is NULL");
+                                }
+                                if(runstatus==null){
+                                    System.out.println("watcher.SummaryStatusWatcher.<init>().run(): value of runstatus: is NULL");
+                                }
+                                
                                 seqrunStatus.put(seq, runstatus);
                                 
                             }
