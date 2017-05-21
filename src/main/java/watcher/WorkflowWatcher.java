@@ -102,6 +102,7 @@ public class WorkflowWatcher {
                 while((value=br.readLine())!=null){
                    // System.out.println("watcher.WorkflowWatcher.init<>.call(): "+value);
                     content+=value;
+                    content+="\n";
                 };
                 
                 workflowHolder.context=content;
@@ -127,7 +128,7 @@ public class WorkflowWatcher {
                         vers=wver.getWfversion();               //get the version from the workflow
                     }
                     Workflow newWorkflow=new Workflow();
-                    newWorkflow.setContents(workflowHolder.context.substring(0, 15));
+                    newWorkflow.setContents(workflowHolder.context);
                     newWorkflow.setMd5sum(workflowHolder.md5);
                     newWorkflow.setWfversion(++vers);       //increment the version
                     newWorkflow.setVolume(WorkflowWatcher.this.volume);

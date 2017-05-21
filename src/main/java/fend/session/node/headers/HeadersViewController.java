@@ -253,7 +253,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     wtabm1.setWorkflowvContent(wf.getContents());
                     wtabList.add(wtabm);
                 }
-                WorkflowVersionModel wfmodel=new WorkflowVersionModel();
+                WorkflowVersionModel wfmodel=new WorkflowVersionModel(lsm.getVolmodel());
                 List<WorkflowVersionTabModel> lwflist=new ArrayList<>(wtabList);
                 System.out.println("fend.session.node.headers.HeadersViewController.setModel(): about to set Wf model: lwlist size: "+lwflist.size());
                 wfmodel.setWfmodel(lwflist);

@@ -58,7 +58,8 @@ public class VolumeSelectionModel {
     //private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
     //for Debug                                                             //to get the seq object use the getSequenceObjBySequenceNumber() call inside HeadersModel class
     
-
+  //  private Set<Long> wfVersionsUsedinVolume=new HashSet<>();
+    
     private Long id;
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
@@ -75,6 +76,14 @@ public class VolumeSelectionModel {
         return logstatusMapForSeq;
     }
 
+    /*public Set<Long> getWfVersionsUsedinVolume() {
+    return wfVersionsUsedinVolume;
+    }
+    
+    public void setWfVersionsUsedinVolume(Set<Long> wfVersionsUsedinVolume) {
+    this.wfVersionsUsedinVolume = wfVersionsUsedinVolume;
+    }*/
+    
     
     
     

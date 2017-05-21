@@ -7,8 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<fx:root id="AnchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../landingResources/landing.css" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="fend.session.node.headers.workflows.WorkflowVersionController">
+<fx:root id="AnchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../landingResources/landing.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.session.node.headers.workflows.WorkflowVersionController">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -16,7 +15,7 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Utilities">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Compare Versions" />
+                    <MenuItem fx:id="compareVersions" mnemonicParsing="false" onAction="#compare" text="Compare Versions" />
                   </items>
                 </Menu>
               </menus>
