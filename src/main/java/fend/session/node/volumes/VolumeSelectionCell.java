@@ -40,7 +40,7 @@ private static int i=0;
         if(item!=null && item.isInflated()){
             
           // System.out.println("VSCell: inflating xml "+i+" headerisDisabled: " + item.getHeaderButtonDisabledStatusProperty().get()+" label: "+item.getLabel() +" isEmpty: "+empty);
-            URL location =getClass().getClassLoader().getResource("nodeResources/volumes/VolumeSelectionView_1.fxml");
+            URL location =getClass().getClassLoader().getResource("nodeResources/volumes/VolumeSelectionView_Q_def_1.fxml");
             
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(location);

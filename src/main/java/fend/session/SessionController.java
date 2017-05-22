@@ -1269,7 +1269,7 @@ public class SessionController implements Initializable {
                         }
                            
                        
-            VolumeSelectionModel targetVolQ=new VolumeSelectionModel(1L);
+            VolumeSelectionModel targetVolQ=new VolumeSelectionModel(1L,child);
             Sequences targetSeqQ=new Sequences();
             SubSurface targetSubQ=refSubQ;
                         
@@ -1464,7 +1464,7 @@ public class SessionController implements Initializable {
          
          for (Iterator<SubSurface> iterator = csubs.iterator(); iterator.hasNext();) {
             SubSurface c = iterator.next();
-            VolumeSelectionModel targetVol=new VolumeSelectionModel(1L);
+            VolumeSelectionModel targetVol=new VolumeSelectionModel(1L,child);
             Sequences targetSeq=new Sequences();
             SubSurface targetSub=c;
             SubSurface refSub=new SubSurface();

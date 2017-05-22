@@ -8,16 +8,29 @@ package fend.session.node.volumes;
 
 import collector.HeaderCollector;
 import db.model.Headers;
+import db.model.QcType;
+import db.model.Sessions;
+import db.services.QcTypeService;
+import db.services.QcTypeServiceImpl;
+import db.services.SessionsService;
+import db.services.SessionsServiceImpl;
+import fend.session.SessionModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.HeadersViewController;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.volumes.qcMatrix.QcMatrixNode;
+import fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListNode;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -50,6 +63,9 @@ public class VolumeSelectionController  {
     final private DirectoryChooser dirChooser = new DirectoryChooser();
     private HeaderCollector hcollector=new HeaderCollector();
     private Long id;
+    private QcTypeService qserv=new QcTypeServiceImpl();
+    private JobStepType0Model parentjob;
+    private SessionsService sserv=new SessionsServiceImpl();
     
     final private ChangeListener<String> VOLUME_LABEL_CHANGE_LISTENER=new ChangeListener<String>() {
 
@@ -95,11 +111,87 @@ public class VolumeSelectionController  {
     @FXML
     private CheckBox qcCheckBox;
     
+    @FXML
+    private Button qMatrixBtn;
+
+    
     private VolumeSelectionModel model;
-     private  TableView<SubSurface> table;
+    private  TableView<SubSurface> table;
      
      
-     private List<TimerTask> volumeTimerTask=new ArrayList<>();
+    private List<TimerTask> volumeTimerTask=new ArrayList<>();
+    
+    @FXML
+    void openQMatrix(ActionEvent event) {
+        SessionModel smodel=model.getParentjob().getSessionModel();
+        Sessions currentsession= sserv.getSessions(smodel.getId());
+        /* Set<QcType> qcset=currentsession.getQcTypes();
+        if(qcset==null){
+        System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qcset is null");
+        }
+        if(qcset.isEmpty()){
+        System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qcset is empty");
+        }*/
+        
+        
+       // System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): pressed");
+        if(model.getQcMatrixModel().getQctypes().isEmpty()){                        //ask for new definition of matrix
+            qcCheckListModel qcCModel=new qcCheckListModel();
+            qcCheckListNode qcCNode=new qcCheckListNode(qcCModel);
+            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): selected: "+qcCModel.getCheckedTypes());
+            
+            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): session fetched is : "+currentsession.getNameSessions());
+            
+           
+            List<String> types=qcCModel.getCheckedTypes();
+            for (Iterator<String> iterator = types.iterator(); iterator.hasNext();) {
+                String type = iterator.next();
+                QcType q=new QcType();
+                q.setName(type.toLowerCase());              //2Dstacks is the same as 2dstACks
+                q.setSessions(currentsession);
+                qserv.createQcType(q);
+            }
+            
+            List<QcType> qctypes=qserv.getQcTypesForSession(currentsession);
+            List<String> names=new ArrayList<>();
+            for (Iterator<QcType> iterator = qctypes.iterator(); iterator.hasNext();) {
+                QcType next = iterator.next();
+                System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): retrieved from db: "+next.getName());
+                names.add(next.getName());
+                
+            }
+            model.getQcMatrixModel().setQctypes(names);
+            
+            showPopList(currentsession);
+            
+        }
+        //else{
+           //Check whether headers are extracted in this line
+           
+         showPopList(currentsession);
+        
+    }
+     
+    
+    void showPopList(Sessions currentSession){
+        List<QcType> qctypes=qserv.getQcTypesForSession(currentSession);
+        List<String> namesoftypes=new ArrayList<>();
+         for (Iterator<QcType> iterator = qctypes.iterator(); iterator.hasNext();) {
+            QcType next = iterator.next();
+            namesoftypes.add(next.getName());
+            
+        }
+        
+           model.getQcMatrixModel().setQctypes(namesoftypes);
+           HeadersModel hmod=model.getHeadersModel();
+           List<Sequences> seqsinVol=hmod.getSequenceListInHeaders();
+           model.getQcMatrixModel().setSequences(seqsinVol);
+           
+           QcMatrixNode qcMatrixNode=new QcMatrixNode(model.getQcMatrixModel());
+    }
+     
+     
+     
      
     @FXML
     void handleSelectVolumeButton(ActionEvent event) {

@@ -28,4 +28,6 @@ public interface JobStepType0NodeController {
 
     public void setInsightListForFrontEndDisplay();
     
+    
+    
 }

@@ -9,6 +9,9 @@ package fend.session.node.volumes;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.volumes.qcMatrix.QcMatrixModel;
+import fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListModel;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +66,45 @@ public class VolumeSelectionModel {
     private Long id;
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
+    private  QcMatrixModel qcMatrixModel;
+    private qcCheckListModel qcCheckListModel;
+    private JobStepType0Model parentjob;
 
+    public JobStepType0Model getParentjob() {
+        return parentjob;
+    }
+
+    public void setParentjob(JobStepType0Model parentjob) {
+        this.parentjob = parentjob;
+    }
+    
+    
+    
+    
+    
+    public QcMatrixModel getQcMatrixModel() {
+        if(qcMatrixModel==null){
+            qcMatrixModel=new QcMatrixModel();
+        }
+        return qcMatrixModel;
+    }
+
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+        this.qcMatrixModel = qcMatrixModel;
+    }
+
+    public qcCheckListModel getQcCheckListModel() {
+        return qcCheckListModel;
+    }
+
+    public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
+        this.qcCheckListModel = qcCheckListModel;
+    }
+    
+    
+    
+    
+    
     public ObservableMap getLogstatusMapForSeq() {
         return logstatusMapForSeq.get();
     }
@@ -125,24 +166,24 @@ public class VolumeSelectionModel {
         
     
     
-    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated,Long volumeType) {
+    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated,Long volumeType,JobStepType0Model pjob) {
         ++i;
         this.volumeSelectionLabel = new SimpleStringProperty(i+" "+volumeSelectionLabel);
-        
+        this.parentjob=pjob;
          
         this.Inflated=toBeInflated;
         this.volumeType=volumeType;
      
     }
     
-     public VolumeSelectionModel(Boolean toBeinflated,long volumeType) {
+     public VolumeSelectionModel(Boolean toBeinflated,long volumeType,JobStepType0Model pjob) {
         
-        this(new String ("choose vol: "),toBeinflated,volumeType);
+        this(new String ("choose vol: "),toBeinflated,volumeType,pjob);
        //  this.headersModel.setVolmodel(this);
     }
     
-    public VolumeSelectionModel(Long volumeType){
-        this(new String ("choose vol: "),false,volumeType);
+    public VolumeSelectionModel(Long volumeType,JobStepType0Model pjob){
+        this(new String ("choose vol: "),false,volumeType, pjob);
          //this.headersModel.setVolmodel(this);
         
         

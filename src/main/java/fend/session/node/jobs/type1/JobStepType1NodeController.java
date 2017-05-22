@@ -201,7 +201,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         }
              
         
-                obsList.add(new VolumeSelectionModel(true,1L));
+                obsList.add(new VolumeSelectionModel(true,1L,model));
                  volumeSelView.setItems(obsList);
                
                

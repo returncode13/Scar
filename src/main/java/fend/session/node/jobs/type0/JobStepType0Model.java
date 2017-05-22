@@ -37,6 +37,7 @@ public interface JobStepType0Model {
     public void addToParent(JobStepType0Model next2);
     public void addToListOfLinksModel(LinksModel lm);
     public void setSessionModel(SessionModel smodel);
+    public SessionModel getSessionModel();
     public BooleanProperty getPendingFlagProperty();
     public BooleanProperty getQcFlagProperty();
     public InsightVersionsModel getInsightVersionsModel();

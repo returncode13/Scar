@@ -617,7 +617,7 @@ public class LandingController implements Initializable,Serializable {
       
                 
                 
-                VolumeSelectionModel fv=new VolumeSelectionModel(beV.getVolumeType());
+                VolumeSelectionModel fv=new VolumeSelectionModel(beV.getVolumeType(),fejsm);
                 fv.setVolumeChosen(new File(beV.getPathOfVolume()));
                 fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
                 fv.setAlert(beV.getAlert());
