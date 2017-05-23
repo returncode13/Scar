@@ -6,12 +6,14 @@
 package fend.session.node.volumes;
 
 
+import db.model.QcMatrix;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.volumes.qcMatrix.QcMatrixModel;
-import fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.qcTable.QcMatrixModel;
+import fend.session.node.volumes.qcTable.QcTableModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -66,10 +68,25 @@ public class VolumeSelectionModel {
     private Long id;
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
-    private  QcMatrixModel qcMatrixModel;
+    private  QcTableModel qcTableModel;
     private qcCheckListModel qcCheckListModel;
     private JobStepType0Model parentjob;
+    private QcMatrixModel qcMatrixModel;
 
+    public QcMatrixModel getQcMatrixModel() {
+        if(qcMatrixModel==null) {
+            qcMatrixModel=new QcMatrixModel();
+            qcMatrixModel.setVmodel(this);
+        }
+        return qcMatrixModel;
+    }
+
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+        this.qcMatrixModel = qcMatrixModel;
+    }
+    
+    
+    
     public JobStepType0Model getParentjob() {
         return parentjob;
     }
@@ -82,18 +99,21 @@ public class VolumeSelectionModel {
     
     
     
-    public QcMatrixModel getQcMatrixModel() {
-        if(qcMatrixModel==null){
-            qcMatrixModel=new QcMatrixModel();
+    public QcTableModel getQcTableModel() {
+        if(qcTableModel==null){
+            qcTableModel=new QcTableModel();
         }
-        return qcMatrixModel;
+        return qcTableModel;
     }
 
-    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
-        this.qcMatrixModel = qcMatrixModel;
+    public void setQcTableModel(QcTableModel qcMatrixModel) {
+        this.qcTableModel = qcMatrixModel;
     }
 
     public qcCheckListModel getQcCheckListModel() {
+        if(qcCheckListModel==null){
+            qcCheckListModel=new qcCheckListModel();
+        }
         return qcCheckListModel;
     }
 

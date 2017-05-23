@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcMatrix;
+package fend.session.node.volumes.qcTable.qcCheckBox;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,16 +15,13 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair
  */
-public class QcMatrixNode extends AnchorPane{
- private FXMLLoader fXMLLoader;
+public class qcCheckListNode extends AnchorPane{
+     private FXMLLoader fXMLLoader;
     private final URL location;
-    private QcMatrixController lsc;
+    private qcCheckListController isc;
     
-    public QcMatrixNode(QcMatrixModel lsm)
-    {
-       
-        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qcmatrix/matrixTable/matrixTable.fxml"); 
+    public qcCheckListNode(qcCheckListModel ism){
+         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qctable/qcCheckBox/qcCheckBox.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -38,23 +35,22 @@ public class QcMatrixNode extends AnchorPane{
                 fXMLLoader.load(location.openStream());
                 
                 
-                lsc=(QcMatrixController)fXMLLoader.getController();
+                isc=(qcCheckListController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
                
                // sc.setId(Long.valueOf(getId()));
                 
-                lsc.setModel(lsm);
-                lsc.setView(this) ;
+                isc.setModel(ism);
+                isc.setView(this) ;
                 
                
                
-                System.out.println("fend.session.node.headers.HeadersNode.<init>()");
+                System.out.println("fend.session.node.volumes.qctable.qcCheckBox.qcCheckListNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);
-            } 
-}
-    
+            }
+    }
 }

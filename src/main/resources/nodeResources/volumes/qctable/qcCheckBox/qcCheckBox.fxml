@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import org.controlsfx.control.CheckListView?>
 
-<fx:root id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListController">
+<fx:root id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListController">
     <stylesheets>
         <URL value="@/landingResources/landing.css" />
     </stylesheets>

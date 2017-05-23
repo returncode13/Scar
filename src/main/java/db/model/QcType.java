@@ -38,15 +38,13 @@ public class QcType {
     private Sessions sessions;
     
     @OneToMany(mappedBy = "qctype",cascade = CascadeType.ALL,orphanRemoval = true)
-   private Set<QcMatrix> qcMatrix;
+   private Set<QcTable> qcMatrix;
 
     public Long getIdQcType() {
         return idQcType;
     }
 
-    public void setIdQcType(Long idQcType) {
-        this.idQcType = idQcType;
-    }
+    
 
     public String getName() {
         return name;

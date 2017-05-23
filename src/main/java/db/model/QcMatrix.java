@@ -21,32 +21,31 @@ import javax.persistence.Table;
 @Entity
 @Table(name="QcMatrix",schema="obpmanager")
 public class QcMatrix {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long idQcMatrix;
+ @Id
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ Long idqcmatrix;
+ 
+@ManyToOne
+@JoinColumn(name="volume_fk",nullable=false)
+private Volume volume;
     
-    @ManyToOne
-    @JoinColumn(name="volume_fk",nullable=false)
-    private Volume volume;
+@ManyToOne
+@JoinColumn(name="qctype_fk",nullable=false)
+private QcType qctype;
+
+@Column(name="present")
+Boolean present;
+
+    public Boolean getPresent() {
+        return present;
+    }
+
+    public void setPresent(Boolean present) {
+        this.present = present;
+    }
+
     
-    @ManyToOne
-    @JoinColumn(name="qctype_fk",nullable=false)
-    private QcType qctype;
-    
-    @Column(name="Seq")
-    private Long sequenceNumber;
-    
-    @Column(name="Subsurface",length=1025)
-    private String subsurface;
-    
-    @Column(name="time")
-    private String time;
-    
-    @Column(name="result")
-    private String result;
-    
-    @Column(name="comment",length=100000)
-    private String comment;
+
 
     public Volume getVolume() {
         return volume;
@@ -64,52 +63,6 @@ public class QcMatrix {
         this.qctype = qctype;
     }
 
-    public Long getSequenceNumber() {
-        return sequenceNumber;
-    }
 
-    public void setSequenceNumber(Long sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
 
-    public String getSubsurface() {
-        return subsurface;
-    }
-
-    public void setSubsurface(String subsurface) {
-        this.subsurface = subsurface;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public QcMatrix() {
-    }
-    
-    
-    
-    
-    
-    
 }

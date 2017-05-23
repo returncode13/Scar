@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcMatrix;
+package fend.session.node.volumes.qcTable;
 
 import fend.session.node.headers.Sequences;
-import fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,21 +16,34 @@ import java.util.Map;
  *
  * @author sharath nair
  */
-public class QcMatrixModel {
+public class QcTableModel {
     
-    List<QcMatrixSequences> qcMatrixSequences=new ArrayList<>();
+    List<QcTableSequences> qcMatrixSequences=new ArrayList<>();
     
     
-    List<String> qctypes=new ArrayList();                   //list of qctypes.
+    List<QcTypeModel> qctypes=new ArrayList();                   //list of qctypes.
+    QcMatrixModel qcMatrixModel;
     List<Sequences> sequences;
 
-    public List<String> getQctypes() {
-        return qctypes;
+    public List<QcTypeModel> getQctypes() {
+        qctypes=qcMatrixModel.getQcTypeModels();
+    return qctypes;
+    }
+   /* 
+    public void setQctypes(List<QcTypeModel> qctypes) {
+    this.qctypes = qctypes;
+    }*/
+
+    public QcMatrixModel getQcMatrixModel() {
+        return qcMatrixModel;
     }
 
-    public void setQctypes(List<String> qctypes) {
-        this.qctypes = qctypes;
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+        this.qcMatrixModel = qcMatrixModel;
+         qctypes=this.qcMatrixModel.getQcTypeModels();
     }
+    
+    
 
     public List<Sequences> getSequences() {
         return sequences;
@@ -41,11 +54,12 @@ public class QcMatrixModel {
         
     }
 
-    public List<QcMatrixSequences> getQcMatrixSequences() {
+    public List<QcTableSequences> getQcMatrixSequences() {
         qcMatrixSequences.clear();
+       
         for (Iterator<Sequences> iterator = sequences.iterator(); iterator.hasNext();) {
             Sequences next = iterator.next();
-            QcMatrixSequences q=new QcMatrixSequences();;
+            QcTableSequences q=new QcTableSequences();;
             q.setQcfields(qctypes);
             q.setSequence(next);
             qcMatrixSequences.add(q);

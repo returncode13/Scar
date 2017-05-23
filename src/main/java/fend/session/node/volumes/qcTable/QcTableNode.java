@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcMatrix.qcCheckBox;
+package fend.session.node.volumes.qcTable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,13 +15,16 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair
  */
-public class qcCheckListNode extends AnchorPane{
-     private FXMLLoader fXMLLoader;
+public class QcTableNode extends AnchorPane{
+ private FXMLLoader fXMLLoader;
     private final URL location;
-    private qcCheckListController isc;
+    private QcTableController lsc;
     
-    public qcCheckListNode(qcCheckListModel ism){
-         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qcmatrix/qcCheckBox/qcCheckBox.fxml"); 
+    public QcTableNode(QcTableModel lsm)
+    {
+       
+        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qctable/matrixTable/matrixTable.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -35,22 +38,22 @@ public class qcCheckListNode extends AnchorPane{
                 fXMLLoader.load(location.openStream());
                 
                 
-                isc=(qcCheckListController)fXMLLoader.getController();
+                lsc=(QcTableController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
                
                // sc.setId(Long.valueOf(getId()));
                 
-                isc.setModel(ism);
-                isc.setView(this) ;
+                lsc.setModel(lsm);
+                lsc.setView(this) ;
                 
                
-               
-                System.out.println("fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListNode.<init>()");
+                System.out.println("fend.session.node.volumes.qcTable.QcTableNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);
-            }
-    }
+            } 
+}
+    
 }

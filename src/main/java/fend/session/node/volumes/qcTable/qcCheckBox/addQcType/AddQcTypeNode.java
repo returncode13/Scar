@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcMatrix.qcCheckBox.addQcType;
+package fend.session.node.volumes.qcTable.qcCheckBox.addQcType;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +21,7 @@ public class AddQcTypeNode extends AnchorPane{
     private AddQcTypeController isc;
     
     public AddQcTypeNode(AddQcTypeModel ism){
-         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qcmatrix/qcCheckBox/addQcType/addQcType.fxml"); 
+         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qctable/qcCheckBox/addQcType/addQcType.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -47,7 +47,7 @@ public class AddQcTypeNode extends AnchorPane{
                 
                
                
-                System.out.println("fend.session.node.volumes.qcMatrix.qcCheckBox.qcCheckListNode.<init>()");
+                System.out.println("fend.session.node.volumes.qctable.qcCheckBox.qcCheckListNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);

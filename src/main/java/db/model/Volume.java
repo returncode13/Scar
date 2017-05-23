@@ -68,7 +68,7 @@ public class Volume implements Serializable {
    private Set<Workflow> workflows;
    
     @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
-   private Set<QcMatrix> qcMatrix;
+   private Set<QcTable> qcMatrix;
    
    
    public Volume(){}

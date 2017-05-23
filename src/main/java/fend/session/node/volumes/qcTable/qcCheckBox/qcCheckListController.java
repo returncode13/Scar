@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcMatrix.qcCheckBox;
+package fend.session.node.volumes.qcTable.qcCheckBox;
 
 
 import db.services.QcTypeService;
 import db.services.QcTypeServiceImpl;
-import fend.session.node.volumes.qcMatrix.qcCheckBox.addQcType.AddQcTypeModel;
-import fend.session.node.volumes.qcMatrix.qcCheckBox.addQcType.AddQcTypeNode;
+import fend.session.node.volumes.qcTable.qcCheckBox.addQcType.AddQcTypeModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.addQcType.AddQcTypeNode;
 import java.util.Iterator;
 import java.util.List;
 import javafx.collections.FXCollections;

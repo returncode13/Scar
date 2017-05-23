@@ -7,10 +7,7 @@ package db.services;
 
 import db.dao.QcMatrixDAO;
 import db.dao.QcMatrixDAOImpl;
-import db.dao.QcTypeDAO;
 import db.model.QcMatrix;
-import db.model.QcType;
-import db.model.Sessions;
 import db.model.Volume;
 import java.util.List;
 
@@ -19,39 +16,31 @@ import java.util.List;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class QcMatrixServiceImpl implements QcMatrixService{
-    
-    QcMatrixDAO qcmDAO=new QcMatrixDAOImpl();
+    QcMatrixDAO qcmDao=new QcMatrixDAOImpl();
     
     @Override
-    public void createQcMatrix(QcMatrix qcm) {
-        qcmDAO.createQcMatrix(qcm);
+    public void createQcMatrix(QcMatrix qcmatrix) {
+        qcmDao.createQcMatrix(qcmatrix);
+    }
+
+    @Override
+    public void updateQcMatrix(Long qid, QcMatrix newq) {
+        qcmDao.updateQcMatrix(qid, newq);
     }
 
     @Override
     public QcMatrix getQcMatrix(Long qid) {
-        return qcmDAO.getQcMatrix(qid);
-    }
-
-    @Override
-    public void updateQcMatrix(Long qid, QcMatrix newQ) {
-        qcmDAO.updateQcMatrix(qid, newQ);
+        return qcmDao.getQcMatrix(qid);
     }
 
     @Override
     public void deleteQcMatrix(Long qid) {
-        qcmDAO.deleteQcMatrix(qid);
+        qcmDao.deleteQcMatrix(qid);
     }
 
     @Override
-    public List<QcMatrix> getQcMatrixFor(Volume v) {
-        return qcmDAO.getQcMatrixFor(v);
+    public List<QcMatrix> getQcMatrixForVolume(Volume v) {
+        return qcmDao.getQcMatrixForVolume(v);
     }
-
-    @Override
-    public List<QcMatrix> getQcMatrixFor(Volume v, QcType qctype) {
-        return qcmDAO.getQcMatrixFor(v, qctype);
-    }
-
-   
     
 }

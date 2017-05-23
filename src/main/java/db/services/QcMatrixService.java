@@ -6,7 +6,6 @@
 package db.services;
 
 import db.model.QcMatrix;
-import db.model.QcType;
 import db.model.Volume;
 import java.util.List;
 
@@ -15,11 +14,10 @@ import java.util.List;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public interface QcMatrixService {
-    public void createQcMatrix(QcMatrix qcm);
+    public void createQcMatrix(QcMatrix qcmatrix);
+    public void updateQcMatrix(Long qid,QcMatrix newq);
     public QcMatrix getQcMatrix(Long qid);
-    public void updateQcMatrix(Long qid,QcMatrix newQ);
     public void deleteQcMatrix(Long qid);
     
-    public List<QcMatrix> getQcMatrixFor(Volume v);
-    public List<QcMatrix> getQcMatrixFor(Volume v,QcType qctype);               //for column wise retrieval
+    public List<QcMatrix> getQcMatrixForVolume(Volume v);    //get all the fields for volume v where present="true"
 }

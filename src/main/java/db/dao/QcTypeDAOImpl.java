@@ -104,5 +104,6 @@ public class QcTypeDAOImpl implements QcTypeDAO{
         }
         return result;
     }
+
     
 }
