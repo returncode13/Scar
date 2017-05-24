@@ -216,7 +216,7 @@ public  class LogWatcher {
                         String value;
                         while((value=br.readLine())!=null){
                             Long maxVersion=0L;
-                           
+                            System.out.println("watcher.LogWatcher.extract(): whileLoop: "+value);
                             /* String[] parts=value.split("\\s");
                             String date=parts[0].substring(parts[0].indexOf(":")+1);
                             
@@ -231,7 +231,20 @@ public  class LogWatcher {
                             //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
                             
                              //New script results
+                             
+                             /* String filename;
+                             String date;
+                             String time;*/
+                             
+                             
+                             
+                             
+                             
                                             String[] parts=value.split("\\s");
+                                            System.out.println("watcher.LogWatcher.extract(): paths.length: "+parts.length);
+                                             if(parts.length!=16){
+                                            continue;
+                                            }
                                             /* for(int iii=0;iii<parts.length;iii++){
                                             System.out.println("wacther.Logwatcher():  "+iii+" = "+parts[iii]);
                                             }*/
@@ -252,13 +265,14 @@ public  class LogWatcher {
                                             String baseInsVersion=parts[14];
                                             String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
-                                            System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" seq: "+seqno+" sub:"+linename+" insVersion: "+baseInsVersion+" insbuild: "+revInsVersion);
+                                            System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" seq: "+seqno+" sub:"+linename+" insVersion: "+baseInsVersion+" insbuild: "+revInsVersion+" insight: "+insVersion);
                                             
                             
                             LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename,seqno, linename,insVersion);
                             System.out.print(".");
                            // if(!listOfExistingSubs.contains(linename)){
                            if(!mapOfExistingLogs.containsKey(filename)){
+                               System.out.println("watcher.LogWatcher.extract():"+filename+" Adding to lwatcholder");
                                lwatchHolderList.add(lwatchholder);
                            }else{
                                //System.out.println("watcher.LogWatcher.extract(): log "+filename+" already present in database...skipping");
@@ -268,7 +282,7 @@ public  class LogWatcher {
                            // }
                             
                             
-                            
+                            System.out.println("watcher.LogWatcher.extract(): Moving on to the next log");
                             
                         }
                         

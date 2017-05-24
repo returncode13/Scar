@@ -25,10 +25,18 @@ public class QcMatrix {
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  Long idqcmatrix;
  
-@ManyToOne
-@JoinColumn(name="volume_fk",nullable=false)
-private Volume volume;
-    
+ /*@ManyToOne
+ @JoinColumn(name="volume_fk",nullable=false)
+ private Volume volume;*/
+
+ @ManyToOne
+ @JoinColumn(name="sessiondetails_fk",nullable=false)
+ private SessionDetails sessionDetails;
+ 
+ 
+ 
+ 
+ 
 @ManyToOne
 @JoinColumn(name="qctype_fk",nullable=false)
 private QcType qctype;
@@ -47,13 +55,13 @@ Boolean present;
     
 
 
-    public Volume getVolume() {
-        return volume;
+    /*  public Volume getVolume() {
+    return volume;
     }
-
+    
     public void setVolume(Volume volume) {
-        this.volume = volume;
-    }
+    this.volume = volume;
+    }*/
 
     public QcType getQctype() {
         return qctype;
@@ -63,6 +71,19 @@ Boolean present;
         this.qctype = qctype;
     }
 
+    public SessionDetails getSessionDetails() {
+        return sessionDetails;
+    }
+
+    public void setSessionDetails(SessionDetails sessionDetails) {
+        this.sessionDetails = sessionDetails;
+    }
+
+    public Long getIdqcmatrix() {
+        return idqcmatrix;
+    }
+
+    
 
 
 }

@@ -33,13 +33,12 @@ public class QcType {
     @Column(name="name")
     private String name;    
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    /*  @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="sessions_fk",nullable=false)
     private Sessions sessions;
     
     @OneToMany(mappedBy = "qctype",cascade = CascadeType.ALL,orphanRemoval = true)
-   private Set<QcTable> qcMatrix;
-
+    private Set<QcTable> qcMatrix;*/
     public Long getIdQcType() {
         return idQcType;
     }
@@ -54,19 +53,18 @@ public class QcType {
         this.name = name;
     }
 
-    public Sessions getSessions() {
-        return sessions;
+    /* public Sessions getSessions() {
+    return sessions;
     }
-
+    
     public void setSessions(Sessions sessions) {
-        this.sessions = sessions;
-    }
-
+    this.sessions = sessions;
+    }*/
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 71 * hash + Objects.hashCode(this.name);
-        hash = 71 * hash + Objects.hashCode(this.sessions);
+       // hash = 71 * hash + Objects.hashCode(this.sessions);
         return hash;
     }
 
@@ -85,9 +83,9 @@ public class QcType {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.sessions, other.sessions)) {
-            return false;
-        }
+        /* if (!Objects.equals(this.sessions, other.sessions)) {
+        return false;
+        }*/
         return true;
     }
     

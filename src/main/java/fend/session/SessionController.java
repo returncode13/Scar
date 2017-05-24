@@ -548,7 +548,9 @@ public class SessionController implements Initializable {
             
             
         }
+       
        List<JobStepType0Model> jobsToBeDeleted=model.getJobsToBeDeleted();
+       
        for (Iterator<JobStepType0Model> iterator = jobsToBeDeleted.iterator(); iterator.hasNext();) {
            JobStepType0Model jobTobeDeleted = iterator.next();
            JobStep jsd=jServ.getJobStep(jobTobeDeleted.getId());
@@ -556,30 +558,7 @@ public class SessionController implements Initializable {
                System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode: job found with id: "+jsd.getIdJobStep()+" : name: "+jsd.getNameJobStep());
            List<SessionDetails> sessionDetailsList=ssdServ.getSessionDetails(jsd);        // all the sessions to which this job belongs to.
            List<JobVolumeDetails> jobvolumeDetailsList=jvdServ.getJobVolumeDetails(jsd);  //list of volumes that belong to this job
-           /*
-           for (Iterator<SessionDetails> iterator1 = sessionDetailsList.iterator(); iterator1.hasNext();) {
-           SessionDetails sessionDetails = iterator1.next();
-           Sessions session=sessionDetails.getSessions();                           //get one of the sessions
-           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): DeleteMode:  DELETING sessiondetails with id: "+sessionDetails.getIdSessionDetails()+" : session:  "+sessionDetails.getSessions().getNameSessions()+"  :job: "+sessionDetails.getJobStep().getNameJobStep() );
-           List<Parent> pl=pserv.getParentsFor(sessionDetails);
-           for (Iterator<Parent> pit = pl.iterator(); pit.hasNext();) {
-           Parent pan = pit.next();
-           Long pin=pan.getIdParent();
-           pserv.deleteParent(pin);
-           }
-           
-           List<Child> cl=cserv.getChildrenFor(sessionDetails);
-           for (Iterator<Child> cin = cl.iterator(); cin.hasNext();) {
-           Child chan = cin.next();
-           Long cid=chan.getIdChild();
-           cserv.deleteChild(cid);
-           
-           }
-           
-           
-           //ssdServ.deleteSessionDetails(sessionDetails.getIdSessionDetails());
-           }
-           */
+         
            
            
            

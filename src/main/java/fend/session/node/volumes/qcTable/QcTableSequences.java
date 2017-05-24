@@ -40,9 +40,11 @@ public class QcTableSequences {
     public void setSequence(Sequences sequence) {
         this.sequence = sequence;
         sequenceNumber.set(this.sequence.getSequenceNumber());
+        subsurface.set(this.sequence.getSubsurface());
     }
 
     public List<QcTypeModel> getQcfields() {
+        System.out.println("fend.session.node.volumes.qcTable.QcTableSequences.getQcfields(): size: "+qcfields.size());
         return qcfields;
     }
 
@@ -75,6 +77,7 @@ public class QcTableSequences {
     }
 
     public List<QcTableSubsurfaces> getQcSubs() {
+          
         
         for(SubSurface subs: sequence.getSubsurfaces()){
             QcTableSubsurfaces qsub=new QcTableSubsurfaces();

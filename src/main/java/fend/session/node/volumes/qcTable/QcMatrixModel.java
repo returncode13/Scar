@@ -5,6 +5,7 @@
  */
 package fend.session.node.volumes.qcTable;
 
+import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,20 +18,29 @@ import java.util.Set;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class QcMatrixModel {
-    VolumeSelectionModel vmodel;
+   // VolumeSelectionModel vmodel;
     Map<QcTypeModel,Boolean> qcTypePresMap=new HashMap<>();
-    
+    JobStepType0Model jobmodel;
    // List<QcMatrixRecord> qcmatrixRecords;
+
+    public JobStepType0Model getJobmodel() {
+        return jobmodel;
+    }
+
+    public void setJobmodel(JobStepType0Model jobmodel) {
+        this.jobmodel = jobmodel;
+    }
     
     
+    
+    /*
     public VolumeSelectionModel getVmodel() {
-        return vmodel;
+    return vmodel;
     }
-
+    
     public void setVmodel(VolumeSelectionModel vmodel) {
-        this.vmodel = vmodel;
-    }
-
+    this.vmodel = vmodel;
+    }*/
     public Map<QcTypeModel, Boolean> getQcTypePresMap() {
         return qcTypePresMap;
     }

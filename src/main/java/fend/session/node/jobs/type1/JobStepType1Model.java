@@ -22,6 +22,9 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.qcTable.QcMatrixModel;
+import fend.session.node.volumes.qcTable.QcTableModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -269,6 +272,48 @@ public class JobStepType1Model implements JobStepType0Model{
     }
     
     
-     
+  private  QcTableModel qcTableModel;
+    private qcCheckListModel qcCheckListModel;
+    
+    private QcMatrixModel qcMatrixModel;
+    
+
+    public QcMatrixModel getQcMatrixModel() {
+        if(qcMatrixModel==null) {
+            qcMatrixModel=new QcMatrixModel();
+            //qcMatrixModel.setVmodel(this);
+            qcMatrixModel.setJobmodel(this);
+        }
+        return qcMatrixModel;
+    }
+
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+        this.qcMatrixModel = qcMatrixModel;
+    }
+    
+    public QcTableModel getQcTableModel() {
+        if(qcTableModel==null){
+            qcTableModel=new QcTableModel();
+        }
+        return qcTableModel;
+    }
+
+    public void setQcTableModel(QcTableModel qcMatrixModel) {
+        this.qcTableModel = qcMatrixModel;
+    }
+    
+     public qcCheckListModel getQcCheckListModel() {
+        if(qcCheckListModel==null){
+            qcCheckListModel=new qcCheckListModel();
+        }
+        return qcCheckListModel;
+    }
+
+    public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
+        this.qcCheckListModel = qcCheckListModel;
+    }
+    
+    
+    
      
 }

@@ -44,7 +44,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
             transaction=session.beginTransaction();
             QcType ll=(QcType) session.get(QcType.class,qid);
             ll.setName(newQcType.getName());
-            ll.setSessions(newQcType.getSessions());
+          //  ll.setSessions(newQcType.getSessions());
             session.update(ll);
             
             
@@ -86,24 +86,42 @@ public class QcTypeDAOImpl implements QcTypeDAO{
         }
     }
 
-    @Override
+    /*@Override
     public List<QcType> getQcTypesForSession(Sessions sessions) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<QcType> result=null;
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(QcType.class);
-            criteria.add(Restrictions.eq("sessions", sessions));
-            result=criteria.list();
-            transaction.commit();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        return result;
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<QcType> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(QcType.class);
+    criteria.add(Restrictions.eq("sessions", sessions));
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
     }
+    return result;
+    }*/
 
+    @Override
+    public List<QcType> getAllQcTypes() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<QcType> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(QcType.class);
+    
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result;
+    }
     
 }

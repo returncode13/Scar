@@ -5,6 +5,9 @@
  */
 package fend.session.node.volumes.qcTable;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
@@ -12,6 +15,20 @@ package fend.session.node.volumes.qcTable;
 public class QcTypeModel {
     String name;
     Long id;
+    private final StringProperty value = new SimpleStringProperty("NotQC'd");
+
+    public String getValue() {
+        return value.get();
+    }
+
+    public void setValue(String value) {
+        this.value.set(value);
+    }
+
+    public StringProperty valueProperty() {
+        return value;
+    }
+    
 
     public String getName() {
         return name;

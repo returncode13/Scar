@@ -13,6 +13,7 @@ import db.model.Sessions;
 import db.model.Volume;
 import java.util.List;
 import db.dao.QcTableDAO;
+import db.model.QcMatrix;
 
 /**
  *
@@ -42,15 +43,22 @@ public class QcTableServiceImpl implements QcTableService{
         qcmDAO.deleteQcTable(qid);
     }
 
-    @Override
+    /*@Override
     public List<QcTable> getQcTableFor(Volume v) {
-        return qcmDAO.getQcTableFor(v);
+    return qcmDAO.getQcTableFor(v);
     }
-
+    
     @Override
     public List<QcTable> getQcTableFor(Volume v, QcType qctype) {
-        return qcmDAO.getQcTableFor(v, qctype);
+    return qcmDAO.getQcTableFor(v, qctype);
+    }*/
+
+    @Override
+    public List<QcTable> getQcTableFor(QcMatrix qmx) {
+        return qcmDAO.getQcTableFor(qmx);
     }
+    
+    
 
    
     

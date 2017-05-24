@@ -5,6 +5,7 @@
  */
 package db.dao;
 
+import db.model.QcMatrix;
 import db.model.QcTable;
 import db.model.QcType;
 import db.model.Volume;
@@ -58,12 +59,13 @@ public class QcTableDAOImpl implements QcTableDAO{
         try{
             transaction=session.beginTransaction();
             QcTable h= (QcTable) session.get(QcTable.class, qid);
-            h.setVolume(newQ.getVolume());
+           // h.setVolume(newQ.getVolume());
             h.setTime(newQ.getTime());
             h.setSequenceNumber(newQ.getSequenceNumber());
             h.setSubsurface(newQ.getSubsurface());
             h.setResult(newQ.getResult());
-            h.setQctype(newQ.getQctype());
+          //  h.setQctype(newQ.getQctype());
+          h.setQcmatrix(newQ.getQcmatrix());
             h.setComment(newQ.getComment());
             session.update(h);
             
@@ -92,44 +94,65 @@ public class QcTableDAOImpl implements QcTableDAO{
             session.close();
         }
     }
-
+    /*
     @Override
     public List<QcTable> getQcTableFor(Volume v) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<QcTable> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(QcTable.class);
+    criteria.add(Restrictions.eq("volume", v));
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result;
+    }
+    
+    @Override
+    public List<QcTable> getQcTableFor(Volume v, QcType qctype) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<QcTable> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(QcTable.class);
+    criteria.add(Restrictions.eq("volume", v));
+    criteria.add(Restrictions.eq("qctype", qctype));
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result;
+    }*/
+
+    @Override
+    public List<QcTable> getQcTableFor(QcMatrix qmx) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;
         try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(QcTable.class);
-            criteria.add(Restrictions.eq("volume", v));
-            result=criteria.list();
-            transaction.commit();
+        transaction=session.beginTransaction();
+        Criteria criteria=session.createCriteria(QcTable.class);
+        criteria.add(Restrictions.eq("qcmatrix", qmx));
+        result=criteria.list();
+        transaction.commit();
         }catch(Exception e){
-            e.printStackTrace();
+        e.printStackTrace();
         }finally{
-            session.close();
+        session.close();
         }
         return result;
     }
-
-    @Override
-    public List<QcTable> getQcTableFor(Volume v, QcType qctype) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<QcTable> result=null;
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(QcTable.class);
-            criteria.add(Restrictions.eq("volume", v));
-            criteria.add(Restrictions.eq("qctype", qctype));
-            result=criteria.list();
-            transaction.commit();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        return result;
-    }
+    
+    
     
 }

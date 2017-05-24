@@ -40,8 +40,8 @@ public class Sessions implements Serializable{
    @OneToMany(mappedBy = "sessions",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<SessionDetails> sessionDetails;
    
-   @OneToMany(mappedBy = "sessions",cascade = CascadeType.ALL,orphanRemoval = true)
-   private Set<QcType> qcTypes;
+   /*@OneToMany(mappedBy = "sessions",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<QcType> qcTypes;*/
 
    @OneToMany(mappedBy = "sessions",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<User> users;
@@ -93,13 +93,13 @@ public class Sessions implements Serializable{
         return "Sessions{" + "idSessions=" + idSessions + ", nameSessions=" + nameSessions + '}';
     }
 
-    public Set<QcType> getQcTypes() {
-        return qcTypes;
+    /*public Set<QcType> getQcTypes() {
+    return qcTypes;
     }
-
+    
     public void setQcTypes(Set<QcType> qcTypes) {
-        this.qcTypes = qcTypes;
-    }
+    this.qcTypes = qcTypes;
+    }*/
 
     
    

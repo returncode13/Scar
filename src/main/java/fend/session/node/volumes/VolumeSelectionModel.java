@@ -68,31 +68,32 @@ public class VolumeSelectionModel {
     private Long id;
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
-    private  QcTableModel qcTableModel;
+    private JobStepType0Model parentjob;
+    /*    private  QcTableModel qcTableModel;
     private qcCheckListModel qcCheckListModel;
     private JobStepType0Model parentjob;
     private QcMatrixModel qcMatrixModel;
-
+    
     public QcMatrixModel getQcMatrixModel() {
-        if(qcMatrixModel==null) {
-            qcMatrixModel=new QcMatrixModel();
-            qcMatrixModel.setVmodel(this);
-        }
-        return qcMatrixModel;
+    if(qcMatrixModel==null) {
+    qcMatrixModel=new QcMatrixModel();
+    qcMatrixModel.setVmodel(this);
     }
-
+    return qcMatrixModel;
+    }
+    
     public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
-        this.qcMatrixModel = qcMatrixModel;
+    this.qcMatrixModel = qcMatrixModel;
     }
     
     
     
     public JobStepType0Model getParentjob() {
-        return parentjob;
+    return parentjob;
     }
-
+    
     public void setParentjob(JobStepType0Model parentjob) {
-        this.parentjob = parentjob;
+    this.parentjob = parentjob;
     }
     
     
@@ -100,27 +101,27 @@ public class VolumeSelectionModel {
     
     
     public QcTableModel getQcTableModel() {
-        if(qcTableModel==null){
-            qcTableModel=new QcTableModel();
-        }
-        return qcTableModel;
+    if(qcTableModel==null){
+    qcTableModel=new QcTableModel();
     }
-
-    public void setQcTableModel(QcTableModel qcMatrixModel) {
-        this.qcTableModel = qcMatrixModel;
-    }
-
-    public qcCheckListModel getQcCheckListModel() {
-        if(qcCheckListModel==null){
-            qcCheckListModel=new qcCheckListModel();
-        }
-        return qcCheckListModel;
-    }
-
-    public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
-        this.qcCheckListModel = qcCheckListModel;
+    return qcTableModel;
     }
     
+    public void setQcTableModel(QcTableModel qcMatrixModel) {
+    this.qcTableModel = qcMatrixModel;
+    }
+    
+    public qcCheckListModel getQcCheckListModel() {
+    if(qcCheckListModel==null){
+    qcCheckListModel=new qcCheckListModel();
+    }
+    return qcCheckListModel;
+    }
+    
+    public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
+    this.qcCheckListModel = qcCheckListModel;
+    }
+    */
     
     
     

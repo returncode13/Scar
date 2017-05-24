@@ -6,6 +6,7 @@
 package db.dao;
 
 import db.model.QcMatrix;
+import db.model.SessionDetails;
 import db.model.Volume;
 import hibUtil.HibernateUtil;
 import java.util.List;
@@ -32,7 +33,7 @@ public class QcMatrixDAOImpl implements QcMatrixDAO{
             e.printStackTrace();
         }finally{
             session.close();
-        } new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        } 
     }
 
     @Override
@@ -42,7 +43,8 @@ public class QcMatrixDAOImpl implements QcMatrixDAO{
         try{
             transaction=session.beginTransaction();
             QcMatrix h= (QcMatrix) session.get(QcMatrix.class, qid);
-            h.setVolume(newq.getVolume());
+        //    h.setVolume(newq.getVolume());
+            h.setSessionDetails(newq.getSessionDetails());
             h.setQctype(newq.getQctype());
             session.update(h);
             
@@ -85,28 +87,47 @@ public class QcMatrixDAOImpl implements QcMatrixDAO{
             session.close();
         }
     }
-
+    /*
     @Override
     public List<QcMatrix> getQcMatrixForVolume(Volume v) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<QcMatrix> result=null;
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(QcMatrix.class);
-            criteria.add(Restrictions.eq("volume", v));
-            criteria.add(Restrictions.eq("present", true));
-            result=criteria.list();
-            transaction.commit();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        return result;
-        
-        
-        
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<QcMatrix> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(QcMatrix.class);
+    criteria.add(Restrictions.eq("volume", v));
+    criteria.add(Restrictions.eq("present", true));
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
     }
+    return result;
+    
+    
+    
+    }*/
+
+    @Override
+    public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sd) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<QcMatrix> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(QcMatrix.class);
+    criteria.add(Restrictions.eq("sessionDetails", sd));
+    criteria.add(Restrictions.eq("present", true));
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result;    }
     
 }

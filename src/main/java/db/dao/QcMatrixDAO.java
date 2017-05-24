@@ -6,6 +6,7 @@
 package db.dao;
 
 import db.model.QcMatrix;
+import db.model.SessionDetails;
 import db.model.Volume;
 import java.util.List;
 
@@ -19,5 +20,7 @@ public interface QcMatrixDAO {
     public QcMatrix getQcMatrix(Long qid);
     public void deleteQcMatrix(Long qid);
     
-    public List<QcMatrix> getQcMatrixForVolume(Volume v);    //get all the fields for volume v where present="true"
+   // public List<QcMatrix> getQcMatrixForVolume(Volume v);    //get all the fields for volume v where present="true"
+    
+    public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sd);
 }

@@ -5,6 +5,7 @@
  */
 package db.dao;
 
+import db.model.QcMatrix;
 import db.model.QcTable;
 import db.model.QcType;
 import db.model.Volume;
@@ -20,7 +21,8 @@ public interface QcTableDAO {
     public void updateQcTable(Long qid,QcTable newQ);
     public void deleteQcTable(Long qid);
     
-    public List<QcTable> getQcTableFor(Volume v);
-    public List<QcTable> getQcTableFor(Volume v,QcType qctype);               //for column wise retrieval
+  //  public List<QcTable> getQcTableFor(Volume v);
+  //  public List<QcTable> getQcTableFor(Volume v,QcType qctype);               //for column wise retrieval
+    public List<QcTable> getQcTableFor(QcMatrix qmx);
     
 }

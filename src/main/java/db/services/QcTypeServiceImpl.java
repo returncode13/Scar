@@ -40,9 +40,14 @@ public class QcTypeServiceImpl implements QcTypeService{
         qcDao.deleteQcType(qid);
     }
 
-    @Override
+    /*@Override
     public List<QcType> getQcTypesForSession(Sessions sessions) {
-        return qcDao.getQcTypesForSession(sessions);
+    return qcDao.getQcTypesForSession(sessions);
+    }*/
+
+    @Override
+    public List<QcType> getAllQcTypes() {
+        return qcDao.getAllQcTypes();
     }
     
 }

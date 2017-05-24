@@ -30,7 +30,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
 
     public void setSub(SubSurface sub) {
         this.sub = sub;
-        sequenceNumber.set(sub.getSequenceNumber());
+        sequenceNumber.setValue(sub.getSequenceNumber());
         subsurface.setValue(sub.getSubsurface());
         
     }

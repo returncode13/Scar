@@ -6,6 +6,7 @@
 package fend.session.node.volumes.qcTable;
 
 import fend.session.node.headers.Sequences;
+import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,13 +19,26 @@ import java.util.Map;
  */
 public class QcTableModel {
     
-    List<QcTableSequences> qcMatrixSequences=new ArrayList<>();
+    List<QcTableSequences> qcTableSequences=new ArrayList<>();
     
     
     List<QcTypeModel> qctypes=new ArrayList();                   //list of qctypes.
     QcMatrixModel qcMatrixModel;
     List<Sequences> sequences;
+    JobStepType0Model jobmodel;
 
+    public JobStepType0Model getJobmodel() {
+        return jobmodel;
+    }
+
+    public void setJobmodel(JobStepType0Model jobmodel) {
+        this.jobmodel = jobmodel;
+    }
+    
+    
+    
+    
+    
     public List<QcTypeModel> getQctypes() {
         qctypes=qcMatrixModel.getQcTypeModels();
     return qctypes;
@@ -54,18 +68,25 @@ public class QcTableModel {
         
     }
 
-    public List<QcTableSequences> getQcMatrixSequences() {
-        qcMatrixSequences.clear();
-       
+    public List<QcTableSequences> getQcTableSequences() {
+        qcTableSequences.clear();
+        qctypes=qcMatrixModel.getQcTypeModels();
+        for (Iterator<QcTypeModel> iterator = qctypes.iterator(); iterator.hasNext();) {
+            QcTypeModel next = iterator.next();
+            System.out.println("fend.session.node.volumes.qcTable.QcTableModel.getQcTableSequences(): qctypes: "+next.getName());
+        }
+        
+        
         for (Iterator<Sequences> iterator = sequences.iterator(); iterator.hasNext();) {
             Sequences next = iterator.next();
             QcTableSequences q=new QcTableSequences();;
+          //  System.out.println("fend.session.node.volumes.qcTable.QcTableModel.getQcTableSequences(): adding seq: "+next.getSequenceNumber());
             q.setQcfields(qctypes);
             q.setSequence(next);
-            qcMatrixSequences.add(q);
+            qcTableSequences.add(q);
             
         }
-        return qcMatrixSequences;
+        return qcTableSequences;
     }
 
     

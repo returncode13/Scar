@@ -24,14 +24,20 @@ public class QcTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idQcTable;
-    
+    /*
     @ManyToOne
     @JoinColumn(name="volume_fk",nullable=false)
     private Volume volume;
     
     @ManyToOne
     @JoinColumn(name="qctype_fk",nullable=false)
-    private QcType qctype;
+    private QcType qctype;*/
+    
+    
+    @ManyToOne
+    @JoinColumn(name="qcmatrix_fk",nullable=false)
+    private QcMatrix qcmatrix;
+    
     
     @Column(name="Seq")
     private Long sequenceNumber;
@@ -48,22 +54,21 @@ public class QcTable {
     @Column(name="comment",length=100000)
     private String comment;
 
-    public Volume getVolume() {
-        return volume;
+    /*public Volume getVolume() {
+    return volume;
     }
-
+    
     public void setVolume(Volume volume) {
-        this.volume = volume;
+    this.volume = volume;
     }
-
+    
     public QcType getQctype() {
-        return qctype;
+    return qctype;
     }
-
+    
     public void setQctype(QcType qctype) {
-        this.qctype = qctype;
-    }
-
+    this.qctype = qctype;
+    }*/
     public Long getSequenceNumber() {
         return sequenceNumber;
     }
@@ -105,6 +110,18 @@ public class QcTable {
     }
 
     public QcTable() {
+    }
+
+    public QcMatrix getQcmatrix() {
+        return qcmatrix;
+    }
+
+    public void setQcmatrix(QcMatrix qcmatrix) {
+        this.qcmatrix = qcmatrix;
+    }
+
+    public Long getIdQcTable() {
+        return idQcTable;
     }
     
     

@@ -19,5 +19,6 @@ public interface QcTypeService {
     public QcType getQcType(Long qid);
     public void deleteQcType(Long qid);
     
-   public List<QcType> getQcTypesForSession(Sessions sessions);  //get qctypes for current session 
+  // public List<QcType> getQcTypesForSession(Sessions sessions);  //get qctypes for current session 
+    public List<QcType> getAllQcTypes();
 }

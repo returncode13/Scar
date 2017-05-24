@@ -44,9 +44,11 @@
                            </HBox.margin>
                         </Button>
                         <Button fx:id="insightVerButton" mnemonicParsing="false" onAction="#handleInsightVerButtonClicked" prefHeight="27.0" prefWidth="140.0" text="I">
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="qmatBtn1" mnemonicParsing="false" onAction="#openQMatrix" prefHeight="27.0" prefWidth="140.0" text="[Q]">
                            <HBox.margin>
                               <Insets left="5.0" />
                            </HBox.margin>
