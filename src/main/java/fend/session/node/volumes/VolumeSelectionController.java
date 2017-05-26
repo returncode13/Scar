@@ -8,16 +8,38 @@ package fend.session.node.volumes;
 
 import collector.HeaderCollector;
 import db.model.Headers;
+import db.model.QcMatrix;
+import db.model.QcType;
+import db.model.Sessions;
+import db.model.Volume;
+import db.services.QcMatrixService;
+import db.services.QcMatrixServiceImpl;
+import db.services.QcTypeService;
+import db.services.QcTypeServiceImpl;
+import db.services.SessionsService;
+import db.services.SessionsServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
+import fend.session.SessionModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.HeadersViewController;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.volumes.qcTable.QcMatrixModel;
+import fend.session.node.volumes.qcTable.QcTableNode;
+import fend.session.node.volumes.qcTable.QcTypeModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListNode;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -39,6 +61,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.swing.JFileChooser;
+import org.controlsfx.control.CheckModel;
 import watcher.VolumeWatcher;
 
 /**
@@ -50,6 +73,11 @@ public class VolumeSelectionController  {
     final private DirectoryChooser dirChooser = new DirectoryChooser();
     private HeaderCollector hcollector=new HeaderCollector();
     private Long id;
+    private QcTypeService qserv=new QcTypeServiceImpl();
+    private JobStepType0Model parentjob;
+    private SessionsService sserv=new SessionsServiceImpl();
+    private VolumeService vserv=new VolumeServiceImpl();
+    private QcMatrixService qcmserv=new QcMatrixServiceImpl();
     
     final private ChangeListener<String> VOLUME_LABEL_CHANGE_LISTENER=new ChangeListener<String>() {
 
@@ -95,11 +123,199 @@ public class VolumeSelectionController  {
     @FXML
     private CheckBox qcCheckBox;
     
+    @FXML
+    private Button qMatrixBtn;
+
+    
     private VolumeSelectionModel model;
-     private  TableView<SubSurface> table;
+    private  TableView<SubSurface> table;
      
      
-     private List<TimerTask> volumeTimerTask=new ArrayList<>();
+    private List<TimerTask> volumeTimerTask=new ArrayList<>();
+    private QcMatrixModel qcMatrixModel;
+    private qcCheckListModel qcCModel;
+    
+    /*  @FXML
+    void openQMatrix(ActionEvent event) {
+    SessionModel smodel=model.getParentjob().getSessionModel();
+    Sessions currentsession= sserv.getSessions(smodel.getId());
+    //Check with definition of QcMatrix
+    Volume v=vserv.getVolume(model.getId());
+    List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForVolume(v);
+    qcMatrixModel=model.getQcMatrixModel();
+    //  List<QcType>
+    qcCheckListModel qcckmod=new qcCheckListModel();
+    List<QcType> qcTypesForSession=qserv.getQcTypesForSession(currentsession);
+    List<String> qcTypesNames=new ArrayList<>();
+    qcCModel=model.getQcCheckListModel();
+    for (Iterator<QcType> iterator = qcTypesForSession.iterator(); iterator.hasNext();) {
+    QcType next = iterator.next();
+    String name=next.getName();
+    qcTypesNames.add(name);
+    }
+    qcCModel.setQcTypes(qcTypesNames);
+    
+    if(qcmatdef.isEmpty()){
+    
+    
+    
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): QcMatrix not defined for current node");
+    
+    qcCheckListNode qcCNode=new qcCheckListNode(qcCModel);
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): selected: "+qcCModel.getCheckedTypes());
+    
+    
+    
+    
+    List<String> types=qcCModel.getCheckedTypes();
+    List<QcTypeModel> qctypeModels=new ArrayList<>();
+    List<Long> ticked=new ArrayList<>();
+    
+    
+    
+    if(qcTypesForSession.isEmpty()){          //no qctypes declared for the entire session
+    for (Iterator<String> iterator = types.iterator(); iterator.hasNext();) {
+    String type = iterator.next();
+    QcType q=new QcType();
+    q.setName(type.toLowerCase());              //2Dstacks is the same as 2dstACks
+    q.setSessions(currentsession);
+    qserv.createQcType(q);
+    
+    
+    }
+    
+    qcTypesForSession=qserv.getQcTypesForSession(currentsession);
+    
+    }
+    else{                                  //if there are existing entries
+    
+    List<String> existingnames=new ArrayList<>();
+    for (Iterator<QcType> iterator = qcTypesForSession.iterator(); iterator.hasNext();) {
+    QcType qctmy = iterator.next();
+    existingnames.add(qctmy.getName());
+    if(types.contains(qctmy.getName())){
+    ticked.add(qctmy.getIdQcType());
+    }
+    
+    }
+    List<String> remaining=new ArrayList<>(types);
+    remaining.removeAll(existingnames);
+    
+    for (Iterator<String> iterator = remaining.iterator(); iterator.hasNext();) {
+    String next = iterator.next();
+    QcType qct=new QcType();
+    qct.setName(next);
+    qct.setSessions(currentsession);
+    qserv.createQcType(qct);               //create new entries
+    ticked.add(qct.getIdQcType());
+    }
+    
+    
+    qcTypesForSession=qserv.getQcTypesForSession(currentsession);    //get the list again..this time with new entries
+    }
+    
+    
+    //at this point the list qcTypesforSession is now a list with all the entries (new and old) for qctypes
+    //and           the list "ticked" contains the ids of the qctype records that have been selected for the current definition
+    
+    
+    
+    
+    
+    List<QcTypeModel> sessionQcTypeModels=new ArrayList<>();
+    for (Iterator<QcType> iterator = qcTypesForSession.iterator(); iterator.hasNext();) {
+    QcType next = iterator.next();
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): retrieved from db: "+next.getName());
+    //names.(next.getName());
+    QcTypeModel qcTypeModel=new QcTypeModel();
+    qcTypeModel.setId(next.getIdQcType());
+    qcTypeModel.setName(next.getName());
+    sessionQcTypeModels.add(qcTypeModel);
+    qcMatrixModel.addToQcTypePresMap(qcTypeModel, Boolean.FALSE);               //initially set all qctypes to false;
+    }
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): Setting the ticked ones to true");
+    for (Iterator<Long> iterator = ticked.iterator(); iterator.hasNext();) {
+    Long tickedid = iterator.next();
+    QcType selectedType=qserv.getQcType(tickedid);
+    QcTypeModel qctymod=new QcTypeModel();
+    qctymod.setId(selectedType.getIdQcType());
+    qctymod.setName(selectedType.getName());
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): ticked: id: "+selectedType.getIdQcType()+" :name: "+selectedType.getName());
+    
+    qctypeModels.add(qctymod);
+    }
+    
+    
+    
+    
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qctypeModels.size(): "+qctypeModels.size());
+    for (Iterator<QcTypeModel> iterator = qctypeModels.iterator(); iterator.hasNext();) {
+    QcTypeModel def = iterator.next();
+    qcMatrixModel.addToQcTypePresMap(def, Boolean.TRUE);                    //set the ones checked to true;
+    
+    }
+    
+    Map<QcTypeModel,Boolean> qcmmap=qcMatrixModel.getQcTypePresMap();
+    
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): Creating the Qc matrix for Volume: "+model.getLabel());
+    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qcMatrixModel.size(): "+qcMatrixModel.getQcTypePresMap().size());
+    for (Map.Entry<QcTypeModel, Boolean> entry : qcmmap.entrySet()) {
+    QcTypeModel qctype = entry.getKey();
+    Boolean ispres = entry.getValue();
+    QcMatrix qcmatrix=new QcMatrix();
+    qcmatrix.setVolume(v);
+    QcType qselect=qserv.getQcType(qctype.getId());
+    qcmatrix.setQctype(qselect);
+    qcmatrix.setPresent(ispres);
+    qcmserv.createQcMatrix(qcmatrix);                   //create the qc matrix
+    
+    
+    }
+    
+    
+    qcmatdef=qcmserv.getQcMatrixForVolume(v);
+    }
+    
+    
+    
+    
+    
+    
+    showPopList(qcmatdef);
+    
+    }
+    
+    
+    void showPopList(List<QcMatrix> qcmatrices){
+    
+    qcMatrixModel.clear();
+    
+    
+    for (Iterator<QcMatrix> iterator = qcmatrices.iterator(); iterator.hasNext();) {
+    QcMatrix rec = iterator.next();
+    QcType qctype=rec.getQctype();
+    Volume v=rec.getVolume();
+    Boolean pres=rec.getPresent();
+    
+    QcTypeModel qctm=new QcTypeModel();
+    qctm.setId(qctype.getIdQcType());
+    qctm.setName(qctype.getName());
+    qcMatrixModel.addToQcTypePresMap(qctm, pres);
+    
+    }
+    
+    model.getQcTableModel().setQcMatrixModel(qcMatrixModel);
+    
+    //model.getQcTableModel().setQctypes(qctypeModels);
+    HeadersModel hmod=model.getHeadersModel();
+    List<Sequences> seqsinVol=hmod.getSequenceListInHeaders();
+    model.getQcTableModel().setSequences(seqsinVol);
+    
+    QcTableNode qcMatrixNode=new QcTableNode(model.getQcTableModel());
+    }
+    
+    */
+     
      
     @FXML
     void handleSelectVolumeButton(ActionEvent event) {
@@ -144,7 +360,7 @@ public class VolumeSelectionController  {
        // hmodel.setObsHList(obSeqs);
        // model.setHeadersModel(hmodel);
                                     
-        HeadersNode hnode=new HeadersNode(model.getHeadersModel()); //displays the table. see method setView();
+        HeadersNode hnode=new HeadersNode(model.getHeadersModel(),0); //displays the table. see method setView();
         HeadersViewController hvc=hnode.getHeadersViewController();   
         
 

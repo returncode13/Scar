@@ -8,6 +8,7 @@ package fend.session.node.headers;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.model.Workflow;
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
@@ -17,14 +18,19 @@ import db.services.VolumeServiceImpl;
 import fend.session.node.headers.logger.LogsModel;
 import fend.session.node.headers.logger.LogsNode;
 import fend.session.node.headers.logger.VersionLogsModel;
+import fend.session.node.headers.workflows.WorkflowVersionModel;
+import fend.session.node.headers.workflows.WorkflowVersionNode;
+import fend.session.node.headers.workflows.WorkflowVersionTabModel;
 import fend.session.node.volumes.VolumeSelectionModel;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +52,7 @@ import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
+import org.hibernate.annotations.common.util.impl.Log;
 import watcher.LogWatcher;
 
 /**
@@ -55,6 +62,7 @@ import watcher.LogWatcher;
  */
 public class HeadersViewController extends Stage implements Initializable {
 
+     private Map<Integer,TreeItem<Sequences>> idxForTree=new HashMap<>();
     
     private HeadersModel hmodel;
     private HeadersNode hnode;
@@ -63,7 +71,7 @@ public class HeadersViewController extends Stage implements Initializable {
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
     String vname=new String();        
-    
+   
        @FXML
     private TreeTableView<Sequences> treetableView;
        
@@ -80,7 +88,7 @@ public class HeadersViewController extends Stage implements Initializable {
         // TODO
     }    
 
-    void setModel(HeadersModel lsm) {
+    void setModel(HeadersModel lsm,int seqSelection) {
         if(lsm==null){
             System.out.println("fend.session.node.headers.setModel: lsm is NULL");
         }
@@ -95,7 +103,7 @@ public class HeadersViewController extends Stage implements Initializable {
      if(item==null || empty){
      setText(null);
      setStyle("");
-     }else if(item.getAlert()){
+     }else if(item.getQcAlert()){
      setStyle("-fx-background-color:tomato");
      }else
      {
@@ -107,8 +115,10 @@ public class HeadersViewController extends Stage implements Initializable {
      
      treetableView.setRowFactory(ttv->{
          ContextMenu contextMenu = new ContextMenu();
-         MenuItem menuItem=new MenuItem("Show Logs");
-         contextMenu.getItems().add(menuItem);
+         MenuItem showLogsMenuItem=new MenuItem("Logs");
+         MenuItem showWorkFlowVersion=new MenuItem("Workflow Versions");
+         contextMenu.getItems().add(showLogsMenuItem);
+         contextMenu.getItems().add(showWorkFlowVersion);
          TreeTableRow<Sequences> row=new TreeTableRow<Sequences>(){
              
              @Override
@@ -118,7 +128,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     setText(null);
                     setStyle("");
                     setContextMenu(null);
-                }else if(item.getAlert()){
+                }else if(item.getQcAlert()){
                     setStyle("-fx-background-color:orange");
                     setTooltip(new Tooltip(item.getErrorMessage()));
                     setContextMenu(contextMenu);
@@ -131,10 +141,10 @@ public class HeadersViewController extends Stage implements Initializable {
             }
          };
          
-         menuItem.setOnAction(evt->{
+         showLogsMenuItem.setOnAction(evt->{
              Sequences seq=row.getItem();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
-             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getAlert());
+             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
             
@@ -180,10 +190,10 @@ public class HeadersViewController extends Stage implements Initializable {
                      System.out.println("fend.session.node.headers.setRowFactory(): non empty log list!");
                      for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
                      Logs logs = iterator.next();
-                     Long version=logs.getVersion();
+                     Long numberOfRuns=logs.getVersion();
                      String timestamp=logs.getTimestamp();
                      String logfilePath=logs.getLogpath();
-                     VersionLogsModel lmod=new VersionLogsModel(version,timestamp,logfilePath);
+                     VersionLogsModel lmod=new VersionLogsModel(numberOfRuns,timestamp,logfilePath);
                      verslogsmodel.add(lmod);
                      }*/
                      
@@ -205,6 +215,58 @@ public class HeadersViewController extends Stage implements Initializable {
              LogsNode logsnode=new LogsNode(logsmodel);
              
          });
+         
+         
+         
+          showWorkFlowVersion.setOnAction(evt->{
+              Sequences seq=row.getItem();
+              String subName=seq.getSubsurface();
+             List<VersionLogsModel> verslogsmodel=new ArrayList<>();
+             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
+             System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
+             Volume v=vserv.getVolume(lsm.getVolmodel().getId());
+            List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());
+            System.out.println("fend.session.node.headers.HeadersViewController.setModel(): extracting headers size: "+h.size());
+            
+            if(h.size()!=1){
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): Something's unusual. more than more header entry found for :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+            }
+            if(h!=null){
+                List<Logs> loglist=lserv.getLogsFor(h.get(0));
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): loglist size: "+loglist.size());
+                Logs latestlog= lserv.getLatestLogFor(v, subName);
+                Workflow latestwf=latestlog.getWorkflow();
+                WorkflowVersionTabModel wtabm=new WorkflowVersionTabModel();
+                wtabm.setVersion(latestwf.getWfversion());
+                wtabm.setWorkflowvContent(latestwf.getContents());
+                
+                Set<WorkflowVersionTabModel> wtabList=new HashSet<>();
+                wtabList.add(wtabm);
+                
+                List<Workflow> wflist=new ArrayList<>();
+                
+                for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
+                    Logs llog = iterator.next();
+                    Workflow wf=llog.getWorkflow();
+                    WorkflowVersionTabModel wtabm1=new WorkflowVersionTabModel();
+                    wtabm1.setVersion(wf.getWfversion());
+                    wtabm1.setWorkflowvContent(wf.getContents());
+                    wtabList.add(wtabm);
+                }
+                WorkflowVersionModel wfmodel=new WorkflowVersionModel(lsm.getVolmodel());
+                List<WorkflowVersionTabModel> lwflist=new ArrayList<>(wtabList);
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): about to set Wf model: lwlist size: "+lwflist.size());
+                wfmodel.setWfmodel(lwflist);
+                WorkflowVersionNode wfnode=new WorkflowVersionNode(wfmodel);
+                
+            }
+            else{
+                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): No header entry found! :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+            }
+          });
+         
+         
+         
                  return row;
      });
      
@@ -233,9 +295,10 @@ public class HeadersViewController extends Stage implements Initializable {
         TreeTableColumn<Sequences,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
         TreeTableColumn<Sequences,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
         TreeTableColumn<Sequences,Boolean>  alert=new TreeTableColumn<>("alert");
-        TreeTableColumn<Sequences,Long>  version=new TreeTableColumn<>("version");
+        TreeTableColumn<Sequences,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
         TreeTableColumn<Sequences,Boolean>  modified=new TreeTableColumn<>("modified");
         TreeTableColumn<Sequences,Boolean>  deleted=new TreeTableColumn<>("deleted");
+        TreeTableColumn<Sequences,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
      
         sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
         subsurfaceName.setCellValueFactory(new TreeItemPropertyValueFactory<>("subsurface"));
@@ -261,11 +324,11 @@ public class HeadersViewController extends Stage implements Initializable {
         cmpInc.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpInc"));
         insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
         alert.setCellValueFactory(new TreeItemPropertyValueFactory<>("alert"));
-        version.setCellValueFactory(new TreeItemPropertyValueFactory<>("version"));
+        numberOfRuns.setCellValueFactory(new TreeItemPropertyValueFactory<>("numberOfRuns"));
         modified.setCellValueFactory(new TreeItemPropertyValueFactory<>("modified"));
         deleted.setCellValueFactory(new TreeItemPropertyValueFactory<>("deleted"));
-        
-        version.setCellFactory((TreeTableColumn<Sequences,Long> p)->{
+        workflowVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("workflowVersion"));
+        numberOfRuns.setCellFactory((TreeTableColumn<Sequences,Long> p)->{
             TreeTableCell cell=new TreeTableCell<Sequences,Long>(){
                
                 @Override
@@ -309,16 +372,17 @@ public class HeadersViewController extends Stage implements Initializable {
         
         
         
-        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,version,modified,deleted,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
+        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,numberOfRuns,modified,deleted,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,workflowVersion);
         
      
      
      List<TreeItem<Sequences>> treeSeq = new ArrayList<>();
      Map<String,Long> gunShotMap;
-     
+     idxForTree.clear();
      
      for(Sequences s:seqListObs){
          gunShotMap=new HashMap<>();
+         
          List<SubSurface> subs=s.getSubsurfaces();
         TreeItem<Sequences> seqroot=new TreeItem<>(s);
         String tempTimeStamp=subs.get(0).getTimeStamp();
@@ -404,6 +468,12 @@ public class HeadersViewController extends Stage implements Initializable {
                  System.out.println("fend.session.node.headers.setRowFactory(): CMP inc is not the same across the sequence!: check the table");
 
              }
+             Integer seqSel=new Integer(sub.getSequenceNumber()+"");
+             if(seqSel==seqSelection){
+                 idxForTree.put(seqSel, seqroot);
+                 
+             }
+             
              seqroot.getChildren().add(subItem);
          }
          
@@ -428,6 +498,7 @@ public class HeadersViewController extends Stage implements Initializable {
          s.setXlineMin(tempXlineMin);
          s.setTraceCount(tempTrcCnt);
          treeSeq.add(seqroot);
+         
      }
      
      Sequences seqZero=new Sequences();
@@ -437,7 +508,21 @@ public class HeadersViewController extends Stage implements Initializable {
      
      treetableView.setRoot(rootOfAllseq);
      treetableView.setShowRoot(false);
+     treetableView.requestFocus();
+     if(seqSelection!=0)
+     {
+         int rww=treetableView.getRow(idxForTree.get(seqSelection));
+         treetableView.getSelectionModel().select(rww);
+         treetableView.getFocusModel().focus(rww);
+         treetableView.scrollTo(rww);
+         idxForTree.get(seqSelection).setExpanded(true);
+     }
+     else{
+         treetableView.getSelectionModel().selectFirst();
+     }
      
+     
+   
      
     }
 

@@ -103,7 +103,8 @@ public class AncestorsServiceImpl implements AncestorsService{
                 SessionDetails sdAnc=ssdServ.getSessionDetails(ancs.getParent());
                 if(Objects.equals(s.getIdSessionDetails(), sdAnc.getIdSessionDetails()))
                     {
-                        System.out.println(s.getJobStep().getNameJobStep()+ ": root Or a standalone node...eitherways a root");
+                        //System.out.println(s.getJobStep().getNameJobStep()+ ": root Or a standalone node...eitherways a root");
+                        System.out.println("db.services.AncestorsServiceImpl.getInitialAncestorsListFor()"+s.getJobStep().getNameJobStep()+ ": root Or a standalone node...eitherways a root");
                     listOfAncestors.add(s.getIdSessionDetails());
                         
                     return;

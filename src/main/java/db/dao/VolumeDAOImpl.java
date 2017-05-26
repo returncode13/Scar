@@ -48,29 +48,7 @@ public class VolumeDAOImpl implements VolumeDAO {
         return null;
     }
 
-    @Override
-    public void updateVolume(Long volid, Volume newVol) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        try{
-            transaction=session.beginTransaction();
-           Volume v = (Volume) session.get(Volume.class, volid);
-           
-            
-                v.setNameVolume(newVol.getNameVolume());
-                v.setMd5Hash(newVol.getMd5Hash());
-                session.update(v);
-            
-            
-          
-            transaction.commit();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        
-    }
+    
 
     @Override
     public void deleteVolume(Long volid) {
@@ -174,6 +152,11 @@ public class VolumeDAOImpl implements VolumeDAO {
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public void updateVolume(Long volid, Volume newVol) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     

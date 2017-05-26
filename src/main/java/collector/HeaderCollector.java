@@ -10,6 +10,7 @@ import db.model.Acquisition;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.model.Workflow;
 import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.HeadersService;
@@ -124,6 +125,7 @@ public class HeaderCollector {
             
             
             File volume=feVolumeSelModel.getVolumeChosen();
+            Long volumeType=feVolumeSelModel.getVolumeType();
             dugHve.setVolume(volume);
          //   logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
        //     while(true)
@@ -189,11 +191,41 @@ public class HeaderCollector {
                 String lineN=next.getSubsurface();
                 List<Logs> logs=lserv.getLogsFor(dbVolume, lineN);
                 Logs latestLog=lserv.getLatestLogFor(dbVolume, lineN);
-                    //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
-                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
-                next.setInsightVersion(latestLog.getInsightVersion());
-                next.setNumberOfRuns(new Long(logs.size()));
+                Boolean errored=latestLog.getErrored();
+                Boolean running=latestLog.getRunning();
+                Boolean cancelled=latestLog.getCancelled();
+                Boolean success=latestLog.getCompletedsuccessfully();
                 
+                
+             
+                Long wfMaxVersion=0L;
+                if(latestLog!=null){
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
+                    next.setInsightVersion(latestLog.getInsightVersion());
+                    wfMaxVersion=latestLog.getWorkflow().getWfversion();
+                }else{
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
+                    next.setInsightVersion(new String("no logs found"));
+                    
+                }
+                    //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
+                    
+                    if(logs!=null){
+                        next.setNumberOfRuns(new Long(logs.size()));
+                    }else{
+                        next.setNumberOfRuns(-1L);
+                    }
+                
+                /* for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
+                Logs logsForLineN = iterator1.next();
+                Workflow wf=logsForLineN.getWorkflow();
+                Long version=wf.getWfversion();
+                if(version>wfMaxVersion){
+                wfMaxVersion=version;
+                }
+                
+                }*/
+                next.setWorkflowVersion(wfMaxVersion);
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
                 if(next.getModified()) 
@@ -254,9 +286,9 @@ public class HeaderCollector {
                 s.setXlineMin(next.getXlineMin());
                 s.setModified(next.getModified());
                 s.setDeleted(next.getDeleted());
-                s.setVersion(next.getNumberOfRuns());
+                s.setNumberOfRuns(next.getNumberOfRuns());
                 s.setInsightVersion(next.getInsightVersion());
-                
+                s.setWorkflowVersion(next.getWorkflowVersion());
           
                 seqSubMap.put(s.getSequenceNumber(), s);
                 
@@ -278,6 +310,9 @@ public class HeaderCollector {
           Sequences sq=new Sequences();
           ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(next);
           sq.setSubsurfaces(ssubs);
+          sq.setSequenceNumber(ssubs.get(0).getSequenceNumber());
+          sq.setSubsurface(ssubs.get(0).getSubsurface().split("_")[0]);
+          
           seqList.add(sq);
       }
             

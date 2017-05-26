@@ -7,8 +7,10 @@ package hibUtil;
 
 
 
-import db.interceptor.AppInterceptor;
+
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +24,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import landing.LandingController;
-import landing.settings.Settings;
+import landing.settings.database.DataBaseSettings;
+import landing.settings.ssh.SShSettings;
 
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -68,7 +71,10 @@ public class HibernateUtil {
      private static int dbPort=5432;
      private static String strDbUSer="irdb";  //Kiba   . CHANGE this in the file hibernate.cfg.xml
      private static String DBPass="password";  //Kiba      CHANGE this in the file hibernate.cfg.xml
-  
+     
+     private static String database="";
+     
+     
     /*
      End of Kiba Params
      */
@@ -81,15 +87,17 @@ public class HibernateUtil {
      
      
     private static SessionFactory buildSessionFactory(){
-        System.out.println("hibUtil.HibernateUtil.buildSessionFactory() : Loading the connection configurations "+LandingController.getSettingXml());
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory() : Loading the connection configurations "+LandingController.getSshSettingXml());
         
-         File sFile=new File(LandingController.getSettingXml());
+         File sFile=new File(LandingController.getSshSettingXml());
+         File dbFile=new File(LandingController.getDbSettingXml());
          
          JAXBContext contextObj;
+         JAXBContext dbcontext;
         try {
-         contextObj = JAXBContext.newInstance(Settings.class);
+         contextObj = JAXBContext.newInstance(SShSettings.class);
          Unmarshaller unm=contextObj.createUnmarshaller();
-         Settings sett=(Settings) unm.unmarshal(sFile);
+         SShSettings sett=(SShSettings) unm.unmarshal(sFile);
          
          if(!sett.isPopulated()){
              System.err.println("Settings not Found!");
@@ -104,6 +112,16 @@ public class HibernateUtil {
              
              
          }
+         
+         
+         dbcontext = JAXBContext.newInstance(DataBaseSettings.class);
+         Unmarshaller dbunm=dbcontext.createUnmarshaller();
+         DataBaseSettings dbsett=(DataBaseSettings)dbunm.unmarshal(dbFile);
+         
+         database=dbsett.getChosenDatabase();
+         
+            
+         
         } catch (JAXBException ex) {
             Logger.getLogger(HibernateUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -113,9 +131,10 @@ public class HibernateUtil {
         
         
         System.out.println("HibernateUtil called using connection settings:");
-        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  HOST: "+connectionIP);
-        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  USER: "+userName);
-        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  PASS: "+password);
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  HOST : "+connectionIP);
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  USER : "+userName);
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  PASS : "+password);
+        System.out.println("hibUtil.HibernateUtil.buildSessionFactory():  DBASE: "+database);
         
         
         
@@ -160,9 +179,13 @@ public class HibernateUtil {
             SessionFactory sessionFactory = configuration.buildSessionFactory( serviceRegistry);
             System.out.println("returning sessionFactory from buildSessionFactory: "+sessionFactory.toString() );
             return sessionFactory;
-*/
+*/  
+            Map<String,String> persistenceMap=new HashMap<>();
+            persistenceMap.put("javax.persistence.jdbc.url",database);
+            
            
-            emfactory=Persistence.createEntityManagerFactory("landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU");
+            emfactory=Persistence.createEntityManagerFactory("landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU",persistenceMap);
+            //emfactory=Persistence.createEntityManagerFactory("landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU");
             //emfactory=provider.createEntityManagerFactory("landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU",null);
             String result = instance.sendCommand(command);
             //sessionFactory=emfactory.unwrap(SessionFactory.class);

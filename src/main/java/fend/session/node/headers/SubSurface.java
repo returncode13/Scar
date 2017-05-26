@@ -54,8 +54,80 @@ public class SubSurface extends Sequences implements Serializable{
     private   BooleanProperty alert=new SimpleBooleanProperty();
     private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
-    private   LongProperty version=new SimpleLongProperty(0L);
+    private   LongProperty numberOfRuns=new SimpleLongProperty(0L);
     private   StringProperty errorMessage=new SimpleStringProperty();
+    /*private LongProperty workflowVersion=new SimpleLongProperty(0L);
+    private Boolean insightFlag;
+    private String dependencyStatus;
+    private String runStatus;*/
+    
+    private final StringProperty run = new SimpleStringProperty(this,"run");
+    private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
+    private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");
+    private final LongProperty workflowVersion = new SimpleLongProperty(this,"workflowVersion");
+    private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
+
+    public String getQcStatus() {
+        return qcStatus.get();
+    }
+
+    public void setQcStatus(String value) {
+        qcStatus.set(value);
+    }
+
+    public StringProperty qcStatusProperty() {
+        return qcStatus;
+    }
+    
+
+    public long getWorkflowVersion() {
+        return workflowVersion.get();
+    }
+
+    public void setWorkflowVersion(long value) {
+        workflowVersion.set(value);
+    }
+
+    public LongProperty workflowVersionProperty() {
+        return workflowVersion;
+    }
+    
+
+    public boolean isInsightFlag() {
+        return insightFlag.get();
+    }
+
+    public void setInsightFlag(boolean value) {
+        insightFlag.set(value);
+    }
+
+    public BooleanProperty insightFlagProperty() {
+        return insightFlag;
+    }
+    
+    public String getDependency() {
+        return dependency.get();
+    }
+
+    public void setDependency(String value) {
+        dependency.set(value);
+    }
+
+    public StringProperty dependencyProperty() {
+        return dependency;
+    }
+    
+    public String getRun() {
+        return run.get();
+    }
+
+    public void setRun(String value) {
+        run.set(value);
+    }
+
+    public StringProperty runProperty() {
+        return run;
+    }
     
             
     
@@ -250,11 +322,11 @@ public class SubSurface extends Sequences implements Serializable{
         this.cmpInc.set(cmpInc);
     }
 
-    public Boolean getAlert() {
+    public Boolean getQcAlert() {
         return alert.get();
     }
 
-    public void setAlert(Boolean alert) {
+    public void setQcAlert(Boolean alert) {
         this.alert=new SimpleBooleanProperty(alert);
     }
 
@@ -292,16 +364,14 @@ public class SubSurface extends Sequences implements Serializable{
         this.deleted.set(deleted);
     }
 
-    public Long getVersion() {
-        return version.get();
+    public Long getNumberOfRuns() {
+        return numberOfRuns.get();
     }
 
-    public void setVersion(Long version) {
-        this.version.set(version);
+    public void setNumberOfRuns(Long version) {
+        this.numberOfRuns.set(version);
     }
-
-    
-    
+   
     
     
     

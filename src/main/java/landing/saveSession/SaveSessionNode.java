@@ -57,7 +57,7 @@ public class SaveSessionNode extends GridPane{
                 
                
                
-                System.out.println("landing.saveSession.SaveSessionNode.<init>()");
+                System.out.println("landing.SaveSessionNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);

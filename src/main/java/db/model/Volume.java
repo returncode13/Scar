@@ -45,6 +45,8 @@ public class Volume implements Serializable {
    @Column(name = "headerExStatus")
    private Boolean headerExtracted;
 
+   @Column(name = "volumeType")
+   private Long volumeType;
    
    
    @Column(name = "alert")
@@ -61,6 +63,12 @@ public class Volume implements Serializable {
    
    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<Logs> logs;
+   
+   @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Workflow> workflows;
+   
+   /*  @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<QcTable> qcMatrix;*/
    
    
    public Volume(){}
@@ -84,6 +92,9 @@ public class Volume implements Serializable {
         hash = 73 * hash + Objects.hashCode(this.alert);
         hash = 73 * hash + Objects.hashCode(this.headers);
         hash = 73 * hash + Objects.hashCode(this.jobVolumeDetails);
+        hash = 73 * hash + Objects.hashCode(this.volumeType);
+        hash = 73 * hash + Objects.hashCode(this.logs);
+        hash = 73 * hash + Objects.hashCode(this.workflows);
         return hash;
     }
 
@@ -118,6 +129,15 @@ public class Volume implements Serializable {
             return false;
         }
         if (!Objects.equals(this.jobVolumeDetails, other.jobVolumeDetails)) {
+            return false;
+        }
+        if (!Objects.equals(this.volumeType, other.volumeType)) {
+            return false;
+        }
+        if (!Objects.equals(this.logs, other.logs)) {
+            return false;
+        }
+        if (!Objects.equals(this.workflows, other.workflows)) {
             return false;
         }
         return true;
@@ -208,6 +228,26 @@ public class Volume implements Serializable {
     public void setLogs(Set<Logs> logs) {
         this.logs = logs;
     }
+
+    public Long getVolumeType() {
+        return volumeType;
+    }
+
+    public void setVolumeType(Long volumeType) {
+        this.volumeType = volumeType;
+    }
+
+    public Set<Workflow> getWorkflows() {
+        return workflows;
+    }
+
+    public void setWorkflows(Set<Workflow> workflows) {
+        this.workflows = workflows;
+    }
+
+    
+    
+    
    
     
    

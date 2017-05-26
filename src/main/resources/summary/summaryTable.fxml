@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<fx:root id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="fend.summary.SummaryController">
+    <stylesheets>
+        <URL value="@/landingResources/landing.css" />
+    </stylesheets>
+   <children>
+      <TableView fx:id="tableView" layoutX="169.0" layoutY="152.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   </children>
+</fx:root>

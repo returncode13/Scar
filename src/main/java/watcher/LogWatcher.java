@@ -53,10 +53,12 @@ class LogWatchHolder{
     String filename;
     String linename;
     String insightVersion;
+    Long seqno;
 
-    public LogWatchHolder(String date, String filename, String linename,String insightVersion) {
+    public LogWatchHolder(String date, String filename,Long seqn, String linename,String insightVersion) {
         this.date = date;
         this.filename = filename;
+        this.seqno=seqn;
         this.linename = linename;
         this.insightVersion=insightVersion;
     }
@@ -73,7 +75,7 @@ class LogWatchHolder{
     
 }
 
-public class LogWatcher {
+public  class LogWatcher {
     private String logsLocation;          // path to the dugio volume logs folder
     private Long numberOfruns;
     TimerTask task;
@@ -91,12 +93,14 @@ public class LogWatcher {
      private Volume volume;
      private List<LogWatchHolder> listOfExistingLogs=new ArrayList<>();
      private Map<String,LogWatchHolder> mapOfExistingLogs=new HashMap<>();
-     
+     LogStatusWatcher logstatuswatcher=null;
+     WorkflowWatcher workflowWatcher=null;
     public LogWatcher(){
     }
     
     public LogWatcher(String logsLocation,String filter,VolumeSelectionModel vmod) 
     {
+        System.out.println("watcher.LogWatcher.<init>(): called for : "+vmod.getLabel());
         counter++;
         
         /*See if any logs are already present in the database.
@@ -110,7 +114,7 @@ public class LogWatcher {
         if(logL!=null){
             for (Iterator<Logs> iterator = logL.iterator(); iterator.hasNext();) {
             Logs next = iterator.next();
-            LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSubsurfaces(), next.getInsightVersion());
+            LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSequence(),next.getSubsurfaces(), next.getInsightVersion());
             //listOfExistingLogs.add(lw);
             mapOfExistingLogs.put(next.getLogpath(), lw);
             }
@@ -144,7 +148,29 @@ public class LogWatcher {
                                 if(action.equals("Added")){
                                     
                                     System.out.println("watcher.LogWatcher. "+logfile+" was added");   
-                                 
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException ex) {
+                                        Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                    try{
+                                        extract();
+                                        commitToDb();
+                                        
+                                    }catch(ArrayIndexOutOfBoundsException aobe){
+                                        System.out.println("I think the log is still building..Will try again after 1 min");
+                                        try {
+                                            Thread.sleep(100000);
+                                        } catch (InterruptedException ex) {
+                                            Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        //if(counter<5){
+                                            extract();
+                                            commitToDb();
+                                        //}
+                                    }
+                                    
+                                    
                                 }
                             }
                         };
@@ -153,14 +179,15 @@ public class LogWatcher {
                         
                         
                         timer=new Timer();
-                        timer.schedule(task,new Date(),2000);                          //every second.
+                        timer.schedule(task,new Date(),2000);                          //every 2 seconds
                    //}
                     
                    
                     return null;
                 }
             }).get();
-        } catch (InterruptedException ex) {
+        } 
+          catch (InterruptedException ex) {
             Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
             Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
@@ -189,7 +216,7 @@ public class LogWatcher {
                         String value;
                         while((value=br.readLine())!=null){
                             Long maxVersion=0L;
-                            
+                            System.out.println("watcher.LogWatcher.extract(): whileLoop: "+value);
                             /* String[] parts=value.split("\\s");
                             String date=parts[0].substring(parts[0].indexOf(":")+1);
                             
@@ -204,7 +231,20 @@ public class LogWatcher {
                             //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
                             
                              //New script results
+                             
+                             /* String filename;
+                             String date;
+                             String time;*/
+                             
+                             
+                             
+                             
+                             
                                             String[] parts=value.split("\\s");
+                                            System.out.println("watcher.LogWatcher.extract(): paths.length: "+parts.length);
+                                             if(parts.length!=16){
+                                            continue;
+                                            }
                                             /* for(int iii=0;iii<parts.length;iii++){
                                             System.out.println("wacther.Logwatcher():  "+iii+" = "+parts[iii]);
                                             }*/
@@ -215,24 +255,34 @@ public class LogWatcher {
                                             Date convjdate=jdate.parse(date+":"+time);
                                             
                                             String linename=parts[7].split("=")[1];
+                                            String qes=new StringBuilder(linename.split("_")[0]).reverse().toString();
+                                          //  System.out.println("watcher.LogWatcher.extract(): qes: "+qes);
+                                            String seq=qes.substring(0,3);
+                                            //System.out.println("watcher.LogWatcher.extract(): seq: "+seq);
+                                            seq=new StringBuilder(seq).reverse().toString();
+                                            Long seqno=Long.valueOf(seq);
+                                            //System.out.println("watcher.LogWatcher.extract(): seqno: "+seqno);
                                             String baseInsVersion=parts[14];
                                             String revInsVersion=parts[15];
                                             String insVersion=baseInsVersion.concat(revInsVersion);
-                                              // System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" ");
+                                            System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" seq: "+seqno+" sub:"+linename+" insVersion: "+baseInsVersion+" insbuild: "+revInsVersion+" insight: "+insVersion);
+                                            
                             
-                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename, linename,insVersion);
+                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename,seqno, linename,insVersion);
+                            System.out.print(".");
                            // if(!listOfExistingSubs.contains(linename)){
                            if(!mapOfExistingLogs.containsKey(filename)){
+                               System.out.println("watcher.LogWatcher.extract():"+filename+" Adding to lwatcholder");
                                lwatchHolderList.add(lwatchholder);
                            }else{
-                               System.out.println("watcher.LogWatcher.extract(): log "+filename+" already present in database...skipping");
+                               //System.out.println("watcher.LogWatcher.extract(): log "+filename+" already present in database...skipping");
                                
                            }
                                 
                            // }
                             
                             
-                            
+                            System.out.println("watcher.LogWatcher.extract(): Moving on to the next log");
                             
                         }
                         
@@ -267,143 +317,172 @@ public class LogWatcher {
                     
     }
     
-    public void commitToDb(){
+    private void commitToDb(){
         
-         List<Logs>logsList=lserv.getLogsFor(volume);
-         Set<String> keys=maplineLog.keySet();
-        for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
-                           String next = iterator.next();
-              List<LogWatchHolder> logwList=(List<LogWatchHolder>) maplineLog.get(next);
-                                    
-                                    for (Iterator<LogWatchHolder> iterator1 = logwList.iterator(); iterator1.hasNext();) {
-                                        LogWatchHolder lgw = iterator1.next();
-                                        
-                                        //if(lgw.filename.equals())
-                                         System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+"" );//" with version: "+preVersion);
-                                        Logs l=new Logs();
-                                     
-                                        l.setLogpath(lgw.filename);
-                                        l.setTimestamp(lgw.date);
-                                        l.setVolume(volume);
-                                        l.setInsightVersion(lgw.insightVersion);
-                                        l.setSubsurfaces(lgw.linename);
-                                        
-                                        lserv.createLogs(l);
-                                        
-                                     //   preVersion++;
-                                    }
-                               // }
+        try {
+           
+            //List<Logs>logsList=lserv.getLogsFor(volume);
+            Set<String> keys=maplineLog.keySet();
+            if(keys.size()>0){
+                 System.out.println("watcher.LogWatcher.commitToDb(): Committing logs");
+            }else{
+                System.out.println("watcher.LogWatcher.commitToDb(): Nothing to commit..yet");
+            }
             
+            ExecutorService executorService= Executors.newFixedThreadPool(1);
             
+            executorService.submit(new Callable<Void>(){
+                @Override
+                public Void call() throws Exception {
+                    for (Iterator<String> iterator = keys.iterator(); iterator.hasNext();) {
+                        String next = iterator.next();
+                        List<LogWatchHolder> logwList=(List<LogWatchHolder>) maplineLog.get(next);
+                        
+                        for (Iterator<LogWatchHolder> iterator1 = logwList.iterator(); iterator1.hasNext();) {
+                            LogWatchHolder lgw = iterator1.next();
+                            
+                            //if(lgw.filename.equals())
+                            System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+"" );//" with version: "+preVersion);
+                            Logs l=new Logs();
+                            
+                            l.setLogpath(lgw.filename);
+                            l.setTimestamp(lgw.date);
+                            l.setVolume(volume);
+                            l.setInsightVersion(lgw.insightVersion);
+                            l.setSubsurfaces(lgw.linename);
+                           l.setSequence(lgw.seqno);
+                            lserv.createLogs(l);
+                            
+                            //   preVersion++;
                         }
-       // for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
-        //                    LogWatchHolder next = iterator.next();
-                         //   List<Headers> hlist=null;
-                        //    hlist=hserv.getHeadersFor(volume, next.linename);
-                            
-                            
-                            
-                     //       Boolean newLog=false;
-                      //      Long maxVersion=0L;
-                            
-                            /*if(hlist==null||hlist.isEmpty()){
-                            //  System.out.println("watcher.Logwatcher(): hlist is  empty");
-                            }*/
-                           // else if(hlist.size()==1){
-                           //     Headers h=hlist.get(0);
-                          //      System.out.println("watcher.Logwatcher(): checking for "+next.linename);
-                               
-                                
-                                
-                             //   if(logsList!=null){
-                                     
-                                  
-                                
-                                
-                                /*   if(logsList.isEmpty()){
-                                //    System.out.println("Loglist is EMPTY");
-                                System.out.println("watcher.Logwatcher(): LogList is empty");
-                                newLog=true;
-                                Long preVersion=0L;
-                                
-                                
-                                
-                                List<LogWatchHolder> logwList=(List<LogWatchHolder>) maplineLog.get(next.linename);
-                                
-                                for (Iterator<LogWatchHolder> iterator1 = logwList.iterator(); iterator1.hasNext();) {
-                                LogWatchHolder lgw = iterator1.next();
-                                System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+ " with version: "+preVersion);
-                                Logs l=new Logs();
-                                //   l.setHeaders(h);
-                                //  l.setLogpath(logpath+"/"+lgw.filename);
-                                l.setLogpath(lgw.filename);
-                                //   l.setNumberOfRuns(preVersion);
-                                // l.setVersion(h.getVersion());
-                                l.setTimestamp(lgw.date);
-                                l.setVolume(volume);
-                                lserv.createLogs(l);
-                                
-                                preVersion++;
-                                }
-                                
-                                newLog=false;
-                                
-                                
-                                
-                                
-                                
-                                }*/
-                                /* else{
-                                //      System.out.println("Loglist is NOT empty");
-                                System.out.println("watcher.Logwatcher(): LogList in not empty");
-                                Boolean exists=false;
-                                for (Iterator<Logs> iterator1 = logsList.iterator(); iterator1.hasNext();) {
-                                Logs log = iterator1.next();
-                                Long currentVersion=log.getNumberOfRuns();
-                                String filenameInDb=log.getLogpath();
-                                if(filenameInDb.equals(this.logsLocation+"/"+next.filename)){
-                                exists=true;
-                                continue;
-                                }
-                                if(currentVersion>=maxVersion){
-                                maxVersion=currentVersion;
-                                }
-                                
-                                System.out.println("Contents: ");
-                                
-                                }
-                                
-                                if(!exists){
-                                
-                                
-                                maxVersion++;
-                                Logs l=new Logs();
-                                //  l.setHeaders(h);
-                                //l.setLogpath(logpath+"/"+next.filename);
-                                l.setLogpath(next.filename);
-                                l.setNumberOfRuns(maxVersion);
-                                l.setVolume(volume);
-                                //l.setVersion(h.getVersion());
-                                l.setTimestamp(next.date);
-                                //  lserv.createLogs(l);
-                                exists=true;
-                                numberOfruns=maxVersion;
-                                }
-                                
-                                
-                                
-                                }*/
-                                
-                        //    }
-                        /* else if(hlist.size()>1){
-                        //Error
+                        // }
                         
-                        System.out.println("watcher.LogWatcher: "+next.linename+" has more than one entry for the volume : "+volume.getNameVolume());
-                        }*/
                         
-        
-        
-        
+                    }
+                    return null;
+                }
+            }).get();
+            
+            
+            // for (Iterator<LogWatchHolder> iterator = lwatchHolderList.iterator(); iterator.hasNext();) {
+            //                    LogWatchHolder next = iterator.next();
+            //   List<Headers> hlist=null;
+            //    hlist=hserv.getHeadersFor(volume, next.linename);
+            
+            
+            
+            //       Boolean newLog=false;
+            //      Long maxVersion=0L;
+            
+            /*if(hlist==null||hlist.isEmpty()){
+            //  System.out.println("watcher.Logwatcher(): hlist is  empty");
+            }*/
+            // else if(hlist.size()==1){
+            //     Headers h=hlist.get(0);
+            //      System.out.println("watcher.Logwatcher(): checking for "+next.linename);
+            
+            
+            
+            //   if(logsList!=null){
+            
+            
+            
+            
+            /*   if(logsList.isEmpty()){
+            //    System.out.println("Loglist is EMPTY");
+            System.out.println("watcher.Logwatcher(): LogList is empty");
+            newLog=true;
+            Long preVersion=0L;
+            
+            
+            
+            List<LogWatchHolder> logwList=(List<LogWatchHolder>) maplineLog.get(next.linename);
+            
+            for (Iterator<LogWatchHolder> iterator1 = logwList.iterator(); iterator1.hasNext();) {
+            LogWatchHolder lgw = iterator1.next();
+            System.out.println("watcher.LogWatcher: I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+ " with version: "+preVersion);
+            Logs l=new Logs();
+            //   l.setHeaders(h);
+            //  l.setLogpath(logpath+"/"+lgw.filename);
+            l.setLogpath(lgw.filename);
+            //   l.setNumberOfRuns(preVersion);
+            // l.setVersion(h.getVersion());
+            l.setTimestamp(lgw.date);
+            l.setVolume(volume);
+            lserv.createLogs(l);
+            
+            preVersion++;
+            }
+            
+            newLog=false;
+            
+            
+            
+            
+            
+            }*/
+            /* else{
+            //      System.out.println("Loglist is NOT empty");
+            System.out.println("watcher.Logwatcher(): LogList in not empty");
+            Boolean exists=false;
+            for (Iterator<Logs> iterator1 = logsList.iterator(); iterator1.hasNext();) {
+            Logs log = iterator1.next();
+            Long currentVersion=log.getNumberOfRuns();
+            String filenameInDb=log.getLogpath();
+            if(filenameInDb.equals(this.logsLocation+"/"+next.filename)){
+            exists=true;
+            continue;
+            }
+            if(currentVersion>=maxVersion){
+            maxVersion=currentVersion;
+            }
+            
+            System.out.println("Contents: ");
+            
+            }
+            
+            if(!exists){
+            
+            
+            maxVersion++;
+            Logs l=new Logs();
+            //  l.setHeaders(h);
+            //l.setLogpath(logpath+"/"+next.filename);
+            l.setLogpath(next.filename);
+            l.setNumberOfRuns(maxVersion);
+            l.setVolume(volume);
+            //l.setVersion(h.getVersion());
+            l.setTimestamp(next.date);
+            //  lserv.createLogs(l);
+            exists=true;
+            numberOfruns=maxVersion;
+            }
+            
+            
+            
+            }*/
+            
+            //    }
+            /* else if(hlist.size()>1){
+            //Error
+            
+            System.out.println("watcher.LogWatcher: "+next.linename+" has more than one entry for the volume : "+volume.getNameVolume());
+            }*/
+            
+            
+            
+            if(logstatuswatcher==null){
+            logstatuswatcher=new LogStatusWatcher(volumeModel);
+            }
+            if(workflowWatcher==null){
+                workflowWatcher=new WorkflowWatcher(volume);
+               
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
     }

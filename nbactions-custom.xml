@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-custom test</actionName>
+            <displayName>custom test</displayName>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <runfx.args>-jar "${project.build.directory}/${project.build.finalName}.jar"</runfx.args>
+            </properties>
+        </action>
+    </actions>

@@ -1,0 +1,34 @@
+.root{
+-fx-base: rgb(50,50,50);
+-fx-background: rgb(50,50,50);
+-fx-control-inner-background: rgb(50,50,50)
+}
+
+.menu-bar{
+
+
+    -fx-background-color : -fx-base
+
+}
+
+
+.button{
+-fx-background-color:#474f59
+}
+
+.split-pane:horizontal > * >.split-pane-divider{
+-fx-base-color: orange -fx-base transparent -fx-base;
+-fx-background-color: transparent, derive(-fx-base,20%);
+-fx-background-insets:0,0 1 0 1;
+}
+
+
+.split-pane:vertical > * >.split-pane-divider{
+-fx-base-color: transparent -fx-base transparent -fx-base;
+-fx-background-color: transparent, derive(-fx-base,20%);
+-fx-background-insets:0,0 1 0 1;
+}
+
+.label{
+-fx-text-fill: whitesmoke;
+}

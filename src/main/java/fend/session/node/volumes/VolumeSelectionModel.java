@@ -6,9 +6,14 @@
 package fend.session.node.volumes;
 
 
+import db.model.QcMatrix;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.volumes.qcTable.QcMatrixModel;
+import fend.session.node.volumes.qcTable.QcTableModel;
+import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +25,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import watcher.LogWatcher;
@@ -52,10 +60,110 @@ public class VolumeSelectionModel {
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
     private LogWatcher logTimerTask=null;                                   //watch for any new logs in ../000scratch/logs
-    //for Debug
-
+    //private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
+    //for Debug                                                             //to get the seq object use the getSequenceObjBySequenceNumber() call inside HeadersModel class
+    
+  //  private Set<Long> wfVersionsUsedinVolume=new HashSet<>();
+    
     private Long id;
+    private Long volumeType;
+    private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
+    private JobStepType0Model parentjob;
+    /*    private  QcTableModel qcTableModel;
+    private qcCheckListModel qcCheckListModel;
+    private JobStepType0Model parentjob;
+    private QcMatrixModel qcMatrixModel;
+    
+    public QcMatrixModel getQcMatrixModel() {
+    if(qcMatrixModel==null) {
+    qcMatrixModel=new QcMatrixModel();
+    qcMatrixModel.setVmodel(this);
+    }
+    return qcMatrixModel;
+    }
+    
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+    this.qcMatrixModel = qcMatrixModel;
+    }
+    
+    
+    
+    public JobStepType0Model getParentjob() {
+    return parentjob;
+    }
+    
+    public void setParentjob(JobStepType0Model parentjob) {
+    this.parentjob = parentjob;
+    }
+    
+    
+    
+    
+    
+    public QcTableModel getQcTableModel() {
+    if(qcTableModel==null){
+    qcTableModel=new QcTableModel();
+    }
+    return qcTableModel;
+    }
+    
+    public void setQcTableModel(QcTableModel qcMatrixModel) {
+    this.qcTableModel = qcMatrixModel;
+    }
+    
+    public qcCheckListModel getQcCheckListModel() {
+    if(qcCheckListModel==null){
+    qcCheckListModel=new qcCheckListModel();
+    }
+    return qcCheckListModel;
+    }
+    
+    public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
+    this.qcCheckListModel = qcCheckListModel;
+    }
+    */
+    
+    
+    
+    
+    public ObservableMap getLogstatusMapForSeq() {
+        return logstatusMapForSeq.get();
+    }
 
+    public void setLogstatusMapForSeq(ObservableMap value) {
+        logstatusMapForSeq.set(value);
+    }
+
+    public MapProperty logstatusMapForSeqProperty() {
+        return logstatusMapForSeq;
+    }
+
+    /*public Set<Long> getWfVersionsUsedinVolume() {
+    return wfVersionsUsedinVolume;
+    }
+    
+    public void setWfVersionsUsedinVolume(Set<Long> wfVersionsUsedinVolume) {
+    this.wfVersionsUsedinVolume = wfVersionsUsedinVolume;
+    }*/
+    
+    
+    
+    
+    /*
+    public Map<Long, StringProperty> getLogstatusMapForSeq() {
+    return logstatusMapForSeq;
+    }
+    
+    public void addToLogstatusMapForSeq(Map<Long, StringProperty> logstatusMapForSeq) {
+    this.logstatusMapForSeq = logstatusMapForSeq;
+    }
+    */
+    public void addToLogstatusMapForSeq(Long seq,StringProperty s){
+        logstatusMapForSeq.put(seq,s);
+    }
+    
+    
+    
     public HeadersModel getHeadersModel() {
         
         return headersModel;
@@ -79,23 +187,24 @@ public class VolumeSelectionModel {
         
     
     
-    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated) {
+    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated,Long volumeType,JobStepType0Model pjob) {
         ++i;
         this.volumeSelectionLabel = new SimpleStringProperty(i+" "+volumeSelectionLabel);
-        
+        this.parentjob=pjob;
          
         this.Inflated=toBeInflated;
+        this.volumeType=volumeType;
      
     }
     
-     public VolumeSelectionModel(Boolean toBeinflated) {
+     public VolumeSelectionModel(Boolean toBeinflated,long volumeType,JobStepType0Model pjob) {
         
-        this(new String ("choose vol: "),toBeinflated);
+        this(new String ("choose vol: "),toBeinflated,volumeType,pjob);
        //  this.headersModel.setVolmodel(this);
     }
     
-    public VolumeSelectionModel(){
-        this(new String ("choose vol: "),false);
+    public VolumeSelectionModel(Long volumeType,JobStepType0Model pjob){
+        this(new String ("choose vol: "),false,volumeType, pjob);
          //this.headersModel.setVolmodel(this);
         
         
@@ -207,11 +316,11 @@ public class VolumeSelectionModel {
    }
 
     private void startLogWatching() {
-        System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  starting to watch logs");
+        System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  starting to watch logs for:  "+volumeChosen.getName());
         String logPath=volumeChosen.getAbsolutePath();
         logPath=logPath+"/../../000scratch/logs";
         if(logTimerTask==null) {
-            
+            System.out.println("fend.session.node.volumes.VolumeSelectionModel.startLogWatching():  initiating logwatcher for :  "+volumeChosen.getName());
             logTimerTask=new LogWatcher(logPath,"",this);
         }
     }
@@ -223,6 +332,7 @@ public class VolumeSelectionModel {
             @Override
             public Void call() throws Exception {
                 //startVolumeWatching();
+                
                 startLogWatching();
             return null;
             }
@@ -233,5 +343,15 @@ public class VolumeSelectionModel {
         
        
     }
+
+    public Long getVolumeType() {
+        return volumeType;
+    }
+
+    public void setVolumeType(Long volumeType) {
+        this.volumeType = volumeType;
+    }
+
+    
     
 }
