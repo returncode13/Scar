@@ -8,26 +8,32 @@ package db.services;
 import db.dao.AcquisitionDAO;
 import db.dao.AcquisitionDAOImpl;
 import db.model.Acquisition;
-import java.util.List;
 
 /**
  *
- * @author sharath
+ * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class AcquisitionServiceImpl implements AcquisitionService{
-
-    AcquisitionDAO acqDao=new AcquisitionDAOImpl();
-
-    @Override
-    public List<Acquisition> getAcquisition() {
-        return acqDao.getAcquisition();
-    }
-
+    AcquisitionDAO aDao=new AcquisitionDAOImpl();
+    
     @Override
     public void createAcquisition(Acquisition acq) {
-        acqDao.createAcquisition(acq);
+        aDao.createAcquisition(acq);
     }
-    
-    
+
+    @Override
+    public Acquisition getAcquisition(Long aid) {
+       return aDao.getAcquisition(aid);
+    }
+
+    @Override
+    public void deleteAcquisition(Long aid) {
+        aDao.deleteAcquisition(aid);
+    }
+
+    @Override
+    public void updateAcquisition(Long aid, Acquisition newAcq) {
+        aDao.updateAcquisition(aid, newAcq);
+    }
     
 }

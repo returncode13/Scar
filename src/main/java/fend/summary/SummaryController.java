@@ -11,7 +11,7 @@ import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -128,7 +128,7 @@ public class SummaryController extends Stage{
                 
                 
                 
-                List<VolumeSelectionModel> vomodList=job.getVolList();
+                List<VolumeSelectionModelType1> vomodList=job.getVolList();
                 List<TableColumn<SummarySequenceModel,SummaryVolumeNodeModel>> volsForJob=new ArrayList<>();               //a list for vols for each job
                 List<SummaryVolumeNodeModel> summaryVolumeNodeModelList=summaryJobNodeModel.getListOfVolumes();
                 
@@ -137,7 +137,7 @@ public class SummaryController extends Stage{
                     /*}
                     for (Iterator<VolumeSelectionModel> iterator2 = vomodList.iterator(); iterator2.hasNext();) {*/
                     //VolumeSelectionModel vol = iterator2.next();
-                    VolumeSelectionModel vol = vomodList.get(vindex);
+                    VolumeSelectionModelType1 vol = vomodList.get(vindex);
                     SummaryVolumeNodeModel summaryVolumeNodeModel=new SummaryVolumeNodeModel();
                     summaryVolumeNodeModel.setVolumeSelectionModel(vol,depindex,jindex,vindex);
                     
@@ -486,7 +486,7 @@ public class SummaryController extends Stage{
          List<VolumeSelectionModel> vomodList=job.getVolList();                              //list of volumes for this job
          
          for (Iterator<VolumeSelectionModel> iterator2 = vomodList.iterator(); iterator2.hasNext();) {
-         VolumeSelectionModel vol = iterator2.next();
+         VolumeSelectionModelType1 vol = iterator2.next();
          
          HeadersModel h=vol.getHeadersModel();
          
@@ -534,7 +534,7 @@ public class SummaryController extends Stage{
                  
                  for (Iterator<SummaryVolumeNodeModel> iterator2 = lvnm.iterator(); iterator2.hasNext();) {
                      SummaryVolumeNodeModel svnm = iterator2.next();
-                     VolumeSelectionModel vs=svnm.getVolumeSelectionModel();
+                     VolumeSelectionModelType1 vs=svnm.getVolumeSelectionModel();
                      HeadersModel hsm=vs.getHeadersModel();
                      List<Sequences> seqs=hsm.getSequenceListInHeaders();
                     // ListSHolder listsh=new ListSHolder();

@@ -14,8 +14,7 @@ import db.model.Parent;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
-import db.services.AcquisitionService;
-import db.services.AcquisitionServiceImpl;
+
 import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
 import db.services.ChildService;
@@ -38,7 +37,7 @@ import fend.session.SessionModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.jobs.type1.JobStepType1Model;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,7 +64,7 @@ public class Collector {
     private SessionModel feSessionModel;
     //private ArrayList<JobStepModel> feJobModel=new ArrayList<>();
     ObservableList<JobStepType0Model> feJobModel=FXCollections.observableArrayList();
-    private ArrayList<VolumeSelectionModel> feVolume=new ArrayList<>();
+    private ArrayList<VolumeSelectionModelType1> feVolume=new ArrayList<>();
        
     
     
@@ -96,7 +95,7 @@ public class Collector {
     
     final private static ParentService pServ=new ParentServiceImpl();
     final private static ChildService cServ=new ChildServiceImpl();
-    final private static AcquisitionService acqServ=new AcquisitionServiceImpl();
+  //  final private static AcquisitionService acqServ=new AcquisitionServiceImpl();
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
@@ -176,7 +175,14 @@ public class Collector {
                 //System.out.println("Coll: JSM ID: "+jsm.getId());
                 jobStep.setAlert(Boolean.FALSE);*/
                  /*jobStep.setPending(Boolean.);*/
-                 List<String> insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
+                 List<String> insightVers=null;
+                 
+                 if(!jsm.getType().equals(3L)){                     //if not acquisition node
+                     insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
+                 }else{
+                     insightVers=new ArrayList<>();
+                 }
+                 
                  String versionString="";                                                              //this string will be of form v1;v2;v3;.. where v1,v2.. are the chosen versions
                  for (Iterator<String> iterator = insightVers.iterator(); iterator.hasNext();) {
                     String next = iterator.next();
@@ -215,10 +221,10 @@ public class Collector {
                  
                
                  
-                 ObservableList<VolumeSelectionModel> vsmlist= jsm.getVolList();
+                 ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
                  
-                 for (Iterator<VolumeSelectionModel> vit = vsmlist.iterator(); vit.hasNext();) {
-                    VolumeSelectionModel vsm = vit.next();
+                 for (Iterator<VolumeSelectionModelType1> vit = vsmlist.iterator(); vit.hasNext();) {
+                    VolumeSelectionModelType1 vsm = vit.next();
                     Volume vp=new Volume();
                      System.out.println("collector.Collector.setupEntries(): Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
                     vp.setIdVolume(vsm.getId());
@@ -586,9 +592,9 @@ public class Collector {
     private void startWatching() {
         for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
             JobStepType0Model jsm = jit.next();
-            ObservableList<VolumeSelectionModel> vsmlist= jsm.getVolList();
-            for (Iterator<VolumeSelectionModel> iterator = vsmlist.iterator(); iterator.hasNext();) {
-                VolumeSelectionModel next = iterator.next();
+            ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
+            for (Iterator<VolumeSelectionModelType1> iterator = vsmlist.iterator(); iterator.hasNext();) {
+                VolumeSelectionModelType1 next = iterator.next();
                 System.out.println("collector.Collector.startWatching(): "+next.getLabel());
                 next.startWatching();
                 

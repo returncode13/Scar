@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcTable.qcCheckBox;
+package fend.session.node.volumes.type1.qcTable.qcCheckBox;
 
-import fend.session.node.volumes.qcTable.qcCheckBox.addQcType.AddQcTypeModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.addQcType.AddQcTypeModel;
 import java.util.ArrayList;
 import java.util.List;
 import org.controlsfx.control.CheckModel;

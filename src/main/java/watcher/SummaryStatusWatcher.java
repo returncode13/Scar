@@ -11,7 +11,7 @@ import db.services.LogsService;
 import db.services.LogsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ import javafx.collections.ObservableMap;
 public class SummaryStatusWatcher {
     private LogsService lserv=new LogsServiceImpl();
     private VolumeService vserv=new VolumeServiceImpl();
-    private VolumeSelectionModel volumeSelectionModel;
+    private VolumeSelectionModelType1 volumeSelectionModel;
     private Volume volume;
     private List<Logs> logsWithDistinctSeq;
     private List<Long> seqs=new ArrayList<>();
@@ -54,7 +54,7 @@ public class SummaryStatusWatcher {
     TimerTask task;
     Timer timer;
 
-    public SummaryStatusWatcher(VolumeSelectionModel volumeSelectionModel) {
+    public SummaryStatusWatcher(VolumeSelectionModelType1 volumeSelectionModel) {
         this.volumeSelectionModel = volumeSelectionModel;
         this.volume=vserv.getVolume(this.volumeSelectionModel.getId());
            

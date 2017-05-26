@@ -5,7 +5,8 @@
  */
 package db.dao;
 
-import db.model.Acquisition;
+import db.model.Sequence;
+import db.model.Subsurface;
 import hibUtil.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -14,28 +15,31 @@ import org.hibernate.Transaction;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class AcquisitionDAOImpl implements AcquisitionDAO{
-
+public class SubsurfaceDAOImpl implements SubsurfaceDAO{
+    
+    
     @Override
-    public void createAcquisition(Acquisition acq) {
+    public void createSubsurface(Subsurface sub) {
+        
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            session.saveOrUpdate(acq);
+            session.saveOrUpdate(sub);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
         }finally{
             session.close();
         }
+
     }
 
     @Override
-    public Acquisition getAcquisition(Long aid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    public Subsurface getSubsurface(Long sid) {
+          Session session = HibernateUtil.getSessionFactory().openSession();
         try{
-            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+            Subsurface l= (Subsurface) session.get(Subsurface.class, sid);
             return l;
         }catch(Exception e){
             e.printStackTrace();
@@ -43,15 +47,17 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
             session.close();
         }
         return null;
+        
     }
 
     @Override
-    public void deleteAcquisition(Long aid) {
+    public void deleteSubsurface(Long sid) {
+       
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+              Subsurface l= (Subsurface) session.get(Subsurface.class, sid);
             session.delete(l);
             transaction.commit();
         }catch(Exception e){
@@ -62,26 +68,14 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
     }
 
     @Override
-    public void updateAcquisition(Long aid, Acquisition newAcq) {
+    public void updateSubsurface(Long sid, Subsurface newsub) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
-            l.setSequence(newAcq.getSequence());
-            l.setCable(newAcq.getCable());
-            l.setFgsp(newAcq.getFgsp());
-            l.setFirstChannel(newAcq.getFirstChannel());
-            l.setFirstFFID(newAcq.getFirstFFID());
-            l.setFirstGoodFFID(newAcq.getFirstGoodFFID());
-            l.setFirstShot(newAcq.getFirstShot());
-            l.setGun(newAcq.getGun());
-            l.setLastChannel(newAcq.getLastChannel());
-            l.setLastFFID(newAcq.getLastFFID());
-            l.setLastGoodFFID(newAcq.getLastGoodFFID());
-            l.setLgsp(newAcq.getLgsp());
-            l.setLastShot(newAcq.getLastShot());
-            l.setSubsurface(newAcq.getSubsurface());
+            Subsurface l= (Subsurface) session.get(Subsurface.class, sid);
+           l.setSequence(newsub.getSequence());
+           l.setSubsurface(newsub.getSubsurface());
             
             session.update(l);
             
@@ -92,8 +86,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
         }finally{
             session.close();
         }    
+        
     }
-    
-   
     
 }

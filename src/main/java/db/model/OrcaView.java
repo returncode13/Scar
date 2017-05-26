@@ -18,7 +18,7 @@ import javax.persistence.UniqueConstraint;
  */
 
 @Entity
-@Table(name="good_sp",schema = "orca")
+@Table(name="subline",schema = "obpmanager")
 public class OrcaView implements Serializable{
 
     @Id
@@ -27,37 +27,49 @@ public class OrcaView implements Serializable{
     @Column(name="real_line_name")
     private String subsurfaceLines;
 
-    @Column(name="preplot_name")
-    private String preplotNames;
+   @Column(name="cable")
+   private Long cable;
+   
+   @Column(name="first_channel")
+   private Long firstChannel;
+   
+   @Column(name="last_channel")
+   private Long lastChannel;
+   
+   @Column(name="gun")
+   private Long gun;
+   
     
     @Column(name="first_ffid")
     private Integer firstFFID;
     
+    @Column(name="last_ffid")
+    private Integer lastFFID;
+    
     @Column(name="first_shot")
     private Integer firstSHOT;
+    
+     @Column(name="last_shot")
+    private Integer lastSHOT;
     
     @Column(name="fg_ffid")
     private Integer fgFFID;
     
+     @Column(name="lg_ffid")
+    private Integer lgFFID;
+    
     @Column(name="fgsp")
     private Integer fgsp;
-    
-    @Column(name="last_ffid")
-    private Integer lastFFID;
-    
-    @Column(name="last_shot")
-    private Integer lastSHOT;
     
     @Column(name="lgsp")
     private Integer lgsp;
     
     
     
-    @Column(name="lg_ffid")
-    private Integer lgFFID;
-    
+   
+    /*
     @Column(name="start_data")
-    private String date;
+    private String date;*/
 
     public Long getSeq() {
         return seq;
@@ -77,13 +89,7 @@ public class OrcaView implements Serializable{
         this.subsurfaceLines = subsurfaceLines;
     }
 
-    public String getPreplotNames() {
-        return preplotNames;
-    }
-
-    public void setPreplotNames(String preplotNames) {
-        this.preplotNames = preplotNames;
-    }
+   
 
     public Integer getFgsp() {
         return fgsp;
@@ -117,13 +123,13 @@ public class OrcaView implements Serializable{
         this.lgFFID = lgFFID;
     }
 
-    public String getDate() {
-        return date;
+    /*public String getDate() {
+    return date;
     }
-
+    
     public void setDate(String date) {
-        this.date = date;
-    }
+    this.date = date;
+    }*/
 
     public Integer getFirstFFID() {
         return firstFFID;
@@ -155,6 +161,38 @@ public class OrcaView implements Serializable{
 
     public void setLastSHOT(Integer lastSHOT) {
         this.lastSHOT = lastSHOT;
+    }
+
+    public Long getCable() {
+        return cable;
+    }
+
+    public void setCable(Long cable) {
+        this.cable = cable;
+    }
+
+    public Long getFirstChannel() {
+        return firstChannel;
+    }
+
+    public void setFirstChannel(Long firstChannel) {
+        this.firstChannel = firstChannel;
+    }
+
+    public Long getLastChannel() {
+        return lastChannel;
+    }
+
+    public void setLastChannel(Long lastChannel) {
+        this.lastChannel = lastChannel;
+    }
+
+    public Long getGun() {
+        return gun;
+    }
+
+    public void setGun(Long gun) {
+        this.gun = gun;
     }
     
     

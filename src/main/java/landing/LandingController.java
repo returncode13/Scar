@@ -40,6 +40,7 @@ import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.acquisitionType.AcquisitionJobStepModel;
 //import fend.session.node.jobs.type1.JobStepType1Model;
 //import fend.session.node.jobs.type1.JobStepType1NodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
@@ -47,7 +48,7 @@ import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.jobs.type0.JobStepType0NodeController;
 import fend.session.node.jobs.type1.JobStepType1Model;
 import fend.session.node.jobs.type2.JobStepType2Model;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.Serializable;
@@ -424,6 +425,9 @@ public class LandingController implements Initializable,Serializable {
             if(type.equals(2L)){
                 fejsm=new JobStepType2Model(null);
             }
+            if(type.equals(3L)){
+                fejsm=new AcquisitionJobStepModel(null);
+            }
             fejsm.setJobStepText(beJobStep.getNameJobStep());
             fejsm.setId(beJobStep.getIdJobStep());
             
@@ -530,7 +534,7 @@ public class LandingController implements Initializable,Serializable {
             
             List<JobVolumeDetails> bejobVols= jvdserv.getJobVolumeDetails(beJobStep);        //this is the list of all the jobVolumeDetail entries related to beJobStep
             List<Volume> beVols=new ArrayList<>();                                           // A list to hold the volumes related to this beJobStep
-            List<VolumeSelectionModel> feVols=new ArrayList<>();                             // A list to hold the volume models corresponding to beVols.  Frontend equivalents
+            List<VolumeSelectionModelType1> feVols=new ArrayList<>();                             // A list to hold the volume models corresponding to beVols.  Frontend equivalents
             
             for (Iterator<JobVolumeDetails> iterator1 = bejobVols.iterator(); iterator1.hasNext();) {
                 JobVolumeDetails next1 = iterator1.next();
@@ -617,7 +621,7 @@ public class LandingController implements Initializable,Serializable {
       
                 
                 
-                VolumeSelectionModel fv=new VolumeSelectionModel(beV.getVolumeType(),fejsm);
+                VolumeSelectionModelType1 fv=new VolumeSelectionModelType1(beV.getVolumeType(),fejsm);
                 fv.setVolumeChosen(new File(beV.getPathOfVolume()));
                 fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
                 fv.setAlert(beV.getAlert());
@@ -636,7 +640,7 @@ public class LandingController implements Initializable,Serializable {
                 fv.setHeadersModel(hmod);                                       //set the headersModel
                 feVols.add(fv);
                 
-                ObservableList<VolumeSelectionModel> obv=FXCollections.observableArrayList(feVols);
+                ObservableList<VolumeSelectionModelType1> obv=FXCollections.observableArrayList(feVols);
                 
                 
                 fejsm.setVolList(obv);

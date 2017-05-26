@@ -15,7 +15,7 @@ import db.services.VolumeServiceImpl;
 import db.services.WorkflowService;
 import db.services.WorkflowServiceImpl;
 import dugex.DugioScripts;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

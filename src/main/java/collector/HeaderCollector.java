@@ -11,8 +11,7 @@ import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
 import db.model.Workflow;
-import db.services.AcquisitionService;
-import db.services.AcquisitionServiceImpl;
+
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
@@ -23,7 +22,9 @@ import dugex.DugioHeaderValuesExtractor;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+//import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -66,11 +67,11 @@ class TempArrayHolder{
 public class HeaderCollector {
     //from frontEnd. user
     
-    private VolumeSelectionModel feVolumeSelModel;
+    private VolumeSelectionModelType1 feVolumeSelModel;
     private HeadersModel headersModel;                                                                      //the headers model corresponding to this volume
     Set<SubSurface> sl;                                                                                     // the SET of subsurfaces in the volume. Note this DOES NOT account for more than one occurrence of the sub
     List<Sequences> seqList;
-    private AcquisitionService acqServ=new AcquisitionServiceImpl();
+//    private AcquisitionService acqServ=new AcquisitionServiceImpl();
     private TempArrayHolder headerholder=new TempArrayHolder();
     
     private DugioHeaderValuesExtractor dugHve=new DugioHeaderValuesExtractor();
@@ -87,7 +88,7 @@ public class HeaderCollector {
     final private static LogsService lserv=new LogsServiceImpl();
     
     
-    public void setFeVolumeSelModel(VolumeSelectionModel feVolumeSelModel) {
+    public void setFeVolumeSelModel(VolumeSelectionModelType1 feVolumeSelModel) {
         this.feVolumeSelModel = feVolumeSelModel;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(feVolumeSelModel.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
@@ -336,7 +337,7 @@ public class HeaderCollector {
    // }
     }
 
-  public List<Sequences> getHeaderListForVolume(VolumeSelectionModel vm){
+  public List<Sequences> getHeaderListForVolume(VolumeSelectionModelType1 vm){
     /*  List<Headers> hl=hdrServ.getHeadersFor(dbVolume);
       List<SubSurface> sl=new ArrayList<>();
       List<Sequences> seqList=new ArrayList<>();

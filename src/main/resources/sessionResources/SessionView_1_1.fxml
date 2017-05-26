@@ -18,6 +18,14 @@
                <children>
                   <VBox fx:id="buttonHolderVBox" alignment="CENTER_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
+                        <Button fx:id="addAcquistionJobNode" mnemonicParsing="false" onAction="#handleAddAcqJobNode" prefHeight="50.0" prefWidth="38.0" style="-fx-background-color: #52585e;" text="A">
+                           <font>
+                              <Font name="DejaVu LGC Sans Mono Bold" size="19.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </Button>
                         <Button fx:id="addJobStepButton1" mnemonicParsing="false" onAction="#handleAddJobStepType1Button" prefHeight="50.0" prefWidth="38.0" style="-fx-background-color: #52585e;" text="1">
                            <font>
                               <Font name="DejaVu LGC Sans Mono Bold" size="19.0" />

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes;
+package fend.session.node.volumes.type1;
 
 
 import collector.HeaderCollector;
@@ -27,11 +27,12 @@ import fend.session.node.headers.HeadersViewController;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.volumes.qcTable.QcMatrixModel;
-import fend.session.node.volumes.qcTable.QcTableNode;
-import fend.session.node.volumes.qcTable.QcTypeModel;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListNode;
+import fend.session.node.volumes.type0.VolumeSelectionControllerType0;
+import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
+import fend.session.node.volumes.type1.qcTable.QcTableNode;
+import fend.session.node.volumes.type1.qcTable.QcTypeModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListNode;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ import watcher.VolumeWatcher;
  *
  * @author naila0152
  */
-public class VolumeSelectionController  {
+public class VolumeSelectionControllerType1 implements VolumeSelectionControllerType0  {
     
     final private DirectoryChooser dirChooser = new DirectoryChooser();
     private HeaderCollector hcollector=new HeaderCollector();
@@ -127,7 +128,7 @@ public class VolumeSelectionController  {
     private Button qMatrixBtn;
 
     
-    private VolumeSelectionModel model;
+    private VolumeSelectionModelType1 model;
     private  TableView<SubSurface> table;
      
      
@@ -159,10 +160,10 @@ public class VolumeSelectionController  {
     
     
     
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): QcMatrix not defined for current node");
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): QcMatrix not defined for current node");
     
     qcCheckListNode qcCNode=new qcCheckListNode(qcCModel);
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): selected: "+qcCModel.getCheckedTypes());
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): selected: "+qcCModel.getCheckedTypes());
     
     
     
@@ -225,7 +226,7 @@ public class VolumeSelectionController  {
     List<QcTypeModel> sessionQcTypeModels=new ArrayList<>();
     for (Iterator<QcType> iterator = qcTypesForSession.iterator(); iterator.hasNext();) {
     QcType next = iterator.next();
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): retrieved from db: "+next.getName());
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): retrieved from db: "+next.getName());
     //names.(next.getName());
     QcTypeModel qcTypeModel=new QcTypeModel();
     qcTypeModel.setId(next.getIdQcType());
@@ -233,14 +234,14 @@ public class VolumeSelectionController  {
     sessionQcTypeModels.add(qcTypeModel);
     qcMatrixModel.addToQcTypePresMap(qcTypeModel, Boolean.FALSE);               //initially set all qctypes to false;
     }
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): Setting the ticked ones to true");
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): Setting the ticked ones to true");
     for (Iterator<Long> iterator = ticked.iterator(); iterator.hasNext();) {
     Long tickedid = iterator.next();
     QcType selectedType=qserv.getQcType(tickedid);
     QcTypeModel qctymod=new QcTypeModel();
     qctymod.setId(selectedType.getIdQcType());
     qctymod.setName(selectedType.getName());
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): ticked: id: "+selectedType.getIdQcType()+" :name: "+selectedType.getName());
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): ticked: id: "+selectedType.getIdQcType()+" :name: "+selectedType.getName());
     
     qctypeModels.add(qctymod);
     }
@@ -248,7 +249,7 @@ public class VolumeSelectionController  {
     
     
     
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qctypeModels.size(): "+qctypeModels.size());
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): qctypeModels.size(): "+qctypeModels.size());
     for (Iterator<QcTypeModel> iterator = qctypeModels.iterator(); iterator.hasNext();) {
     QcTypeModel def = iterator.next();
     qcMatrixModel.addToQcTypePresMap(def, Boolean.TRUE);                    //set the ones checked to true;
@@ -257,8 +258,8 @@ public class VolumeSelectionController  {
     
     Map<QcTypeModel,Boolean> qcmmap=qcMatrixModel.getQcTypePresMap();
     
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): Creating the Qc matrix for Volume: "+model.getLabel());
-    System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qcMatrixModel.size(): "+qcMatrixModel.getQcTypePresMap().size());
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): Creating the Qc matrix for Volume: "+model.getLabel());
+    System.out.println("fend.session.node.volumes.VolumeSelectionControllerType1.openQMatrix(): qcMatrixModel.size(): "+qcMatrixModel.getQcTypePresMap().size());
     for (Map.Entry<QcTypeModel, Boolean> entry : qcmmap.entrySet()) {
     QcTypeModel qctype = entry.getKey();
     Boolean ispres = entry.getValue();
@@ -368,11 +369,11 @@ public class VolumeSelectionController  {
            
     }
 
-    public VolumeSelectionModel getModel() {
+    public VolumeSelectionModelType1 getModel() {
         return model;
     }
 
-    public void setModel(VolumeSelectionModel model) {
+    public void setModel(VolumeSelectionModelType1 model) {
         if(this.model!=null)removeModelListeners();
         
         this.model = model;

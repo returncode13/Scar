@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcTable;
+package fend.session.node.volumes.type1.qcTable;
 
 import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

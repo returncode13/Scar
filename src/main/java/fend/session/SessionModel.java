@@ -8,7 +8,7 @@ package fend.session;
 import fend.session.edges.LinksModel;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.jobs.type1.JobStepType1Model;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;

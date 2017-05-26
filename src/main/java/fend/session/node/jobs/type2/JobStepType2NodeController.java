@@ -38,13 +38,13 @@ import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.jobs.type0.JobStepType0NodeController;
-import fend.session.node.volumes.VolumeSelectionCell;
-import fend.session.node.volumes.VolumeSelectionModel;
-import fend.session.node.volumes.qcTable.QcMatrixModel;
-import fend.session.node.volumes.qcTable.QcTableNode;
-import fend.session.node.volumes.qcTable.QcTypeModel;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListNode;
+import fend.session.node.volumes.type1.VolumeSelectionCell;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
+import fend.session.node.volumes.type1.qcTable.QcTableNode;
+import fend.session.node.volumes.type1.qcTable.QcTypeModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListNode;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -90,20 +90,20 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     
     
     
-    final private ChangeListener<ObservableList<VolumeSelectionModel>> JOBSTEP_VOLUME_LIST_CHANGE_LISTENER =new ChangeListener<ObservableList<VolumeSelectionModel>>() {
+    final private ChangeListener<ObservableList<VolumeSelectionModelType1>> JOBSTEP_VOLUME_LIST_CHANGE_LISTENER =new ChangeListener<ObservableList<VolumeSelectionModelType1>>() {
 
         @Override
-        public void changed(ObservableValue<? extends ObservableList<VolumeSelectionModel>> observable, ObservableList<VolumeSelectionModel> oldValue, ObservableList<VolumeSelectionModel> newValue) {
+        public void changed(ObservableValue<? extends ObservableList<VolumeSelectionModelType1>> observable, ObservableList<VolumeSelectionModelType1> oldValue, ObservableList<VolumeSelectionModelType1> newValue) {
            /* System.out.println("OldValue List Contents ");
             for (Iterator<VolumeSelectionModel> iterator = oldValue.iterator(); iterator.hasNext();) {
-                VolumeSelectionModel next = iterator.next();
+                VolumeSelectionModelType1 next = iterator.next();
                 System.out.println("VSModel #  "+next.getVsId());
                 
             }
             
              System.out.println("NewValue List Contents ");
             for (Iterator<VolumeSelectionModel> iterator = newValue.iterator(); iterator.hasNext();) {
-                VolumeSelectionModel next = iterator.next();
+                VolumeSelectionModelType1 next = iterator.next();
                 System.out.println("VSModel #  "+next.getVsId());
                 
             }
@@ -126,8 +126,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         }
     };
     
-    private List<VolumeSelectionModel> volSelectionList=new ArrayList<>();
-    private ObservableList<VolumeSelectionModel> obsList=FXCollections.observableList(volSelectionList);
+    private List<VolumeSelectionModelType1> volSelectionList=new ArrayList<>();
+    private ObservableList<VolumeSelectionModelType1> obsList=FXCollections.observableList(volSelectionList);
     private int show=0;
     private JobStepType2Model model;
     private JobStepType2Node jsn;                                //the real node is jsn.getJobStepNode()
@@ -172,7 +172,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     private GridPane gridPaneJobStepNode;
 
     @FXML
-    private ListView<VolumeSelectionModel> volumeSelView;
+    private ListView<VolumeSelectionModelType1> volumeSelView;
     
     @FXML
     private Button insightVerButton;
@@ -208,7 +208,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
          SessionDetails sessiondetails=ssdserv.getSessionDetails(js, currentsession);
         
         
-   //     for(VolumeSelectionModel vmodel:obsList){
+   //     for(VolumeSelectionModelType1 vmodel:obsList){
             //Check with definition of QcMatrix
         //Volume v=vserv.getVolume(vmodel.getId());
         
@@ -392,7 +392,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         
            //model.getQcTableModel().setQctypes(qctypeModels);
            List<Sequences> seqsinJob=new ArrayList<>();
-           for(VolumeSelectionModel vmod:obsList){
+           for(VolumeSelectionModelType1 vmod:obsList){
                HeadersModel hmod=vmod.getHeadersModel();
             List<Sequences> seqsinVol=hmod.getSequenceListInHeaders();
             seqsinJob.addAll(seqsinVol);
@@ -417,7 +417,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         }
              
         
-                obsList.add(new VolumeSelectionModel(true,1L,model));
+                obsList.add(new VolumeSelectionModelType1(true,1L,model));
                  volumeSelView.setItems(obsList);
                
                
@@ -426,8 +426,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
                 System.out.println("JSNC: Adding volumeModel "+obsList.get(obsList.size()-1).getId()+" to JobStepModel "+model.getId());
                 System.out.println("JSNC: At this point the jobStep model# "+model.getId()+" has the following Volumes ");
                 
-                for (Iterator<VolumeSelectionModel> iterator = model.getVolList().iterator(); iterator.hasNext();) {
-            VolumeSelectionModel next = iterator.next();
+                for (Iterator<VolumeSelectionModelType1> iterator = model.getVolList().iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 next = iterator.next();
                     System.out.println("         id# "+next.getId()+" label: "+next.getLabel()+" headerButtonIsDisabled :"+next.isHeaderButtonIsDisabled());
             
         }
@@ -574,7 +574,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     }
     
    
-    public ObservableList<VolumeSelectionModel> getObsList() {
+    public ObservableList<VolumeSelectionModelType1> getObsList() {
         return obsList;
     }
 
@@ -675,10 +675,10 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
          
          
          
-      volumeSelView.setCellFactory(new Callback<ListView<VolumeSelectionModel>, ListCell<VolumeSelectionModel>>() {
+      volumeSelView.setCellFactory(new Callback<ListView<VolumeSelectionModelType1>, ListCell<VolumeSelectionModelType1>>() {
 
                         @Override
-                        public ListCell<VolumeSelectionModel> call(ListView<VolumeSelectionModel> param) {
+                        public ListCell<VolumeSelectionModelType1> call(ListView<VolumeSelectionModelType1> param) {
                             //System.out.println("JSNController: calling setCellFactory on  "+param.getItems().get(show).getLabel());
                             
                            
@@ -726,7 +726,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         updateJobStepVolumeListView(model.getVolList());
     }
     
-    private void updateJobStepVolumeListView(ObservableList<VolumeSelectionModel> newValue){
+    private void updateJobStepVolumeListView(ObservableList<VolumeSelectionModelType1> newValue){
         volumeSelView.setItems(newValue);
     }
  /*
@@ -810,8 +810,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     public void setVolumeModelsForFrontEndDisplay() {
         
         
-        for (Iterator<VolumeSelectionModel> iterator = obsList.iterator(); iterator.hasNext();) {
-            VolumeSelectionModel next = iterator.next();
+        for (Iterator<VolumeSelectionModelType1> iterator = obsList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 next = iterator.next();
             volumeSelView.setItems(obsList);
                
                 
@@ -821,8 +821,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
                 System.out.println("JSNC: Adding volumeModel "+obsList.get(obsList.size()-1).getId()+" to JobStepModel "+model.getId());
                 System.out.println("JSNC: At this point the jobStep model# "+model.getId()+" has the following Volumes ");
                 
-                for (Iterator<VolumeSelectionModel> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
-            VolumeSelectionModel next1 = iterator1.next();
+                for (Iterator<VolumeSelectionModelType1> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
+            VolumeSelectionModelType1 next1 = iterator1.next();
                     System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
                     
                     HeadersModel hmod=next1.getHeadersModel();

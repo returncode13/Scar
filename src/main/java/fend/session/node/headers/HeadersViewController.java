@@ -21,7 +21,7 @@ import fend.session.node.headers.logger.VersionLogsModel;
 import fend.session.node.headers.workflows.WorkflowVersionModel;
 import fend.session.node.headers.workflows.WorkflowVersionNode;
 import fend.session.node.headers.workflows.WorkflowVersionTabModel;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,7 +159,7 @@ public class HeadersViewController extends Stage implements Initializable {
                      System.out.println("fend.session.node.headers.setRowFactory(): LogList is empty");
                      logLocation= logLocation+"/../../000scratch/logs";
                      ExecutorService execService=Executors.newFixedThreadPool(1);
-                     final VolumeSelectionModel vmd=lsm.getVolmodel();
+                     final VolumeSelectionModelType1 vmd=lsm.getVolmodel();
                      final String lloc=new String(logLocation);
                      try{
                      execService.submit(new Callable<Void>(){

@@ -12,6 +12,8 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+//import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,10 +23,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import fend.session.node.volumes.VolumeSelectionModel;
-import fend.session.node.volumes.qcTable.QcMatrixModel;
-import fend.session.node.volumes.qcTable.QcTableModel;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
+import fend.session.node.volumes.type1.qcTable.QcTableModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,7 +44,7 @@ import org.apache.commons.collections4.map.MultiValueMap;
 public class JobStepType1Model implements JobStepType0Model{
     private final Long type=1L;
     private final StringProperty jobStepTextProperty;
-    private final ListProperty<VolumeSelectionModel>volListProperty;
+    private final ListProperty<VolumeSelectionModelType1>volListProperty;
     private InsightVersionsModel insightVersionsModel;
     
     private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
@@ -71,7 +73,7 @@ public class JobStepType1Model implements JobStepType0Model{
     public JobStepType1Model(String jobStepText,SessionModel smodel) {
    
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
-       ObservableList<VolumeSelectionModel> obs=FXCollections.observableArrayList();
+       ObservableList<VolumeSelectionModelType1> obs=FXCollections.observableArrayList();
         this.volListProperty = new SimpleListProperty<>(obs);
         this.sessionModel=smodel;
         
@@ -98,7 +100,7 @@ public class JobStepType1Model implements JobStepType0Model{
         this("Enter a name",smodel);
     }
 
-    public ListProperty<VolumeSelectionModel> getVolListProperty() {
+    public ListProperty<VolumeSelectionModelType1> getVolListProperty() {
         return volListProperty;
     }
 
@@ -115,11 +117,11 @@ public class JobStepType1Model implements JobStepType0Model{
         jobStepTextProperty.set(text);
     }
     
-    public ObservableList<VolumeSelectionModel> getVolList(){
+    public ObservableList<VolumeSelectionModelType1> getVolList(){
         return volListProperty.get();
     }
     
-    public void setVolList(ObservableList<VolumeSelectionModel> obsList){
+    public void setVolList(ObservableList<VolumeSelectionModelType1> obsList){
         volListProperty.set(obsList);
     }
  

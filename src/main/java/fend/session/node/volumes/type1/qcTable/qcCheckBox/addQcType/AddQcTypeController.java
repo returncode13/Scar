@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcTable.qcCheckBox.addQcType;
+package fend.session.node.volumes.type1.qcTable.qcCheckBox.addQcType;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

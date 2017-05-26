@@ -55,6 +55,8 @@ import fend.session.edges.curves.CubCurveModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.acquisitionType.AcquisitionJobStepModel;
+import fend.session.node.jobs.acquisitionType.AcquisitionNode;
 import fend.session.node.jobs.type1.JobStepType1Node;
 import java.io.IOException;
 import java.net.URL;
@@ -103,7 +105,7 @@ import fend.session.node.jobs.type0.JobStepType0Node;
 import fend.session.node.jobs.type0.JobStepType0NodeController;
 import fend.session.node.jobs.type2.JobStepType2Model;
 import fend.session.node.jobs.type2.JobStepType2Node;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.summary.SummaryModel;
 import fend.summary.SummaryNode;
 import java.util.HashMap;
@@ -132,7 +134,7 @@ public class SessionController implements Initializable {
     //private ObservableList<JobStepModel> obsModelList=FXCollections.observableList(jobStepModelList);
     private SessionModel model=new SessionModel();
     private ObservableList<JobStepType0Model> obsModelList=FXCollections.observableList(model.listOfJobs);
-    private List<VolumeSelectionModel> dummyList = new ArrayList<>();
+    private List<VolumeSelectionModelType1> dummyList = new ArrayList<>();
     private JobStepType0Node jsn;
     
     private ArrayList<LinksModel> linksModelList=new ArrayList<>();
@@ -197,6 +199,11 @@ public class SessionController implements Initializable {
 
     @FXML
     private Button addJobStepButton2;
+    
+    
+    @FXML
+    private Button addAcquistionJobNode;
+
      
      @FXML
     private CheckBox tracker;
@@ -205,11 +212,30 @@ public class SessionController implements Initializable {
      int i=0;
      @FXML
     private Button overviewButton;
+     
 
      private MultiMap<JobStepType0Model,MultiMap<Integer,JobStepType0Model>> mapOfDepthMaps=new MultiValueMap<>();    //for multiple roots. The map will store the root job and a map of jobs keyed off their depths
     // private MultiValueMap<JobStepType0Model,List<JobStepType0Model>> graphMap=new MultiValueMap<>();                           //for multiple roots. The map will store the root job and its corresponding adjacency list of children. this list will be the graph traversed
              
-     
+    @FXML
+    void handleAddAcqJobNode(ActionEvent event) {
+        System.out.println("fend.session.SessionController.handleAddJobStepButton(): jobStepContents below");
+        
+        for (Iterator<JobStepType0Model> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
+            System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
+            
+        }
+        model.addJobToSession(new AcquisitionJobStepModel(model));
+       // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
+        obsModelList=model.getListOfJobs();
+        jsn=new AcquisitionNode((AcquisitionJobStepModel) obsModelList.get(obsModelList.size()-1));
+      
+        
+       rightInteractivePane.getChildren().add((AcquisitionNode)jsn);
+    }
+ 
+    
      
      @FXML
     void overviewButtonClicked(ActionEvent event) {
@@ -296,8 +322,8 @@ public class SessionController implements Initializable {
      
     @FXML
     void handleAddJobStepType1Button(ActionEvent event) {
-        //dummyList.add(new VolumeSelectionModel("v1", Boolean.TRUE));
-       // dummyList.add(new VolumeSelectionModel("v2", Boolean.TRUE));
+        //dummyList.add(new VolumeSelectionModelType1("v1", Boolean.TRUE));
+       // dummyList.add(new VolumeSelectionModelType1("v2", Boolean.TRUE));
        // obsModelList.add(new JobStepModel("SRME", dummyList));
        
         System.out.println("fend.session.SessionController.handleAddJobStepButton(): jobStepContents below");
@@ -653,7 +679,7 @@ public class SessionController implements Initializable {
            
            
            /*for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
-           VolumeSelectionModel next1 = iterator1.next();
+           VolumeSelectionModelType1 next1 = iterator1.next();
            System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
            }*/
            Long type=next.getType();
@@ -662,6 +688,9 @@ public class SessionController implements Initializable {
            }
            if(type.equals(2L)){
                jsn=new JobStepType2Node((JobStepType2Model) next);
+           }
+           if(type.equals(3L)){
+               jsn=new AcquisitionNode((AcquisitionJobStepModel)next);
            }
            
             JobStepType0NodeController jsc=jsn.getJsnc();
@@ -678,6 +707,8 @@ public class SessionController implements Initializable {
                         roots.add((JobStepType1Node) jsn);
                     }if(jsn instanceof JobStepType2Node){
                         roots.add((JobStepType2Node) jsn);
+                    }if(jsn instanceof AcquisitionNode){
+                        roots.add((AcquisitionNode) jsn);
                     }
                     
                 }
@@ -725,6 +756,18 @@ public class SessionController implements Initializable {
            
             
                         jsnAnchorMap.put((JobStepType2Node)jsn, mstart);
+                    }
+            if(jsn instanceof AcquisitionNode){
+                        rightInteractivePane.getChildren().add((AcquisitionNode)jsn);
+                        centerX=((AcquisitionNode)jsn).boundsInLocalProperty().getValue().getMinX();
+                        centerY=((AcquisitionNode)jsn).boundsInLocalProperty().getValue().getMinY()+((AcquisitionNode)jsn).boundsInLocalProperty().get().getHeight()/2;
+                        mstart.setJob(next);
+                        mstart.setCenterX(centerX);
+                        mstart.setCenterY(centerY);
+            
+           
+            
+                        jsnAnchorMap.put((AcquisitionNode)jsn, mstart);
                     }
             
             
@@ -973,11 +1016,11 @@ public class SessionController implements Initializable {
     }
     
     private Set<SubSurface> calculateSubsInJob(JobStepType0Model job){
-        List<VolumeSelectionModel> volList=job.getVolList();
+        List<VolumeSelectionModelType1> volList=job.getVolList();
         Set<SubSurface> subsInJob=new HashSet<>();
         
-        for (Iterator<VolumeSelectionModel> iterator = volList.iterator(); iterator.hasNext();) {
-            VolumeSelectionModel vol = iterator.next();
+        for (Iterator<VolumeSelectionModelType1> iterator = volList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 vol = iterator.next();
                 
                 if(!vol.getHeaderButtonStatus()){
                 Set<SubSurface> subsInVol=vol.getSubsurfaces();
@@ -1224,9 +1267,9 @@ public class SessionController implements Initializable {
             //check for Insight Version mismatch
             Set<SubSurface> csubq=child.getSubsurfacesInJob();
             
-            List<VolumeSelectionModel> cVolList=child.getVolList();
-         for (Iterator<VolumeSelectionModel> iterator = cVolList.iterator(); iterator.hasNext();) {
-            VolumeSelectionModel next = iterator.next();
+            List<VolumeSelectionModelType1> cVolList=child.getVolList();
+         for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 next = iterator.next();
             next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
             
         }
@@ -1248,12 +1291,12 @@ public class SessionController implements Initializable {
                         }
                            
                        
-            VolumeSelectionModel targetVolQ=new VolumeSelectionModel(1L,child);
+            VolumeSelectionModelType1 targetVolQ=new VolumeSelectionModelType1(1L,child);
             Sequences targetSeqQ=new Sequences();
             SubSurface targetSubQ=refSubQ;
                         
-                           for (Iterator<VolumeSelectionModel> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
-                            VolumeSelectionModel vc = iterator1.next();
+                           for (Iterator<VolumeSelectionModelType1> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
+                            VolumeSelectionModelType1 vc = iterator1.next();
                             Set<SubSurface> vcSub=vc.getSubsurfaces();
                            // System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                             if(vcSub.contains(targetSubQ)){
@@ -1432,9 +1475,9 @@ public class SessionController implements Initializable {
          Set<SubSurface> psubs=parent.getSubsurfacesInJob();
          Set<SubSurface> csubs=child.getSubsurfacesInJob();
          
-         List<VolumeSelectionModel> cVolList=child.getVolList();
-         for (Iterator<VolumeSelectionModel> iterator = cVolList.iterator(); iterator.hasNext();) {
-            VolumeSelectionModel next = iterator.next();
+         List<VolumeSelectionModelType1> cVolList=child.getVolList();
+         for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 next = iterator.next();
             next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
             
         }
@@ -1443,13 +1486,13 @@ public class SessionController implements Initializable {
          
          for (Iterator<SubSurface> iterator = csubs.iterator(); iterator.hasNext();) {
             SubSurface c = iterator.next();
-            VolumeSelectionModel targetVol=new VolumeSelectionModel(1L,child);
+            VolumeSelectionModelType1 targetVol=new VolumeSelectionModelType1(1L,child);
             Sequences targetSeq=new Sequences();
             SubSurface targetSub=c;
             SubSurface refSub=new SubSurface();
             
-                        for (Iterator<VolumeSelectionModel> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
-                            VolumeSelectionModel vc = iterator1.next();
+                        for (Iterator<VolumeSelectionModelType1> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
+                            VolumeSelectionModelType1 vc = iterator1.next();
                             Set<SubSurface> vcSub=vc.getSubsurfaces();
                            // System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                             if(vcSub.contains(targetSub)){
@@ -1713,10 +1756,10 @@ public class SessionController implements Initializable {
         
         for (Iterator<JobStepType0Model> iterator = obsModelList.iterator(); iterator.hasNext();) {
             JobStepType0Model next = iterator.next();
-            List<VolumeSelectionModel> volList=next.getVolList();
+            List<VolumeSelectionModelType1> volList=next.getVolList();
                 
-                for (Iterator<VolumeSelectionModel> iterator1 = volList.iterator(); iterator1.hasNext();) {
-                VolumeSelectionModel vol = iterator1.next();
+                for (Iterator<VolumeSelectionModelType1> iterator1 = volList.iterator(); iterator1.hasNext();) {
+                VolumeSelectionModelType1 vol = iterator1.next();
                 vol.startWatching();
                 
             }

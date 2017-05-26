@@ -10,7 +10,8 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.type2.JobStepType2Model;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.List;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
@@ -33,7 +34,8 @@ public interface JobStepType0Model {
     public void setJobStepText(String nameJobStep);
     public void setId(Long idJobStep);
     public void setInsightVersionsModel(InsightVersionsModel ivm);
-    public void setVolList(ObservableList<VolumeSelectionModel> obv);
+    public void setVolList(ObservableList<VolumeSelectionModelType1> obv);
+    //public void setVolList(ObservableList<VolumeSelectionModelType0> obv);
     public void addToParent(JobStepType0Model next2);
     public void addToListOfLinksModel(LinksModel lm);
     public void setSessionModel(SessionModel smodel);
@@ -47,7 +49,7 @@ public interface JobStepType0Model {
     public void setPendingFlagProperty(Boolean TRUE);
     public Set<SubSurface> getSubsurfacesInJob();
     public void setQcFlagProperty(Boolean FALSE);
-
+    
     
     
 }

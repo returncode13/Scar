@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import db.model.Acquisition;
+import db.model.Sequence;
 import hibUtil.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -14,15 +14,15 @@ import org.hibernate.Transaction;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class AcquisitionDAOImpl implements AcquisitionDAO{
+public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
-    public void createAcquisition(Acquisition acq) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    public void createSequence(Sequence seq) {
+       Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            session.saveOrUpdate(acq);
+            session.saveOrUpdate(seq);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -32,10 +32,10 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
     }
 
     @Override
-    public Acquisition getAcquisition(Long aid) {
+    public Sequence getSequence(Long sid) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
-            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+            Sequence l= (Sequence) session.get(Sequence.class, sid);
             return l;
         }catch(Exception e){
             e.printStackTrace();
@@ -46,12 +46,12 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
     }
 
     @Override
-    public void deleteAcquisition(Long aid) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+    public void deleteSequence(Long sid) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+             Sequence l= (Sequence) session.get(Sequence.class, sid);
             session.delete(l);
             transaction.commit();
         }catch(Exception e){
@@ -62,26 +62,13 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
     }
 
     @Override
-    public void updateAcquisition(Long aid, Acquisition newAcq) {
+    public void updateSequence(Long sid, Sequence newseq) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
-            l.setSequence(newAcq.getSequence());
-            l.setCable(newAcq.getCable());
-            l.setFgsp(newAcq.getFgsp());
-            l.setFirstChannel(newAcq.getFirstChannel());
-            l.setFirstFFID(newAcq.getFirstFFID());
-            l.setFirstGoodFFID(newAcq.getFirstGoodFFID());
-            l.setFirstShot(newAcq.getFirstShot());
-            l.setGun(newAcq.getGun());
-            l.setLastChannel(newAcq.getLastChannel());
-            l.setLastFFID(newAcq.getLastFFID());
-            l.setLastGoodFFID(newAcq.getLastGoodFFID());
-            l.setLgsp(newAcq.getLgsp());
-            l.setLastShot(newAcq.getLastShot());
-            l.setSubsurface(newAcq.getSubsurface());
+            Sequence l= (Sequence) session.get(Sequence.class, sid);
+            l.setSequenceno(sid);
             
             session.update(l);
             
@@ -93,7 +80,5 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
             session.close();
         }    
     }
-    
-   
     
 }

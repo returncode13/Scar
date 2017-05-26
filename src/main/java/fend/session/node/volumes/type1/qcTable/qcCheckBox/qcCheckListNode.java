@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcTable.qcCheckBox;
+package fend.session.node.volumes.type1.qcTable.qcCheckBox;
 
 import java.io.IOException;
 import java.net.URL;

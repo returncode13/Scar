@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes.qcTable;
+package fend.session.node.volumes.type1.qcTable;
 
 import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Set;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class QcMatrixModel {
-   // VolumeSelectionModel vmodel;
+   // VolumeSelectionModelType1 vmodel;
     Map<QcTypeModel,Boolean> qcTypePresMap=new HashMap<>();
     JobStepType0Model jobmodel;
    // List<QcMatrixRecord> qcmatrixRecords;
@@ -34,11 +34,11 @@ public class QcMatrixModel {
     
     
     /*
-    public VolumeSelectionModel getVmodel() {
+    public VolumeSelectionModelType1 getVmodel() {
     return vmodel;
     }
     
-    public void setVmodel(VolumeSelectionModel vmodel) {
+    public void setVmodel(VolumeSelectionModelType1 vmodel) {
     this.vmodel = vmodel;
     }*/
     public Map<QcTypeModel, Boolean> getQcTypePresMap() {

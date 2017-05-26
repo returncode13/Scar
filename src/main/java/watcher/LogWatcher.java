@@ -16,7 +16,7 @@ import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioScripts;
 
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +83,7 @@ public  class LogWatcher {
     private static int counter=0;
     private String filter=new String();
     
-    VolumeSelectionModel volumeModel;
+    VolumeSelectionModelType1 volumeModel;
     HeadersService hserv=new HeadersServiceImpl();
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
@@ -98,7 +98,7 @@ public  class LogWatcher {
     public LogWatcher(){
     }
     
-    public LogWatcher(String logsLocation,String filter,VolumeSelectionModel vmod) 
+    public LogWatcher(String logsLocation,String filter,VolumeSelectionModelType1 vmod) 
     {
         System.out.println("watcher.LogWatcher.<init>(): called for : "+vmod.getLabel());
         counter++;

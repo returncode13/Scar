@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.volumes;
+package fend.session.node.volumes.type1;
 
 
 import db.model.QcMatrix;
@@ -11,9 +11,10 @@ import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.volumes.qcTable.QcMatrixModel;
-import fend.session.node.volumes.qcTable.QcTableModel;
-import fend.session.node.volumes.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
+import fend.session.node.volumes.type1.qcTable.QcTableModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,8 @@ import watcher.VolumeWatcher;
  *
  * @author naila0152
  */
-public class VolumeSelectionModel {
+public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
+    private final Long type=1L;
     private static Long i=0L;
     private final StringProperty volumeSelectionLabel;
     
@@ -122,6 +124,10 @@ public class VolumeSelectionModel {
     this.qcCheckListModel = qcCheckListModel;
     }
     */
+
+    public Long getType() {
+        return type;
+    }
     
     
     
@@ -187,7 +193,7 @@ public class VolumeSelectionModel {
         
     
     
-    public VolumeSelectionModel(String volumeSelectionLabel,Boolean toBeInflated,Long volumeType,JobStepType0Model pjob) {
+    public VolumeSelectionModelType1(String volumeSelectionLabel,Boolean toBeInflated,Long volumeType,JobStepType0Model pjob) {
         ++i;
         this.volumeSelectionLabel = new SimpleStringProperty(i+" "+volumeSelectionLabel);
         this.parentjob=pjob;
@@ -197,13 +203,13 @@ public class VolumeSelectionModel {
      
     }
     
-     public VolumeSelectionModel(Boolean toBeinflated,long volumeType,JobStepType0Model pjob) {
+     public VolumeSelectionModelType1(Boolean toBeinflated,long volumeType,JobStepType0Model pjob) {
         
         this(new String ("choose vol: "),toBeinflated,volumeType,pjob);
        //  this.headersModel.setVolmodel(this);
     }
     
-    public VolumeSelectionModel(Long volumeType,JobStepType0Model pjob){
+    public VolumeSelectionModelType1(Long volumeType,JobStepType0Model pjob){
         this(new String ("choose vol: "),false,volumeType, pjob);
          //this.headersModel.setVolmodel(this);
         
