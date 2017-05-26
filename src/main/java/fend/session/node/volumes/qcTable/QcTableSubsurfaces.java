@@ -36,35 +36,36 @@ public class QcTableSubsurfaces extends QcTableSequences{
     }
 
     
-
+    @Override
     public List<QcTypeModel> getQcfields() {
         return qcfields;
     }
-
+    
+    @Override
     public void setQcfields(List<QcTypeModel> qcfields) {
         this.qcfields = qcfields;
     }
     
-
+    @Override
     public String getSubsurface() {
         subsurface.setValue(sub.getSubsurface());
         return subsurface.get();
     }
 
   
-
+    @Override
     public StringProperty subsurfaceProperty() {
         return subsurface;
     }
    
-
+    @Override
     public long getSequenceNumber() {
         sequenceNumber.set(sub.getSequenceNumber());
         return sequenceNumber.get();
     }
 
    
-
+    @Override
     public LongProperty sequenceNumberProperty() {
         return sequenceNumber;
     }

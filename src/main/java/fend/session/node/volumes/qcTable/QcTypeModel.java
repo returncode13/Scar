@@ -5,6 +5,8 @@
  */
 package fend.session.node.volumes.qcTable;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -15,19 +17,35 @@ import javafx.beans.property.StringProperty;
 public class QcTypeModel {
     String name;
     Long id;
-    private final StringProperty value = new SimpleStringProperty("NotQC'd");
+    private final BooleanProperty notQcd = new SimpleBooleanProperty(true);
 
-    public String getValue() {
-        return value.get();
+    public boolean isNotQcd() {
+        return notQcd.get();
     }
 
-    public void setValue(String value) {
-        this.value.set(value);
+    public void setNotQcd(boolean value) {
+        notQcd.set(value);
     }
 
-    public StringProperty valueProperty() {
-        return value;
+    public BooleanProperty notQcdProperty() {
+        return notQcd;
     }
+    private final BooleanProperty passQc = new SimpleBooleanProperty(false);
+
+    public boolean isPassQc() {
+        return passQc.get();
+    }
+
+    public void setPassQc(boolean value) {
+        passQc.set(value);
+    }
+
+    public BooleanProperty passQcProperty() {
+        System.out.println("fend.session.node.volumes.qcTable.QcTypeModel.passQcProperty(): Returning: "+passQc.get()+" for seq: "+name);
+        return passQc;
+    }
+   
+    
     
 
     public String getName() {
@@ -45,6 +63,20 @@ public class QcTypeModel {
     public Long getId() {
         return id;
     }
+    private final StringProperty qcStatus = new SimpleStringProperty("NQ");
+
+    public String getQcStatus() {
+        return qcStatus.get();
+    }
+
+    public void setQcStatus(String value) {
+        qcStatus.set(value);
+    }
+
+    public StringProperty qcStatusProperty() {
+        return qcStatus;
+    }
+    
     
     
 }

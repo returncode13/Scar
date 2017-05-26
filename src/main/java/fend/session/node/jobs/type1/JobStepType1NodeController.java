@@ -410,7 +410,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
            
             
          //qcmatdef=qcmserv.getQcMatrixForVolume(v);   
-         qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
+         qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);             //only get the qctypes for which present=true
         }
         
         

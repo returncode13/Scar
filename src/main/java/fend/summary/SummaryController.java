@@ -74,7 +74,7 @@ public class SummaryController extends Stage{
         });
         
         Set<Integer> keys=map.keySet();
-         List<TableColumn<SummarySequenceModel,DepthModel>> depthsForGraph=new ArrayList<>();       //a jlist of depths for each seq
+         List<TableColumn<SummarySequenceModel,DepthModel>> depthsForGraph=new ArrayList<>();       //a list of depths for each seq
          depthListmodel=new DepthListModel();
          List<DepthModel> dmodelList=depthListmodel.getListOfDepthModel();
          
@@ -100,7 +100,7 @@ public class SummaryController extends Stage{
             
             
             List<JobStepType0Model> jobList=(List<JobStepType0Model>) map.get(depth);
-            List<TableColumn<SummarySequenceModel,SummaryJobNodeModel>> jobsForDepth=new ArrayList<>();                  // a jlist of jobs for each depth
+            List<TableColumn<SummarySequenceModel,SummaryJobNodeModel>> jobsForDepth=new ArrayList<>();                  // a list of jobs for each depth
             List<SummaryJobNodeModel> summaryjobnodemodelList=dm.getListOfJobs();
             
             
@@ -129,7 +129,7 @@ public class SummaryController extends Stage{
                 
                 
                 List<VolumeSelectionModel> vomodList=job.getVolList();
-                List<TableColumn<SummarySequenceModel,SummaryVolumeNodeModel>> volsForJob=new ArrayList<>();               //a jlist for vols for each job
+                List<TableColumn<SummarySequenceModel,SummaryVolumeNodeModel>> volsForJob=new ArrayList<>();               //a list for vols for each job
                 List<SummaryVolumeNodeModel> summaryVolumeNodeModelList=summaryJobNodeModel.getListOfVolumes();
                 
                 for(int vindex=0;vindex<vomodList.size();vindex++){

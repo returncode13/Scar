@@ -310,6 +310,8 @@ public class HeaderCollector {
           Sequences sq=new Sequences();
           ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(next);
           sq.setSubsurfaces(ssubs);
+          sq.setSequenceNumber(ssubs.get(0).getSequenceNumber());
+          sq.setSubsurface(ssubs.get(0).getSubsurface().split("_")[0]);
           
           seqList.add(sq);
       }

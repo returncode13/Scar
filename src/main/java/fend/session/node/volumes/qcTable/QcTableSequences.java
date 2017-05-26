@@ -41,10 +41,18 @@ public class QcTableSequences {
         this.sequence = sequence;
         sequenceNumber.set(this.sequence.getSequenceNumber());
         subsurface.set(this.sequence.getSubsurface());
+        for(SubSurface subs: sequence.getSubsurfaces()){
+            QcTableSubsurfaces qsub=new QcTableSubsurfaces();
+            qsub.setQcfields(qcfields);
+            qsub.setSub(subs);              //sequence and subsurface information is set within class
+            qcSubs.add(qsub);
+        }
     }
+    
+    
 
     public List<QcTypeModel> getQcfields() {
-        System.out.println("fend.session.node.volumes.qcTable.QcTableSequences.getQcfields(): size: "+qcfields.size());
+      //  System.out.println("fend.session.node.volumes.qcTable.QcTableSequences.getQcfields(): size: "+qcfields.size());
         return qcfields;
     }
 
@@ -79,12 +87,12 @@ public class QcTableSequences {
     public List<QcTableSubsurfaces> getQcSubs() {
           
         
-        for(SubSurface subs: sequence.getSubsurfaces()){
-            QcTableSubsurfaces qsub=new QcTableSubsurfaces();
-            qsub.setQcfields(qcfields);
-            qsub.setSub(subs);              //sequence and subsurface information is set within class
-            qcSubs.add(qsub);
-        }
+        /* for(SubSurface subs: sequence.getSubsurfaces()){
+        QcTableSubsurfaces qsub=new QcTableSubsurfaces();
+        qsub.setQcfields(qcfields);
+        qsub.setSub(subs);              //sequence and subsurface information is set within class
+        qcSubs.add(qsub);
+        }*/
         
         return qcSubs;
     }

@@ -62,6 +62,9 @@ public class QcMatrixModel {
     public List<QcTypeModel> getQcTypeModels(){
         Set<QcTypeModel> keys=qcTypePresMap.keySet();
         List<QcTypeModel> types=new ArrayList<>(keys);
+        
+        
+        
         return types;
     }
     
