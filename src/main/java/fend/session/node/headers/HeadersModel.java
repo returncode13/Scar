@@ -7,7 +7,8 @@ package fend.session.node.headers;
 
 import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import db.model.Headers;
-import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,8 @@ public class HeadersModel {
     private List<Sequences> seqList=new ArrayList<>();
     private ObservableList<Sequences> sequenceListInHeaders=FXCollections.observableList(seqList);
     private Long id;
-    private VolumeSelectionModelType1 volmodel;
+   // private VolumeSelectionModelType1 volmodel;
+    private VolumeSelectionModelType0 volmodel;
 
     public ObservableList<Sequences> getSequenceListInHeaders() {
         return sequenceListInHeaders;
@@ -34,7 +36,10 @@ public class HeadersModel {
         this.sequenceListInHeaders = FXCollections.observableList(sequenceListInHeaders);
     }
 
-    public HeadersModel(VolumeSelectionModelType1 volmodel) {
+    /*public HeadersModel(VolumeSelectionModelType1 volmodel) {
+    this.volmodel = volmodel;
+    }*/
+    public HeadersModel(VolumeSelectionModelType0 volmodel) {
         this.volmodel = volmodel;
     }
     
@@ -45,15 +50,24 @@ public class HeadersModel {
         this.id=id;
     }
 
-    public VolumeSelectionModelType1 getVolmodel() {
+    /*public VolumeSelectionModelType1 getVolmodel() {
+    if(volmodel==null){
+    System.out.println("fend.session.node.headers.HeadersModel.getVolmodel()  NULL returned");
+    }
+    return volmodel;
+    }*/
+    public VolumeSelectionModelType0 getVolmodel() {
         if(volmodel==null){
             System.out.println("fend.session.node.headers.HeadersModel.getVolmodel()  NULL returned");
         }
         return volmodel;
     }
 
-    public void setVolmodel(VolumeSelectionModelType1 volmodel) {
-        this.volmodel = volmodel;
+    /*public void setVolmodel(VolumeSelectionModelType1 volmodel) {
+    this.volmodel = volmodel;
+    }*/
+    public void setVolmodel(VolumeSelectionModelType0 volmodel) {
+    this.volmodel = volmodel;
     }
     
     public Sequences getSequenceObjBySequenceNumber(Long seqno){

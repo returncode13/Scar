@@ -16,5 +16,35 @@ import java.util.Set;
  */
 public interface VolumeSelectionModelType0 {
     public Long getType();
+
+    public Long getId();
+
+    public String getLabel();
+
+    public Long getVolumeType();
+
+    public Boolean getHeaderButtonStatus();
+
+    public File getVolumeChosen();
+
+    public void startWatching();
+
+    public void setVolumeChosen(File file);
+
+    public void setHeaderButtonStatus(Boolean b);
+
+    public void setAlert(Boolean alert);
+
+    public void setLabel(String nameVolume);
+
+    public void setId(Long idVolume);
+
+    public void setVolumeType(Long volumeType);
+
+    public void setInflated(Boolean b);
+
+    public void setSubsurfaces(Set<SubSurface> sl);
+
+    public void setHeadersModel(HeadersModel hmod);
    
 }

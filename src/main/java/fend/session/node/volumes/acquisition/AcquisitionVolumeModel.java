@@ -17,10 +17,94 @@ import java.util.Set;
  */
 public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
     final private Long type=3L;
-
+    private Long id;
+    private String label="AcqVol";
+    
     @Override
     public Long getType() {
         return type;
+    }
+
+    @Override
+    public Long getId() {
+
+            return id;
+    }
+
+    @Override
+    public String getLabel() {
+            return label;
+    }
+
+    @Override
+    public Long getVolumeType() {
+        return type;
+    }
+
+    @Override
+    public Boolean getHeaderButtonStatus() {
+        return true;
+    }
+
+    @Override
+    public File getVolumeChosen() {
+        return new File("");
+    }
+
+    @Override
+    public void startWatching() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setVolumeChosen(File file) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+
+    @Override
+    public void setAlert(Boolean alert) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLabel(String nameVolume) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+
+    @Override
+    public void setVolumeType(Long volumeType) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+
+    @Override
+    public void setSubsurfaces(Set<SubSurface> sl) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setHeadersModel(HeadersModel hmod) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setHeaderButtonStatus(Boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setId(Long idVolume) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setInflated(Boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
    
     

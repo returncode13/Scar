@@ -106,6 +106,7 @@ import fend.session.node.jobs.type0.JobStepType0NodeController;
 import fend.session.node.jobs.type2.JobStepType2Model;
 import fend.session.node.jobs.type2.JobStepType2Node;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.summary.SummaryModel;
 import fend.summary.SummaryNode;
 import java.util.HashMap;
@@ -134,7 +135,7 @@ public class SessionController implements Initializable {
     //private ObservableList<JobStepModel> obsModelList=FXCollections.observableList(jobStepModelList);
     private SessionModel model=new SessionModel();
     private ObservableList<JobStepType0Model> obsModelList=FXCollections.observableList(model.listOfJobs);
-    private List<VolumeSelectionModelType1> dummyList = new ArrayList<>();
+   // private List<VolumeSelectionModelType1> dummyList = new ArrayList<>();
     private JobStepType0Node jsn;
     
     private ArrayList<LinksModel> linksModelList=new ArrayList<>();
@@ -1016,7 +1017,9 @@ public class SessionController implements Initializable {
     }
     
     private Set<SubSurface> calculateSubsInJob(JobStepType0Model job){
-        List<VolumeSelectionModelType1> volList=job.getVolList();
+        
+        if(job instanceof JobStepType1Model){                   //for 2D case
+            List<VolumeSelectionModelType1> volList=job.getVolList();
         Set<SubSurface> subsInJob=new HashSet<>();
         
         for (Iterator<VolumeSelectionModelType1> iterator = volList.iterator(); iterator.hasNext();) {
@@ -1037,6 +1040,11 @@ public class SessionController implements Initializable {
         }*/
         
         return subsInJob;
+        }
+        else{
+            throw new UnsupportedOperationException("calculateSubsinJob for job type. "+job.getType()+" not defined");
+        }
+        
     }
     
     
@@ -1065,32 +1073,32 @@ public class SessionController implements Initializable {
             
              
              
-             Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
+           //  Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
               //Set<SubSurface> rootsSubSurfaces=new HashSet(root.getSeqSubsInJob().values());
              
-             for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
-             SubSurface subinRoot = iterator.next();
-             jobSubString.add(subinRoot.getSubsurface().split("_")[0]);
-             //System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
-             
-             }
-             
-             List<String> acqStringBackedUp=new ArrayList(acqString);    //because acqString is about to go ba-bye!
-             
-             acqString.removeAll(jobSubString);    //remove the subs common to both acq and jobs. Since acq leads job , I guess it is logical to assume that acq be the larger list
-             List<String> remainingSubs=new ArrayList<>(acqString);
-             
-             System.out.println("fend.session.SessionController.tracking(): remaining subs: "+remainingSubs);
-             
-             if(remainingSubs.size()>0){  //means jobs has subs that were acquired but weren't processed
-             root.setPendingFlagProperty(Boolean.TRUE);
-             System.out.println("fend.session.SessionController.tracking() setting PendingFlagProperty to TRUE: ");
-             
-             }
-             else{                       //all subs acquired are present in the job
-             root.setPendingFlagProperty(Boolean.FALSE);
-             System.out.println("fend.session.SessionController.tracking() setting PendingFlagProperty to FALSE: ");
-             }
+              /*  for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
+              SubSurface subinRoot = iterator.next();
+              jobSubString.add(subinRoot.getSubsurface().split("_")[0]);
+              //System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
+              
+              }
+              
+              List<String> acqStringBackedUp=new ArrayList(acqString);    //because acqString is about to go ba-bye!
+              
+              acqString.removeAll(jobSubString);    //remove the subs common to both acq and jobs. Since acq leads job , I guess it is logical to assume that acq be the larger list
+              List<String> remainingSubs=new ArrayList<>(acqString);
+              */
+              /*System.out.println("fend.session.SessionController.tracking(): remaining subs: "+remainingSubs);
+              
+              if(remainingSubs.size()>0){  //means jobs has subs that were acquired but weren't processed
+              //  root.setPendingFlagProperty(Boolean.TRUE);
+              System.out.println("fend.session.SessionController.tracking() setting PendingFlagProperty to TRUE: ");
+              
+              }
+              else{                       //all subs acquired are present in the job
+              /// root.setPendingFlagProperty(Boolean.FALSE);
+              System.out.println("fend.session.SessionController.tracking() setting PendingFlagProperty to FALSE: ");
+              }*/
              
                 List<JobStepType0Model> children = root.getJsChildren();
                 for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
@@ -1103,7 +1111,7 @@ public class SessionController implements Initializable {
                         
                     }
                         pendingarray=new ArrayList<>();
-                 setPendingJobsFlag(root,child);
+               //  setPendingJobsFlag(root,child);
                     setQCFlag(root, child);
                     
              }
@@ -1231,14 +1239,14 @@ public class SessionController implements Initializable {
          pSubsStrings.removeAll(cSubsStrings);
          remaining=pSubsStrings;
          if(remaining.size()>0){   //child has pending subs
-         child.setPendingFlagProperty(Boolean.TRUE);
+       //  child.setPendingFlagProperty(Boolean.TRUE);
          
          System.out.println("fend.session.SessionController.setPendingJobsFlag():  child :"+child.getJobStepText()+" has pending subs "+remaining);
          pendingarray.addAll(remaining);
          System.out.println("fend.session.SessionController.setPendingJobsFlag(): Pending flag set in model");
          }else     //child has no pending subs
          {
-         child.setPendingFlagProperty(Boolean.FALSE);
+       //  child.setPendingFlagProperty(Boolean.FALSE);
           System.out.println("fend.session.SessionController.setPendingJobsFlag():  child :"+child.getJobStepText()+" has NO pending subs "+remaining);
          }
          }
@@ -1249,7 +1257,7 @@ public class SessionController implements Initializable {
          }
          for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
              JobStepType0Model grandchild = iterator.next();
-             setPendingJobsFlag(child, grandchild);
+            // setPendingJobsFlag(child, grandchild);
          }
          
          
@@ -1259,6 +1267,12 @@ public class SessionController implements Initializable {
 
     private void setQCFlag(JobStepType0Model parent,JobStepType0Model child){
        
+        
+        
+        //2d-2d edge
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+            
+        
         //If Child has been traversed then return.   Create a "traversed" flag in JobStepModel and set in each time the node is returning "upwards". i.e it and all of its descendants have been traversed, set its "traversed" flag to True
         Boolean traceFail=false;            //defualt QC status is false
         Boolean insightFail=false;
@@ -1748,7 +1762,7 @@ public class SessionController implements Initializable {
          
          
          
-         
+    }    
          
     }
 
@@ -1756,13 +1770,18 @@ public class SessionController implements Initializable {
         
         for (Iterator<JobStepType0Model> iterator = obsModelList.iterator(); iterator.hasNext();) {
             JobStepType0Model next = iterator.next();
-            List<VolumeSelectionModelType1> volList=next.getVolList();
+            if(next instanceof JobStepType1Model){
+                List<VolumeSelectionModelType1> volList=next.getVolList();
                 
                 for (Iterator<VolumeSelectionModelType1> iterator1 = volList.iterator(); iterator1.hasNext();) {
                 VolumeSelectionModelType1 vol = iterator1.next();
                 vol.startWatching();
                 
+                }
+            }else{
+                System.out.println("fend.session.SessionController.startWatching(): not implemented for jobtype: "+next.getType());
             }
+            
         }
     }
 

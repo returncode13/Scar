@@ -37,7 +37,8 @@ import fend.session.SessionModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.jobs.type1.JobStepType1Model;
-import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,8 +65,8 @@ public class Collector {
     private SessionModel feSessionModel;
     //private ArrayList<JobStepModel> feJobModel=new ArrayList<>();
     ObservableList<JobStepType0Model> feJobModel=FXCollections.observableArrayList();
-    private ArrayList<VolumeSelectionModelType1> feVolume=new ArrayList<>();
-       
+   // private ArrayList<VolumeSelectionModelType1> feVolume=new ArrayList<>();
+    private ArrayList<VolumeSelectionModelType0> feVolume=new ArrayList<>();   
     
     
     //for db////
@@ -221,10 +222,12 @@ public class Collector {
                  
                
                  
-                 ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
-                 
-                 for (Iterator<VolumeSelectionModelType1> vit = vsmlist.iterator(); vit.hasNext();) {
-                    VolumeSelectionModelType1 vsm = vit.next();
+                 //ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
+                 ObservableList<VolumeSelectionModelType0> vsmlist= jsm.getVolList();
+                 //for (Iterator<VolumeSelectionModelType1> vit = vsmlist.iterator(); vit.hasNext();) {
+                 for (Iterator<VolumeSelectionModelType0> vit = vsmlist.iterator(); vit.hasNext();) {
+                    //VolumeSelectionModelType1 vsm = vit.next();
+                    VolumeSelectionModelType0 vsm = vit.next();
                     Volume vp=new Volume();
                      System.out.println("collector.Collector.setupEntries(): Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
                     vp.setIdVolume(vsm.getId());
@@ -234,7 +237,12 @@ public class Collector {
                     //vp.setHeaderExtracted(Boolean.FALSE);
                     vp.setHeaderExtracted(vsm.getHeaderButtonStatus());
                     vp.setMd5Hash(null);                                //figure a way to calculate MD5
-                    vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
+                    if(!vsm.getType().equals(3L)){
+                        vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
+                    }else{
+                        vp.setPathOfVolume("no volume for acq");
+                    }
+                    
                     
                     dbVolumes.add(vp);
                     
@@ -592,13 +600,20 @@ public class Collector {
     private void startWatching() {
         for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
             JobStepType0Model jsm = jit.next();
-            ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
-            for (Iterator<VolumeSelectionModelType1> iterator = vsmlist.iterator(); iterator.hasNext();) {
-                VolumeSelectionModelType1 next = iterator.next();
-                System.out.println("collector.Collector.startWatching(): "+next.getLabel());
-                next.startWatching();
-                
-            }
+            //ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
+             ObservableList<VolumeSelectionModelType0> vsmlist= jsm.getVolList();
+             /*for (Iterator<VolumeSelectionModelType1> iterator = vsmlist.iterator(); iterator.hasNext();) {
+             VolumeSelectionModelType1 next = iterator.next();
+             System.out.println("collector.Collector.startWatching(): "+next.getLabel());
+             next.startWatching();
+             
+             }*/
+             for (Iterator<VolumeSelectionModelType0> iterator = vsmlist.iterator(); iterator.hasNext();) {
+             VolumeSelectionModelType0 next = iterator.next();
+             System.out.println("collector.Collector.startWatching(): "+next.getLabel());
+             next.startWatching();
+             
+             }
         }
     }
 

@@ -124,7 +124,8 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     this.qcCheckListModel = qcCheckListModel;
     }
     */
-
+    
+    @Override
     public Long getType() {
         return type;
     }
@@ -175,6 +176,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         return headersModel;
     }
 
+    @Override
     public void setHeadersModel(HeadersModel headersModel) {
         this.headersModel = headersModel;
         //this.headersModel.setVolmodel(this);
@@ -186,6 +188,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         return subsurfaces;
     }
 
+    @Override
     public void setSubsurfaces(Set<SubSurface> subsurfaces) {
         this.subsurfaces = subsurfaces;
     }
@@ -215,12 +218,13 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         
         
     }
-
+    
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
     
-    
+    @Override
     public Long getId() {
         return id;
     }
@@ -245,6 +249,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         headerButtonDisabledStatusProperty.setValue(b);
     }
     
+    @Override
     public Boolean getHeaderButtonStatus(){
         return headerButtonDisabledStatusProperty.get();
     }
@@ -257,6 +262,8 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     public String getLabel(){
         return volumeSelectionLabel.get();
     }
+    
+    @Override
     public void setLabel(String volumeSelected){
        // System.out.println("VSModel: setting label to : "+volumeSelected);
         volumeSelectionLabel.set(volumeSelected);
@@ -265,15 +272,18 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     public boolean isInflated() {
         return Inflated;
     }
-
-    public void setInflated(boolean Inflated) {
+    
+    @Override
+    public void setInflated(Boolean Inflated) {
         this.Inflated = Inflated;
     }
-
+    
+    @Override
     public File getVolumeChosen() {
         return volumeChosen;
     }
-
+    
+    @Override
     public void setVolumeChosen(File volumeChosen) {
         this.volumeChosen = volumeChosen;
         
@@ -283,7 +293,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     return alert;
     }
     
-    public void setAlert(boolean alert) {
+    public void setAlert(Boolean alert) {
     this.alert = alert;
     }
 
@@ -330,7 +340,8 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
             logTimerTask=new LogWatcher(logPath,"",this);
         }
     }
-
+    
+    @Override
     public void startWatching() {
         
          ExecutorService executorService = Executors.newFixedThreadPool(10);
@@ -349,11 +360,13 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         
        
     }
-
+    
+    @Override
     public Long getVolumeType() {
         return volumeType;
     }
-
+    
+    @Override
     public void setVolumeType(Long volumeType) {
         this.volumeType = volumeType;
     }

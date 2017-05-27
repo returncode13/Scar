@@ -34,7 +34,7 @@ public interface JobStepType0Model {
     public void setJobStepText(String nameJobStep);
     public void setId(Long idJobStep);
     public void setInsightVersionsModel(InsightVersionsModel ivm);
-    public void setVolList(ObservableList<VolumeSelectionModelType1> obv);
+   // public void setVolList(ObservableList<VolumeSelectionModelType1> obv);
     //public void setVolList(ObservableList<VolumeSelectionModelType0> obv);
     public void addToParent(JobStepType0Model next2);
     public void addToListOfLinksModel(LinksModel lm);

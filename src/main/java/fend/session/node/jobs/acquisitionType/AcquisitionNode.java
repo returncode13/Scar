@@ -303,7 +303,10 @@ public class AcquisitionNode extends AnchorPane implements JobStepType0Node {
 
              @Override
              public void handle(ActionEvent event) {
-                 System.out.println("fend.session.node.jobs.JobStepNode. This will delete this node with id: "+AcquisitionNode.this.getId()+" session: "+AcquisitionNode.this.jmodel.getSessionModel().getName()+" : with sessionID: "+AcquisitionNode.this.jmodel.getSessionModel().getId());
+                 System.out.println("fend.session.node.jobs.AcquisitionNode. This will delete this node with id: "+AcquisitionNode.this.getId());
+                 System.out.println("fend.session.node.jobs.AcquisitionNode"+" name: "+AcquisitionNode.this.jmodel.getJobStepText());
+                 System.out.println("fend.session.node.jobs.AcquisitionNode"+" session: "+AcquisitionNode.this.jmodel.getSessionModel().getName());
+                 System.out.println("fend.session.node.jobs.AcquisitionNode sessionID: "+AcquisitionNode.this.jmodel.getSessionModel().getId());
                  AcquisitionNode.this.jmodel.getSessionModel().removeJobfromSession(jmodel);
                  AcquisitionNode.this.jmodel.getSessionModel().addToDeleteList(jmodel);
                  List<LinksModel> lmlist=AcquisitionNode.this.jmodel.getListOfLinkModels();

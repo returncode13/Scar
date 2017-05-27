@@ -11,6 +11,7 @@ import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //Acimport fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
@@ -183,7 +184,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
 
     @Override
     public void setSessionModel(SessionModel smodel) {
-        this.sessionModel = sessionModel;
+        this.sessionModel = smodel;
     }
 
     @Override
@@ -239,9 +240,5 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
         
     }
 
-    @Override
-    public void setVolList(ObservableList<VolumeSelectionModelType1> obv) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
 }

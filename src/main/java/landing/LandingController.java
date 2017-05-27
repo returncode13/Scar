@@ -48,7 +48,10 @@ import fend.session.node.jobs.type0.JobStepType0Model;
 import fend.session.node.jobs.type0.JobStepType0NodeController;
 import fend.session.node.jobs.type1.JobStepType1Model;
 import fend.session.node.jobs.type2.JobStepType2Model;
+import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.Serializable;
@@ -534,8 +537,8 @@ public class LandingController implements Initializable,Serializable {
             
             List<JobVolumeDetails> bejobVols= jvdserv.getJobVolumeDetails(beJobStep);        //this is the list of all the jobVolumeDetail entries related to beJobStep
             List<Volume> beVols=new ArrayList<>();                                           // A list to hold the volumes related to this beJobStep
-            List<VolumeSelectionModelType1> feVols=new ArrayList<>();                             // A list to hold the volume models corresponding to beVols.  Frontend equivalents
-            
+           // List<VolumeSelectionModelType1> feVols=new ArrayList<>();                             // A list to hold the volume models corresponding to beVols.  Frontend equivalents
+            List<VolumeSelectionModelType0> feVols=new ArrayList<>();                             // A list to hold the volume models corresponding to beVols.  Frontend equivalents
             for (Iterator<JobVolumeDetails> iterator1 = bejobVols.iterator(); iterator1.hasNext();) {
                 JobVolumeDetails next1 = iterator1.next();
                 
@@ -621,16 +624,27 @@ public class LandingController implements Initializable,Serializable {
       
                 
                 
-                VolumeSelectionModelType1 fv=new VolumeSelectionModelType1(beV.getVolumeType(),fejsm);
-                fv.setVolumeChosen(new File(beV.getPathOfVolume()));
-                fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
-                fv.setAlert(beV.getAlert());
-                fv.setLabel(beV.getNameVolume());
-                fv.setId(beV.getIdVolume());
-                fv.setVolumeType(beV.getVolumeType());
-                System.out.println("landing.LandingController.loadSession(): Volume name: "+beV.getNameVolume()+" : Volume Id: "+beV.getIdVolume());
-                fv.setInflated(true);
-                fv.setSubsurfaces(sl);
+                //VolumeSelectionModelType1 fv=new VolumeSelectionModelType1(beV.getVolumeType(),fejsm);
+                Long typev=beV.getVolumeType();
+                VolumeSelectionModelType0 fv;
+                if(!typev.equals(3L)){
+                    fv=new VolumeSelectionModelType1(beV.getVolumeType(),fejsm);
+                    fv.setVolumeChosen(new File(beV.getPathOfVolume()));
+                    fv.setHeaderButtonStatus(!beV.getHeaderExtracted());     // if extracted is true then the status of disablity should be false
+                    fv.setAlert(beV.getAlert());
+                    fv.setLabel(beV.getNameVolume());
+                    fv.setId(beV.getIdVolume());
+                    fv.setVolumeType(beV.getVolumeType());
+                    System.out.println("landing.LandingController.loadSession(): Volume name: "+beV.getNameVolume()+" : Volume Id: "+beV.getIdVolume());
+                    fv.setInflated(true);
+                    fv.setSubsurfaces(sl);
+                }else{
+                    fv= new AcquisitionVolumeModel();
+                    fv.setVolumeChosen(new File(""));
+                }
+               
+                
+                
                 
                             HeadersModel hmod=new HeadersModel(fv);
                             ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
@@ -640,10 +654,22 @@ public class LandingController implements Initializable,Serializable {
                 fv.setHeadersModel(hmod);                                       //set the headersModel
                 feVols.add(fv);
                 
-                ObservableList<VolumeSelectionModelType1> obv=FXCollections.observableArrayList(feVols);
+                if(!typev.equals(3L)){
+                    ObservableList<VolumeSelectionModelType0> obv=FXCollections.observableArrayList(feVols);
+                    ObservableList<VolumeSelectionModelType1> obv1=FXCollections.observableArrayList();
+                    for (Iterator<VolumeSelectionModelType0> iterator2 = obv.iterator(); iterator2.hasNext();) {
+                        VolumeSelectionModelType0 next2 = iterator2.next();
+                        obv1.add((VolumeSelectionModelType1)next2);
+                        
+                    }
+                    ((JobStepType1Model)fejsm).setVolList(obv1);
+                    //fejsm.setVolList(obv1);
+                }else{
+                    //no volume to set for acquisition node
+                }
                 
-                
-                fejsm.setVolList(obv);
+                //ObservableList<VolumeSelectionModelType1> obv=FXCollections.observableArrayList(feVols);
+               
             }
             
             
@@ -674,7 +700,10 @@ public class LandingController implements Initializable,Serializable {
                 fejsm=new JobStepType1Model(null);
             }if(type.equals(2L)){
                 fejsm=new JobStepType2Model(null);
+            }if(type.equals(3L)){
+                fejsm=new AcquisitionJobStepModel(null);
             }
+            
            
             
             for (Iterator<JobStepType0Model> iterator1 = jmodList.iterator(); iterator1.hasNext();) {
