@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.type0;
+package fend.session.node.jobs.types.type0;
 
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
-import fend.session.node.jobs.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
 import java.io.File;
 import javafx.collections.ObservableList;
 

@@ -46,5 +46,7 @@ public interface VolumeSelectionModelType0 {
     public void setSubsurfaces(Set<SubSurface> sl);
 
     public void setHeadersModel(HeadersModel hmod);
+
+    public HeadersModel getHeadersModel();
    
 }

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.type0;
+package fend.session.node.jobs.types.type0;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
-import fend.session.node.jobs.type2.JobStepType2Model;
+import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.List;

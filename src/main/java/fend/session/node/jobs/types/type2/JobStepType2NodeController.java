@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.type2;
+package fend.session.node.jobs.types.type2;
 
 import db.model.JobStep;
 import db.model.QcMatrix;
@@ -30,14 +30,14 @@ import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
-import fend.session.node.jobs.type1.JobStepType1Model;
-import fend.session.node.jobs.type1.JobStepType1Node;
-import fend.session.node.jobs.type1.JobStepType1NodeController;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type1.JobStepType1Node;
+import fend.session.node.jobs.types.type1.JobStepType1NodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
-import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.jobs.type0.JobStepType0NodeController;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.volumes.type1.VolumeSelectionCell;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.session.node.volumes.type1.qcTable.QcMatrixModel;

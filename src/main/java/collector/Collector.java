@@ -35,8 +35,8 @@ import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
 import fend.session.node.headers.SubSurface;
-import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.jobs.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
@@ -176,13 +176,13 @@ public class Collector {
                 //System.out.println("Coll: JSM ID: "+jsm.getId());
                 jobStep.setAlert(Boolean.FALSE);*/
                  /*jobStep.setPending(Boolean.);*/
-                 List<String> insightVers=null;
-                 
+                 List<String> insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
+                 /*
                  if(!jsm.getType().equals(3L)){                     //if not acquisition node
-                     insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
+                 insightVers=jsm.getInsightVersionsModel().getCheckedVersions();
                  }else{
-                     insightVers=new ArrayList<>();
-                 }
+                 insightVers=new ArrayList<>();
+                 }*/
                  
                  String versionString="";                                                              //this string will be of form v1;v2;v3;.. where v1,v2.. are the chosen versions
                  for (Iterator<String> iterator = insightVers.iterator(); iterator.hasNext();) {

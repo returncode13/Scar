@@ -5,7 +5,7 @@
  */
 package fend.session.node.volumes.type1.qcTable;
 
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,46 +3,39 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.type1;
+package fend.session.node.jobs.types.type2;
 
-
-import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
-//import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
+import fend.session.node.volumes.type1.qcTable.QcTableModel;
+import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
-import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
-import fend.session.node.volumes.type1.qcTable.QcTableModel;
-import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import org.apache.commons.collections4.MultiMap;
-import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  *
- * @author naila0152
+ * @author adira0150
  */
-public class JobStepType1Model implements JobStepType0Model{
-    private final Long type=1L;
+public class JobStepType2Model implements JobStepType0Model{
+    
+    private final Long type=2L;
     private final StringProperty jobStepTextProperty;
     private final ListProperty<VolumeSelectionModelType1>volListProperty;
     private InsightVersionsModel insightVersionsModel;
@@ -65,13 +58,16 @@ public class JobStepType1Model implements JobStepType0Model{
 
     private List<LinksModel> listOfLinkModels=new ArrayList<>();
     
-   
+    /* public JobStepType1Model(String jobStepText, SessionModel smodel) {
+    super(jobStepText, smodel);
+    }*/
+    
 
    
     
 
-    public JobStepType1Model(String jobStepText,SessionModel smodel) {
-   
+    public JobStepType2Model(String jobStepText,SessionModel smodel) {
+       
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
        ObservableList<VolumeSelectionModelType1> obs=FXCollections.observableArrayList();
         this.volListProperty = new SimpleListProperty<>(obs);
@@ -96,7 +92,7 @@ public class JobStepType1Model implements JobStepType0Model{
     
     
 
-    public JobStepType1Model(SessionModel smodel) {
+    public JobStepType2Model(SessionModel smodel) {
         this("Enter a name",smodel);
     }
 
@@ -205,6 +201,7 @@ public class JobStepType1Model implements JobStepType0Model{
         this.id=id;
     }
     
+    @Override
      public Long getId() {
         return id;
     }
@@ -268,12 +265,12 @@ public class JobStepType1Model implements JobStepType0Model{
         listOfLinkModels.remove(lm);
     }
 
-    
+   
     public Long getType() {
         return this.type;
     }
     
-    
+      
   private  QcTableModel qcTableModel;
     private qcCheckListModel qcCheckListModel;
     
@@ -315,7 +312,5 @@ public class JobStepType1Model implements JobStepType0Model{
         this.qcCheckListModel = qcCheckListModel;
     }
     
-    
-    
-     
+   
 }

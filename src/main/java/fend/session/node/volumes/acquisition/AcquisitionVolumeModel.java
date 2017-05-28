@@ -10,6 +10,9 @@ import fend.session.node.headers.SubSurface;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
 import java.util.Set;
+import java.util.UUID;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -17,8 +20,10 @@ import java.util.Set;
  */
 public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
     final private Long type=3L;
-    private Long id;
+    private Long id=Long.valueOf(UUID.randomUUID().getMostSignificantBits()+"");
     private String label="AcqVol";
+    private HeadersModel headersModel=new HeadersModel(this);
+    
     
     @Override
     public Long getType() {
@@ -53,58 +58,83 @@ public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
 
     @Override
     public void startWatching() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override
     public void setVolumeChosen(File file) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     
 
     @Override
     public void setAlert(Boolean alert) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override
     public void setLabel(String nameVolume) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     
 
     @Override
     public void setVolumeType(Long volumeType) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     
 
     @Override
     public void setSubsurfaces(Set<SubSurface> sl) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("fend.session.node.volumes.acquisition.AcquisitionVolumeModel.setSubsurfaces(): not implemented");
     }
 
     @Override
     public void setHeadersModel(HeadersModel hmod) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("fend.session.node.volumes.acquisition.AcquisitionVolumeModel.setHeadersModel(): not implemented");
     }
 
     @Override
     public void setHeaderButtonStatus(Boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override
     public void setId(Long idVolume) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        id=idVolume;
     }
 
     @Override
     public void setInflated(Boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+    }
+
+    public ObservableValue<String> getRunStatus() {
+        return new SimpleStringProperty("acquired");                    //this can be changed to NTBP/Acquired , but that needs to come from the view in the database
+    }
+
+    public ObservableValue<String> getDependency() {
+        return new SimpleStringProperty("Ok");
+    }
+
+    public ObservableValue<String> getInsight() {
+        return new SimpleStringProperty("OK");
+    }
+
+    public ObservableValue<String> getWorkflowVersion() {
+        return new SimpleStringProperty("v0");
+    }
+
+    public ObservableValue<String> getQcStatus() {
+        return new SimpleStringProperty("v0");
+    }
+
+    @Override
+    public HeadersModel getHeadersModel() {
+        return headersModel;
     }
    
     

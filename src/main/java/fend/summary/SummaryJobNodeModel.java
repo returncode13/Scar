@@ -5,11 +5,13 @@
  */
 package fend.summary;
 
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -36,8 +38,9 @@ public class SummaryJobNodeModel {
     
     private List<SummaryVolumeNodeModel> listOfVolumes=new ArrayList<>();
 
-    public List<SummaryVolumeNodeModel> getListOfVolumes() {
-        return listOfVolumes;
+    public ObservableList<SummaryVolumeNodeModel> getListOfVolumes() {
+        ObservableList<SummaryVolumeNodeModel> obs=FXCollections.observableArrayList(listOfVolumes);
+        return obs;
     }
 
     public void setListOfVolumes(List<SummaryVolumeNodeModel> listOfVolumes) {

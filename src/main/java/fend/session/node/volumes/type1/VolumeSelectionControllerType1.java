@@ -26,7 +26,7 @@ import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.HeadersViewController;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type0.VolumeSelectionControllerType0;
 import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
 import fend.session.node.volumes.type1.qcTable.QcTableNode;

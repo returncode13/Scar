@@ -18,11 +18,12 @@ import javax.persistence.UniqueConstraint;
  */
 
 @Entity
-@Table(name="subline",schema = "obpmanager")
+@Table(name="subline",schema = "public")
 public class OrcaView implements Serializable{
 
     @Id
-    private Long seq;
+    @Column(name="sequence")
+    private Long sequence;
     
     @Column(name="real_line_name")
     private String subsurfaceLines;
@@ -71,12 +72,12 @@ public class OrcaView implements Serializable{
     @Column(name="start_data")
     private String date;*/
 
-    public Long getSeq() {
-        return seq;
+    public Long getSequence() {
+        return sequence;
     }
 
-    public void setSeq(Long seq) {
-        this.seq = seq;
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
     }
     
   

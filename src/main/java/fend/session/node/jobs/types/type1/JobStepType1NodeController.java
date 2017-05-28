@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.type1;
+package fend.session.node.jobs.types.type1;
 
 
 import com.sun.javafx.scene.input.DragboardHelper;
@@ -78,7 +78,7 @@ import fend.session.node.headers.Sequences;
 import fend.session.node.jobs.insightVersions.InsightVersionsController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 
 import fend.session.node.volumes.type1.VolumeSelectionCell;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -91,7 +91,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxListCell;
-import fend.session.node.jobs.type0.JobStepType0NodeController;
+import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
 import fend.session.node.volumes.type1.qcTable.QcTableNode;
 import fend.session.node.volumes.type1.qcTable.QcTypeModel;

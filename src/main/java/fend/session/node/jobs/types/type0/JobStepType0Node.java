@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.type0;
+package fend.session.node.jobs.types.type0;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;

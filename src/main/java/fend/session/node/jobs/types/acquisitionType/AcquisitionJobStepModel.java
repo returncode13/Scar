@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.acquisitionType;
+package fend.session.node.jobs.types.acquisitionType;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -25,6 +25,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -36,7 +37,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     
     private final Long type=3L;
     private final StringProperty jobStepTextProperty;
-    private final ListProperty<AcquisitionVolumeModel>volListProperty;
+    private final ObservableList<AcquisitionVolumeModel>volListProperty;
     
     private ArrayList<JobStepType0Model> jsParents=new ArrayList<>();
     private ArrayList<JobStepType0Model> jsChildren=new ArrayList<>();
@@ -52,13 +53,21 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
 
     private List<LinksModel> listOfLinkModels=new ArrayList<>();
      private InsightVersionsModel insightVersionsModel;
-
+     private AcquisitionVolumeModel volmodel;
+     
     public AcquisitionJobStepModel(String jobStepText, SessionModel sessionModel) {
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
         this.sessionModel = sessionModel;
         jsParents.add(this);
         jsChildren.add(this);
-        volListProperty=new SimpleListProperty<>();
+        
+        volmodel=new AcquisitionVolumeModel();
+        List<AcquisitionVolumeModel> templ=new ArrayList<>();
+        templ.add(volmodel);
+        //ObservableList<AcquisitionVolumeModel> ob=FXCollections.observableArrayList(templ);
+        volListProperty=FXCollections.observableArrayList(templ);
+        //volListProperty.addAll(ob);
+                
     }
 
     public AcquisitionJobStepModel(SessionModel sessionModel) {
@@ -206,7 +215,9 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     public InsightVersionsModel getInsightVersionsModel() {
         List<String> temp=new ArrayList<>();
         temp.add("acqVersion");
-        return new InsightVersionsModel(temp);
+        InsightVersionsModel insM=new InsightVersionsModel(temp);
+        insM.setCheckedVersions(temp);
+        return insM;
     }
 
     @Override
@@ -216,8 +227,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
 
     @Override
     public ObservableList getVolList() {
-        ListProperty<AcquisitionVolumeModel> list=new SimpleListProperty<>();
-        return list;
+        return volListProperty;
     }
     
     @Override

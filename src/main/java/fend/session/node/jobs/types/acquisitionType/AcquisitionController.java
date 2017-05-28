@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.session.node.jobs.acquisitionType;
+package fend.session.node.jobs.types.acquisitionType;
 
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
-import fend.session.node.jobs.type0.JobStepType0Model;
-import fend.session.node.jobs.type0.JobStepType0NodeController;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
