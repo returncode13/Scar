@@ -1058,7 +1058,7 @@ public class SessionController implements Initializable {
          
          for (Iterator<OrcaView> iterator = acquiredSubs.iterator(); iterator.hasNext();) {
          OrcaView acq = iterator.next();
-         acqString.add(acq.getSubsurfaceLines());
+         acqString.add(acq.getSubsurfaceLineNames());
          System.out.println("fend.session.SessionController.tracking(): in AcqString: added: "+acqString.get(acqString.size()-1));
          
          }

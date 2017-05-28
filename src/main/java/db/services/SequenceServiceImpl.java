@@ -8,6 +8,7 @@ package db.services;
 import db.dao.SequenceDAO;
 import db.dao.SequenceDAOImpl;
 import db.model.Sequence;
+import java.util.List;
 
 /**
  *
@@ -35,6 +36,16 @@ public class SequenceServiceImpl implements SequenceService{
     @Override
     public void updateSequence(Long sid, Sequence newseq) {
         seqDao.updateSequence(sid, newseq);
+    }
+
+    @Override
+    public Sequence getSequenceObjByseqno(Long seqno) {
+        return seqDao.getSequenceObjByseqno(seqno);
+    }
+
+    @Override
+    public List<Sequence> getSequenceList() {
+        return seqDao.getSequenceList();
     }
     
 }

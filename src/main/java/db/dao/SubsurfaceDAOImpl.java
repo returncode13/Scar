@@ -8,8 +8,11 @@ package db.dao;
 import db.model.Sequence;
 import db.model.Subsurface;
 import hibUtil.HibernateUtil;
+import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -87,6 +90,54 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
             session.close();
         }    
         
+    }
+
+    @Override
+    public List<Subsurface> getSubsurfaceForSequence(Sequence seq) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Subsurface> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Subsurface.class);
+            criteria.add(Restrictions.eq("sequence", seq.getSequenceno()));
+            
+            
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Subsurface> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Subsurface.class);
+            criteria.add(Restrictions.eq("subsurface", dugSubsurface));
+            
+            
+            result=criteria.list();
+            if(result.size()>1){
+                System.out.println("db.dao.SubsurfaceDAOImpl.getSubsurfaceObjBysubsurfacename(): more than one entry found in db table for "+dugSubsurface);
+            }
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()!=0){
+             return result.get(0);
+        }else
+            return null;
     }
     
 }

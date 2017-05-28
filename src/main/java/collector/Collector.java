@@ -5,15 +5,23 @@
  */
 package collector;
 
+import core.Seq;
+import core.Sub;
+import db.model.Acquisition;
 import db.model.Ancestors;
 import db.model.Child;
 import db.model.Descendants;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.OrcaView;
 import db.model.Parent;
+import db.model.Sequence;
 import db.model.SessionDetails;
 import db.model.Sessions;
+import db.model.Subsurface;
 import db.model.Volume;
+import db.services.AcquisitionService;
+import db.services.AcquisitionServiceImpl;
 
 import db.services.AncestorsService;
 import db.services.AncestorsServiceImpl;
@@ -25,18 +33,25 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.OrcaViewService;
+import db.services.OrcaViewServiceImpl;
 import db.services.ParentService;
 import db.services.ParentServiceImpl;
+import db.services.SequenceService;
+import db.services.SequenceServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
 import db.services.SessionsServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
 import fend.session.node.headers.SubSurface;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
+import fend.session.node.volumes.acquisition.AcqHeaders;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
@@ -97,6 +112,10 @@ public class Collector {
     final private static ParentService pServ=new ParentServiceImpl();
     final private static ChildService cServ=new ChildServiceImpl();
   //  final private static AcquisitionService acqServ=new AcquisitionServiceImpl();
+    final private static OrcaViewService oserv=new OrcaViewServiceImpl();
+    final private static SequenceService seqserv=new SequenceServiceImpl();
+    final private static SubsurfaceService subserv=new SubsurfaceServiceImpl();
+    final private static AcquisitionService acqserv=new AcquisitionServiceImpl();
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
@@ -278,6 +297,89 @@ public class Collector {
     //codes for commiting the transactions
        
     private void commitEntries(){
+        //update list of sequences;
+        //get entries of shot lines from orcaview
+        List<OrcaView> orcaList=oserv.getOrcaView();            //list of acquisitions
+        List<Long> orcaListSeq=oserv.getSeqOrcaView();
+        for (Iterator<Long> iterator = orcaListSeq.iterator(); iterator.hasNext();) {
+            Long next = iterator.next();
+            System.out.println("collector.Collector.commitEntries(): seq "+next);
+            
+        }
+        List<Sequence> refsequences=seqserv.getSequenceList();
+        
+        if(refsequences!=null && orcaListSeq!=null)
+        if(refsequences.size()!=orcaListSeq.size()){                //add to databse if new sequences are added to the orcaview
+            
+        
+        for (Iterator<OrcaView> iterator = orcaList.iterator(); iterator.hasNext();) {
+            OrcaView ov = iterator.next();
+            Sequence seq=new Sequence();
+            seq.setSequenceno(ov.getSequences());
+            if(seqserv.getSequenceObjByseqno(ov.getSequences())==null)seqserv.createSequence(seq);
+            else continue;
+            
+        }
+        
+        List<Sequence> sequences=seqserv.getSequenceList();     //list of sequences
+        List<Seq> coreSeqList=new ArrayList<>();
+        List<Acquisition> acqlist=new ArrayList<>();
+
+        for (Iterator<Sequence> iterator = sequences.iterator(); iterator.hasNext();) {
+            Sequence seq = iterator.next();
+            Seq cseq=new Seq();
+            cseq.setSeqno(seq.getSequenceno());
+            List<Sub> sublist=new ArrayList();
+            List<OrcaView> ocsForSeq=oserv.getOrcaViewsForSeq(seq);
+            for (Iterator<OrcaView> iterator1 = ocsForSeq.iterator(); iterator1.hasNext();) {
+                OrcaView ov = iterator1.next();
+                Subsurface sub=new Subsurface();
+                sub.setSequence(seq);
+                sub.setSubsurface(ov.getDugSubsurface());
+                System.out.println("collector.Collector.commitEntries(): Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
+                if(subserv.getSubsurfaceObjBysubsurfacename(ov.getDugSubsurface())==null){
+                    System.out.println("collector.Collector.commitEntries(): creating "+ov.getDugSubsurface());
+                    subserv.createSubsurface(sub);
+                    Sub sb=new Sub();
+                    sb.setSeq(cseq);
+                    sb.setSubsurfaceName(sub.getSubsurface());
+                    sublist.add(sb);
+                    
+                    Acquisition ah=new Acquisition();
+                    ah.setSequence(seq);
+                    ah.setSubsurface(sub);
+                    ah.setCable(ov.getCables());
+                    ah.setFgsp(ov.getFgsp());
+                    ah.setFirstChannel(ov.getFirstChannel());
+                    ah.setFirstFFID(ov.getFirstFFID());
+                    ah.setFirstGoodFFID(ov.getFgFFID());
+                    ah.setFirstShot(ov.getFirstSHOT());
+                    ah.setGun(ov.getGuns());
+                    ah.setLastChannel(ov.getLastChannel());
+                    ah.setLastFFID(ov.getLastFFID());
+                    ah.setLastGoodFFID(ov.getLgFFID());
+                    ah.setLastShot(ov.getLastSHOT());
+                    ah.setLgsp(ov.getLgsp());
+                    
+                    acqlist.add(ah);
+                    
+                    
+                    
+                    }
+                    else continue;
+                }
+                cseq.setSubsurfaceList(sublist);
+                coreSeqList.add(cseq);
+            }
+        
+      
+        
+            for (Iterator<Acquisition> iterator = acqlist.iterator(); iterator.hasNext();) {
+                Acquisition acq = iterator.next();
+                acqserv.createAcquisition(acq);
+
+            }
+        }
         
         //add to the Sessions Table
         for(Iterator<Sessions> ssit = dbSessions.iterator();ssit.hasNext();){
@@ -434,7 +536,7 @@ public class Collector {
          
             
          
-        //figure out what goes where and who is who's ancestor    ..store in a map
+        //figure out what goes where and who is who'sb ancestor    ..store in a map
             
          Map<SessionDetails,Set<Long>> ancestorMap=new HashMap<>();
          List<SessionDetails> sdList= ssdServ.getSessionDetails(currentSession);
@@ -564,7 +666,7 @@ public class Collector {
             }
          
          
-          //figure out what goes where and who is who's ancestor    ..store in a map
+          //figure out what goes where and who is who'sb ancestor    ..store in a map
             
            
         Map<SessionDetails,Set<Long>> descendantMap=new HashMap<>();

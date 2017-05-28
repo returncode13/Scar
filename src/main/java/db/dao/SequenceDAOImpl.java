@@ -7,8 +7,11 @@ package db.dao;
 
 import db.model.Sequence;
 import hibUtil.HibernateUtil;
+import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -79,6 +82,56 @@ public class SequenceDAOImpl implements SequenceDAO {
         }finally{
             session.close();
         }    
+    }
+
+    @Override
+    public Sequence getSequenceObjByseqno(Long seqno) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Sequence> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Sequence.class);
+            criteria.add(Restrictions.eq("sequenceno", seqno));
+            
+            
+            result=criteria.list();
+            if(result.size()>1){
+                System.out.println("db.dao.SequenceDAOImpl.getSequenceObjByseqno(): More than one entry for sequence no: "+seqno);
+            }
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()!=0){
+             return result.get(0);
+        }else
+            return null;
+       
+    }
+
+    @Override
+    public List<Sequence> getSequenceList() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Sequence> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Sequence.class);
+            
+            
+            
+            result=criteria.list();
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
     
 }

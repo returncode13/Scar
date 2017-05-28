@@ -5,12 +5,18 @@
  */
 package fend.session.node.jobs.types.acquisitionType;
 
+import collector.HeaderCollector;
+import db.services.SequenceService;
+import db.services.SequenceServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import fend.session.edges.Links;
 import fend.session.edges.LinksModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
+import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
@@ -61,6 +67,10 @@ public class AcquisitionController implements JobStepType0NodeController{
     private List<LinksModel> linksModelList=new ArrayList<>();
     private ObservableList<LinksModel> obsLinkList=FXCollections.observableList(linksModelList);
     private Long id;
+    private SequenceService seqserv=new SequenceServiceImpl();
+    private SubsurfaceService subserv=new SubsurfaceServiceImpl();
+    private HeaderCollector hcollector=new HeaderCollector();
+    
     
     @FXML
     private AnchorPane anchorPane;
@@ -85,7 +95,9 @@ public class AcquisitionController implements JobStepType0NodeController{
     
     @FXML
     void showAcqTable(ActionEvent event) {
-        
+        AcquisitionVolumeModel vmod=(AcquisitionVolumeModel) model.getVolList().get(0);
+        System.out.println("fend.session.node.jobs.types.acquisitionType.AcquisitionController.showAcqTable(): loaded volume model: "+vmod.getLabel()+" id: "+vmod.getId());
+        hcollector.setFeVolumeSelModel(vmod);
     }
 
      @FXML

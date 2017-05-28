@@ -6,9 +6,12 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -17,19 +20,52 @@ import javax.persistence.UniqueConstraint;
  * @author sharath
  */
 
-@Entity
+@Entity 
 @Table(name="subline",schema = "public")
 public class OrcaView implements Serializable{
-
-    @Id
-    @Column(name="sequence")
-    private Long sequence;
+    
+   
+    /*@Column(name="sequence")
+    @Id private Long sequence;
+    
     
     @Column(name="real_line_name")
-    private String subsurfaceLines;
+    @Id private String real_line_name;
+    
+    
+    @Column(name="cable")
+    @Id private Long cable;*/
 
-   @Column(name="cable")
-   private Long cable;
+    public Long getSequences() {
+        return orcaid.getSequence();
+    }
+
+    public String getSubsurfaceLineNames() {
+        return orcaid.getReal_line_name();
+    }
+
+    public Long getCables() {
+        return orcaid.getCable();
+    }
+    
+    public Long getGuns() {
+    return orcaid.getGun();
+    }
+    
+    
+    
+    
+   @Id
+   private OrcaKey orcaid;
+
+    public OrcaKey getOrcaid() {
+        return orcaid;
+    }
+
+    public void setOrcaid(OrcaKey orcaid) {
+        this.orcaid = orcaid;
+    }
+   
    
    @Column(name="first_channel")
    private Long firstChannel;
@@ -37,33 +73,34 @@ public class OrcaView implements Serializable{
    @Column(name="last_channel")
    private Long lastChannel;
    
-   @Column(name="gun")
-   private Long gun;
+   
+   /* @Column(name="gun")
+   @Id private Long gun;*/
    
     
     @Column(name="first_ffid")
-    private Integer firstFFID;
+    private Long firstFFID;
     
     @Column(name="last_ffid")
-    private Integer lastFFID;
+    private Long lastFFID;
     
     @Column(name="first_shot")
-    private Integer firstSHOT;
+    private Long firstSHOT;
     
      @Column(name="last_shot")
-    private Integer lastSHOT;
+    private Long lastSHOT;
     
     @Column(name="fg_ffid")
-    private Integer fgFFID;
+    private Long fgFFID;
     
      @Column(name="lg_ffid")
-    private Integer lgFFID;
+    private Long lgFFID;
     
     @Column(name="fgsp")
-    private Integer fgsp;
+    private Long fgsp;
     
     @Column(name="lgsp")
-    private Integer lgsp;
+    private Long lgsp;
     
     
     
@@ -72,55 +109,54 @@ public class OrcaView implements Serializable{
     @Column(name="start_data")
     private String date;*/
 
-    public Long getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(Long sequence) {
-        this.sequence = sequence;
+    /*public Long getSequences() {
+    return sequence;
     }
     
-  
-
-    public String getSubsurfaceLines() {
-        return subsurfaceLines;
+    public void setSequence(Long sequence) {
+    this.sequence = sequence;
     }
-
-    public void setSubsurfaceLines(String subsurfaceLines) {
-        this.subsurfaceLines = subsurfaceLines;
+    
+    
+    
+    public String getSubsurfaceLineNames() {
+    return real_line_name;
     }
-
+    
+    public void setSubsurfaceLineName(String real_line_name) {
+    this.real_line_name = real_line_name;
+    }*/
    
 
-    public Integer getFgsp() {
+    public Long getFgsp() {
         return fgsp;
     }
 
-    public void setFgsp(Integer fgsp) {
+    public void setFgsp(Long fgsp) {
         this.fgsp = fgsp;
     }
 
-    public Integer getLgsp() {
+    public Long getLgsp() {
         return lgsp;
     }
 
-    public void setLgsp(Integer lgsp) {
+    public void setLgsp(Long lgsp) {
         this.lgsp = lgsp;
     }
 
-    public Integer getFgFFID() {
+    public Long getFgFFID() {
         return fgFFID;
     }
 
-    public void setFgFFID(Integer fgFFID) {
+    public void setFgFFID(Long fgFFID) {
         this.fgFFID = fgFFID;
     }
 
-    public Integer getLgFFID() {
+    public Long getLgFFID() {
         return lgFFID;
     }
 
-    public void setLgFFID(Integer lgFFID) {
+    public void setLgFFID(Long lgFFID) {
         this.lgFFID = lgFFID;
     }
 
@@ -132,46 +168,45 @@ public class OrcaView implements Serializable{
     this.date = date;
     }*/
 
-    public Integer getFirstFFID() {
+    public Long getFirstFFID() {
         return firstFFID;
     }
 
-    public void setFirstFFID(Integer firstFFID) {
+    public void setFirstFFID(Long firstFFID) {
         this.firstFFID = firstFFID;
     }
 
-    public Integer getFirstSHOT() {
+    public Long getFirstSHOT() {
         return firstSHOT;
     }
 
-    public void setFirstSHOT(Integer firstSHOT) {
+    public void setFirstSHOT(Long firstSHOT) {
         this.firstSHOT = firstSHOT;
     }
 
-    public Integer getLastFFID() {
+    public Long getLastFFID() {
         return lastFFID;
     }
 
-    public void setLastFFID(Integer lastFFID) {
+    public void setLastFFID(Long lastFFID) {
         this.lastFFID = lastFFID;
     }
 
-    public Integer getLastSHOT() {
+    public Long getLastSHOT() {
         return lastSHOT;
     }
 
-    public void setLastSHOT(Integer lastSHOT) {
+    public void setLastSHOT(Long lastSHOT) {
         this.lastSHOT = lastSHOT;
     }
-
-    public Long getCable() {
-        return cable;
+    /*
+    public Long getCables() {
+    return cable;
     }
-
+    
     public void setCable(Long cable) {
-        this.cable = cable;
-    }
-
+    this.cable = cable;
+    }*/
     public Long getFirstChannel() {
         return firstChannel;
     }
@@ -188,18 +223,67 @@ public class OrcaView implements Serializable{
         this.lastChannel = lastChannel;
     }
 
-    public Long getGun() {
-        return gun;
+    /* public Long getGuns() {
+    return gun;
+    }
+    
+    public void setGun(Long gun) {
+    this.gun = gun;
+    }*/
+    
+    public String getDugSubsurface(){
+        String sub=orcaid.getReal_line_name();
+        Long cab=orcaid.getCable();
+        Long gn=orcaid.getGun();
+        String dugsub=sub+"_cable"+cab+"_gun"+gn;
+        return dugsub;
     }
 
-    public void setGun(Long gun) {
-        this.gun = gun;
+    /* @Override
+    public int hashCode() {
+    int hash = 7;
+    hash = 97 * hash + Objects.hashCode(this.sequence);
+    hash = 97 * hash + Objects.hashCode(this.real_line_name);
+    hash = 97 * hash + Objects.hashCode(this.cable);
+    hash = 97 * hash + Objects.hashCode(this.gun);
+    return hash;
     }
     
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) {
+    return true;
+    }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final OrcaView other = (OrcaView) obj;
+    if (!Objects.equals(this.real_line_name, other.real_line_name)) {
+    return false;
+    }
+    if (!Objects.equals(this.sequence, other.sequence)) {
+    return false;
+    }
+    if (!Objects.equals(this.cable, other.cable)) {
+    return false;
+    }
+    if (!Objects.equals(this.gun, other.gun)) {
+    return false;
+    }
+    return true;
+    }*/
     
-   
+    
+    
+    
+  
     public OrcaView() {
     }
+
+    
     
     
     
@@ -207,3 +291,6 @@ public class OrcaView implements Serializable{
     
     
 }
+
+
+

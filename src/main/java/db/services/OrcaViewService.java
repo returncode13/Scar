@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.OrcaView;
+import db.model.Sequence;
 import java.util.List;
 
 /**
@@ -14,4 +15,8 @@ import java.util.List;
  */
 public interface OrcaViewService {
      public List<OrcaView> getOrcaView();      //return the list of all lines shot till date (SELECT * from table)
+
+    public List<OrcaView> getOrcaViewsForSeq(Sequence seq);
+
+    public List<Long> getSeqOrcaView();
 }

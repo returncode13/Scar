@@ -9,19 +9,26 @@ import com.sun.javafx.scene.control.skin.VirtualFlow;
 import db.model.Acquisition;
 import db.model.Headers;
 import db.model.Logs;
+import db.model.Sequence;
 import db.model.Volume;
 import db.model.Workflow;
+import db.services.AcquisitionServiceImpl;
 
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
 import db.services.LogsServiceImpl;
+import db.services.SequenceService;
+import db.services.SequenceServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioHeaderValuesExtractor;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.Sequences;
 import fend.session.node.headers.SubSurface;
+import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -68,6 +75,7 @@ public class HeaderCollector {
     //from frontEnd. user
     
     private VolumeSelectionModelType1 feVolumeSelModel;
+    private AcquisitionVolumeModel acqmodel;
     private HeadersModel headersModel;                                                                      //the headers model corresponding to this volume
     Set<SubSurface> sl;                                                                                     // the SET of subsurfaces in the volume. Note this DOES NOT account for more than one occurrence of the sub
     List<Sequences> seqList;
@@ -82,6 +90,10 @@ public class HeaderCollector {
     //for db Transactions
     final private static HeadersService hdrServ=new HeadersServiceImpl();
     final private static VolumeService volServ=new VolumeServiceImpl();
+    final private static SequenceService seqserv=new SequenceServiceImpl();
+    final private static SubsurfaceService subserv=new SubsurfaceServiceImpl();
+    final private static AcquisitionServiceImpl acserv=new AcquisitionServiceImpl();
+    
     private Volume dbVolume;
     private String logLocation;
     //LogWatcher logForSub;
@@ -338,69 +350,16 @@ public class HeaderCollector {
     }
 
   public List<Sequences> getHeaderListForVolume(VolumeSelectionModelType1 vm){
-    /*  List<Headers> hl=hdrServ.getHeadersFor(dbVolume);
-      List<SubSurface> sl=new ArrayList<>();
-      List<Sequences> seqList=new ArrayList<>();
-      MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
-      
-      for (Iterator<Headers> iterator = hl.iterator(); iterator.hasNext();) {
-          Headers next = iterator.next();
-          SubSurface s= new SubSurface();
-          
-          s.setSequenceNumber(next.getSequenceNumber());
-          s.setSubsurface(next.getSubsurface());
-          s.setTimeStamp(next.getTimeStamp());
-          
-          s.setCmpInc(next.getCmpInc());
-          s.setCmpMax(next.getCmpMax());
-          s.setCmpMin(next.getCmpMin());
-          s.setDugChannelInc(next.getDugChannelInc());
-          s.setDugChannelMax(next.getDugChannelMax());
-          s.setDugChannelMin(next.getDugChannelMin());
-          s.setDugShotInc(next.getDugShotInc());
-          s.setDugShotMax(next.getDugShotMax());
-          s.setDugShotMin(next.getDugShotMin());
-          s.setInlineInc(next.getInlineInc());
-          s.setInlineMax(next.getInlineMax());
-          s.setInlineMin(next.getInlineMin());
-          s.setOffsetInc(next.getOffsetInc());
-          s.setOffsetMax(next.getOffsetMax());
-          s.setOffsetMin(next.getOffsetMin());
-          
-          s.setTraceCount(next.getTraceCount());
-          s.setXlineInc(next.getXlineInc());
-          s.setXlineMax(next.getXlineMax());
-          s.setXlineMin(next.getXlineMin());
-          
-          seqSubMap.put(s.getSequenceNumber(), s);
-         
-          
-          sl.add(s);
-          
-          
-          
-      }
-      
-      Set<Long> seqNos=seqSubMap.keySet();
-      
-      
-      for (Iterator<Long> iterator = seqNos.iterator(); iterator.hasNext();) {
-          Long next = iterator.next();
-          Sequences sq=new Sequences();
-          ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(next);
-          sq.setSubsurfaces(ssubs);
-          seqList.add(sq);
-      }
-      
-      feVolumeSelModel.setSubsurfaces(sl);
-      ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
-      headersModel.setObsHList(obseq);
-      
-      System.out.println("HColl: done setting the headerList here");
-*/
+   
       headersModel=vm.getHeadersModel();
       return headersModel.getSequenceListInHeaders();                                                //the observable List is the list of sequences. which contains all the header information
   }
+
+    public void setFeVolumeSelModel(AcquisitionVolumeModel vmod) {
+       this.acqmodel=vmod;
+       this.headersModel=acqmodel.getHeadersModel();
+        dbVolume=volServ.getVolume(acqmodel.getId());
+    }
     
     
     

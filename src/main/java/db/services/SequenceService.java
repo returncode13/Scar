@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.Sequence;
+import java.util.List;
 
 /**
  *
@@ -16,4 +17,7 @@ public interface SequenceService {
     public Sequence getSequence(Long sid);
     public void deleteSequence(Long sid);
     public void updateSequence(Long sid,Sequence newseq);
+    public Sequence getSequenceObjByseqno(Long seqno);
+
+    public List<Sequence> getSequenceList();
 }

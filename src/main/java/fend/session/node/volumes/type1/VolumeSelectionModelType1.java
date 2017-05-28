@@ -71,59 +71,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
     private JobStepType0Model parentjob;
-    /*    private  QcTableModel qcTableModel;
-    private qcCheckListModel qcCheckListModel;
-    private JobStepType0Model parentjob;
-    private QcMatrixModel qcMatrixModel;
-    
-    public QcMatrixModel getQcMatrixModel() {
-    if(qcMatrixModel==null) {
-    qcMatrixModel=new QcMatrixModel();
-    qcMatrixModel.setVmodel(this);
-    }
-    return qcMatrixModel;
-    }
-    
-    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
-    this.qcMatrixModel = qcMatrixModel;
-    }
-    
-    
-    
-    public JobStepType0Model getParentjob() {
-    return parentjob;
-    }
-    
-    public void setParentjob(JobStepType0Model parentjob) {
-    this.parentjob = parentjob;
-    }
-    
-    
-    
-    
-    
-    public QcTableModel getQcTableModel() {
-    if(qcTableModel==null){
-    qcTableModel=new QcTableModel();
-    }
-    return qcTableModel;
-    }
-    
-    public void setQcTableModel(QcTableModel qcMatrixModel) {
-    this.qcTableModel = qcMatrixModel;
-    }
-    
-    public qcCheckListModel getQcCheckListModel() {
-    if(qcCheckListModel==null){
-    qcCheckListModel=new qcCheckListModel();
-    }
-    return qcCheckListModel;
-    }
-    
-    public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
-    this.qcCheckListModel = qcCheckListModel;
-    }
-    */
+
     
     @Override
     public Long getType() {
@@ -145,26 +93,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         return logstatusMapForSeq;
     }
 
-    /*public Set<Long> getWfVersionsUsedinVolume() {
-    return wfVersionsUsedinVolume;
-    }
-    
-    public void setWfVersionsUsedinVolume(Set<Long> wfVersionsUsedinVolume) {
-    this.wfVersionsUsedinVolume = wfVersionsUsedinVolume;
-    }*/
-    
-    
-    
-    
-    /*
-    public Map<Long, StringProperty> getLogstatusMapForSeq() {
-    return logstatusMapForSeq;
-    }
-    
-    public void addToLogstatusMapForSeq(Map<Long, StringProperty> logstatusMapForSeq) {
-    this.logstatusMapForSeq = logstatusMapForSeq;
-    }
-    */
+   
     public void addToLogstatusMapForSeq(Long seq,StringProperty s){
         logstatusMapForSeq.put(seq,s);
     }
