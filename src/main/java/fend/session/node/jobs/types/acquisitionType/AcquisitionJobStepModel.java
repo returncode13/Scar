@@ -37,7 +37,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     
     private final Long type=3L;
     private final StringProperty jobStepTextProperty;
-    private final ObservableList<AcquisitionVolumeModel>volListProperty;
+    private final ListProperty<AcquisitionVolumeModel>volListProperty;
     
     private ArrayList<JobStepType0Model> jsParents=new ArrayList<>();
     private ArrayList<JobStepType0Model> jsChildren=new ArrayList<>();
@@ -64,8 +64,8 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
         volmodel=new AcquisitionVolumeModel();
         List<AcquisitionVolumeModel> templ=new ArrayList<>();
         templ.add(volmodel);
-        //ObservableList<AcquisitionVolumeModel> ob=FXCollections.observableArrayList(templ);
-        volListProperty=FXCollections.observableArrayList(templ);
+        ObservableList<AcquisitionVolumeModel> ob=FXCollections.observableArrayList(templ);
+        volListProperty=new SimpleListProperty<>(ob);
         //volListProperty.addAll(ob);
                 
     }
@@ -248,6 +248,10 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     @Override
     public void setQcFlagProperty(Boolean FALSE) {
         
+    }
+
+    public void setVolList(ObservableList<AcquisitionVolumeModel> obva) {
+        volListProperty.set(obva);
     }
 
     

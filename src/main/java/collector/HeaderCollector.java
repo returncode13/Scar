@@ -136,17 +136,19 @@ public class HeaderCollector {
             
             
            
-               
+               System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): started");
            
             
             
             
             File volume=feVolumeSelModel.getVolumeChosen();
+            System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): started");
             final Long volumeType=feVolumeSelModel.getVolumeType();
             dugHve.setVolume(volume);
          //   logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
        //     while(true)
       //  {
+      System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): before try loop");
             
         try {
            
@@ -275,7 +277,15 @@ public class HeaderCollector {
                 }
             }
                 if(volumeType.equals(3L)){
-                    if(hdrServ.getHeadersFor(dbVolume)==null)hdrServ.createHeaders(next);
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Checking to see if headers exist for acquisition volume type: "+dbVolume.getNameVolume());
+                    List<Headers> lhdr=hdrServ.getHeadersFor(dbVolume,next.getSubsurface());
+                    next.setWorkflowVersion(-100L);
+                    next.setInsightVersion("0.0");
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() size of headers for Acqvol: "+lhdr.size());
+                    if(lhdr.size()==0 ){
+                        System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): creating headers for "+next.getSubsurface().getSubsurface());
+                        hdrServ.createHeaders(next);
+                    }
                 }
                 SubSurfaceHeaders s= new SubSurfaceHeaders();
           
@@ -381,8 +391,8 @@ public class HeaderCollector {
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
         
-         System.out.println("HeaderColl: Set the volume Sel model "+feVolumeSelModel.getLabel());
-        System.out.println("HeaderColl: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
+         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
+        System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
        
                 
        

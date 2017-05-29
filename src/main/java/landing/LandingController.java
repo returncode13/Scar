@@ -455,82 +455,6 @@ public class LandingController implements Initializable,Serializable {
             
             
             
-            //get the parents of this jobstep
-            
-            /* List<Parent> lParent=pserv.getParentsFor(next);
-            
-            for (Iterator<Parent> iterator1 = lParent.iterator(); iterator1.hasNext();) {
-            Parent next1 = iterator1.next();
-            Long parentjobId=next1.getParent();
-            SessionDetails parentJobssd=ssDserv.getSessionDetails(parentjobId);
-            //System.out.println(beJobStep.getNameJobStep()+" :has Parent: "+ parentJobssd.getJobStep().getNameJobStep());
-            parentAndJobMap.put(beJobStep, parentJobssd.getJobStep());
-            
-            Long parentId=parentJobssd.getJobStep().getIdJobStep();
-            
-            boolean parentExists=false;
-            
-            for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
-            JobStepModel next2 = iterator2.next();
-            if(next2.getId().equals(parentId)){
-            parentExists=true;
-            fejsm.addToParent(next2);
-            }
-            
-            }
-            
-            if(!parentExists){
-            JobStepModel pjobStepModel=new JobStepModel();
-            pjobStepModel.setJobStepText(parentJobssd.getJobStep().getNameJobStep());
-            pjobStepModel.setId(parentJobssd.getJobStep().getIdJobStep());
-            
-            
-            
-            fejsm.addToParent(pjobStepModel);
-            }
-            
-            
-            }*/
-            
-            //get children of this jobstep
-            
-            /*  List<Child> lChild=cserv.getChildrenFor(next);
-            for (Iterator<Child> iterator1 = lChild.iterator(); iterator1.hasNext();) {
-            Child next1 = iterator1.next();
-            Long childjobId=next1.getChild();
-            SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
-            //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
-            childAndJobMap.put(beJobStep, childssd.getJobStep());
-            
-            
-            Long childId=childssd.getJobStep().getIdJobStep();
-            
-            //in jmodList find the job that has the same id as the childId
-            boolean childExists=false;
-            
-            for (Iterator<JobStepModel> iterator2 = jmodList.iterator(); iterator2.hasNext();) {
-            JobStepModel next2 = iterator2.next();
-            if(next2.getId().equals(childId))
-            {
-            childExists=true;
-            fejsm.addToChildren(next2);
-            }
-            
-            }
-            if(!childExists)
-            {
-            JobStepModel cJobStepModel=new JobStepModel();
-            cJobStepModel.setJobStepText(childssd.getJobStep().getNameJobStep());
-            cJobStepModel.setId(childssd.getJobStep().getIdJobStep());
-            
-            fejsm.addToChildren(cJobStepModel);
-            }
-            
-            
-            
-            }*/
-            
-            
             
             //get all volumes related to beJobstep from the table JobVolumeDetails
             
@@ -641,6 +565,10 @@ public class LandingController implements Initializable,Serializable {
                 }else{
                     fv= new AcquisitionVolumeModel();
                     fv.setVolumeChosen(new File(""));
+                    fv.setId(beV.getIdVolume());
+                    fv.setVolumeType(beV.getVolumeType());
+                    fv.setSubsurfaces(sl);
+                    fv.setLabel(beV.getNameVolume());
                 }
                
                 
@@ -666,6 +594,15 @@ public class LandingController implements Initializable,Serializable {
                     //fejsm.setVolList(obv1);
                 }else{
                     //no volume to set for acquisition node
+                    ObservableList<VolumeSelectionModelType0> obv=FXCollections.observableArrayList(feVols);
+                   
+                    ObservableList<AcquisitionVolumeModel> obva=FXCollections.observableArrayList();
+                     for (Iterator<VolumeSelectionModelType0> iterator2 = obv.iterator(); iterator2.hasNext();) {
+                        VolumeSelectionModelType0 next2 = iterator2.next();
+                        obva.add((AcquisitionVolumeModel)next2);
+                    }
+                     ((AcquisitionJobStepModel)fejsm).setVolList(obva);
+                    
                 }
                 
                 //ObservableList<VolumeSelectionModelType1> obv=FXCollections.observableArrayList(feVols);
