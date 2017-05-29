@@ -13,8 +13,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import db.model.Headers;
+import db.model.Subsurface;
 import db.model.Volume;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -65,7 +66,7 @@ public class HeadersDAOImpl implements HeadersDAO{
             transaction=session.beginTransaction();
             Headers h= (Headers) session.get(Headers.class, hid);
             
-            if(h.getSequenceNumber().equals(newH.getSequenceNumber()) && h.getSubsurface().equals(newH.getSubsurface())){
+            if(h.getSequence().equals(newH.getSequence()) && h.getSubsurface().equals(newH.getSubsurface())){
             h.setTimeStamp(newH.getTimeStamp());
             h.setCmpInc(newH.getCmpInc());
             h.setCmpMax(newH.getCmpMax());
@@ -270,8 +271,47 @@ public class HeadersDAOImpl implements HeadersDAO{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    /* @Override
     public Set<Volume> getVolumesContaining(String subsurface) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<Headers> result=null;
+    Set<Volume> volumeSet=new HashSet<>();
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(Headers.class);
+    criteria.add(Restrictions.eq("subsurface", subsurface));
+    
+    result=criteria.list();
+    if(result.size()>0){
+    System.out.println("res >0 :"+result.size());
+    }else
+    {System.out.println("res=0");}
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    
+    if(result.size()==0){
+    System.out.println("result is zero");
+    }
+    
+    
+    for (Iterator<Headers> iterator = result.iterator(); iterator.hasNext();) {
+    Headers next = iterator.next();
+    System.out.println("Adding: "+next.getVolume());
+    volumeSet.add(next.getVolume());
+    
+    }
+    
+    return volumeSet;
+    
+    }*/
+    
+     @Override
+    public Set<Volume> getVolumesContaining(Subsurface subsurface) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Headers> result=null;
@@ -309,8 +349,28 @@ public class HeadersDAOImpl implements HeadersDAO{
         
     }
 
-    @Override
+    /*@Override
     public List<Headers> getHeadersFor(Volume v, String s) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<Headers> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(Headers.class);
+    criteria.add(Restrictions.eq("volume", v));
+    criteria.add(Restrictions.eq("subsurface", s));
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result;
+    }*/
+    
+    @Override
+    public List<Headers> getHeadersFor(Volume v, Subsurface s) {
        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Headers> result=null;

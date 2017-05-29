@@ -8,8 +8,8 @@ package fend.session.node.volumes.type1;
 
 import db.model.QcMatrix;
 import fend.session.node.headers.HeadersModel;
-import fend.session.node.headers.Sequences;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SequenceHeaders;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
@@ -57,8 +57,8 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
     
     private HeadersModel headersModel=new HeadersModel(this);                                    // the headers corresponding to this particular volume.
-    private Set<SubSurface> subsurfaces;                                       //the subsurfaces in the volume.
-    private MultiMap<Long,SubSurface> seqSubsMap=new MultiValueMap<>();
+    private Set<SubSurfaceHeaders> subsurfaces;                                       //the subsurfaces in the volume.
+    private MultiMap<Long,SubSurfaceHeaders> seqSubsMap=new MultiValueMap<>();
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
     private LogWatcher logTimerTask=null;                                   //watch for any new logs in ../000scratch/logs
@@ -113,12 +113,12 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
 
     
 
-    public Set<SubSurface> getSubsurfaces() {
+    public Set<SubSurfaceHeaders> getSubsurfaces() {
         return subsurfaces;
     }
 
     @Override
-    public void setSubsurfaces(Set<SubSurface> subsurfaces) {
+    public void setSubsurfaces(Set<SubSurfaceHeaders> subsurfaces) {
         this.subsurfaces = subsurfaces;
     }
 
@@ -236,13 +236,13 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         
     }
 
-    public MultiMap<Long, SubSurface> getSeqSubsMap() {
+    public MultiMap<Long, SubSurfaceHeaders> getSeqSubsMap() {
         return seqSubsMap;
     }
 
     
     
-    public void setSeqSubsMap(MultiMap<Long, SubSurface> seqSubsMap) {
+    public void setSeqSubsMap(MultiMap<Long, SubSurfaceHeaders> seqSubsMap) {
         this.seqSubsMap = seqSubsMap;
     }
 

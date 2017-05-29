@@ -9,7 +9,7 @@ import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
-import fend.session.node.headers.Sequences;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
@@ -187,11 +187,11 @@ public class SummaryController extends Stage{
                     
                     HeadersModel h=vol.getHeadersModel();
                     
-                    ObservableList<Sequences> seqs=h.getSequenceListInHeaders();
+                    ObservableList<SequenceHeaders> seqs=h.getSequenceListInHeaders();
                      //mapDepthModelSeq.put(dm, seqs);
                   //  List<DepthModel>
-                  for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
-                  Sequences seq = iterator1.next();
+                  for (Iterator<SequenceHeaders> iterator1 = seqs.iterator(); iterator1.hasNext();) {
+                  SequenceHeaders seq = iterator1.next();
                   mapDepthModelSeq.put(dm, seq.getSequenceNumber());
                   
                   
@@ -248,7 +248,7 @@ public class SummaryController extends Stage{
                              if(!type.equals(3L)){
                                   try{
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
-                                 Sequences ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                                 SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                              
                                if(ss==null){
                                    return param.getValue().notApplicableDependencyProperty();
@@ -307,7 +307,7 @@ public class SummaryController extends Stage{
                             
                              
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
-                            Sequences ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                            SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                                if(ss==null){
                                    return param.getValue().notApplicableProperty(); 
                                }
@@ -351,7 +351,7 @@ public class SummaryController extends Stage{
                             
                              
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
-                            Sequences ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                            SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                                if(ss==null){
                                    return param.getValue().notApplicableProperty(); 
                                }
@@ -388,7 +388,7 @@ public class SummaryController extends Stage{
                             
                              
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
-                            Sequences ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                            SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                             if(ss==null){
                                    return param.getValue().notApplicableProperty(); 
                                }
@@ -427,7 +427,7 @@ public class SummaryController extends Stage{
                                if(!type.equals(3L)){
                                    
                               VolumeSelectionModelType1 vmod1=(VolumeSelectionModelType1) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
-                               Sequences ss=vmod1.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               SequenceHeaders ss=vmod1.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
                                if(ss==null){
                                    
                                }else{
@@ -449,7 +449,7 @@ public class SummaryController extends Stage{
                     });
                     
                     /*for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
-                    Sequences seq = iterator1.next();
+                    SequenceHeaders seq = iterator1.next();
                     
                     SummarySequenceModel summarySequenceModel=new SummarySequenceModel();
                     summarySequenceModel.setDepthlist(value);
@@ -589,7 +589,7 @@ public class SummaryController extends Stage{
          
          
          for (Iterator<Sequences> iterator3 = seqs.iterator(); iterator3.hasNext();) {
-         Sequences seq = iterator3.next();
+         SequenceHeaders seq = iterator3.next();
          
          SummarySequenceModel summarySequenceModel=new SummarySequenceModel();
          List<DepthModel> deplist=(List<DepthModel>) mapseqDepthModel.get(seq);
@@ -633,7 +633,7 @@ public class SummaryController extends Stage{
                      List<Sequences> seqs=hsm.getSequenceListInHeaders();
                     // ListSHolder listsh=new ListSHolder();
                      for (Iterator<Sequences> iterator3 = seqs.iterator(); iterator3.hasNext();) {
-                         Sequences seq = iterator3.next();
+                         SequenceHeaders seq = iterator3.next();
                          SHolder sh=new SHolder();
                          sh.d=depth;
                          sh.j=sjnm;
@@ -650,7 +650,7 @@ public class SummaryController extends Stage{
          
          Set<Sequences> keySeqs=mmap.keySet();
          for (Iterator<Sequences> iterator = keySeqs.iterator(); iterator.hasNext();) {
-            Sequences seq = iterator.next();
+            SequenceHeaders seq = iterator.next();
             List<SHolder> shlist=(List<SHolder>) mmap.get(seq);
             DepthListModel dlist=new DepthListModel();
             List<DepthModel> dmodlist=dlist.getListOfDepthModel();

@@ -38,8 +38,8 @@ import fend.session.SessionNode;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeadersModel;
-import fend.session.node.headers.Sequences;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SequenceHeaders;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionJobStepModel;
 //import fend.session.node.jobs.type1.JobStepType1Model;
 //import fend.session.node.jobs.type1.JobStepType1NodeController;
@@ -547,16 +547,16 @@ public class LandingController implements Initializable,Serializable {
                 
                 //Load headers for beV i.e the backend Volume.
                 List<Headers> hl=hdrServ.getHeadersFor(beV);
-                Set<SubSurface> sl=new HashSet<>();
-                List<Sequences> seqList=new ArrayList<>();
-                MultiMap<Long,SubSurface> seqSubMap=new MultiValueMap<>();                                             //for creating association between Sequences and Subsurfaces
+                Set<SubSurfaceHeaders> sl=new HashSet<>();
+                List<SequenceHeaders> seqList=new ArrayList<>();
+                MultiMap<Long,SubSurfaceHeaders> seqSubMap=new MultiValueMap<>();                                             //for creating association between SequenceHeaders and Subsurfaces
       
                         for (Iterator<Headers> iteratornn = hl.iterator(); iteratornn.hasNext();) {
                             Headers beH = iteratornn.next();
-                            SubSurface s= new SubSurface();
+                            SubSurfaceHeaders s= new SubSurfaceHeaders();
           
-                            s.setSequenceNumber(beH.getSequenceNumber());
-                            s.setSubsurface(beH.getSubsurface());
+                            s.setSequenceNumber(beH.getSequence().getSequenceno());
+                            s.setSubsurface(beH.getSubsurface().getSubsurface());
                             s.setTimeStamp(beH.getTimeStamp());
 
                             s.setCmpInc(beH.getCmpInc());
@@ -615,8 +615,8 @@ public class LandingController implements Initializable,Serializable {
 
                         for (Iterator<Long> iteratorSeq = seqNos.iterator(); iteratorSeq.hasNext();) {
                             Long seq_no = iteratorSeq.next();
-                            Sequences sq=new Sequences();
-                            ArrayList<SubSurface> ssubs=(ArrayList<SubSurface>) seqSubMap.get(seq_no);
+                            SequenceHeaders sq=new SequenceHeaders();
+                            ArrayList<SubSurfaceHeaders> ssubs=(ArrayList<SubSurfaceHeaders>) seqSubMap.get(seq_no);
                             sq.setSubsurfaces(ssubs);
                             seqList.add(sq);
                         }
@@ -647,7 +647,7 @@ public class LandingController implements Initializable,Serializable {
                 
                 
                             HeadersModel hmod=new HeadersModel(fv);
-                            ObservableList<Sequences> obseq=FXCollections.observableArrayList(seqList);
+                            ObservableList<SequenceHeaders> obseq=FXCollections.observableArrayList(seqList);
                             hmod.setSequenceListInHeaders(obseq);
                 
                 

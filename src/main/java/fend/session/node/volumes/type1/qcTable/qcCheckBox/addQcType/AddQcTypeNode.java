@@ -21,7 +21,7 @@ public class AddQcTypeNode extends AnchorPane{
     private AddQcTypeController isc;
     
     public AddQcTypeNode(AddQcTypeModel ism){
-         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qctable/qcCheckBox/addQcType/addQcType.fxml"); 
+         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/type1/qctable/qcCheckBox/addQcType/addQcType.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

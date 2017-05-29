@@ -9,7 +9,7 @@ package fend.session.node.jobs.types.type1;
 import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -59,7 +59,7 @@ public class JobStepType1Model implements JobStepType0Model{
     //For debug
     private Long id;
     
-    private Set<SubSurface> subsurfacesInJob=new HashSet<>();
+    private Set<SubSurfaceHeaders> subsurfacesInJob=new HashSet<>();
     private SessionModel sessionModel;
     
 
@@ -241,11 +241,11 @@ public class JobStepType1Model implements JobStepType0Model{
     }
     
     @Override
-    public Set<SubSurface> getSubsurfacesInJob() {
+    public Set<SubSurfaceHeaders> getSubsurfacesInJob() {
         return subsurfacesInJob;
     }
 
-    public void setSubsurfacesInJob(Set<SubSurface> subsurfacesInJob) {
+    public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsurfacesInJob) {
         this.subsurfacesInJob = subsurfacesInJob;
     }
 

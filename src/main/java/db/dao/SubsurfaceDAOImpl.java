@@ -139,5 +139,26 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
         }else
             return null;
     }
+
+    @Override
+    public List<Subsurface> getSubsurfaceList() {
+          Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Subsurface> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Subsurface.class);
+            
+            
+            
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
     
 }

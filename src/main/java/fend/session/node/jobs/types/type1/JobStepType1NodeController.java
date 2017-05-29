@@ -74,7 +74,7 @@ import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
 import fend.session.node.headers.HeadersModel;
-import fend.session.node.headers.Sequences;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
@@ -449,10 +449,10 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         model.getQcTableModel().setQcMatrixModel(qcMatrixModel);
         
            //model.getQcTableModel().setQctypes(qctypeModels);
-           List<Sequences> seqsinJob=new ArrayList<>();
+           List<SequenceHeaders> seqsinJob=new ArrayList<>();
            for(VolumeSelectionModelType1 vmod:obsList){
                HeadersModel hmod=vmod.getHeadersModel();
-            List<Sequences> seqsinVol=hmod.getSequenceListInHeaders();
+            List<SequenceHeaders> seqsinVol=hmod.getSequenceListInHeaders();
             seqsinJob.addAll(seqsinVol);
            }
            
@@ -853,9 +853,9 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
                     System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
                     
                     HeadersModel hmod=next1.getHeadersModel();
-                    List<Sequences> seqL=hmod.getSequenceListInHeaders();
-                    for (Iterator<Sequences> iterator2 = seqL.iterator(); iterator2.hasNext();) {
-                        Sequences next2 = iterator2.next();
+                    List<SequenceHeaders> seqL=hmod.getSequenceListInHeaders();
+                    for (Iterator<SequenceHeaders> iterator2 = seqL.iterator(); iterator2.hasNext();) {
+                        SequenceHeaders next2 = iterator2.next();
                         System.out.println("fend.session.node.jobs.JobStepNodeController.setVolumeModelsForFrontEndDisplay() Sequence: "+next2.getSequenceNumber());
                     }
             

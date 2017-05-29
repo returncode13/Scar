@@ -21,7 +21,7 @@ public class qcCheckListNode extends AnchorPane{
     private qcCheckListController isc;
     
     public qcCheckListNode(qcCheckListModel ism){
-         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qctable/qcCheckBox/qcCheckBox.fxml"); 
+         this.location=getClass().getClassLoader().getResource("nodeResources/volumes/type1/qctable/qcCheckBox/qcCheckBox.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

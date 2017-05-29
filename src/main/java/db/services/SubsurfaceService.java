@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.Subsurface;
+import java.util.List;
 
 /**
  *
@@ -18,5 +19,7 @@ public interface SubsurfaceService {
     public void updateSubsurface(Long sid, Subsurface newsub);
 
     public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface);
+
+    public List<Subsurface> getSubsurfaceList();
     
 }

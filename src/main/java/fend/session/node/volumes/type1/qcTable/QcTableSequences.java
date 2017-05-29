@@ -5,8 +5,8 @@
  */
 package fend.session.node.volumes.type1.qcTable;
 
-import fend.session.node.headers.Sequences;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SequenceHeaders;
+import fend.session.node.headers.SubSurfaceHeaders;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.LongProperty;
@@ -22,7 +22,7 @@ public class QcTableSequences {
     
     private final StringProperty subsurface = new SimpleStringProperty();
     private final LongProperty sequenceNumber = new SimpleLongProperty();
-    Sequences sequence;
+    SequenceHeaders sequence;
     List<QcTypeModel> qcfields=new ArrayList();
     List<QcTableSubsurfaces> qcSubs=new ArrayList<>();
     
@@ -33,15 +33,15 @@ public class QcTableSequences {
     
     
 
-    public Sequences getSequence() {
+    public SequenceHeaders getSequence() {
         return sequence;
     }
 
-    public void setSequence(Sequences sequence) {
+    public void setSequence(SequenceHeaders sequence) {
         this.sequence = sequence;
         sequenceNumber.set(this.sequence.getSequenceNumber());
         subsurface.set(this.sequence.getSubsurface());
-        for(SubSurface subs: sequence.getSubsurfaces()){
+        for(SubSurfaceHeaders subs: sequence.getSubsurfaces()){
             QcTableSubsurfaces qsub=new QcTableSubsurfaces();
             qsub.setQcfields(qcfields);
             qsub.setSub(subs);              //sequence and subsurface information is set within class
@@ -87,7 +87,7 @@ public class QcTableSequences {
     public List<QcTableSubsurfaces> getQcSubs() {
           
         
-        /* for(SubSurface subs: sequence.getSubsurfaces()){
+        /* for(SubSurfaceHeaders subs: sequence.getSubsurfaces()){
         QcTableSubsurfaces qsub=new QcTableSubsurfaces();
         qsub.setQcfields(qcfields);
         qsub.setSub(subs);              //sequence and subsurface information is set within class

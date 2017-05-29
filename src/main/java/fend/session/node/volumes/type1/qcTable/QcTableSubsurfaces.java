@@ -5,8 +5,8 @@
  */
 package fend.session.node.volumes.type1.qcTable;
 
-import fend.session.node.headers.Sequences;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SequenceHeaders;
+import fend.session.node.headers.SubSurfaceHeaders;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.LongProperty;
@@ -21,14 +21,14 @@ import javafx.beans.property.StringProperty;
 public class QcTableSubsurfaces extends QcTableSequences{
     private final StringProperty subsurface = new SimpleStringProperty();
     private final LongProperty sequenceNumber = new SimpleLongProperty();
-    SubSurface sub;
+    SubSurfaceHeaders sub;
     List<QcTypeModel> qcfields=new ArrayList();
 
-    public SubSurface getSub() {
+    public SubSurfaceHeaders getSub() {
         return sub;
     }
 
-    public void setSub(SubSurface sub) {
+    public void setSub(SubSurfaceHeaders sub) {
         this.sub = sub;
         sequenceNumber.setValue(sub.getSequenceNumber());
         subsurface.setValue(sub.getSubsurface());

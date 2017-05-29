@@ -10,6 +10,7 @@ import db.dao.HeadersDAOImpl;
 import java.util.List;
 import java.util.Set;
 import db.model.Headers;
+import db.model.Subsurface;
 import db.model.Volume;
 
 /**
@@ -60,14 +61,24 @@ public class HeadersServiceImpl implements HeadersService{
         hDao.deleteHeadersFor(v);
     }
 
-    @Override
+    /*@Override
     public Set<Volume> getVolumesContaining(String subsurface) {
-        System.out.println("sub: "+subsurface);
+    System.out.println("sub: "+subsurface);
+    return hDao.getVolumesContaining(subsurface);
+    }
+    
+    @Override
+    public List<Headers> getHeadersFor(Volume v, String subsurface) {
+    return hDao.getHeadersFor(v, subsurface);
+    }*/
+    @Override
+    public Set<Volume> getVolumesContaining(Subsurface subsurface) {
+        System.out.println("sub: "+subsurface.getSubsurface());
         return hDao.getVolumesContaining(subsurface);
     }
 
     @Override
-    public List<Headers> getHeadersFor(Volume v, String subsurface) {
+    public List<Headers> getHeadersFor(Volume v, Subsurface subsurface) {
         return hDao.getHeadersFor(v, subsurface);
     }
     

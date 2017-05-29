@@ -5,7 +5,7 @@
  */
 package fend.session.node.volumes.type1.qcTable;
 
-import fend.session.node.headers.Sequences;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class QcTableModel {
     
     List<QcTypeModel> qctypes=new ArrayList();                   //list of qctypes.
     QcMatrixModel qcMatrixModel;
-    List<Sequences> sequences;
+    List<SequenceHeaders> sequences;
     JobStepType0Model jobmodel;
 
     public JobStepType0Model getJobmodel() {
@@ -59,11 +59,11 @@ public class QcTableModel {
     
     
 
-    public List<Sequences> getSequences() {
+    public List<SequenceHeaders> getSequences() {
         return sequences;
     }
 
-    public void setSequences(List<Sequences> sequences) {
+    public void setSequences(List<SequenceHeaders> sequences) {
         this.sequences = sequences;
         
     }
@@ -77,8 +77,8 @@ public class QcTableModel {
         }
         
         
-        for (Iterator<Sequences> iterator = sequences.iterator(); iterator.hasNext();) {
-            Sequences next = iterator.next();
+        for (Iterator<SequenceHeaders> iterator = sequences.iterator(); iterator.hasNext();) {
+            SequenceHeaders next = iterator.next();
             QcTableSequences q=new QcTableSequences();;
           //  System.out.println("fend.session.node.volumes.qcTable.QcTableModel.getQcTableSequences(): adding seq: "+next.getSequenceNumber());
             q.setQcfields(qctypes);

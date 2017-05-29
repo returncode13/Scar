@@ -6,7 +6,7 @@
 package fend.session.node.volumes.acquisition;
 
 import fend.session.node.headers.HeadersModel;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
 import java.util.Set;
@@ -88,7 +88,7 @@ public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
     
 
     @Override
-    public void setSubsurfaces(Set<SubSurface> sl) {
+    public void setSubsurfaces(Set<SubSurfaceHeaders> sl) {
         System.out.println("fend.session.node.volumes.acquisition.AcquisitionVolumeModel.setSubsurfaces(): not implemented");
     }
 

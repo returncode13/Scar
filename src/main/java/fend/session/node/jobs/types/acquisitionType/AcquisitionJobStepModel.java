@@ -7,7 +7,7 @@ package fend.session.node.jobs.types.acquisitionType;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
@@ -231,7 +231,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     }
     
     @Override
-    public void setSubsurfacesInJob(Set<SubSurface> subsInJob) {
+    public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsInJob) {
         
     }
 
@@ -241,7 +241,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     }
 
     @Override
-    public Set<SubSurface> getSubsurfacesInJob() {
+    public Set<SubSurfaceHeaders> getSubsurfacesInJob() {
         return new HashSet<>();
     }
 

@@ -24,7 +24,7 @@ public class QcTableNode extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("nodeResources/volumes/qctable/matrixTable/matrixTable.fxml"); 
+        this.location=getClass().getClassLoader().getResource("nodeResources/volumes/type1/qctable/matrixTable/matrixTable.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

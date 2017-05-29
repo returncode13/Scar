@@ -53,8 +53,8 @@ import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurve;
 import fend.session.edges.curves.CubCurveModel;
 import fend.session.node.headers.HeadersModel;
-import fend.session.node.headers.Sequences;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SequenceHeaders;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionJobStepModel;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionNode;
 import fend.session.node.jobs.types.type1.JobStepType1Node;
@@ -902,9 +902,15 @@ public class SessionController implements Initializable {
                     //curve.startYProperty().bindBidirectional(next.layoutYProperty());
                     
                  //   System.out.println("fend.session.SessionController.drawCurve():  for: "+next.getJsnc().getModel().getJobStepText()+" : child: "+key.getJsnc().getModel().getJobStepText());
+                    if(!next.getJsnc().getModel().getType().equals(3L)){
+                        curve.startXProperty().bind(Bindings.add(((AnchorPane)next).layoutXProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinX()+515));         //next is the parent node
+                        curve.startYProperty().bind(Bindings.add(((AnchorPane)next).layoutYProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinY()+74));
+                    }else{
+                        curve.startXProperty().bind(Bindings.add(((AnchorPane)next).layoutXProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinX()+172));         //next is the parent node
+                        curve.startYProperty().bind(Bindings.add(((AnchorPane)next).layoutYProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinY()+61));
+                    }
+                            
                     
-                    curve.startXProperty().bind(Bindings.add(((AnchorPane)next).layoutXProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinX()+515));         //next is the parent node
-                    curve.startYProperty().bind(Bindings.add(((AnchorPane)next).layoutYProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinY()+74));
                     /*curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMaxX()));         //next is the parent node
                     curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMaxY()/2));*/
                     curve.endXProperty().bind(Bindings.add(((AnchorPane)key).layoutXProperty(),((AnchorPane)key).boundsInLocalProperty().get().getMinX()));           //key in the child node
@@ -1016,17 +1022,17 @@ public class SessionController implements Initializable {
         
     }
     
-    private Set<SubSurface> calculateSubsInJob(JobStepType0Model job){
+    private Set<SubSurfaceHeaders> calculateSubsInJob(JobStepType0Model job){
         
         if(job instanceof JobStepType1Model){                   //for 2D case
             List<VolumeSelectionModelType1> volList=job.getVolList();
-        Set<SubSurface> subsInJob=new HashSet<>();
+        Set<SubSurfaceHeaders> subsInJob=new HashSet<>();
         
         for (Iterator<VolumeSelectionModelType1> iterator = volList.iterator(); iterator.hasNext();) {
             VolumeSelectionModelType1 vol = iterator.next();
                 
                 if(!vol.getHeaderButtonStatus()){
-                Set<SubSurface> subsInVol=vol.getSubsurfaces();
+                Set<SubSurfaceHeaders> subsInVol=vol.getSubsurfaces();
                 subsInJob.addAll(subsInVol);
                 }
             
@@ -1035,7 +1041,7 @@ public class SessionController implements Initializable {
         }
         job.setSubsurfacesInJob(subsInJob);
         /*for (Iterator<SubSurface> iterator = subsInJob.iterator(); iterator.hasNext();) {
-        SubSurface subinJob = iterator.next();
+        SubSurfaceHeaders subinJob = iterator.next();
         System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
         }*/
         
@@ -1077,7 +1083,7 @@ public class SessionController implements Initializable {
               //Set<SubSurface> rootsSubSurfaces=new HashSet(root.getSeqSubsInJob().values());
              
               /*  for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
-              SubSurface subinRoot = iterator.next();
+              SubSurfaceHeaders subinRoot = iterator.next();
               jobSubString.add(subinRoot.getSubsurface().split("_")[0]);
               //System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
               
@@ -1207,22 +1213,22 @@ public class SessionController implements Initializable {
          
          
        // Set<SubSurface> pSubs=calculateSubsInJob(parent);
-         Set<SubSurface> pSubs=parent.getSubsurfacesInJob();
-         Set<SubSurface> cSubs=calculateSubsInJob(child);
+         Set<SubSurfaceHeaders> pSubs=parent.getSubsurfacesInJob();
+         Set<SubSurfaceHeaders> cSubs=calculateSubsInJob(child);
       
          
          List<String> pSubsStrings=new ArrayList<>();
          List<String> cSubsStrings=new ArrayList<>();
          
-         for (Iterator<SubSurface> iterator = pSubs.iterator(); iterator.hasNext();) {
-         SubSurface subInParent = iterator.next();
+         for (Iterator<SubSurfaceHeaders> iterator = pSubs.iterator(); iterator.hasNext();) {
+         SubSurfaceHeaders subInParent = iterator.next();
          pSubsStrings.add(subInParent.getSubsurface());
         // System.out.println("fend.session.SessionController.setPendingJobsFlag():  pSubsStrings found : "+pSubsStrings.get(pSubsStrings.size()-1));
          
          }
          
-         for (Iterator<SubSurface> iterator = cSubs.iterator(); iterator.hasNext();) {
-         SubSurface subInChild = iterator.next();
+         for (Iterator<SubSurfaceHeaders> iterator = cSubs.iterator(); iterator.hasNext();) {
+         SubSurfaceHeaders subInChild = iterator.next();
          cSubsStrings.add(subInChild.getSubsurface());
          //System.out.println("fend.session.SessionController.setPendingJobsFlag():  cSubsStrings found : "+cSubsStrings.get(cSubsStrings.size()-1));
          }
@@ -1272,7 +1278,7 @@ public class SessionController implements Initializable {
         Boolean insightFail=false;
            //insight version check
            calculateSubsInJob(child);
-            Set<SubSurface> csubq=child.getSubsurfacesInJob();
+            Set<SubSurfaceHeaders> csubq=child.getSubsurfacesInJob();
             
             List<VolumeSelectionModelType1> cVolList=child.getVolList();
          for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
@@ -1286,8 +1292,8 @@ public class SessionController implements Initializable {
             List<String> versionsSelectedInChildQ=child.getInsightVersionsModel().getCheckedVersions();
                         MultiValueMap<String,String> baseRevisionFromJobMapQ=new MultiValueMap<>();
                         
-                      for (Iterator<SubSurface> iterator = csubq.iterator(); iterator.hasNext();) {
-                        SubSurface refSubQ = iterator.next();
+                      for (Iterator<SubSurfaceHeaders> iterator = csubq.iterator(); iterator.hasNext();) {
+                        SubSurfaceHeaders refSubQ = iterator.next();
                         /*String baseVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[0];
                         String revisionOfVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[1].split("\\)")[0];*/
                         String baseVersionFromSubQ=new String();
@@ -1299,12 +1305,12 @@ public class SessionController implements Initializable {
                            
                        
             VolumeSelectionModelType1 targetVolQ=new VolumeSelectionModelType1(1L,child);
-            Sequences targetSeqQ=new Sequences();
-            SubSurface targetSubQ=refSubQ;
+            SequenceHeaders targetSeqQ=new SequenceHeaders();
+            SubSurfaceHeaders targetSubQ=refSubQ;
                         
                            for (Iterator<VolumeSelectionModelType1> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
                             VolumeSelectionModelType1 vc = iterator1.next();
-                            Set<SubSurface> vcSub=vc.getSubsurfaces();
+                            Set<SubSurfaceHeaders> vcSub=vc.getSubsurfaces();
                            // System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                             if(vcSub.contains(targetSubQ)){
                               //  System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
@@ -1317,9 +1323,9 @@ public class SessionController implements Initializable {
                         
                         if(targetVolQ!=null){
                             HeadersModel hmod=targetVolQ.getHeadersModel();
-                            List<Sequences> seqList=hmod.getSequenceListInHeaders();
+                            List<SequenceHeaders> seqList=hmod.getSequenceListInHeaders();
                             
-                for (Sequences seq : seqList) {
+                for (SequenceHeaders seq : seqList) {
                     if(targetSubQ.getSequenceNumber().equals(seq.getSequenceNumber())){
                         targetSeqQ=seq;
                         //  System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
@@ -1464,7 +1470,7 @@ public class SessionController implements Initializable {
         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
             
             //check for Insight Version mismatch
-            Set<SubSurface> csubq=child.getSubsurfacesInJob();
+            Set<SubSurfaceHeaders> csubq=child.getSubsurfacesInJob();
             
             List<VolumeSelectionModelType1> cVolList=child.getVolList();
          for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
@@ -1478,8 +1484,8 @@ public class SessionController implements Initializable {
             List<String> versionsSelectedInChildQ=child.getInsightVersionsModel().getCheckedVersions();
                         MultiValueMap<String,String> baseRevisionFromJobMapQ=new MultiValueMap<>();
                         
-                      for (Iterator<SubSurface> iterator = csubq.iterator(); iterator.hasNext();) {
-                        SubSurface refSubQ = iterator.next();
+                      for (Iterator<SubSurfaceHeaders> iterator = csubq.iterator(); iterator.hasNext();) {
+                        SubSurfaceHeaders refSubQ = iterator.next();
                         /*String baseVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[0];
                         String revisionOfVersionFromSubQ=refSubQ.getInsightVersion().split("\\(")[1].split("\\)")[0];*/
                         String baseVersionFromSubQ=new String();
@@ -1491,12 +1497,12 @@ public class SessionController implements Initializable {
                            
                        
             VolumeSelectionModelType1 targetVolQ=new VolumeSelectionModelType1(1L,child);
-            Sequences targetSeqQ=new Sequences();
-            SubSurface targetSubQ=refSubQ;
+            SequenceHeaders targetSeqQ=new SequenceHeaders();
+            SubSurfaceHeaders targetSubQ=refSubQ;
                         
                            for (Iterator<VolumeSelectionModelType1> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
                             VolumeSelectionModelType1 vc = iterator1.next();
-                            Set<SubSurface> vcSub=vc.getSubsurfaces();
+                            Set<SubSurfaceHeaders> vcSub=vc.getSubsurfaces();
                            // System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                             if(vcSub.contains(targetSubQ)){
                               //  System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
@@ -1509,9 +1515,9 @@ public class SessionController implements Initializable {
                         
                         if(targetVolQ!=null){
                             HeadersModel hmod=targetVolQ.getHeadersModel();
-                            List<Sequences> seqList=hmod.getSequenceListInHeaders();
+                            List<SequenceHeaders> seqList=hmod.getSequenceListInHeaders();
                             
-                for (Sequences seq : seqList) {
+                for (SequenceHeaders seq : seqList) {
                     if(targetSubQ.getSequenceNumber().equals(seq.getSequenceNumber())){
                         targetSeqQ=seq;
                         //  System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
@@ -1631,8 +1637,8 @@ public class SessionController implements Initializable {
             calculateSubsInJob(parent);
          //Set<SubSurface> csubs= calculateSubsInJob(child);
          //Set<SubSurface> psubs=calculateSubsInJob(parent);
-         Set<SubSurface> psubs=parent.getSubsurfacesInJob();
-         Set<SubSurface> csubs=child.getSubsurfacesInJob();
+         Set<SubSurfaceHeaders> psubs=parent.getSubsurfacesInJob();
+         Set<SubSurfaceHeaders> csubs=child.getSubsurfacesInJob();
             System.out.println("fend.session.SessionController.setQCFlag(): size of child and parent subs: "+csubs.size()+" : "+psubs.size());
             
          List<VolumeSelectionModelType1> cVolList=child.getVolList();
@@ -1644,16 +1650,16 @@ public class SessionController implements Initializable {
         
          
          
-         for (Iterator<SubSurface> iterator = csubs.iterator(); iterator.hasNext();) {
-            SubSurface c = iterator.next();
+         for (Iterator<SubSurfaceHeaders> iterator = csubs.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders c = iterator.next();
             VolumeSelectionModelType1 targetVol=new VolumeSelectionModelType1(1L,child);
-            Sequences targetSeq=new Sequences();
-            SubSurface targetSub=c;
-            SubSurface refSub=new SubSurface();
+            SequenceHeaders targetSeq=new SequenceHeaders();
+            SubSurfaceHeaders targetSub=c;
+            SubSurfaceHeaders refSub=new SubSurfaceHeaders();
             
                         for (Iterator<VolumeSelectionModelType1> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
                             VolumeSelectionModelType1 vc = iterator1.next();
-                            Set<SubSurface> vcSub=vc.getSubsurfaces();
+                            Set<SubSurfaceHeaders> vcSub=vc.getSubsurfaces();
                            System.out.println("fend.session.SessionController.setQCFlag(): Checking if Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                             if(vcSub.contains(targetSub)){
                               System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
@@ -1666,9 +1672,9 @@ public class SessionController implements Initializable {
                         
                         if(targetVol!=null){
                             HeadersModel hmod=targetVol.getHeadersModel();
-                            List<Sequences> seqList=hmod.getSequenceListInHeaders();
+                            List<SequenceHeaders> seqList=hmod.getSequenceListInHeaders();
                             
-                for (Sequences seq : seqList) {
+                for (SequenceHeaders seq : seqList) {
                     if(targetSub.getSequenceNumber().equals(seq.getSequenceNumber())){
                         targetSeq=seq;
                           System.out.println("fend.session.SessionController.setQCFlag(): SUCCESS!!Job: "+child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
@@ -1688,8 +1694,8 @@ public class SessionController implements Initializable {
                         }
                       
                         
-                        for (Iterator<SubSurface> iterator1 = psubs.iterator(); iterator1.hasNext();) {
-                          SubSurface p = iterator1.next();
+                        for (Iterator<SubSurfaceHeaders> iterator1 = psubs.iterator(); iterator1.hasNext();) {
+                          SubSurfaceHeaders p = iterator1.next();
                           if(csubs.contains(p))
                           {
                               if(p.equals(c)){

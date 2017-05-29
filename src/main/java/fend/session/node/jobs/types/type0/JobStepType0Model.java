@@ -7,7 +7,7 @@ package fend.session.node.jobs.types.type0;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
@@ -45,9 +45,9 @@ public interface JobStepType0Model {
     public InsightVersionsModel getInsightVersionsModel();
     public Long getType();
     public ObservableList getVolList();
-    public void setSubsurfacesInJob(Set<SubSurface> subsInJob);
+    public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsInJob);
     public void setPendingFlagProperty(Boolean TRUE);
-    public Set<SubSurface> getSubsurfacesInJob();
+    public Set<SubSurfaceHeaders> getSubsurfacesInJob();
     public void setQcFlagProperty(Boolean FALSE);
     
     

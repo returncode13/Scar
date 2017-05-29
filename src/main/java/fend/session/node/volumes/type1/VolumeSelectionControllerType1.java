@@ -24,8 +24,8 @@ import fend.session.SessionModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.HeadersViewController;
-import fend.session.node.headers.Sequences;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SequenceHeaders;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type0.VolumeSelectionControllerType0;
 import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
@@ -129,7 +129,7 @@ public class VolumeSelectionControllerType1 implements VolumeSelectionController
 
     
     private VolumeSelectionModelType1 model;
-    private  TableView<SubSurface> table;
+    private  TableView<SubSurfaceHeaders> table;
      
      
     private List<TimerTask> volumeTimerTask=new ArrayList<>();
@@ -351,7 +351,7 @@ public class VolumeSelectionControllerType1 implements VolumeSelectionController
         //HeaderGroup hg=new HeaderGroup(htm);
        // HeadersModel hmodel=new HeadersModel();
        // List<SubSurface> subs=hcollector.getHeaderListForVolume();
-        List<Sequences> seqs=hcollector.getHeaderListForVolume(model);
+        List<SequenceHeaders> seqs=hcollector.getHeaderListForVolume(model);
         
         /*At the end of this call the model's headersmodel contains all the sequences and the models variable "subsurfaces" contains the subsurfaces in the volume.
         */

@@ -48,7 +48,7 @@ import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.volumes.acquisition.AcqHeaders;

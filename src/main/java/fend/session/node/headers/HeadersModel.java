@@ -22,17 +22,17 @@ import javafx.collections.ObservableList;
  */
 public class HeadersModel {
    
-    private List<Sequences> seqList=new ArrayList<>();
-    private ObservableList<Sequences> sequenceListInHeaders=FXCollections.observableList(seqList);
+    private List<SequenceHeaders> seqList=new ArrayList<>();
+    private ObservableList<SequenceHeaders> sequenceListInHeaders=FXCollections.observableList(seqList);
     private Long id;
    // private VolumeSelectionModelType1 volmodel;
     private VolumeSelectionModelType0 volmodel;
 
-    public ObservableList<Sequences> getSequenceListInHeaders() {
+    public ObservableList<SequenceHeaders> getSequenceListInHeaders() {
         return sequenceListInHeaders;
     }
 
-    public void setSequenceListInHeaders(ObservableList<Sequences> sequenceListInHeaders) {
+    public void setSequenceListInHeaders(ObservableList<SequenceHeaders> sequenceListInHeaders) {
         this.sequenceListInHeaders = FXCollections.observableList(sequenceListInHeaders);
     }
 
@@ -70,9 +70,9 @@ public class HeadersModel {
     this.volmodel = volmodel;
     }
     
-    public Sequences getSequenceObjBySequenceNumber(Long seqno){
-        for (Iterator<Sequences> iterator = sequenceListInHeaders.iterator(); iterator.hasNext();) {
-            Sequences seq = iterator.next();
+    public SequenceHeaders getSequenceObjBySequenceNumber(Long seqno){
+        for (Iterator<SequenceHeaders> iterator = sequenceListInHeaders.iterator(); iterator.hasNext();) {
+            SequenceHeaders seq = iterator.next();
             if(seq.getSequenceNumber().equals(seqno)){
                 return seq;
             }

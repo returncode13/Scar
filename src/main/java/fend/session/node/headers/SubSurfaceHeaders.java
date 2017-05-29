@@ -21,7 +21,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author naila0152
  */
-public class SubSurface extends Sequences implements Serializable{
+public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     
     
     
@@ -416,7 +416,7 @@ public class SubSurface extends Sequences implements Serializable{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SubSurface other = (SubSurface) obj;
+        final SubSurfaceHeaders other = (SubSurfaceHeaders) obj;
         if (!Objects.equals(this.sequenceNumber.get(), other.sequenceNumber.get())) {
             return false;
         }

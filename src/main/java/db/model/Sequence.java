@@ -36,6 +36,18 @@ private Set<Subsurface> subsurfaces;
 @OneToMany(mappedBy = "sequence",cascade = CascadeType.ALL,orphanRemoval = true)
 private Set<Acquisition> acquisition;
 
+@OneToMany(mappedBy = "sequence",cascade = CascadeType.ALL,orphanRemoval = true)
+private Set<Headers> headers;
+
+    public Set<Headers> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Set<Headers> headers) {
+        this.headers = headers;
+    }
+
+
     public Set<Acquisition> getAcquisition() {
         return acquisition;
     }

@@ -7,12 +7,15 @@ package fend.session.node.headers;
 
 import db.model.Headers;
 import db.model.Logs;
+import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workflow;
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
 import db.services.LogsServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.node.headers.logger.LogsModel;
@@ -62,18 +65,20 @@ import watcher.LogWatcher;
  */
 public class HeadersViewController extends Stage implements Initializable {
 
-     private Map<Integer,TreeItem<Sequences>> idxForTree=new HashMap<>();
+     private Map<Integer,TreeItem<SequenceHeaders>> idxForTree=new HashMap<>();
     
     private HeadersModel hmodel;
     private HeadersNode hnode;
-    ObservableList<Sequences> seqListObs;
+    ObservableList<SequenceHeaders> seqListObs;
     HeadersService hdserv=new HeadersServiceImpl();
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
+    SubsurfaceService subserv=new SubsurfaceServiceImpl();
+    
     String vname=new String();        
    
        @FXML
-    private TreeTableView<Sequences> treetableView;
+    private TreeTableView<SequenceHeaders> treetableView;
        
      
     
@@ -98,7 +103,7 @@ public class HeadersViewController extends Stage implements Initializable {
      /*
      treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
      @Override
-     protected void updateItem(Sequences item,boolean empty){
+     protected void updateItem(SequenceHeaders item,boolean empty){
      super.updateItem(item,empty);
      if(item==null || empty){
      setText(null);
@@ -119,10 +124,10 @@ public class HeadersViewController extends Stage implements Initializable {
          MenuItem showWorkFlowVersion=new MenuItem("Workflow Versions");
          contextMenu.getItems().add(showLogsMenuItem);
          contextMenu.getItems().add(showWorkFlowVersion);
-         TreeTableRow<Sequences> row=new TreeTableRow<Sequences>(){
+         TreeTableRow<SequenceHeaders> row=new TreeTableRow<SequenceHeaders>(){
              
              @Override
-            protected void updateItem(Sequences item,boolean empty){
+            protected void updateItem(SequenceHeaders item,boolean empty){
                 super.updateItem(item,empty);
                 if(item==null || empty){
                     setText(null);
@@ -142,13 +147,13 @@ public class HeadersViewController extends Stage implements Initializable {
          };
          
          showLogsMenuItem.setOnAction(evt->{
-             Sequences seq=row.getItem();
+             SequenceHeaders seq=row.getItem();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
              System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
-            
-             List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());
+             Subsurface sub= subserv.getSubsurfaceObjBysubsurfacename(seq.getSubsurface());
+             List<Headers> h=hdserv.getHeadersFor(v, sub);
              // List<Logs> logs=lserv.getLogsFor(h.get(0));
              if(h.size()==1){
                  
@@ -219,13 +224,14 @@ public class HeadersViewController extends Stage implements Initializable {
          
          
           showWorkFlowVersion.setOnAction(evt->{
-              Sequences seq=row.getItem();
+              SequenceHeaders seq=row.getItem();
               String subName=seq.getSubsurface();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
              System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
-            List<Headers> h=hdserv.getHeadersFor(v, seq.getSubsurface());
+            Subsurface sub= subserv.getSubsurfaceObjBysubsurfacename(seq.getSubsurface());
+             List<Headers> h=hdserv.getHeadersFor(v, sub);
             System.out.println("fend.session.node.headers.HeadersViewController.setModel(): extracting headers size: "+h.size());
             
             if(h.size()!=1){
@@ -271,34 +277,34 @@ public class HeadersViewController extends Stage implements Initializable {
      });
      
      
-        TreeTableColumn<Sequences,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
-        TreeTableColumn<Sequences,String> subsurfaceName= new TreeTableColumn<>("SAILLINE");
-        TreeTableColumn<Sequences,String>  timeStamp=new TreeTableColumn<>("TIMESTAMP");
-        TreeTableColumn<Sequences,Long>  tracecount=new TreeTableColumn<>("Traces");
-        TreeTableColumn<Sequences,Long>  inlineMax=new TreeTableColumn<>("inlineMax");
-        TreeTableColumn<Sequences,Long>  inlineMin=new TreeTableColumn<>("inlineMin");
-        TreeTableColumn<Sequences,Long>  inlineInc=new TreeTableColumn<>("inlineInc");
-        TreeTableColumn<Sequences,Long>  xlineMax=new TreeTableColumn<>("xlineMax");
-        TreeTableColumn<Sequences,Long>  xlineMin =new TreeTableColumn<>("xlineMin");
-        TreeTableColumn<Sequences,Long>  xlineInc =new TreeTableColumn<>("xlineInc");
-        TreeTableColumn<Sequences,Long>  dugShotMax=new TreeTableColumn<>("dugShotMax");
-        TreeTableColumn<Sequences,Long>  dugShotMin=new TreeTableColumn<>("dugShotMin");
-        TreeTableColumn<Sequences,Long>  dugShotInc=new TreeTableColumn<>("dugShotInc");
-        TreeTableColumn<Sequences,Long>  dugChannelMax=new TreeTableColumn<>("dugChannelMax");
-        TreeTableColumn<Sequences,Long>  dugChannelMin=new TreeTableColumn<>("dugChannelMin");
-        TreeTableColumn<Sequences,Long>  dugChannelInc=new TreeTableColumn<>("dugChannelInc");
-        TreeTableColumn<Sequences,Long>  offsetMax=new TreeTableColumn<>("offsetMax");
-        TreeTableColumn<Sequences,Long>  offsetMin=new TreeTableColumn<>("offsetMin");
-        TreeTableColumn<Sequences,Long>  offsetInc=new TreeTableColumn<>("offsetInc");
-        TreeTableColumn<Sequences,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
-        TreeTableColumn<Sequences,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
-        TreeTableColumn<Sequences,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
-        TreeTableColumn<Sequences,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
-        TreeTableColumn<Sequences,Boolean>  alert=new TreeTableColumn<>("alert");
-        TreeTableColumn<Sequences,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
-        TreeTableColumn<Sequences,Boolean>  modified=new TreeTableColumn<>("modified");
-        TreeTableColumn<Sequences,Boolean>  deleted=new TreeTableColumn<>("deleted");
-        TreeTableColumn<Sequences,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
+        TreeTableColumn<SequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
+        TreeTableColumn<SequenceHeaders,String> subsurfaceName= new TreeTableColumn<>("SAILLINE");
+        TreeTableColumn<SequenceHeaders,String>  timeStamp=new TreeTableColumn<>("TIMESTAMP");
+        TreeTableColumn<SequenceHeaders,Long>  tracecount=new TreeTableColumn<>("Traces");
+        TreeTableColumn<SequenceHeaders,Long>  inlineMax=new TreeTableColumn<>("inlineMax");
+        TreeTableColumn<SequenceHeaders,Long>  inlineMin=new TreeTableColumn<>("inlineMin");
+        TreeTableColumn<SequenceHeaders,Long>  inlineInc=new TreeTableColumn<>("inlineInc");
+        TreeTableColumn<SequenceHeaders,Long>  xlineMax=new TreeTableColumn<>("xlineMax");
+        TreeTableColumn<SequenceHeaders,Long>  xlineMin =new TreeTableColumn<>("xlineMin");
+        TreeTableColumn<SequenceHeaders,Long>  xlineInc =new TreeTableColumn<>("xlineInc");
+        TreeTableColumn<SequenceHeaders,Long>  dugShotMax=new TreeTableColumn<>("dugShotMax");
+        TreeTableColumn<SequenceHeaders,Long>  dugShotMin=new TreeTableColumn<>("dugShotMin");
+        TreeTableColumn<SequenceHeaders,Long>  dugShotInc=new TreeTableColumn<>("dugShotInc");
+        TreeTableColumn<SequenceHeaders,Long>  dugChannelMax=new TreeTableColumn<>("dugChannelMax");
+        TreeTableColumn<SequenceHeaders,Long>  dugChannelMin=new TreeTableColumn<>("dugChannelMin");
+        TreeTableColumn<SequenceHeaders,Long>  dugChannelInc=new TreeTableColumn<>("dugChannelInc");
+        TreeTableColumn<SequenceHeaders,Long>  offsetMax=new TreeTableColumn<>("offsetMax");
+        TreeTableColumn<SequenceHeaders,Long>  offsetMin=new TreeTableColumn<>("offsetMin");
+        TreeTableColumn<SequenceHeaders,Long>  offsetInc=new TreeTableColumn<>("offsetInc");
+        TreeTableColumn<SequenceHeaders,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
+        TreeTableColumn<SequenceHeaders,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
+        TreeTableColumn<SequenceHeaders,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
+        TreeTableColumn<SequenceHeaders,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
+        TreeTableColumn<SequenceHeaders,Boolean>  alert=new TreeTableColumn<>("alert");
+        TreeTableColumn<SequenceHeaders,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
+        TreeTableColumn<SequenceHeaders,Boolean>  modified=new TreeTableColumn<>("modified");
+        TreeTableColumn<SequenceHeaders,Boolean>  deleted=new TreeTableColumn<>("deleted");
+        TreeTableColumn<SequenceHeaders,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
      
         sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
         subsurfaceName.setCellValueFactory(new TreeItemPropertyValueFactory<>("subsurface"));
@@ -328,13 +334,13 @@ public class HeadersViewController extends Stage implements Initializable {
         modified.setCellValueFactory(new TreeItemPropertyValueFactory<>("modified"));
         deleted.setCellValueFactory(new TreeItemPropertyValueFactory<>("deleted"));
         workflowVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("workflowVersion"));
-        numberOfRuns.setCellFactory((TreeTableColumn<Sequences,Long> p)->{
-            TreeTableCell cell=new TreeTableCell<Sequences,Long>(){
+        numberOfRuns.setCellFactory((TreeTableColumn<SequenceHeaders,Long> p)->{
+            TreeTableCell cell=new TreeTableCell<SequenceHeaders,Long>(){
                
                 @Override
                 protected void updateItem(Long item, boolean empty){
                   super.updateItem(item, empty);
-                    TreeTableRow<Sequences> seqTreeRow=getTreeTableRow();
+                    TreeTableRow<SequenceHeaders> seqTreeRow=getTreeTableRow();
                     if(item==null || empty ){
                         setText(null);
                         seqTreeRow.setStyle("");
@@ -349,13 +355,13 @@ public class HeadersViewController extends Stage implements Initializable {
                     return cell;
         });
         
-        alert.setCellFactory((TreeTableColumn<Sequences,Boolean> p)->{
-            TreeTableCell cell=new TreeTableCell<Sequences,Boolean>(){
+        alert.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
+            TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
                
                 @Override
                 protected void updateItem(Boolean item, boolean empty){
                   super.updateItem(item, empty);
-                    TreeTableRow<Sequences> seqTreeRow=getTreeTableRow();
+                    TreeTableRow<SequenceHeaders> seqTreeRow=getTreeTableRow();
                     if(item==null || empty ){
                         setText(null);
                         seqTreeRow.setStyle("");
@@ -376,15 +382,15 @@ public class HeadersViewController extends Stage implements Initializable {
         
      
      
-     List<TreeItem<Sequences>> treeSeq = new ArrayList<>();
+     List<TreeItem<SequenceHeaders>> treeSeq = new ArrayList<>();
      Map<String,Long> gunShotMap;
      idxForTree.clear();
      
-     for(Sequences s:seqListObs){
+     for(SequenceHeaders s:seqListObs){
          gunShotMap=new HashMap<>();
          
-         List<SubSurface> subs=s.getSubsurfaces();
-        TreeItem<Sequences> seqroot=new TreeItem<>(s);
+         List<SubSurfaceHeaders> subs=s.getSubsurfaces();
+        TreeItem<SequenceHeaders> seqroot=new TreeItem<>(s);
         String tempTimeStamp=subs.get(0).getTimeStamp();
         Long tempTrcCnt=0L;
         Long tempInlineMax=subs.get(0).getInlineMax();
@@ -406,8 +412,8 @@ public class HeadersViewController extends Stage implements Initializable {
         
         
         
-         for(SubSurface sub:subs){
-             TreeItem<Sequences> subItem=new TreeItem<>(sub);
+         for(SubSurfaceHeaders sub:subs){
+             TreeItem<SequenceHeaders> subItem=new TreeItem<>(sub);
              tempTrcCnt+=sub.getTraceCount();
              
              if(Long.valueOf(tempTimeStamp).longValue()<=Long.valueOf(sub.getTimeStamp()).longValue()){
@@ -501,8 +507,8 @@ public class HeadersViewController extends Stage implements Initializable {
          
      }
      
-     Sequences seqZero=new Sequences();
-     TreeItem<Sequences> rootOfAllseq=new TreeItem<>();
+     SequenceHeaders seqZero=new SequenceHeaders();
+     TreeItem<SequenceHeaders> rootOfAllseq=new TreeItem<>();
      
      rootOfAllseq.getChildren().addAll(treeSeq);
      

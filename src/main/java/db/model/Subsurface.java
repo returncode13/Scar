@@ -38,7 +38,28 @@ public class Subsurface {
     
     @OneToMany(mappedBy = "subsurface",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Acquisition> acquisition;
+    
+    @OneToMany(mappedBy = "subsurface",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Headers> headers;
 
+    public Set<Acquisition> getAcquisition() {
+        return acquisition;
+    }
+
+    public void setAcquisition(Set<Acquisition> acquisition) {
+        this.acquisition = acquisition;
+    }
+
+    public Set<Headers> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Set<Headers> headers) {
+        this.headers = headers;
+    }
+
+    
+    
     public String getSubsurface() {
         return subsurface;
     }

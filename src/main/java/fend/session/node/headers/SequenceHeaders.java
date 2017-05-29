@@ -24,11 +24,11 @@ import javafx.beans.property.StringProperty;
  *
  * @author naila0152
  */
-public class Sequences implements Serializable{
+public class SequenceHeaders implements Serializable{
 
     
     
-    ArrayList<SubSurface> subsurfaces=new ArrayList<>();
+    ArrayList<SubSurfaceHeaders> subsurfaces=new ArrayList<>();
     private Long sequenceNumber;   
     private String subsurface;
     private String timeStamp;
@@ -177,17 +177,17 @@ public class Sequences implements Serializable{
     }
     
     
-    public ArrayList<SubSurface> getSubsurfaces() {
+    public ArrayList<SubSurfaceHeaders> getSubsurfaces() {
         return subsurfaces;
     }
 
-    public void setSubsurfaces(ArrayList<SubSurface> subsurfaces) {
+    public void setSubsurfaces(ArrayList<SubSurfaceHeaders> subsurfaces) {
         this.subsurfaces = subsurfaces;
-        for (Iterator<SubSurface> iterator = this.subsurfaces.iterator(); iterator.hasNext();) {
-            fend.session.node.headers.SubSurface next = iterator.next();
+        for (Iterator<SubSurfaceHeaders> iterator = this.subsurfaces.iterator(); iterator.hasNext();) {
+            fend.session.node.headers.SubSurfaceHeaders next = iterator.next();
             this.addTowfVersionSet(next.getWorkflowVersion());
         }
-        this.sequenceNumber=Collections.min(subsurfaces, (SubSurface o1, SubSurface o2) -> {
+        this.sequenceNumber=Collections.min(subsurfaces, (SubSurfaceHeaders o1, SubSurfaceHeaders o2) -> {
             return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
         }).getSequenceNumber();
         

@@ -5,7 +5,7 @@
  */
 package fend.summary;
 
-import fend.session.node.headers.Sequences;
+import fend.session.node.headers.SequenceHeaders;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.LongProperty;
@@ -100,13 +100,13 @@ public class SummarySequenceModel {
     return ins;
     }*/
     
-    private Sequences sequence;
+    private SequenceHeaders sequence;
 
-    public Sequences getSequence() {
+    public SequenceHeaders getSequence() {
         return sequence;
     }
 
-    public void setSequence(Sequences sequence) {
+    public void setSequence(SequenceHeaders sequence) {
         this.sequence = sequence;
         
         this.seq.set(this.sequence.getSequenceNumber());

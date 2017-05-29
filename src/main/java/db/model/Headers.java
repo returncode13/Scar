@@ -37,17 +37,26 @@ public class Headers implements Serializable{
     private Volume volume;
     
     
+    
     @OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Logs> logs;
     
     
     
     
-    @Column(name= "Seq")
-    private Long sequenceNumber;
+    /* @Column(name= "Seq")
+    private Long sequence;
     
     @Column(name= "Subsurface",length = 1025)
-    private String subsurface;
+    private String subsurface;*/
+    
+    @ManyToOne
+    @JoinColumn(name="seq_fk",nullable = false)
+    private Sequence sequence;
+    
+    @ManyToOne
+    @JoinColumn(name="subsurface_fk",nullable = false)
+    private Subsurface subsurface;
     
     @Column(name= "TimeStamp ")
     private String timeStamp;
@@ -134,35 +143,35 @@ public class Headers implements Serializable{
 
     
 
-    public Headers(Long idHeaders, Volume volume, Long sequenceNumber, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
-        this.idHeaders = idHeaders;
-        this.volume = volume;
-        this.sequenceNumber = sequenceNumber;
-        this.subsurface = subsurface;
-        this.timeStamp = timeStamp;
-        this.traceCount = traceCount;
-        this.inlineMax = inlineMax;
-        this.inlineMin = inlineMin;
-        this.inlineInc = inlineInc;
-        this.xlineMax = xlineMax;
-        this.xlineMin = xlineMin;
-        this.xlineInc = xlineInc;
-        this.dugShotMax = dugShotMax;
-        this.dugShotMin = dugShotMin;
-        this.dugShotInc = dugShotInc;
-        this.dugChannelMax = dugChannelMax;
-        this.dugChannelMin = dugChannelMin;
-        this.dugChannelInc = dugChannelInc;
-        this.offsetMax = offsetMax;
-        this.offsetMin = offsetMin;
-        this.offsetInc = offsetInc;
-        this.cmpMax = cmpMax;
-        this.cmpMin = cmpMin;
-        this.cmpInc = cmpInc;
-        this.modified=modified;
-        this.deleted=deleted;
-        this.numberOfRuns=version;
-    }
+    /*public Headers(Long idHeaders, Volume volume, Long sequence, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
+    this.idHeaders = idHeaders;
+    this.volume = volume;
+    this.sequence = sequence;
+    this.subsurface = subsurface;
+    this.timeStamp = timeStamp;
+    this.traceCount = traceCount;
+    this.inlineMax = inlineMax;
+    this.inlineMin = inlineMin;
+    this.inlineInc = inlineInc;
+    this.xlineMax = xlineMax;
+    this.xlineMin = xlineMin;
+    this.xlineInc = xlineInc;
+    this.dugShotMax = dugShotMax;
+    this.dugShotMin = dugShotMin;
+    this.dugShotInc = dugShotInc;
+    this.dugChannelMax = dugChannelMax;
+    this.dugChannelMin = dugChannelMin;
+    this.dugChannelInc = dugChannelInc;
+    this.offsetMax = offsetMax;
+    this.offsetMin = offsetMin;
+    this.offsetInc = offsetInc;
+    this.cmpMax = cmpMax;
+    this.cmpMin = cmpMin;
+    this.cmpInc = cmpInc;
+    this.modified=modified;
+    this.deleted=deleted;
+    this.numberOfRuns=version;
+    }*/
 
     
     
@@ -170,7 +179,7 @@ public class Headers implements Serializable{
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.volume);
-        hash = 97 * hash + Objects.hashCode(this.sequenceNumber);
+        hash = 97 * hash + Objects.hashCode(this.sequence);
         hash = 97 * hash + Objects.hashCode(this.subsurface);
         hash = 97 * hash + Objects.hashCode(this.traceCount);
         hash = 97 * hash + Objects.hashCode(this.inlineMax);
@@ -214,7 +223,7 @@ public class Headers implements Serializable{
         if (!Objects.equals(this.volume, other.volume)) {
             return false;
         }
-        if (!Objects.equals(this.sequenceNumber, other.sequenceNumber)) {
+        if (!Objects.equals(this.sequence, other.sequence)) {
             return false;
         }
         if (!Objects.equals(this.subsurface, other.subsurface)) {
@@ -321,22 +330,39 @@ public class Headers implements Serializable{
         this.volume = volume;
     }
 
-    public Long getSequenceNumber() {
-        return sequenceNumber;
+    /*  public Long getSequenceNumber() {
+    return sequence;
     }
-
-    public void setSequenceNumber(Long sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    
+    public void setSequenceNumber(Long sequence) {
+    this.sequence = sequence;
     }
-
+    
     public String getSubsurface() {
+    return subsurface;
+    }
+    
+    public void setSubsurface(String subsurface) {
+    this.subsurface = subsurface;
+    }*/
+
+    public Sequence getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
+
+    public Subsurface getSubsurface() {
         return subsurface;
     }
 
-    public void setSubsurface(String subsurface) {
+    public void setSubsurface(Subsurface subsurface) {
         this.subsurface = subsurface;
     }
-
+    
+    
     public Long getTraceCount() {
         return traceCount;
     }

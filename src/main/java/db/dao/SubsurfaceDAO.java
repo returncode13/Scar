@@ -23,4 +23,6 @@ public interface SubsurfaceDAO {
     public List<Subsurface> getSubsurfaceForSequence(Sequence seq);
 
     public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface);
+
+    public List<Subsurface> getSubsurfaceList();
 }
