@@ -8,11 +8,21 @@ package fend.session.node.volumes.type1.qcTable;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 /**
  *
@@ -22,9 +32,13 @@ public class QcTableSubsurfaces extends QcTableSequences{
     private final StringProperty subsurface = new SimpleStringProperty();
     private final LongProperty sequenceNumber = new SimpleLongProperty();
     SubSurfaceHeaders sub;
+    SequenceHeaders sequence;
     List<QcTypeModel> qcfields=new ArrayList();
-
+    
+   // Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
+    
     public SubSurfaceHeaders getSub() {
+        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSubsurfaces.getSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
         return sub;
     }
 
@@ -33,16 +47,23 @@ public class QcTableSubsurfaces extends QcTableSequences{
         sequenceNumber.setValue(sub.getSequenceNumber());
         subsurface.setValue(sub.getSubsurface());
         
+        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSubsurfaces.setSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
+        
+    }
+    
+    @Override
+    public void setSequence(SequenceHeaders seq){
+        this.sequence=seq;
     }
 
     
     @Override
-    public List<QcTypeModel> getQcfields() {
+    public List<QcTypeModel> getQctypes() {
         return qcfields;
     }
     
     @Override
-    public void setQcfields(List<QcTypeModel> qcfields) {
+    public void setQctypes(List<QcTypeModel> qcfields) {
         this.qcfields = qcfields;
     }
     
@@ -69,4 +90,25 @@ public class QcTableSubsurfaces extends QcTableSequences{
     public LongProperty sequenceNumberProperty() {
         return sequenceNumber;
     }
+    
+    
+    
+    public void addToQcTypeMap(QcTypeModel q,Boolean b){
+        PassBP ps=new PassBP();
+        qctypeMap.put(q, ps.passProperty());
+    }
+    
+    public void clearQcTypeMap(){
+        qctypeMap.clear();
+    }
+
+    public Map<QcTypeModel, BooleanProperty> getQctypeMap() {
+        return qctypeMap;
+    }
+
+    public void setQctypeMap(Map<QcTypeModel, BooleanProperty> qctypeMap) {
+        this.qctypeMap = qctypeMap;
+    }
+    
+    
 }

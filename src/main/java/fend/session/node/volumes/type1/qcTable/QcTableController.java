@@ -11,9 +11,12 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
@@ -52,29 +55,29 @@ public class QcTableController extends Stage {
         /*for (Iterator<QcTypeModel> iterator = qctypes.iterator(); iterator.hasNext();) {
         QcTypeModel qctype = iterator.next();*/
         
-        List<CheckBoxTreeItem<QcTableSequences>> treeSeq=new ArrayList<>();
+        //List<CheckBoxTreeItem<QcTableSequences>> treeSeq=new ArrayList<>();
+        List<TreeItem<QcTableSequences>> treeSeq=new ArrayList<>();
         List<QcTableSequences> qcTableSequences=model.getQcTableSequences();
         for(QcTableSequences qcTableSequence: qcTableSequences){
-            List<String> qctypeValuesAtSeq=new ArrayList<>();
-            CheckBoxTreeItem<QcTableSequences> seqroot=new CheckBoxTreeItem<>(qcTableSequence);
+            
+            //CheckBoxTreeItem<QcTableSequences> seqroot=new CheckBoxTreeItem<>(qcTableSequence);
+            System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): creating treeItem seq: "+qcTableSequence.getSequence().getSequenceNumber());
+            TreeItem<QcTableSequences> seqroot=new TreeItem<>(qcTableSequence);
           //  qcTableSequence.setQcfields(qctypes);
             List<QcTableSubsurfaces> qcsubs=qcTableSequence.getQcSubs();
             for(QcTableSubsurfaces qcsub:qcsubs){
-                CheckBoxTreeItem<QcTableSequences> subItem=new CheckBoxTreeItem<>(qcsub);
+               // CheckBoxTreeItem<QcTableSequences> subItem=new CheckBoxTreeItem<>(qcsub);
+               System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): creating subtreeItem seq: "+qcsub.getSub().getSequenceNumber() +" sub: "+qcsub.getSub().getSubsurface());
+                TreeItem<QcTableSequences> subItem=new TreeItem<>(qcsub);
                 seqroot.getChildren().add(subItem);
-                //seqroot.setIndependent(true);
-                /* for(int i=0;i<qctypes.size();i++){
-                seqroot.selectedProperty().bindBidirectional(qcsub.getQcfields().get(i).passQcProperty());
-                seqroot.indeterminateProperty().bindBidirectional(qcsub.getQcfields().get(i).notQcdProperty());
-                }*/
-               // seqroot.selectedProperty().bindBidirectional(qcTableSequence.getQcfields().get(0));
+                
             }
             treeSeq.add(seqroot);
         }
         
-        
-         //List<TreeTableColumn<QcTableSequences,String>> cols=new ArrayList<>();
-         List<TreeTableColumn<QcTableSequences,QcTypeModel>> cols=new ArrayList<>();
+       
+         List<TreeTableColumn<QcTableSequences,Boolean>> cols=new ArrayList<>();
+        //List<TreeTableColumn<QcTableSequences,QcTypeModel>> cols=new ArrayList<>();
         
          
          
@@ -82,114 +85,153 @@ public class QcTableController extends Stage {
          
         for(int i=0;i<qctypes.size();i++){
             QcTypeModel qctype=qctypes.get(i);
-            //TreeTableColumn<QcTableSequences,String> qctypeCol=new TreeTableColumn<>(qctype.getName());
-            TreeTableColumn<QcTableSequences,QcTypeModel> qctypeCol=new TreeTableColumn<>(qctype.getName());
+            //TreeTableColumn<QcTableSequences,Boolean> qctypeCol=new TreeTableColumn<>(qctype.getName());
+           //TreeTableColumn<QcTableSequences,QcTypeModel> qcval=new TreeTableColumn<>(qctype.getName());
             final int iii=i;
-            qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, QcTypeModel>, ObservableValue<QcTypeModel>>() {
+            
+            
+            TreeTableColumn<QcTableSequences,Boolean> qctypeCol=new TreeTableColumn<>(qctype.getName());
+            
+           //qctypeCol.setCellValueFactory(cellData->cellData.getValue().getValue().tpProperty());
+          // qctypeCol.setCellValueFactory(cellData->cellData.getValue().getValue().qctypeMap.get(qctype));
+          
+          
+          /*    <--Working instance
+           qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
                 @Override
-                public ObservableValue<QcTypeModel> call(TreeTableColumn.CellDataFeatures<QcTableSequences, QcTypeModel> param) {
-                    return (ObservableValue<QcTypeModel>) param.getValue().getValue().getQcfields().get(iii);
-
-
+                public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
+                     SimpleBooleanProperty bprop=new SimpleBooleanProperty();
+                     //System.out.println(".call(): bprop: is "+((bprop==null)?"is NULL":" not null"));
+                     QcTableSequences qseq=param.getValue().getValue();
+                     
+                     if(qseq instanceof QcTableSubsurfaces){
+                         System.out.println("subObj: "+((QcTableSubsurfaces)qseq).getSub());
+                     System.out.println("subSeqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber());
+                     System.out.println(" and subSurface : "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                     bprop=(SimpleBooleanProperty) ((QcTableSubsurfaces)qseq).getSub().passedQCProperty();
+                     }
+                     else        
+                     if(qseq instanceof QcTableSequences){
+                         System.out.println("seqObj: "+qseq.getSequence());
+                         bprop=(SimpleBooleanProperty) qseq.getSequence().passedQCProperty();
+//                     System.out.println("seqNO: "+qseq.getSequence().getSequenceNumber());
+  //                   System.out.println(" and sub : "+qseq.getSequence().getSubsurface());
+                     }
+                     
+                     bprop.addListener(new ChangeListener<Boolean>(){
+                         @Override
+                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                             if(qseq instanceof QcTableSubsurfaces){
+                                 System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for subseq: "+((QcTableSubsurfaces)qseq).getSub()+ " with seqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber()+" sub: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                                 ((QcTableSubsurfaces)qseq).getSub().setPassedQC(newValue);
+                             }
+                             else
+                             if(qseq instanceof QcTableSequences){
+                                 System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for seq: "+qseq.getSequence()+" with seqNO: "+qseq.getSequenceNumber());
+                                 qseq.getSequence().setPassedQC(newValue);
+                             }
+                             
+                             
+                            // param.getValue().getValue().addToQcTypeMap(qctype, newValue);
+                             
+                             
+                             
+                         }
+                         
+                     });
+                     return bprop;
                 }
             });
+                    <--Working block
+          */
+          
+               qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
+                @Override
+                public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
+                     SimpleBooleanProperty bprop=new SimpleBooleanProperty();
+                     //System.out.println(".call(): bprop: is "+((bprop==null)?"is NULL":" not null"));
+                     QcTableSequences qseq=param.getValue().getValue();
+                     
+                     if(qseq instanceof QcTableSubsurfaces){
+                         System.out.println("subObj: "+((QcTableSubsurfaces)qseq).getSub());
+                     System.out.println("subSeqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber());
+                     System.out.println(" and subSurface : "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                     bprop=(SimpleBooleanProperty) ((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty();
+                     }
+                     else        
+                     if(qseq instanceof QcTableSequences){
+                         System.out.println("seqObj: "+qseq.getSequence());
+                         bprop=(SimpleBooleanProperty) qseq.getQctypes().get(iii).passQcProperty();
+//                     System.out.println("seqNO: "+qseq.getSequence().getSequenceNumber());
+  //                   System.out.println(" and sub : "+qseq.getSequence().getSubsurface());
+                     }
+                     
+                     bprop.addListener(new ChangeListener<Boolean>(){
+                         @Override
+                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                             if(qseq instanceof QcTableSubsurfaces){
+                                 System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for subseq: "+((QcTableSubsurfaces)qseq).getSub()+ " with seqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber()+" sub: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                                 ((QcTableSubsurfaces)qseq).getQctypes().get(iii).setPassQc(newValue);
+                             }
+                             else
+                             if(qseq instanceof QcTableSequences){
+                                 System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for seq: "+qseq.getSequence()+" with seqNO: "+qseq.getSequenceNumber());
+                                 qseq.getQctypes().get(iii).setPassQc(newValue);
+                             }
+                             
+                             
+                            // param.getValue().getValue().addToQcTypeMap(qctype, newValue);
+                             
+                             
+                             
+                         }
+                         
+                     });
+                     return bprop;
+                }
+            });
+           qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
+          
+            System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): inside for loop for qctype: "+qctype.getName());
+            /* qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
+            //System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel().call(): seq: "+param.getValue().getValue().getSequenceNumber()+" sub: "+param.getValue().getValue().getSubsurface()+" = "+param.getValue().getValue().getQcfields().get(iii).getName()+" : "+param.getValue().getValue().getQcfields().get(iii).getQcStatus());
+            QcTypeModel qctmd=param.getValue().getValue().getQcfields().get(iii);
+            SimpleStringProperty strProp=new SimpleStringProperty(qctmd.getQcStatus());
+            SimpleBooleanProperty boolProp=new SimpleBooleanProperty(qctmd.isPassQc());
             
+            boolProp.addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println(".changed(): from :"+oldValue+ " to : "+newValue+" for  "+param.getValue().getValue().getSubsurface()+ " and type: "+param.getValue().getValue().getQcfields().get(iii).getName());
+            qctmd.setPassQc(newValue);
+            }
             
-            //qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
-           //qctypeCol.setCellValueFactory(param->param.getValue().getValue().getQcfields().get(iii).valueProperty());
-          /* qctypeCol.setCellFactory(new Callback<TreeTableColumn<QcTableSequences, String>, TreeTableCell<QcTableSequences, String>>() {
+            });
+            
+            return boolProp;
+            //return param.getValue().getValue().getQcfields().get(iii).qcStatusProperty();
+            }
+            });*/
            
+           
+           //qctypeCol.setCellFactory(CheckBoxTreeTableCell.);
+           
+           /* qctypeCol.setCellFactory(new Callback<TreeTableColumn<QcTableSequences, Boolean>, TreeTableCell<QcTableSequences, Boolean>>() {
            @Override
-           public TreeTableCell<QcTableSequences, String> call(TreeTableColumn<QcTableSequences, String> param) {
-           
-           //  return new CheckBoxCell(treetable,iii);
-           return new CheckBoxCell(param,iii);
+           public TreeTableCell<QcTableSequences, Boolean> call(TreeTableColumn<QcTableSequences, Boolean> param) {*/
+               /*CheckBoxTreeTableCell<QcTableSequences,Boolean> cell=new CheckBoxTreeTableCell<>();
+               cell.setAlignment(Pos.CENTER);
+               return cell;*/
+         /* return new CheckBoxCell(param, iii);
            }
            });
+*/
+            
            
-          */
-           /*qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, String>, ObservableValue<String>>() {
-           @Override
-           public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<QcTableSequences, String> param) {
-           System.out.println(".call(): seq: "+param.getValue().getValue().getSequenceNumber()+" sub: "+param.getValue().getValue().getSubsurface()+" = "+param.getValue().getValue().getQcfields().get(iii).getName()+" : "+param.getValue().getValue().getQcfields().get(iii).getQcStatus());
-           return param.getValue().getValue().getQcfields().get(iii).qcStatusProperty();
-           }
-           });*/
-           
-           /*   qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
-           @Override
-           public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
-           
-           return param.getValue().getValue().getQcfields().get(iii).passQcProperty();
-           }
-           });*/
-              //qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
-           /*  qctypeCol.setCellFactory(new Callback<TreeTableColumn<QcTableSequences, Boolean>, TreeTableCell<QcTableSequences, Boolean>>() {
-           @Override
-           public TreeTableCell<QcTableSequences, Boolean> call(TreeTableColumn<QcTableSequences, Boolean> param) {
-           param.
-           return new CheckBoxCell(param, iii);
-           }
-           });*/
-           //qctypeCol.setCellFactory();
-            
-            /*qctypeCol.setCellFactory(param->new TreeTableCell(){
-            final CheckBox checkbox=new CheckBox(){
-            {
-            setAllowIndeterminate(true);
-            }
-            };
-            
-            public void updateItem(String qcstatus,boolean empty){
-            
-            }
-            
-            
-            
-            });*/
-            
-            
-            //qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
-          // qctypeCol.setCellValueFactory(param-> param.getValue().getValue().getQcfields().get(iii).passQcProperty());
-          /* qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
-          @Override
-          public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
           
-          
-          QcTableSequences qs=param.getValue().getValue();
-          System.out.println(".call(): seq: "+param.getValue().getValue().getSequenceNumber()+" sub: "+param.getValue().getValue().getSubsurface()+" = "+param.getValue().getValue().getQcfields().get(iii).getName()+" : "+param.getValue().getValue().getQcfields().get(iii).isPassQc());
-          SimpleBooleanProperty bp= (SimpleBooleanProperty) qs.getQcfields().get(iii).passQcProperty();
-          
-          bp.addListener(new ChangeListener<Boolean>() {
-          @Override
-          public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          System.out.println(".changed(): seq: "+qs.getSequenceNumber()+" sub: "+qs.getSubsurface()+" field: "+qs.getQcfields().get(iii).getName()+" from "+oldValue+" to "+newValue);
-          param.getValue().getValue().getQcfields().get(iii).setPassQc(newValue);
-          }
-          }
-          );
-          return bp;
-          }
-          });
-          qctypeCol.setCellFactory(new Callback<TreeTableColumn<QcTableSequences, Boolean>, TreeTableCell<QcTableSequences, Boolean>>() {
-          @Override
-          public TreeTableCell<QcTableSequences, Boolean> call(TreeTableColumn<QcTableSequences, Boolean> param) {
-          CheckBoxTreeTableCell<QcTableSequences,Boolean> cell=new CheckBoxTreeTableCell<>();
-          return cell;
-          }
-          });*/
-            /* qctypeCol.setCellFactory(param->new TreeTableCell(){
-            final CheckBox cb=new CheckBox(){{
-            setAllowIndeterminate(true);
-            //allowIndeterminateProperty().set(true);
-            }};
-            
-            @Override
-            public void updateItem(Boolean item,boolean empty){
-            
-            }
-            });*/
-            
+            //qcval.getColumns().add(qctypeCol);
             cols.add(qctypeCol);
             
         }

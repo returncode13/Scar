@@ -275,7 +275,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
          //qcMatrixModel=vmodel.getQcMatrixModel();
          qcMatrixModel=model.getQcMatrixModel();
       //  List<QcType>
-        qcCheckListModel qcckmod=new qcCheckListModel();
+        
         //List<QcType> allQcTypes=qserv.getQcTypesForSession(currentsession);
         List<QcType> allQcTypes=qserv.getAllQcTypes();
         List<String> qcTypesNames=new ArrayList<>();
@@ -427,7 +427,8 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
     }
     
     void showPopList(List<QcMatrix> qcmatrices){
-        
+        if(model.getQcTableModel().getQcMatrixModel()==null)        //only for the first run do we need to clear the model. 
+        {
         qcMatrixModel.clear();
         
         
@@ -443,10 +444,12 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             qctm.setName(qctype.getName());
             qcMatrixModel.addToQcTypePresMap(qctm, pres);
             
-        }
+            }
         
         //   vmodel.getQcTableModel().setQcMatrixModel(qcMatrixModel);
         model.getQcTableModel().setQcMatrixModel(qcMatrixModel);
+        }
+        
         
            //model.getQcTableModel().setQctypes(qctypeModels);
            List<SequenceHeaders> seqsinJob=new ArrayList<>();

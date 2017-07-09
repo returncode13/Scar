@@ -67,6 +67,20 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     private final LongProperty workflowVersion = new SimpleLongProperty(this,"workflowVersion");
     private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
 
+    private final BooleanProperty passedQC = new SimpleBooleanProperty();
+
+    public boolean isPassedQC() {
+        return passedQC.get();
+    }
+
+    public void setPassedQC(boolean value) {
+        passedQC.set(value);
+    }
+
+    public BooleanProperty passedQCProperty() {
+        return passedQC;
+    }
+    
     public String getQcStatus() {
         return qcStatus.get();
     }

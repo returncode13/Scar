@@ -73,6 +73,28 @@ public class SequenceHeaders implements Serializable{
     private final BooleanProperty pendingalert = new SimpleBooleanProperty(Boolean.FALSE);
     private Set<Long> wfversionSet=new HashSet<>();                                                         //use this set to check if there are more than one versions of the workflow present in the seq
     
+    private final BooleanProperty passedQC = new SimpleBooleanProperty();
+
+    public boolean isPassedQC() {
+        return passedQC.get();
+    }
+
+    public void setPassedQC(boolean value) {
+        passedQC.set(value);
+    }
+
+    public BooleanProperty passedQCProperty() {
+        return passedQC;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     public void addTowfVersionSet(Long ver){
         wfversionSet.add(ver);

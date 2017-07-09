@@ -59,7 +59,7 @@ public class QcMatrixModel {
         qcTypePresMap.clear();
     }
     
-    public List<QcTypeModel> getQcTypeModels(){
+    public List<QcTypeModel> getQcTypeModels(){   //the qctypes chosen for this job step
         Set<QcTypeModel> keys=qcTypePresMap.keySet();
         List<QcTypeModel> types=new ArrayList<>(keys);
         
