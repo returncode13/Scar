@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -163,7 +164,14 @@ public class DugioHeaderValuesExtractor {
     
     private void calculateSubsurfaceLines(final Map<Sub,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders,final Long volumeType){
        List<Subsurface> subList=subserv.getSubsurfaceList();                   //get all subs
-       
+       Set<Sub> keysubs=subsurfaceTimestamp.keySet();
+        
+       Map<String,Headers> checkMap=new HashMap<>();                //used to check if a linename is present for which the headers have already been extracted
+       for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
+            Sub next = iterator.next();
+            String ssub=next.getSubsurfaceName();
+            checkMap.put(ssub, subsurfaceTimestamp.get(next));
+        }
        
         if(volumeType.equals(1L)){
              headers.clear();
@@ -190,13 +198,18 @@ public class DugioHeaderValuesExtractor {
                         
                        // System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
                         
-                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
-                        if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                        //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
+                        //Subsurface subexists=subserv.getSubsurfaceObjBysubsurfacename(lineName);
+                         //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey());
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+checkMap.containsKey(lineName));
+                       // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                       if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && checkMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
                             
                         continue;
                         }
-                        if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                        //if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                        if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && !checkMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+subsurfaceTimestamp.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
                            Headers h=subsurfaceTimestamp.get(lineName);
                             h.setModified(Boolean.TRUE);

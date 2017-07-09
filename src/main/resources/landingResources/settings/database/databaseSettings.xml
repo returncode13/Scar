@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <dataBaseSettings id="0">
-    <chosenDatabase>jdbc:postgresql://localhost:5432/proj_adi034516</chosenDatabase>
+    <chosenDatabase>jdbc:postgresql://localhost:5432/proj_adi041717</chosenDatabase>
     <dbPassword></dbPassword>
     <dbUser>fgeo</dbUser>
 </dataBaseSettings>
