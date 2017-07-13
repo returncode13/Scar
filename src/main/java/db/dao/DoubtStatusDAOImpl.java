@@ -47,7 +47,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
             ll.setDoubtType(newds.getDoubtType());
             ll.setErrorMessage(newds.getErrorMessage());
             ll.setHeaders(newds.getHeaders());
-            ll.setSessionDetails(newds.getSessionDetails());
+            ll.setParentSessionDetails(newds.getParentSessionDetails());
             ll.setStatus(newds.getStatus());
             ll.setUser(newds.getUser());
             session.update(ll);
@@ -132,17 +132,40 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
         return result;
     }
 
+    /*@Override
+    public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails sd, DoubtType dt, Headers hd) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<DoubtStatus> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(DoubtStatus.class);
+    criteria.add(Restrictions.eq("sessionDetails", sd));
+    criteria.add(Restrictions.eq("doubtType", dt));
+    criteria.add(Restrictions.eq("headers", hd));
+    
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result;                      //the list size should be one
+    }*/
+
     @Override
-    public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails sd, DoubtType dt, Headers hd) {                   
-        Session session = HibernateUtil.getSessionFactory().openSession();
+    public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails parentsd, Long childsdId, DoubtType dt, Headers hd) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<DoubtStatus> result=null;
         try{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(DoubtStatus.class);
-            criteria.add(Restrictions.eq("sessionDetails", sd));
+            criteria.add(Restrictions.eq("parentSessionDetails", parentsd));
             criteria.add(Restrictions.eq("doubtType", dt));
             criteria.add(Restrictions.eq("headers", hd));
+            criteria.add(Restrictions.eq("childSessionDetailsId",childsdId));
             
             result=criteria.list();
             transaction.commit();
@@ -151,7 +174,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
         }finally{
             session.close();
         }
-        return result;                      //the list size should be one
+        return result;             
     }
     
     

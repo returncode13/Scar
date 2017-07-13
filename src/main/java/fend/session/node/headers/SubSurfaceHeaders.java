@@ -92,10 +92,12 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
         this.sequenceHeader = sequenceHeader;
     }
 
+    @Override
     public Doubt getDoubt() {
         return doubt;
     }
 
+    @Override
     public void setDoubt(Doubt doubt) {
         this.doubt = doubt;
     }

@@ -513,7 +513,7 @@ public class Collector {
                      SessionDetails parSSd=ssdServ.getSessionDetails(parJs, currentSession);
                     if(parSSd!=null)parent.setParent(parSSd.getIdSessionDetails());
                     
-                     if(pServ.getParentFor(parent.getSessionDetails(), parent.getParent())==null){dbParent.add(parent);}
+                     if(pServ.getParentRowFor(parent.getSessionDetails(), parent.getParent())==null){dbParent.add(parent);}
               
                     
                 }
@@ -522,7 +522,7 @@ public class Collector {
                     for (Iterator<Parent> iterator = dbParent.iterator(); iterator.hasNext();) {
                     Parent next = iterator.next();
                     
-                    //if(pServ.getParentFor(next.getSessionDetails(), next.getParent())==null){pServ.addParent(next);}
+                    //if(pServ.getParentRowFor(next.getSessionDetails(), next.getParent())==null){pServ.addParent(next);}
                     pServ.addParent(next);
                 }
        

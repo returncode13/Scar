@@ -56,7 +56,7 @@ public class SessionDetails implements Serializable{
       @OneToMany(mappedBy = "sessionDetails",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<QcMatrix> qcMatrix;
       
-      @OneToMany(mappedBy = "sessionDetails",cascade = CascadeType.ALL,orphanRemoval = true)
+      @OneToMany(mappedBy = "parentSessionDetails",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<DoubtStatus> doubtstatus;
     
     public SessionDetails() {

@@ -128,18 +128,20 @@ public class HeadersViewController extends Stage implements Initializable {
              
              @Override
             protected void updateItem(SequenceHeaders item,boolean empty){
+                 
                 super.updateItem(item,empty);
                 if(item==null || empty){
                     setText(null);
                     setStyle("");
                     setContextMenu(null);
                 }//else if(item.getQcAlert()){
-                else if(!item.isDependency()){
+                if(item!=null)System.out.println(".updateItem() seq: "+item.getSequenceNumber()+" sub: "+item.getSubsurface()+" isDependency(): "+item.isDependency()+" Doubt: "+item.getDoubt().isDoubt());
+                if(item!=null && !item.isDependency()){
                     setStyle("-fx-background-color:orange");
                     setTooltip(new Tooltip(item.getErrorMessage()));
                     setContextMenu(contextMenu);
-                }else if(item.getDoubt().isDoubt()){
-                    setStyle("-fx-background-color:green");
+                }if(item!=null && item.getDoubt().isDoubt() && item.isDependency()){
+                    setStyle("-fx-background-color:purple");
                     setTooltip(new Tooltip(item.getDoubt().getErrorMessage()));
                     setContextMenu(contextMenu);
                 }

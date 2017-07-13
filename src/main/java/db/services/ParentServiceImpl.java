@@ -41,8 +41,8 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
-    public Parent getParentFor(SessionDetails fkid, Long parent) {
-        return pDAO.getParentFor(fkid, parent);
+    public Parent getParentRowFor(SessionDetails fkid, Long parent) {
+        return pDAO.getParentRowFor(fkid, parent);
     }
 
     @Override

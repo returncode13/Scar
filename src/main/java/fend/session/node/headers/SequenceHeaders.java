@@ -61,9 +61,7 @@ public class SequenceHeaders implements Serializable{
     private StringProperty errorMessage=new SimpleStringProperty();
    // private Long workflowVersion=6L;
    //private Boolean insightFlag=Boolean.FALSE;
-    //private String dependencyStatus=new String("Good");
-    //private String runStatus=new String("Great!");
-    //private String qcStatus=new String("Amazing");
+    
     private final StringProperty run = new SimpleStringProperty(this,"run");
    // private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
     private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");

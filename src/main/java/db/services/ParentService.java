@@ -19,6 +19,6 @@ public interface ParentService {
     public void updateParent(Long id,Parent newP);
     public void deleteParent(Long id);
     
-    public Parent getParentFor(SessionDetails fkid,Long parent);
-    public List<Parent> getParentsFor(SessionDetails s);
+    public Parent getParentRowFor(SessionDetails fkid,Long parent);//get the Parent row for these two columns!
+    public List<Parent> getParentsFor(SessionDetails s);    //this returns the parent rows for this node s. the parents are found under parentrow.parent variable
 }

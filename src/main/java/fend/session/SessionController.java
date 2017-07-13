@@ -1866,6 +1866,24 @@ public class SessionController implements Initializable {
             dependencyChecks(child, gchild);
         }
     }
+    
+    public void inheritanceOfDoubt(JobStepType0Model parent,JobStepType0Model child){
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+                      
+            System.out.println("collector.Collector.inheritanceOfDoubt():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+        
+        child.getDoubt().setDoubt(parent.getDoubt().isDoubt());
+        
+        
+        List<JobStepType0Model> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
+            JobStepType0Model gchild = iterator.next();
+             System.out.println("fend.session.SessionController.dependencyChecks():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+            inheritanceOfDoubt(child, gchild);
+        }
+    }
 
     public void startWatching() {
         

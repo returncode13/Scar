@@ -30,8 +30,8 @@ public class DoubtStatus {
     private Headers headers;
     
     @ManyToOne
-    @JoinColumn(name="sessiondetails_fk",nullable=false)
-    private SessionDetails sessionDetails;
+    @JoinColumn(name="parent_sessiondetails_fk",nullable=false)
+    private SessionDetails parentSessionDetails;
     
     @ManyToOne
     @JoinColumn(name="doubtType_fk",nullable=false)
@@ -40,6 +40,11 @@ public class DoubtStatus {
     @ManyToOne
     @JoinColumn(name="user_fk",nullable=true)
     private User user;
+    
+    
+    @Column(name="child_sessionDetails_id",nullable=false)
+    private Long childSessionDetailsId;
+    
     
     @Column(name="status")
     private String status;
@@ -61,6 +66,14 @@ public class DoubtStatus {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public Long getChildSessionDetailsId() {
+        return childSessionDetailsId;
+    }
+
+    public void setChildSessionDetailsId(Long childSessionDetailsId) {
+        this.childSessionDetailsId = childSessionDetailsId;
     }
     
     
@@ -91,12 +104,12 @@ public class DoubtStatus {
         this.headers = headers;
     }
 
-    public SessionDetails getSessionDetails() {
-        return sessionDetails;
+    public SessionDetails getParentSessionDetails() {
+        return parentSessionDetails;
     }
 
-    public void setSessionDetails(SessionDetails sessionDetails) {
-        this.sessionDetails = sessionDetails;
+    public void setParentSessionDetails(SessionDetails parentSessionDetails) {
+        this.parentSessionDetails = parentSessionDetails;
     }
 
     public DoubtType getDoubtType() {

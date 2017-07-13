@@ -21,6 +21,6 @@ public interface ParentDAO {
     public void updateParent(Long id,Parent newP);
     public void deleteParent(Long id);
     
-    public Parent getParentFor(SessionDetails fkid,Long parent);
+    public Parent getParentRowFor(SessionDetails fkid,Long parent);  //get the Parent row for these two columns!
     public List<Parent> getParentsFor(SessionDetails s);
 }

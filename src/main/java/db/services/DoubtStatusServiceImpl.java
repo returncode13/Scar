@@ -52,9 +52,11 @@ public class DoubtStatusServiceImpl implements DoubtStatusService{
         return dsDAO.getDoubtStatusListForJobInSession(sd,dt);
     }
 
+    
+
     @Override
-    public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails sd, DoubtType dt, Headers hd) {
-        return dsDAO.getDoubtStatusListForJobInSession(sd,dt,hd);
+    public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails parentsd, Long childsdId, DoubtType dt, Headers hd) {
+        return dsDAO.getDoubtStatusListForJobInSession(parentsd, childsdId, dt, hd);
     }
     
 }
