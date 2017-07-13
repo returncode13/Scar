@@ -41,6 +41,8 @@ public class Headers implements Serializable{
     @OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Logs> logs;
     
+    @OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<DoubtStatus> doubtstatus;
     
     
     

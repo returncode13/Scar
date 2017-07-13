@@ -690,7 +690,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
          
         // model.getPendingFlagProperty().addListener(CHECK_BOX_CHANGE_LISTENER);
          pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
-         qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
+         qcCheckBox.selectedProperty().bind(model.getDependency());
          model.getVolListProperty().addListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().bindBidirectional(model.getVolListProperty());
          obsLinkList.addListener(LINKS_CHANGE_LISTENER);

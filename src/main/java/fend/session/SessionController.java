@@ -55,6 +55,8 @@ import fend.session.edges.curves.CubCurveModel;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
+import fend.session.node.jobs.dependencies.Dep11;
+import fend.session.node.jobs.dependencies.DepA1;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionJobStepModel;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionNode;
 import fend.session.node.jobs.types.type1.JobStepType1Node;
@@ -1118,7 +1120,8 @@ public class SessionController implements Initializable {
                     }
                         pendingarray=new ArrayList<>();
                //  setPendingJobsFlag(root,child);
-                    setQCFlag(root, child);
+               //     setQCFlag(root, child);
+                    dependencyChecks(root, child);
                     
              }
              
@@ -1283,11 +1286,11 @@ public class SessionController implements Initializable {
             List<VolumeSelectionModelType1> cVolList=child.getVolList();
          for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
             VolumeSelectionModelType1 next = iterator.next();
-            next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
+            next.setDependency(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
             
         }
             
-             child.setQcFlagProperty(Boolean.FALSE);
+             child.setDependency(Boolean.FALSE);
             
             List<String> versionsSelectedInChildQ=child.getInsightVersionsModel().getCheckedVersions();
                         MultiValueMap<String,String> baseRevisionFromJobMapQ=new MultiValueMap<>();
@@ -1402,11 +1405,13 @@ public class SessionController implements Initializable {
                         
                             Boolean QCFailure=traceFail || insightFail;
                             System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
-                            child.setQcFlagProperty(QCFailure);
-                            targetVolQ.setQcFlagProperty(QCFailure);
-                            targetSeqQ.setQcAlert(QCFailure);
+                            child.setDependency(QCFailure);
+                            targetVolQ.setDependency(QCFailure);
+                          //  targetSeqQ.setQcAlert(QCFailure);
+                          targetSeqQ.setDependency(QCFailure);
                             targetSeqQ.setInsightFlag(insightFail);
-                            targetSubQ.setQcAlert(QCFailure);
+                            targetSubQ.setDependency(QCFailure);
+                            //targetSubQ.setQcAlert(QCFailure);
                               if(insightFail && !traceFail){
                                    errorMessage="version mismatch";
                                }
@@ -1475,11 +1480,11 @@ public class SessionController implements Initializable {
             List<VolumeSelectionModelType1> cVolList=child.getVolList();
          for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
             VolumeSelectionModelType1 next = iterator.next();
-            next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
+            next.setDependency(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
             
         }
             
-             child.setQcFlagProperty(Boolean.FALSE);
+             child.setDependency(Boolean.FALSE);
             
             List<String> versionsSelectedInChildQ=child.getInsightVersionsModel().getCheckedVersions();
                         MultiValueMap<String,String> baseRevisionFromJobMapQ=new MultiValueMap<>();
@@ -1594,11 +1599,13 @@ public class SessionController implements Initializable {
                         
                             Boolean QCFailure=traceFail || insightFail;
                             System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
-                            child.setQcFlagProperty(QCFailure);
-                            targetVolQ.setQcFlagProperty(QCFailure);
-                            targetSeqQ.setQcAlert(QCFailure);
+                            child.setDependency(QCFailure);
+                            targetVolQ.setDependency(QCFailure);
+                           // targetSeqQ.setQcAlert(QCFailure);
+                           targetSeqQ.setDependency(QCFailure);
                             targetSeqQ.setInsightFlag(insightFail);
-                            targetSubQ.setQcAlert(QCFailure);
+                            //targetSubQ.setQcAlert(QCFailure);
+                            targetSubQ.setDependency(QCFailure);
                               if(insightFail && !traceFail){
                                    errorMessage="version mismatch";
                                }
@@ -1631,7 +1638,7 @@ public class SessionController implements Initializable {
         System.out.println("collector.Collector.setQCFlag():  ROOT/LEAF found: "+parent.getJobStepText());
         return;
         }*/
-          child.setQcFlagProperty(Boolean.FALSE);
+          child.setDependency(Boolean.FALSE);
          
             calculateSubsInJob(child);
             calculateSubsInJob(parent);
@@ -1644,7 +1651,7 @@ public class SessionController implements Initializable {
          List<VolumeSelectionModelType1> cVolList=child.getVolList();
          for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
             VolumeSelectionModelType1 next = iterator.next();
-            next.setQcFlagProperty(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
+            next.setDependency(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
             
         }
         
@@ -1783,10 +1790,12 @@ public class SessionController implements Initializable {
                                System.out.println("fend.session.SessionController.setQCFlag(): trace Flag: "+traceFail);
                                System.out.println("fend.session.SessionController.setQCFlag(): insight Flag: "+insightFail);
                                System.out.println("fend.session.SessionController.setQCFlag(): QCFailure Flag: "+QCFailure);
-                               child.setQcFlagProperty(QCFailure);
-                               targetVol.setQcFlagProperty(QCFailure);
-                               targetSeq.setQcAlert(QCFailure);
-                               targetSub.setQcAlert(QCFailure);
+                               child.setDependency(QCFailure);
+                               targetVol.setDependency(QCFailure);
+                               /* targetSeq.setQcAlert(QCFailure);
+                               targetSub.setQcAlert(QCFailure);*/
+                               targetSeq.setDependency(QCFailure);
+                               targetSub.setDependency(QCFailure);
                                if(insightFail && !traceFail){
                                    errorMessage="version mismatch";
                                }
@@ -1822,6 +1831,40 @@ public class SessionController implements Initializable {
          
     }    
          
+    }
+    
+    
+    
+    
+    
+    public void dependencyChecks(JobStepType0Model parent,JobStepType0Model child){
+        
+           if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+                      
+            System.out.println("collector.Collector.dependencychecks():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+        
+           
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){
+            System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            DepA1 depA1=new DepA1(parent,child);
+        }   
+           
+           
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+            System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Dep11 dep11=new Dep11(parent, child,model);               //set doubt flags here
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+         }
+        
+        
+        List<JobStepType0Model> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
+            JobStepType0Model gchild = iterator.next();
+             System.out.println("fend.session.SessionController.dependencyChecks():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+            dependencyChecks(child, gchild);
+        }
     }
 
     public void startWatching() {

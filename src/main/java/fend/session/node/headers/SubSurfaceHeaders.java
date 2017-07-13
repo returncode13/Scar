@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import midend.doubt.Doubt;
 
 
 /**
@@ -24,9 +25,9 @@ import javafx.beans.property.StringProperty;
 public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     
     
+    private Doubt doubt=new Doubt();
     
-    
-    
+    private SequenceHeaders sequenceHeader=new SequenceHeaders();
     private   LongProperty sequenceNumber=new SimpleLongProperty();   
     private   StringProperty subsurface=new SimpleStringProperty();
     private   StringProperty timeStamp=new SimpleStringProperty();
@@ -56,19 +57,55 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
     private   LongProperty numberOfRuns=new SimpleLongProperty(0L);
     private   StringProperty errorMessage=new SimpleStringProperty();
-    /*private LongProperty workflowVersion=new SimpleLongProperty(0L);
-    private Boolean insightFlag;
-    private String dependencyStatus;
-    private String runStatus;*/
+    
     
     private final StringProperty run = new SimpleStringProperty(this,"run");
-    private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
+    //private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
+    private final BooleanProperty dependency = new SimpleBooleanProperty();
+
+    public boolean isDependency() {
+        return dependency.get();
+    }
+
+    public void setDependency(boolean value) {
+        dependency.set(value);
+    }
+
+    public BooleanProperty dependencyProperty() {
+        return dependency;
+    }
+    
+    
     private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");
     private final LongProperty workflowVersion = new SimpleLongProperty(this,"workflowVersion");
     private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
 
     private final BooleanProperty passedQC = new SimpleBooleanProperty();
+    
+   
 
+    public SequenceHeaders getSequenceHeader() {
+        return sequenceHeader;
+    }
+
+    public void setSequenceHeader(SequenceHeaders sequenceHeader) {
+        this.sequenceHeader = sequenceHeader;
+    }
+
+    public Doubt getDoubt() {
+        return doubt;
+    }
+
+    public void setDoubt(Doubt doubt) {
+        this.doubt = doubt;
+    }
+    
+    
+    
+    
+   
+    
+    
     public boolean isPassedQC() {
         return passedQC.get();
     }
@@ -119,17 +156,17 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
         return insightFlag;
     }
     
-    public String getDependency() {
-        return dependency.get();
+    /*public String getDependency() {
+    return dependency.get();
     }
-
+    
     public void setDependency(String value) {
-        dependency.set(value);
+    dependency.set(value);
     }
-
+    
     public StringProperty dependencyProperty() {
-        return dependency;
-    }
+    return dependency;
+    }*/
     
     public String getRun() {
         return run.get();
@@ -336,14 +373,13 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
         this.cmpInc.set(cmpInc);
     }
 
-    public Boolean getQcAlert() {
-        return alert.get();
+    /* public Boolean getQcAlert() {
+    return alert.get();
     }
-
+    
     public void setQcAlert(Boolean alert) {
-        this.alert=new SimpleBooleanProperty(alert);
-    }
-
+    this.alert=new SimpleBooleanProperty(alert);
+    }*/
     public String getErrorMessage() {
         return errorMessage.get();
     }

@@ -27,6 +27,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import midend.doubt.Doubt;
 
 /**
  *
@@ -54,6 +55,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     private List<LinksModel> listOfLinkModels=new ArrayList<>();
      private InsightVersionsModel insightVersionsModel;
      private AcquisitionVolumeModel volmodel;
+     private Doubt doubt;
      
     public AcquisitionJobStepModel(String jobStepText, SessionModel sessionModel) {
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
@@ -74,6 +76,14 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
         this("Acquisition",sessionModel);
     }
     
+    
+     public Doubt getDoubt() {
+        return doubt;
+    }
+
+    public void setDoubt(Doubt doubt) {
+        this.doubt = doubt;
+    }
     
     
     
@@ -207,7 +217,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     }
 
     @Override
-    public BooleanProperty getQcFlagProperty() {
+    public BooleanProperty getDependency() {
         return new SimpleBooleanProperty(false);
     }
 
@@ -246,7 +256,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     }
 
     @Override
-    public void setQcFlagProperty(Boolean FALSE) {
+    public void setDependency(Boolean FALSE) {
         
     }
 

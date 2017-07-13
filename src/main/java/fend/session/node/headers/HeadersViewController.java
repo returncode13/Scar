@@ -133,11 +133,17 @@ public class HeadersViewController extends Stage implements Initializable {
                     setText(null);
                     setStyle("");
                     setContextMenu(null);
-                }else if(item.getQcAlert()){
+                }//else if(item.getQcAlert()){
+                else if(!item.isDependency()){
                     setStyle("-fx-background-color:orange");
                     setTooltip(new Tooltip(item.getErrorMessage()));
                     setContextMenu(contextMenu);
-                }else
+                }else if(item.getDoubt().isDoubt()){
+                    setStyle("-fx-background-color:green");
+                    setTooltip(new Tooltip(item.getDoubt().getErrorMessage()));
+                    setContextMenu(contextMenu);
+                }
+                else
                 {
                     //setStyle("-fx-background-color:green");
                    // setStyle(../landingResources/landing.css)
@@ -149,7 +155,7 @@ public class HeadersViewController extends Stage implements Initializable {
          showLogsMenuItem.setOnAction(evt->{
              SequenceHeaders seq=row.getItem();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
-             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
+             System.out.println("Sub: "+seq.getSubsurface()+" : dependency is : "+seq.isDependency());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
              Subsurface sub= subserv.getSubsurfaceObjBysubsurfacename(seq.getSubsurface());
@@ -227,7 +233,7 @@ public class HeadersViewController extends Stage implements Initializable {
               SequenceHeaders seq=row.getItem();
               String subName=seq.getSubsurface();
              List<VersionLogsModel> verslogsmodel=new ArrayList<>();
-             System.out.println("Sub: "+seq.getSubsurface()+" : alert is : "+seq.getQcAlert());
+             System.out.println("Sub: "+seq.getSubsurface()+" : dependency is : "+seq.isDependency());
              System.out.println(""+lsm.getVolmodel().getLabel()+"  id: "+lsm.getVolmodel().getId());
              Volume v=vserv.getVolume(lsm.getVolmodel().getId());
             Subsurface sub= subserv.getSubsurfaceObjBysubsurfacename(seq.getSubsurface());

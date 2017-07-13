@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import midend.doubt.Doubt;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -48,7 +49,7 @@ public class JobStepType1Model implements JobStepType0Model{
     private InsightVersionsModel insightVersionsModel;
     
     private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
-    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    private BooleanProperty dependency=new SimpleBooleanProperty(Boolean.TRUE);
     
     private ArrayList<JobStepType0Model> jsParents=new ArrayList<>();
     private ArrayList<JobStepType0Model> jsChildren=new ArrayList<>();
@@ -65,6 +66,23 @@ public class JobStepType1Model implements JobStepType0Model{
 
     private List<LinksModel> listOfLinkModels=new ArrayList<>();
     
+    
+    private Doubt doubt;
+    
+    /*private final StringProperty doubt = new SimpleStringProperty(this,"N");
+    
+    public String getDoubt() {
+    return doubt.get();
+    }
+    
+    public void setDoubt(String value) {
+    doubt.set(value);
+    }
+    
+    public StringProperty doubtProperty() {
+    return doubt;
+    }*/
+    
    
 
    
@@ -76,6 +94,7 @@ public class JobStepType1Model implements JobStepType0Model{
        ObservableList<VolumeSelectionModelType1> obs=FXCollections.observableArrayList();
         this.volListProperty = new SimpleListProperty<>(obs);
         this.sessionModel=smodel;
+        this.doubt=new Doubt();
         
         jsParents.add(this);                                                        //provision for root
         jsChildren.add(this);                                                       //provision for leaf
@@ -84,6 +103,22 @@ public class JobStepType1Model implements JobStepType0Model{
            
         
     }
+
+    @Override
+    public Doubt getDoubt() {
+        return doubt;
+    }
+
+    public void setDoubt(Doubt doubt) {
+        this.doubt = doubt;
+    }
+    
+    
+    
+    
+    
+    
+    
 
     public InsightVersionsModel getInsightVersionsModel() {
         return insightVersionsModel;
@@ -232,12 +267,12 @@ public class JobStepType1Model implements JobStepType0Model{
         this.pendingFlagProperty.set(b);
     }
 
-    public BooleanProperty getQcFlagProperty() {
-        return qcFlagProperty;
+    public BooleanProperty getDependency() {
+        return dependency;
     }
 
-    public void setQcFlagProperty(Boolean b) {
-        this.qcFlagProperty.set(b);
+    public void setDependency(Boolean b) {
+        this.dependency.set(b);
     }
     
     @Override

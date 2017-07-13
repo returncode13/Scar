@@ -210,8 +210,19 @@ public class DugioHeaderValuesExtractor {
                         }
                         //if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                         if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && !checkMap.get(lineName).getTimeStamp().equals(time)){
-                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+subsurfaceTimestamp.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
-                           Headers h=subsurfaceTimestamp.get(lineName);
+                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+checkMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
+                            Set<Sub> keysubs=subsurfaceTimestamp.keySet();
+                            Sub skey=null;
+                            for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
+                                Sub next = iterator.next();
+                                if(next.getSubsurfaceName().equalsIgnoreCase(lineName)){
+                                    skey=next;
+                                    break;
+                                }
+                                
+                            }
+                            
+                            Headers h=subsurfaceTimestamp.get(skey);
                             h.setModified(Boolean.TRUE);
                             Long ver=h.getNumberOfRuns();
                             h.setNumberOfRuns(++ver);

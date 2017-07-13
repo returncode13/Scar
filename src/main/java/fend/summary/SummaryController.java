@@ -234,6 +234,7 @@ public class SummaryController extends Stage{
                     
                     
                     
+                    
                     dep.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
@@ -256,7 +257,9 @@ public class SummaryController extends Stage{
                                else{
                                    String dep=new String();
                                    Boolean Pf=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model().getPendingFlagProperty().getValue();
-                                   Boolean Qf=ss.getQcAlert();
+                                   //Boolean Qf=ss.getQcAlert();
+                                   Boolean Qf=ss.getDoubt().isDoubt();
+                                   System.out.println(".call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
                                    
                                    if(Pf){
                                        dep="";
@@ -290,6 +293,25 @@ public class SummaryController extends Stage{
                             
                         }
                     });
+                    
+                    
+                    /*dep.setCellFactory(column->{
+                    return new TableCell<SummarySequenceModel,String>(){
+                    @Override
+                    protected void updateItem(String item,boolean empty){
+                    super.updateItem(item,empty);
+                    if(empty || item==null){
+                    setText(null);
+                    }else{
+                    if(item.equalsIgnoreCase("Q"))
+                    setText()
+                    }
+                    
+                    }
+                    };
+                    });*/
+                    
+                    
                     ins.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {

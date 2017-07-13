@@ -28,6 +28,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import midend.doubt.Doubt;
 
 /**
  *
@@ -41,7 +42,7 @@ public class JobStepType2Model implements JobStepType0Model{
     private InsightVersionsModel insightVersionsModel;
     
     private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
-    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    private BooleanProperty dependency=new SimpleBooleanProperty(Boolean.TRUE);
     
     private ArrayList<JobStepType0Model> jsParents=new ArrayList<>();
     private ArrayList<JobStepType0Model> jsChildren=new ArrayList<>();
@@ -57,6 +58,7 @@ public class JobStepType2Model implements JobStepType0Model{
     
 
     private List<LinksModel> listOfLinkModels=new ArrayList<>();
+     private Doubt doubt;
     
     /* public JobStepType1Model(String jobStepText, SessionModel smodel) {
     super(jobStepText, smodel);
@@ -80,7 +82,18 @@ public class JobStepType2Model implements JobStepType0Model{
            
         
     }
+    
+     public Doubt getDoubt() {
+        return doubt;
+    }
 
+    public void setDoubt(Doubt doubt) {
+        this.doubt = doubt;
+    }
+    
+    
+    
+    
     public InsightVersionsModel getInsightVersionsModel() {
         return insightVersionsModel;
     }
@@ -229,12 +242,12 @@ public class JobStepType2Model implements JobStepType0Model{
         this.pendingFlagProperty.set(b);
     }
 
-    public BooleanProperty getQcFlagProperty() {
-        return qcFlagProperty;
+    public BooleanProperty getDependency() {
+        return dependency;
     }
 
-    public void setQcFlagProperty(Boolean b) {
-        this.qcFlagProperty.set(b);
+    public void setDependency(Boolean b) {
+        this.dependency.set(b);
     }
 
     public Set<SubSurfaceHeaders> getSubsurfacesInJob() {

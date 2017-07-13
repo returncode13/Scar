@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
+import midend.doubt.Doubt;
 
 /**
  *
@@ -41,14 +42,16 @@ public interface JobStepType0Model {
     public void setSessionModel(SessionModel smodel);
     public SessionModel getSessionModel();
     public BooleanProperty getPendingFlagProperty();
-    public BooleanProperty getQcFlagProperty();
+    public BooleanProperty getDependency();
     public InsightVersionsModel getInsightVersionsModel();
     public Long getType();
     public ObservableList getVolList();
     public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsInJob);
     public void setPendingFlagProperty(Boolean TRUE);
     public Set<SubSurfaceHeaders> getSubsurfacesInJob();
-    public void setQcFlagProperty(Boolean FALSE);
+    public void setDependency(Boolean FALSE);
+
+    public Doubt getDoubt();
     
     
     

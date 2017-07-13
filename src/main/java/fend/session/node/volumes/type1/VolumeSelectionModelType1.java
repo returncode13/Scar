@@ -54,7 +54,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private boolean headerButtonIsDisabled=true;
     private final BooleanProperty headerButtonDisabledStatusProperty=new SimpleBooleanProperty(headerButtonIsDisabled);
     private boolean alert=false;
-    private BooleanProperty qcFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
+    private BooleanProperty dependency=new SimpleBooleanProperty(Boolean.FALSE);
     
     private HeadersModel headersModel=new HeadersModel(this);                                    // the headers corresponding to this particular volume.
     private Set<SubSurfaceHeaders> subsurfaces;                                       //the subsurfaces in the volume.
@@ -71,7 +71,10 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
     private JobStepType0Model parentjob;
-
+    
+    
+    
+    
     
     @Override
     public Long getType() {
@@ -226,13 +229,13 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     this.alert = alert;
     }
 
-    public BooleanProperty getQcFlagProperty() {
-        return qcFlagProperty;
+    public BooleanProperty getDependency() {
+        return dependency;
     }
 
-    public void setQcFlagProperty(Boolean b) {
-        this.qcFlagProperty.set(b);
-       // this.qcFlagProperty=new SimpleBooleanProperty(b);
+    public void setDependency(Boolean b) {
+        this.dependency.set(b);
+       // this.dependency=new SimpleBooleanProperty(b);
         
     }
 
@@ -248,7 +251,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
 
     
     public void printQC(){
-        System.out.println("volumeSelectionModel: QcFlag status "+qcFlagProperty.get());
+        System.out.println("volumeSelectionModel: QcFlag status "+dependency.get());
     }
     
     

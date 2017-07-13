@@ -19,6 +19,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import midend.doubt.Doubt;
 
 /**
  *
@@ -26,7 +27,7 @@ import javafx.beans.property.StringProperty;
  */
 public class SequenceHeaders implements Serializable{
 
-    
+    private Doubt doubt=new Doubt();
     
     ArrayList<SubSurfaceHeaders> subsurfaces=new ArrayList<>();
     private Long sequenceNumber;   
@@ -64,7 +65,7 @@ public class SequenceHeaders implements Serializable{
     //private String runStatus=new String("Great!");
     //private String qcStatus=new String("Amazing");
     private final StringProperty run = new SimpleStringProperty(this,"run");
-    private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
+   // private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
     private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");
     private final StringProperty workflowSeqProperty = new SimpleStringProperty();
 
@@ -74,6 +75,34 @@ public class SequenceHeaders implements Serializable{
     private Set<Long> wfversionSet=new HashSet<>();                                                         //use this set to check if there are more than one versions of the workflow present in the seq
     
     private final BooleanProperty passedQC = new SimpleBooleanProperty();
+    
+    private final BooleanProperty dependency = new SimpleBooleanProperty();
+
+    public boolean isDependency() {
+        return dependency.get();
+    }
+
+    public void setDependency(boolean value) {
+        dependency.set(value);
+    }
+
+    public BooleanProperty dependencyProperty() {
+        return dependency;
+    }
+
+    public Doubt getDoubt() {
+        return doubt;
+    }
+
+    public void setDoubt(Doubt doubt) {
+        this.doubt = doubt;
+    }
+    
+    
+   
+    
+    
+    
 
     public boolean isPassedQC() {
         return passedQC.get();
@@ -174,17 +203,17 @@ public class SequenceHeaders implements Serializable{
         return insightFlag;
     }
     
-    public String getDependency() {
-        return dependency.get();
+    /* public String getDependency() {
+    return dependency.get();
     }
-
+    
     public void setDependency(String value) {
-        dependency.set(value);
+    dependency.set(value);
     }
-
+    
     public StringProperty dependencyProperty() {
-        return dependency;
-    }
+    return dependency;
+    }W*/
     
     public String getRun() {
         return run.get();
@@ -204,9 +233,11 @@ public class SequenceHeaders implements Serializable{
     }
 
     public void setSubsurfaces(ArrayList<SubSurfaceHeaders> subsurfaces) {
+        
         this.subsurfaces = subsurfaces;
         for (Iterator<SubSurfaceHeaders> iterator = this.subsurfaces.iterator(); iterator.hasNext();) {
             fend.session.node.headers.SubSurfaceHeaders next = iterator.next();
+            next.setSequenceHeader(this);
             this.addTowfVersionSet(next.getWorkflowVersion());
         }
         this.sequenceNumber=Collections.min(subsurfaces, (SubSurfaceHeaders o1, SubSurfaceHeaders o2) -> {
@@ -400,13 +431,13 @@ public class SequenceHeaders implements Serializable{
         this.insightVersion = insightVersion;
     }
 
-    public Boolean getQcAlert() {
-        return qcalert.get();
+    /* public Boolean getQcAlert() {
+    return qcalert.get();
     }
-
+    
     public void setQcAlert(Boolean alert) {
-        this.qcalert.set(alert);
-    }
+    this.qcalert.set(alert);
+    }*/
 
     public Boolean getModified() {
         return modified;

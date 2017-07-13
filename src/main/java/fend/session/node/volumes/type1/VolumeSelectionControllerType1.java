@@ -401,8 +401,8 @@ public class VolumeSelectionControllerType1 implements VolumeSelectionController
        // System.out.println("VSController: binding");
         volumePathLabel.accessibleTextProperty().bindBidirectional(model.getVolumeSelectionLabel());
         headerTableDisplayButton.disableProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
-        System.out.println("VolumeSelectioncontroller.  binding qcCheckBox: with Property Value: "+model.getQcFlagProperty());
-        qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
+        System.out.println("VolumeSelectioncontroller.  binding qcCheckBox: with Property Value: "+model.getDependency());
+        qcCheckBox.selectedProperty().bind(model.getDependency());
         //headerTableDisplayButton.defaultButtonProperty().bindBidirectional(model.getHeaderButtonDisabledStatusProperty());
     }
     

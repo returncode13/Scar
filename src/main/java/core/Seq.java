@@ -31,35 +31,35 @@ public class Seq {
     public void setSubsurfaceList(List<Sub> subsurfaceList) {
         this.subsurfaceList = subsurfaceList;
     }
-
+    /*
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + Objects.hashCode(this.seqno);
-        hash = 37 * hash + Objects.hashCode(this.subsurfaceList);
-        return hash;
+    int hash = 7;
+    hash = 37 * hash + Objects.hashCode(this.seqno);
+    hash = 37 * hash + Objects.hashCode(this.subsurfaceList);
+    return hash;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Seq other = (Seq) obj;
-        if (!Objects.equals(this.seqno, other.seqno)) {
-            return false;
-        }
-        if (!Objects.equals(this.subsurfaceList, other.subsurfaceList)) {
-            return false;
-        }
-        return true;
+    if (this == obj) {
+    return true;
     }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final Seq other = (Seq) obj;
+    if (!Objects.equals(this.seqno, other.seqno)) {
+    return false;
+    }
+    if (!Objects.equals(this.subsurfaceList, other.subsurfaceList)) {
+    return false;
+    }
+    return true;
+    }*/
     
     
 }

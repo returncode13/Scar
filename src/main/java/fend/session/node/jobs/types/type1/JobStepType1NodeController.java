@@ -274,7 +274,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
          
          qcMatrixModel=model.getQcMatrixModel();
-         //qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
+       //  qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
       //  List<QcType>
         
         //List<QcType> allQcTypes=qserv.getQcTypesForSession(currentsession);
@@ -428,7 +428,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
     }
     
     void showPopList(List<QcMatrix> qcmatrices){
-       
+       if(model.getQcTableModel().getQcMatrixModel()==null){     //the resultant qcmatrix from this call is not the same as the models qcmatrix. aka, the qcMatrixModel variable
         qcMatrixModel.clear();
         
         
@@ -447,7 +447,11 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             }
         
         //   vmodel.getQcTableModel().setQcMatrixModel(qcMatrixModel);
-        model.getQcTableModel().setQcMatrixModel(qcMatrixModel);
+        
+           model.getQcTableModel().setQcMatrixModel(qcMatrixModel); 
+        }
+       else
+       qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
         
         
         
@@ -720,7 +724,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
          
         // model.getPendingFlagProperty().addListener(CHECK_BOX_CHANGE_LISTENER);
          pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
-         qcCheckBox.selectedProperty().bind(model.getQcFlagProperty());
+         qcCheckBox.selectedProperty().bind(model.getDependency());
          model.getVolListProperty().addListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().bindBidirectional(model.getVolListProperty());
          obsLinkList.addListener(LINKS_CHANGE_LISTENER);

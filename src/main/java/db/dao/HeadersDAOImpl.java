@@ -66,7 +66,7 @@ public class HeadersDAOImpl implements HeadersDAO{
             transaction=session.beginTransaction();
             Headers h= (Headers) session.get(Headers.class, hid);
             
-            if(h.getSequence().equals(newH.getSequence()) && h.getSubsurface().equals(newH.getSubsurface())){
+            if(h.getSequence().getSequenceno().equals(newH.getSequence().getSequenceno()) && h.getSubsurface().getSubsurface().equals(newH.getSubsurface().getSubsurface())){
             h.setTimeStamp(newH.getTimeStamp());
             h.setCmpInc(newH.getCmpInc());
             h.setCmpMax(newH.getCmpMax());
