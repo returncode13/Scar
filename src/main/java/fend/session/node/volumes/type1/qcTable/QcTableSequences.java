@@ -146,6 +146,7 @@ public class QcTableSequences {
                  
             
          //   qsub.setQctypeMap(fmap);
+            qsub.setQcTableSeq(this);
             qsub.setSequence(this.sequence);
             qsub.setSub(subs);              //sequence and subsurface information is set within class
             qcSubs.add(qsub);
