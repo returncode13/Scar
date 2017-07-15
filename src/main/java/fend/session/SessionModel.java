@@ -18,7 +18,7 @@ import javafx.collections.ObservableList;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 public class SessionModel implements Serializable{
     ObservableList<JobStepType0Model> listOfJobs=FXCollections.observableArrayList();

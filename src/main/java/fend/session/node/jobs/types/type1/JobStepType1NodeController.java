@@ -260,6 +260,12 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
     
      @FXML
     void openQMatrix(ActionEvent event) {
+        
+        qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
+        
+        if(qcMatrixModel.getQcTypePresMap().isEmpty()){
+            
+      
             SessionModel smodel=model.getSessionModel();
         Sessions currentsession= sserv.getSessions(smodel.getId());
         JobStep js= jserv.getJobStep(model.getId());
@@ -273,12 +279,27 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
       //  List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForVolume(v);
         List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
          
-         qcMatrixModel=model.getQcMatrixModel();
-       //  qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
+         //qcMatrixModel=model.getQcMatrixModel();
+         
       //  List<QcType>
         
         //List<QcType> allQcTypes=qserv.getQcTypesForSession(currentsession);
         List<QcType> allQcTypes=qserv.getAllQcTypes();
+        
+        /*if(allQcTypes.isEmpty()){          //no qctypes declared for the entire session
+        for (Iterator<String> iterator = types.iterator(); iterator.hasNext();) {
+        String type = iterator.next();
+        QcType q=new QcType();
+        q.setName(type.toLowerCase());              //2Dstacks is the same as 2dstACks
+        // q.setSessions(currentsession);
+        qserv.createQcType(q);
+        
+        allQcTypes=qserv.getAllQcTypes();
+        }
+        */
+              //  allQcTypes=qserv.getQcTypesForSession(currentsession);
+             
+        
         List<String> qcTypesNames=new ArrayList<>();
         //qcCModel=vmodel.getQcCheckListModel(); 
         qcCModel=model.getQcCheckListModel();
@@ -289,7 +310,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         }
         qcCModel.setQcTypes(qcTypesNames);
       
-        if(qcmatdef.isEmpty()){                                
+        if(qcmatdef.isEmpty()){                     //no matrix defined for this job. ask for a definition           
            
             
             
@@ -419,17 +440,36 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         
        
            
-         showPopList(qcmatdef);
+         showPopList(qcmatdef);    //qcmatdef holds the definitions
        // }
         
-        
+       }else{
+            List<SequenceHeaders> seqsinJob=new ArrayList<>();
+           for(VolumeSelectionModelType1 vmod:obsList){
+               HeadersModel hmod=vmod.getHeadersModel();
+            List<SequenceHeaders> seqsinVol=hmod.getSequenceListInHeaders();
+            seqsinJob.addAll(seqsinVol);
+           }
+           
+          // vmodel.getQcTableModel().setSequences(seqsinVol);
+          model.getQcTableModel().setSequences(seqsinJob);
+          model.getQcTableModel().loadQcTypes();
+           
+          // QcTableNode qcMatrixNode=new QcTableNode(vmodel.getQcTableModel());
+          QcTableNode qcMatrixNode=new QcTableNode(model.getQcTableModel());
+        }   
         
         
     }
     
     void showPopList(List<QcMatrix> qcmatrices){
-       if(model.getQcTableModel().getQcMatrixModel()==null){     //the resultant qcmatrix from this call is not the same as the models qcmatrix. aka, the qcMatrixModel variable
-        qcMatrixModel.clear();
+       //if(model.getQcTableModel().getQcMatrixModel()==null){     //the resultant qcmatrix from this call is not the same as the models qcmatrix. aka, the qcMatrixModel variable
+       
+        System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.showPopList(): qcMatrixModel.getQcTypePresMap().isEmpty()?: "+qcMatrixModel.getQcTypePresMap().isEmpty());
+       
+       
+       if(qcMatrixModel.getQcTypePresMap().isEmpty()){                             //there is no definition of the qcmatrix in this job..so define it
+        //qcMatrixModel.clear();
         
         
            for (Iterator<QcMatrix> iterator = qcmatrices.iterator(); iterator.hasNext();) {
@@ -451,7 +491,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
            model.getQcTableModel().setQcMatrixModel(qcMatrixModel); 
         }
        else
-       qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
+       qcMatrixModel=model.getQcTableModel().getQcMatrixModel();            //qcmatrix has been defined. get it.
         
         
         
@@ -465,6 +505,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
            
           // vmodel.getQcTableModel().setSequences(seqsinVol);
           model.getQcTableModel().setSequences(seqsinJob);
+          model.getQcTableModel().loadQcTypes();
            
           // QcTableNode qcMatrixNode=new QcTableNode(vmodel.getQcTableModel());
           QcTableNode qcMatrixNode=new QcTableNode(model.getQcTableModel());

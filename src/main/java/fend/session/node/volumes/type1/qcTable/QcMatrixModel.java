@@ -22,7 +22,9 @@ public class QcMatrixModel {
     Map<QcTypeModel,Boolean> qcTypePresMap=new HashMap<>();
     JobStepType0Model jobmodel;
    // List<QcMatrixRecord> qcmatrixRecords;
-
+    Map<QcTypeModel,Boolean> checkMap=new HashMap<>();      //use this map for keeping track of what's been checked/unchecked from the presMap
+    
+    
     public JobStepType0Model getJobmodel() {
         return jobmodel;
     }
@@ -53,6 +55,22 @@ public class QcMatrixModel {
         qcTypePresMap.put(qcmodel, present);
         
     }
+
+    public Map<QcTypeModel, Boolean> getCheckMap() {
+        return checkMap;
+    }
+
+    public void setCheckMap(Map<QcTypeModel, Boolean> checkMap) {
+        this.checkMap = checkMap;
+    }
+    
+    public void changeCheckMap(QcTypeModel q,Boolean newVal){
+        checkMap.put(q, newVal);
+    }
+    
+    
+    
+    
     
     
     public void clear(){

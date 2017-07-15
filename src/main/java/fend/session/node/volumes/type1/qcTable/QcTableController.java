@@ -172,11 +172,51 @@ public class QcTableController extends Stage {
                              if(qseq instanceof QcTableSubsurfaces){
                                  System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for subseq: "+((QcTableSubsurfaces)qseq).getSub()+ " with seqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber()+" sub: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
                                  ((QcTableSubsurfaces)qseq).getQctypes().get(iii).setPassQc(newValue);
+                                 if(!newValue){
+                                   ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(newValue);
+                                 }
+                                 List<QcTableSubsurfaces> qcss=((QcTableSubsurfaces)qseq).getQcTableSeq().getQcSubs();
+                                 Boolean alltrue=true;
+                                 for (Iterator<QcTableSubsurfaces> iterator = qcss.iterator(); iterator.hasNext();) {
+                                     QcTableSubsurfaces next = iterator.next();
+                                     alltrue= alltrue && next.getQctypes().get(iii).isPassQc();
+                                 }
+                                 if(alltrue){
+                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(alltrue);
+                                 }
                              }
                              else
                              if(qseq instanceof QcTableSequences){
                                  System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for seq: "+qseq.getSequence()+" with seqNO: "+qseq.getSequenceNumber());
-                                 qseq.getQctypes().get(iii).setPassQc(newValue);
+                                
+                                 
+                                 if(newValue){                  //if true clicked for a seq, then set all the subs as true
+                                     qseq.getQctypes().get(iii).setPassQc(newValue);
+                                     List<QcTableSubsurfaces> qseqsubs=qseq.getQcSubs();
+                                 for (Iterator<QcTableSubsurfaces> iterator = qseqsubs.iterator(); iterator.hasNext();) {
+                                     QcTableSubsurfaces next = iterator.next();
+                                     next.getQctypes().get(iii).setPassQc(newValue);
+                                     
+                                 }
+                                 }
+                                 
+                                 if(!newValue){                 //if false clicked for a seq, first check if the subs are all true in which case dont uncheck the seq but
+                                                                // if any of them are unchecked then allow uncheck  for seq
+                                     Boolean alltrue=true;
+                                     List<QcTableSubsurfaces> qseqsubs=qseq.getQcSubs();
+                                     for (Iterator<QcTableSubsurfaces> iterator = qseqsubs.iterator(); iterator.hasNext();) {
+                                         QcTableSubsurfaces next = iterator.next();
+                                         alltrue= alltrue && next.getQctypes().get(iii).isPassQc();
+                                         
+                                     }
+                                     
+                                     if(alltrue){
+                                          qseq.getQctypes().get(iii).setPassQc(!newValue);
+                                     }else{
+                                         qseq.getQctypes().get(iii).setPassQc(newValue);
+                                     }
+                                 }
+                                 
                              }
                              
                              
@@ -191,6 +231,7 @@ public class QcTableController extends Stage {
                 }
             });
            qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
+          
           
             System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): inside for loop for qctype: "+qctype.getName());
             /* qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {

@@ -33,9 +33,20 @@ public class QcTableSubsurfaces extends QcTableSequences{
     private final LongProperty sequenceNumber = new SimpleLongProperty();
     SubSurfaceHeaders sub;
     SequenceHeaders sequence;
-    List<QcTypeModel> qcfields=new ArrayList();
-    
+    List<QcTypeModel> qcfields=null;
+    QcTableSequences qcTableSeq;
    // Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
+
+    public QcTableSequences getQcTableSeq() {
+        return qcTableSeq;
+    }
+
+    public void setQcTableSeq(QcTableSequences qcTableSeq) {
+        this.qcTableSeq = qcTableSeq;
+    }
+    
+    
+    
     
     public SubSurfaceHeaders getSub() {
         System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSubsurfaces.getSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
