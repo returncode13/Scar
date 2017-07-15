@@ -61,16 +61,19 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     
     private final StringProperty run = new SimpleStringProperty(this,"run");
     //private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
-    private final BooleanProperty dependency = new SimpleBooleanProperty();
+    private final BooleanProperty dependency = new SimpleBooleanProperty(Boolean.TRUE);
 
+    @Override
     public boolean isDependency() {
         return dependency.get();
     }
 
+    @Override
     public void setDependency(boolean value) {
         dependency.set(value);
     }
 
+    @Override
     public BooleanProperty dependencyProperty() {
         return dependency;
     }

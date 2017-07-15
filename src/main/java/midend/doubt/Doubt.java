@@ -5,8 +5,10 @@
  */
 package midend.doubt;
 
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,12 +22,56 @@ import javafx.beans.value.ChangeListener;
  * A flag that is set to true if the map.size()>0
  * A status property that show whether the doubt is set to "Y","O" or "N"
  */
+
+class JobPair{
+    JobStepType0Model parent;
+    JobStepType0Model child;
+    String type;
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + Objects.hashCode(this.parent.getId());
+        hash = 31 * hash + Objects.hashCode(this.child.getId());
+        hash = 31 * hash + Objects.hashCode(this.type);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final JobPair other = (JobPair) obj;
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Objects.equals(this.parent.getId(), other.parent.getId())) {
+            return false;
+        }
+        if (!Objects.equals(this.child.getId(), other.child.getId())) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+}
+
+
+
 public class Doubt {
     
     public static final String doubtTime="time";
     public static final String doubtTraces="traces";
     
-    Map<String,String> doubtmap=new HashMap<>();
+    Map<JobPair,String> doubtmap=new HashMap<>();
     private  BooleanProperty doubt = new SimpleBooleanProperty();
     private  StringProperty status = new SimpleStringProperty(this,"N");
 
@@ -65,39 +111,65 @@ public class Doubt {
 
     public void setDoubt(boolean value) {
         doubt.set(value);
+        
     }
 
     public BooleanProperty doubtProperty() {
-        if(doubtmap.size()!=0)doubt.set(true);
+        if(!doubtmap.isEmpty())doubt.set(true);
         return doubt;
     }
 
-    public Map<String, String> getDoubtmap() {
+    public Map<JobPair, String> getDoubtmap() {
         return doubtmap;
     }
 
-    public void setDoubtmap(Map<String, String> doubtmap) {
+    public void setDoubtmap(Map<JobPair, String> doubtmap) {
         this.doubtmap = doubtmap;
     }
     
     
-    public void addToDoubtMap(String type, String errorMessage){
-        doubtmap.put(type, errorMessage);
-        if(doubtmap.size()!=0)doubt.set(true);
-        else doubt.set(false);
+    public void addToDoubtMap(JobStepType0Model parent,JobStepType0Model child,String type, String errorMessage){
+        
+        JobPair jp=new JobPair();
+        jp.parent=parent;
+        jp.child=child;
+        jp.type=type;
+        
+        doubtmap.put(jp, errorMessage);
+        if(!doubtmap.isEmpty()){
+            doubt.set(true);
+            status.set("Y");
+        }
+        else {
+            doubt.set(false);
+            status.set("N");
+        }
     }
     
-    public void removeFromDoubtMap(String type){
-        doubtmap.remove(type);
-        if(doubtmap.size()!=0)doubt.set(true);
-        else doubt.set(false);
+    public void removeFromDoubtMap(JobStepType0Model parent,JobStepType0Model child,String type){
+        
+        JobPair jp=new JobPair();
+        jp.parent=parent;
+        jp.child=child;
+        jp.type=type;
+        
+        
+        doubtmap.remove(jp);
+        if(!doubtmap.isEmpty()){
+            doubt.set(true);
+            status.set("Y");
+        }
+        else {
+            doubt.set(false);
+            status.set("N");
+        }
     }
     
     
     public String getErrorMessage(){
         String err=new String();
-        for (Map.Entry<String, String> entry : doubtmap.entrySet()) {
-            String key = entry.getKey();
+        for (Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
+            JobPair key = entry.getKey();
             String value = entry.getValue();
             err+="\n"+value;
         }

@@ -54,7 +54,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private boolean headerButtonIsDisabled=true;
     private final BooleanProperty headerButtonDisabledStatusProperty=new SimpleBooleanProperty(headerButtonIsDisabled);
     private boolean alert=false;
-    private BooleanProperty dependency=new SimpleBooleanProperty(Boolean.FALSE);
+    private BooleanProperty dependency=new SimpleBooleanProperty(Boolean.TRUE);
     
     private HeadersModel headersModel=new HeadersModel(this);                                    // the headers corresponding to this particular volume.
     private Set<SubSurfaceHeaders> subsurfaces;                                       //the subsurfaces in the volume.

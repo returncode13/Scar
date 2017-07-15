@@ -62,7 +62,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
         this.sessionModel = sessionModel;
         jsParents.add(this);
         jsChildren.add(this);
-        
+        this.doubt=new Doubt();
         volmodel=new AcquisitionVolumeModel();
         List<AcquisitionVolumeModel> templ=new ArrayList<>();
         templ.add(volmodel);

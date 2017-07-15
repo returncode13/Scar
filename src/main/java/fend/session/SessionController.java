@@ -57,6 +57,8 @@ import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.dependencies.Dep11;
 import fend.session.node.jobs.dependencies.DepA1;
+import fend.session.node.jobs.dependencies.Inherit11;
+import fend.session.node.jobs.dependencies.InheritA1;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionJobStepModel;
 import fend.session.node.jobs.types.acquisitionType.AcquisitionNode;
 import fend.session.node.jobs.types.type1.JobStepType1Node;
@@ -1111,7 +1113,24 @@ public class SessionController implements Initializable {
                 List<JobStepType0Model> children = root.getJsChildren();
                 for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
                  JobStepType0Model child = iterator.next();
-                    System.out.println("fend.session.SessionController.tracking(): setPendingJobs: to be called for Parent: "+root.getJobStepText()+" : child: "+child.getJobStepText());
+                    System.out.println("fend.session.SessionController.tracking(): DependencyChecks: to be called for Parent: "+root.getJobStepText()+" : child: "+child.getJobStepText());
+                    List<JobStepType0Model> gChild=child.getJsChildren();
+                        for (Iterator<JobStepType0Model> iterator1 = gChild.iterator(); iterator1.hasNext();) {
+                        JobStepType0Model next = iterator1.next();
+                            System.out.println("fend.session.SessionController.tracking(): child: "+child.getJobStepText()+" : has child: "+next.getJobStepText());
+                        
+                    }
+                    //    pendingarray=new ArrayList<>();
+               //  setPendingJobsFlag(root,child);
+               //     setQCFlag(root, child);
+                    dependencyChecks(root, child);
+                    
+                    
+             }
+                
+                for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                 JobStepType0Model child = iterator.next();
+                    System.out.println("fend.session.SessionController.tracking(): Inheritance: to be called for Parent: "+root.getJobStepText()+" : child: "+child.getJobStepText());
                     List<JobStepType0Model> gChild=child.getJsChildren();
                         for (Iterator<JobStepType0Model> iterator1 = gChild.iterator(); iterator1.hasNext();) {
                         JobStepType0Model next = iterator1.next();
@@ -1121,9 +1140,11 @@ public class SessionController implements Initializable {
                         pendingarray=new ArrayList<>();
                //  setPendingJobsFlag(root,child);
                //     setQCFlag(root, child);
-                    dependencyChecks(root, child);
+                    inheritanceOfDoubt(root, child);
+                    
                     
              }
+                
              
              
          }
@@ -1855,6 +1876,7 @@ public class SessionController implements Initializable {
         if(parent.getType().equals(1L) && child.getType().equals(1L)){
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             Dep11 dep11=new Dep11(parent, child,model);               //set doubt flags here
+            
             System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
          }
         
@@ -1874,13 +1896,33 @@ public class SessionController implements Initializable {
              return;
          }
         
-        child.getDoubt().setDoubt(parent.getDoubt().isDoubt());
+        
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            InheritA1 inhA1=new InheritA1(parent, child);
+        } 
+        
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
+           Inherit11 inh11=new Inherit11(parent, child);                     
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): moving on..");
+         }
+        
+       //child.getDoubt().setDoubt(parent.getDoubt().isDoubt());
+        //get all the seq and subs...block A
+            
+       
+        //end of that block A
+        
+        
+        
+        
         
         
         List<JobStepType0Model> grandChildren=child.getJsChildren();
          for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
             JobStepType0Model gchild = iterator.next();
-             System.out.println("fend.session.SessionController.dependencyChecks():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+             System.out.println("fend.session.SessionController.inheritanceOfDoubt():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
             inheritanceOfDoubt(child, gchild);
         }
     }
