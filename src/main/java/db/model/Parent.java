@@ -27,10 +27,10 @@ public class Parent implements Serializable{
     private Long idParent;
     
     @ManyToOne
-    @JoinColumn(name = "node_fk")       
+    @JoinColumn(name = "node_fk")                                   
     private SessionDetails sessionDetails;
     
-    @Column(name="parent")
+    @Column(name="parent")                          //this is the parent of node_fk
     private Long parent;  
 
     public Parent() {

@@ -5,7 +5,7 @@
  */
 package fend.summary;
 
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import java.util.Map;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;

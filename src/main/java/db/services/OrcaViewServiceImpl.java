@@ -8,6 +8,7 @@ package db.services;
 import db.dao.OrcaViewDAO;
 import db.dao.OrcaViewDAOImpl;
 import db.model.OrcaView;
+import db.model.Sequence;
 import java.util.List;
 
 /**
@@ -20,6 +21,16 @@ public class OrcaViewServiceImpl implements OrcaViewService{
     @Override
     public List<OrcaView> getOrcaView() {
      return orcaDAO.getOrcaView();
+    }
+
+    @Override
+    public List<OrcaView> getOrcaViewsForSeq(Sequence seq) {
+        return orcaDAO.getOrcaViewsForSeq(seq);
+    }
+
+    @Override
+    public List<Long> getSeqOrcaView() {
+        return orcaDAO.getSeqOrcaView();
     }
     
 }

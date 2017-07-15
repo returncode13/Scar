@@ -7,7 +7,8 @@ package fend.session.node.headers;
 
 import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import db.model.Headers;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,24 +18,28 @@ import javafx.collections.ObservableList;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 public class HeadersModel {
    
-    private List<Sequences> seqList=new ArrayList<>();
-    private ObservableList<Sequences> sequenceListInHeaders=FXCollections.observableList(seqList);
+    private List<SequenceHeaders> seqList=new ArrayList<>();
+    private ObservableList<SequenceHeaders> sequenceListInHeaders=FXCollections.observableList(seqList);
     private Long id;
-    private VolumeSelectionModel volmodel;
+   // private VolumeSelectionModelType1 volmodel;
+    private VolumeSelectionModelType0 volmodel;
 
-    public ObservableList<Sequences> getSequenceListInHeaders() {
+    public ObservableList<SequenceHeaders> getSequenceListInHeaders() {
         return sequenceListInHeaders;
     }
 
-    public void setSequenceListInHeaders(ObservableList<Sequences> sequenceListInHeaders) {
+    public void setSequenceListInHeaders(ObservableList<SequenceHeaders> sequenceListInHeaders) {
         this.sequenceListInHeaders = FXCollections.observableList(sequenceListInHeaders);
     }
 
-    public HeadersModel(VolumeSelectionModel volmodel) {
+    /*public HeadersModel(VolumeSelectionModelType1 volmodel) {
+    this.volmodel = volmodel;
+    }*/
+    public HeadersModel(VolumeSelectionModelType0 volmodel) {
         this.volmodel = volmodel;
     }
     
@@ -45,20 +50,29 @@ public class HeadersModel {
         this.id=id;
     }
 
-    public VolumeSelectionModel getVolmodel() {
+    /*public VolumeSelectionModelType1 getVolmodel() {
+    if(volmodel==null){
+    System.out.println("fend.session.node.headers.HeadersModel.getVolmodel()  NULL returned");
+    }
+    return volmodel;
+    }*/
+    public VolumeSelectionModelType0 getVolmodel() {
         if(volmodel==null){
             System.out.println("fend.session.node.headers.HeadersModel.getVolmodel()  NULL returned");
         }
         return volmodel;
     }
 
-    public void setVolmodel(VolumeSelectionModel volmodel) {
-        this.volmodel = volmodel;
+    /*public void setVolmodel(VolumeSelectionModelType1 volmodel) {
+    this.volmodel = volmodel;
+    }*/
+    public void setVolmodel(VolumeSelectionModelType0 volmodel) {
+    this.volmodel = volmodel;
     }
     
-    public Sequences getSequenceObjBySequenceNumber(Long seqno){
-        for (Iterator<Sequences> iterator = sequenceListInHeaders.iterator(); iterator.hasNext();) {
-            Sequences seq = iterator.next();
+    public SequenceHeaders getSequenceObjBySequenceNumber(Long seqno){
+        for (Iterator<SequenceHeaders> iterator = sequenceListInHeaders.iterator(); iterator.hasNext();) {
+            SequenceHeaders seq = iterator.next();
             if(seq.getSequenceNumber().equals(seqno)){
                 return seq;
             }

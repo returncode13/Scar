@@ -5,7 +5,7 @@
  */
 package fend.session.node.headers.logger;
 
-import fend.session.node.headers.SubSurface;
+import fend.session.node.headers.SubSurfaceHeaders;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

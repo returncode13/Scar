@@ -86,7 +86,7 @@ public class ParentDAOImpl implements ParentDAO{
     }
 
     @Override
-    public Parent getParentFor(SessionDetails fkid, Long parent) {
+    public Parent getParentRowFor(SessionDetails fkid, Long parent) {
         
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Parent> result=null;

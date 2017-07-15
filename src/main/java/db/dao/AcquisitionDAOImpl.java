@@ -7,44 +7,19 @@ package db.dao;
 
 import db.model.Acquisition;
 import hibUtil.HibernateUtil;
-import java.util.List;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 
 /**
  *
- * @author sharath
+ * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class AcquisitionDAOImpl implements AcquisitionDAO{
-
-    @Override
-    public List<Acquisition> getAcquisition() {
-        Session session=HibernateUtil.getSessionFactory().openSession();
-        List<Acquisition> result=null;
-        Transaction transaction = null;
-        
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Acquisition.class);
-            result=criteria.list();
-            transaction.commit();
-            
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        finally{
-            session.close();
-        }
-        return result;
-    }
 
     @Override
     public void createAcquisition(Acquisition acq) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        
         try{
             transaction=session.beginTransaction();
             session.saveOrUpdate(acq);
@@ -56,6 +31,69 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
         }
     }
 
+    @Override
+    public Acquisition getAcquisition(Long aid) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try{
+            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+            return l;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteAcquisition(Long aid) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+            session.delete(l);
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void updateAcquisition(Long aid, Acquisition newAcq) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+            Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
+            l.setSequence(newAcq.getSequence());
+            l.setCable(newAcq.getCable());
+            l.setFgsp(newAcq.getFgsp());
+            l.setFirstChannel(newAcq.getFirstChannel());
+            l.setFirstFFID(newAcq.getFirstFFID());
+            l.setFirstGoodFFID(newAcq.getFirstGoodFFID());
+            l.setFirstShot(newAcq.getFirstShot());
+            l.setGun(newAcq.getGun());
+            l.setLastChannel(newAcq.getLastChannel());
+            l.setLastFFID(newAcq.getLastFFID());
+            l.setLastGoodFFID(newAcq.getLastGoodFFID());
+            l.setLgsp(newAcq.getLgsp());
+            l.setLastShot(newAcq.getLastShot());
+            l.setSubsurface(newAcq.getSubsurface());
+            
+            session.update(l);
+            
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }    
+    }
+    
    
     
 }

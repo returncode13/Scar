@@ -5,7 +5,8 @@
  */
 package fend.summary;
 
-import fend.session.node.volumes.VolumeSelectionModel;
+//import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
@@ -25,7 +26,8 @@ import watcher.SummaryStatusWatcher;
 public class SummaryVolumeNodeModel {
    
     static int count=0;
-    private VolumeSelectionModel volumeSelectionModel;
+    //private VolumeSelectionModelType1 volumeSelectionModel;
+    private VolumeSelectionModelType0 volumeSelectionModel;
    
     private final StringProperty run = new SimpleStringProperty(this,"run");
     private final StringProperty dep = new SimpleStringProperty(this,"dep");
@@ -124,19 +126,35 @@ public class SummaryVolumeNodeModel {
     
   
 
-    public VolumeSelectionModel getVolumeSelectionModel() {
+    /*public VolumeSelectionModelType1 getVolumeSelectionModel() {
+    return volumeSelectionModel;
+    }*/
+    
+    public VolumeSelectionModelType0 getVolumeSelectionModel() {
         return volumeSelectionModel;
     }
 
-    public void setVolumeSelectionModel(VolumeSelectionModel volumeSelectionModel, int depth,int jobind,int volin) {
+    /*public void setVolumeSelectionModel(VolumeSelectionModelType1 volumeSelectionModel, int depth,int jobind,int volin) {
+    this.volumeSelectionModel = volumeSelectionModel;
+    //  this.qcflag.set(new Boolean(this.volumeSelectionModel.getQcFlagProperty().get()).toString()+" :d: "+depth+" :j: "+jobind+" :v: "+volin+" "+this.volumeSelectionModel.getLabel());
+    if(summaryStatusWatcher==null){
+    System.out.println("fend.summary.SummaryVolumeNodeModel.setVolumeSelectionModel(): Starting summaryStatusWatcher : "+count);
+    count++;
+    summaryStatusWatcher=new SummaryStatusWatcher(volumeSelectionModel);
+    }
+    }*/
+    
+    public void setVolumeSelectionModel(VolumeSelectionModelType0 volumeSelectionModel, int depth,int jobind,int volin) {
         this.volumeSelectionModel = volumeSelectionModel;
       //  this.qcflag.set(new Boolean(this.volumeSelectionModel.getQcFlagProperty().get()).toString()+" :d: "+depth+" :j: "+jobind+" :v: "+volin+" "+this.volumeSelectionModel.getLabel());
       if(summaryStatusWatcher==null){
           System.out.println("fend.summary.SummaryVolumeNodeModel.setVolumeSelectionModel(): Starting summaryStatusWatcher : "+count);
           count++;
-          summaryStatusWatcher=new SummaryStatusWatcher(volumeSelectionModel);
+          summaryStatusWatcher=new SummaryStatusWatcher(this.volumeSelectionModel);
       }
     }
+    
+    
     
     
     

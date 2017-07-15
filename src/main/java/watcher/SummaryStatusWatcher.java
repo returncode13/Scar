@@ -11,7 +11,9 @@ import db.services.LogsService;
 import db.services.LogsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,7 +44,8 @@ import javafx.collections.ObservableMap;
 public class SummaryStatusWatcher {
     private LogsService lserv=new LogsServiceImpl();
     private VolumeService vserv=new VolumeServiceImpl();
-    private VolumeSelectionModel volumeSelectionModel;
+    private VolumeSelectionModelType1 volumeSelectionModel;
+    private AcquisitionVolumeModel acqvolumemodel;
     private Volume volume;
     private List<Logs> logsWithDistinctSeq;
     private List<Long> seqs=new ArrayList<>();
@@ -54,8 +57,10 @@ public class SummaryStatusWatcher {
     TimerTask task;
     Timer timer;
 
-    public SummaryStatusWatcher(VolumeSelectionModel volumeSelectionModel) {
-        this.volumeSelectionModel = volumeSelectionModel;
+    public SummaryStatusWatcher(VolumeSelectionModelType0 volumeSelectionModel) {
+        if(!volumeSelectionModel.getType().equals(3L)){
+            
+        this.volumeSelectionModel = (VolumeSelectionModelType1) volumeSelectionModel;
         this.volume=vserv.getVolume(this.volumeSelectionModel.getId());
            
         ExecutorService executorserv= Executors.newFixedThreadPool(1);
@@ -128,7 +133,7 @@ public class SummaryStatusWatcher {
                                 
                             }
                             
-                            volumeSelectionModel.setLogstatusMapForSeq(seqrunStatus);
+                            SummaryStatusWatcher.this.volumeSelectionModel.setLogstatusMapForSeq(seqrunStatus);
                             
                         }
                         
@@ -147,6 +152,16 @@ public class SummaryStatusWatcher {
             } catch (ExecutionException ex) {
                 Logger.getLogger(SummaryStatusWatcher.class.getName()).log(Level.SEVERE, null, ex);
               }
+    
+    }
+        
+        
+        else{
+            acqvolumemodel=(AcquisitionVolumeModel) volumeSelectionModel;
+            System.out.println("watcher.SummaryStatusWatcher.<init>(): to be defined for type 3 Volumes");
+        }
+    
+    
     }
     
 }

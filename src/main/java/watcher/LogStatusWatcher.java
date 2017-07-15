@@ -12,7 +12,7 @@ import db.services.LogsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioScripts;
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class LogStatusWatcher {
     private List<Logs>  listOfdbLogs;
     private List<LogStatusHolder> logstatusHolderList=new ArrayList<>();
     private VolumeService volserv=new VolumeServiceImpl();
-    private VolumeSelectionModel volselmodel;
+    private VolumeSelectionModelType1 volselmodel;
     private Volume volume;
     private DugioScripts dugioscripts;
     
@@ -56,7 +56,7 @@ public class LogStatusWatcher {
     Timer timer;
     
     
-    public LogStatusWatcher(VolumeSelectionModel volselmod){
+    public LogStatusWatcher(VolumeSelectionModelType1 volselmod){
         this.volselmodel=volselmod;
         dugioscripts=new DugioScripts();
         volume = volserv.getVolume(this.volselmodel.getId());

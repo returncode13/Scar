@@ -7,9 +7,9 @@ package fend.session.edges;
 
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.edges.curves.CubCurveModel;
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import java.io.Serializable;
-import fend.session.node.jobs.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 

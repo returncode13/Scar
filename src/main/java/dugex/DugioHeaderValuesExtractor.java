@@ -5,7 +5,11 @@
  */
 package dugex;
 
+import core.Sub;
 import db.model.Headers;
+import db.model.Subsurface;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -114,6 +119,7 @@ public class DugioHeaderValuesExtractor {
     private DugioMetaHeaders dmh=new DugioMetaHeaders();
     private File volume;
     private ArrayList<Headers> headers=new ArrayList<>();;
+    private SubsurfaceService subserv=new SubsurfaceServiceImpl();
     
     public DugioHeaderValuesExtractor(){
         
@@ -126,8 +132,8 @@ public class DugioHeaderValuesExtractor {
     
     
     
-    public ArrayList<Headers> calculatedHeaders(final Map<String,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders) throws InterruptedException, ExecutionException{
-        calculateSubsurfaceLines(subsurfaceTimestamp,existingHeaders);
+    public ArrayList<Headers> calculatedHeaders(final Map<Sub,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders,final Long volumeType) throws InterruptedException, ExecutionException{
+        calculateSubsurfaceLines(subsurfaceTimestamp,existingHeaders,volumeType);
        
        /* for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
             Headers next = iterator.next();
@@ -142,7 +148,7 @@ public class DugioHeaderValuesExtractor {
             @Override
             public Void call() throws Exception {
                 System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders ..calling calculateRemainingHeaders in "+Thread.currentThread().getName()+" forking");
-                return calculateRemainingHeaders();
+                return calculateRemainingHeaders(volumeType);
                // System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in"+Thread.currentThread().getName()+"joining");
             }
         }).get();
@@ -156,9 +162,20 @@ public class DugioHeaderValuesExtractor {
         return headers;
     }
     
-    private void calculateSubsurfaceLines(final Map<String,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders){
-        headers.clear();
-        try{
+    private void calculateSubsurfaceLines(final Map<Sub,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders,final Long volumeType){
+       List<Subsurface> subList=subserv.getSubsurfaceList();                   //get all subs
+       Set<Sub> keysubs=subsurfaceTimestamp.keySet();
+        
+       Map<String,Headers> checkMap=new HashMap<>();                //used to check if a linename is present for which the headers have already been extracted
+       for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
+            Sub next = iterator.next();
+            String ssub=next.getSubsurfaceName();
+            checkMap.put(ssub, subsurfaceTimestamp.get(next));
+        }
+       
+        if(volumeType.equals(1L)){
+             headers.clear();
+            try{
             ExecutorService executorService= Executors.newFixedThreadPool(1);
             executorService.submit(new Callable<Void>() {
 
@@ -181,15 +198,31 @@ public class DugioHeaderValuesExtractor {
                         
                        // System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
                         
-                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
-                        if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                        //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
+                        //Subsurface subexists=subserv.getSubsurfaceObjBysubsurfacename(lineName);
+                         //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey());
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+checkMap.containsKey(lineName));
+                       // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                       if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && checkMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
                             
                         continue;
                         }
-                        if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
-                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+subsurfaceTimestamp.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
-                           Headers h=subsurfaceTimestamp.get(lineName);
+                        //if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                        if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && !checkMap.get(lineName).getTimeStamp().equals(time)){
+                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+checkMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
+                            Set<Sub> keysubs=subsurfaceTimestamp.keySet();
+                            Sub skey=null;
+                            for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
+                                Sub next = iterator.next();
+                                if(next.getSubsurfaceName().equalsIgnoreCase(lineName)){
+                                    skey=next;
+                                    break;
+                                }
+                                
+                            }
+                            
+                            Headers h=subsurfaceTimestamp.get(skey);
                             h.setModified(Boolean.TRUE);
                             Long ver=h.getNumberOfRuns();
                             h.setNumberOfRuns(++ver);
@@ -200,10 +233,12 @@ public class DugioHeaderValuesExtractor {
                         //continue; //Comment this out later when implementing
                         }
                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+lineName);
-
-                        hdr.setSubsurface(lineName);
+                        Subsurface hdrsub=subserv.getSubsurfaceObjBysubsurfacename(lineName);
+                        //hdr.setSubsurface(lineName);
+                         hdr.setSubsurface(hdrsub);
                         hdr.setTimeStamp(time);
-                        hdr.setSequenceNumber(Long.valueOf(seq));
+                        //hdr.setSequenceNumber(Long.valueOf(seq));
+                        hdr.setSequence(hdrsub.getSequence());
                         headers.add(hdr);
                         
                     }
@@ -218,12 +253,28 @@ public class DugioHeaderValuesExtractor {
         } catch (InterruptedException ex) {
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
+        }
+        
+        
+        if(volumeType.equals(3L)){              //acq type
+            headers.clear();
+            for (Iterator<Subsurface> iterator = subList.iterator(); iterator.hasNext();) {
+                Subsurface sub = iterator.next();
+                Headers h=new Headers();
+                h.setSubsurface(sub);
+                h.setSequence(sub.getSequence());
+                h.setTimeStamp("acqtime");
+                headers.add(h);
+                
+            }
+        }
+        
         
     }
     
     
     
-    private Void calculateRemainingHeaders(){
+    private Void calculateRemainingHeaders(final Long volumetype){
         try{
             /*  ExecutorService executorService = Executors.newFixedThreadPool(1);
             executorService.submit(new Callable<Void>() {
@@ -253,28 +304,30 @@ futures.add(
                 // synchronized(this){
                  Headers hdr = iterator.next();
                          //if(hdr.getTimeStamp().)
-                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders for "+hdr.getSubsurface() +" on thread: "+Thread.currentThread().getName());
-                                     Long traceCount;
-                                     Long cmpMax;
-                                     Long cmpMin;
-                                     Long cmpInc;
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders for "+hdr.getSubsurface().getSubsurface() +" on thread: "+Thread.currentThread().getName());
+                                     Long traceCount=0L;
+                                     Long cmpMax=0L;
+                                     Long cmpMin=0L;
+                                     Long cmpInc=0L;
                                      
-                                     Long inlineMax;
-                                     Long inlineMin;
-                                     Long inlineInc;
-                                     Long xlineMax;
-                                     Long xlineMin;
-                                     Long xlineInc;
-                                     Long dugShotMax;
-                                     Long dugShotMin;
-                                     Long dugShotInc;
-                                     Long dugChannelMax;
-                                     Long dugChannelMin;
-                                     Long dugChannelInc;
-                                     Long offsetMax;
-                                     Long offsetMin;
-                                     Long offsetInc;
-                        try{
+                                     Long inlineMax=0L;
+                                     Long inlineMin=0L;
+                                     Long inlineInc=0L;
+                                     Long xlineMax=0L;
+                                     Long xlineMin=0L;
+                                     Long xlineInc=0L;
+                                     Long dugShotMax=0L;
+                                     Long dugShotMin=0L;
+                                     Long dugShotInc=0L;
+                                     Long dugChannelMax=0L;
+                                     Long dugChannelMin=0L;
+                                     Long dugChannelInc=0L;
+                                     Long offsetMax=0L;
+                                     Long offsetMin=0L;
+                                     Long offsetInc=0L;
+                                   if(volumetype.equals(1L))
+                                     {
+                                         try{
                                      traceCount=Long.valueOf(forTraces(hdr));
                                      cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
                                      cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
@@ -319,7 +372,32 @@ futures.add(
                                      offsetMin=-1L;
                                      offsetInc=-1L;
                         }
-                         
+             }
+                                   
+                                   
+                                   
+                                   if(volumetype.equals(3L)){
+                                       traceCount=-100L;
+                                     cmpMax=-100L;
+                                     cmpMin=-100L;
+                                     cmpInc=-100L;
+                                     
+                                     inlineMax=-100L;
+                                     inlineMin=-100L;
+                                     inlineInc=-100L;
+                                     xlineMax=-100L;
+                                     xlineMin=-100L;
+                                     xlineInc=-100L;
+                                     dugShotMax=-100L;
+                                     dugShotMin=-100L;
+                                     dugShotInc=-100L;
+                                     dugChannelMax=-100L;
+                                     dugChannelMin=-100L;
+                                     dugChannelInc=-100L;
+                                     offsetMax=-100L;
+                                     offsetMin=-100L;
+                                     offsetInc=-100L;
+                                   }
                                      
                                      /* Long[] values=new Long[dmh.metaHeaders.length];
                                      keyValueExtractor(hdr, values);*/
@@ -390,7 +468,7 @@ futures.add(
                                      hdr.setOffsetMin(offsetMin);
                                      hdr.setOffsetInc(offsetInc);
                                 
-                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): finished storing headers for : "+hdr.getSubsurface()+" on Thread: "+Thread.currentThread().getName());
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): finished storing headers for : "+hdr.getSubsurface().getSubsurface()+" on Thread: "+Thread.currentThread().getName());
                            return null;
              }
         }));//.get();
@@ -558,7 +636,7 @@ futures.add(
                        /// System.out.println("Inside forEach key with key ="+key);
         
          
-                 Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
+                 Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface().getSubsurface(),key).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
                         BufferedReader br=new BufferedReader(isr);
@@ -577,7 +655,7 @@ futures.add(
     
     private String forTraces(Headers hdr) throws IOException{
                       //  System.out.println("Inside forTraces key with NO key");
-                        Process process=new ProcessBuilder(ds.getDugioGetTraces().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface()).start();
+                        Process process=new ProcessBuilder(ds.getDugioGetTraces().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface().getSubsurface()).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
                         BufferedReader br=new BufferedReader(isr);
@@ -598,7 +676,7 @@ futures.add(
         int keycount=0;
         for(String key:dmh.metaHeaders){
             
-                        Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
+                        Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface().getSubsurface(),key).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
                         BufferedReader br=new BufferedReader(isr);
@@ -626,7 +704,7 @@ futures.add(
 
             @Override
             public Void call() throws Exception {
-                Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface(),key).start();
+                Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface().getSubsurface(),key).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
                         BufferedReader br=new BufferedReader(isr);

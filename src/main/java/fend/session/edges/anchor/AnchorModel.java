@@ -6,12 +6,12 @@
 package fend.session.edges.anchor;
 
 import fend.session.edges.LinksModel;
-import fend.session.node.jobs.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import java.io.Serializable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
-import fend.session.node.jobs.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
 
 /**
  *

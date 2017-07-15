@@ -6,15 +6,15 @@
 package db.services;
 
 import db.model.Acquisition;
-import java.util.List;
 
 /**
  *
- * @author sharath
+ * @author sharath nair <sharath.nair@polarcus.com>
  */
 public interface AcquisitionService {
-    
-    public List<Acquisition> getAcquisition();              //return the list of Acquisition parameters. Subsurfacelinename,starting shot pont, ending sp, start time,end time etc.
-     public void createAcquisition(Acquisition acq);
+    public void createAcquisition(Acquisition acq);
+    public Acquisition getAcquisition(Long aid);
+    public void deleteAcquisition(Long aid);
+    public void updateAcquisition(Long aid, Acquisition newAcq);
     
 }

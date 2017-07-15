@@ -6,13 +6,14 @@
 package db.dao;
 
 import db.model.Acquisition;
-import java.util.List;
 
 /**
  *
- * @author sharath
+ * @author sharath nair <sharath.nair@polarcus.com>
  */
 public interface AcquisitionDAO {
-    public List<Acquisition> getAcquisition(); //return a list of ALL subsurfaces shot till date (SELECT * FROM <table> )
     public void createAcquisition(Acquisition acq);
+    public Acquisition getAcquisition(Long aid);
+    public void deleteAcquisition(Long aid);
+    public void updateAcquisition(Long aid, Acquisition newAcq);
 }

@@ -1,6 +1,6 @@
 package fend.session.node.headers.workflows;
 
-import fend.session.node.volumes.VolumeSelectionModel;
+import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +16,9 @@ import java.util.List;
  */
 public class WorkflowVersionModel {
     List<WorkflowVersionTabModel> wfmodel=new ArrayList<>();
-    private VolumeSelectionModel volumeSelectionModel;
+    private VolumeSelectionModelType1 volumeSelectionModel;
     
-    public WorkflowVersionModel(VolumeSelectionModel volmodel) {
+    public WorkflowVersionModel(VolumeSelectionModelType1 volmodel) {
         this.volumeSelectionModel=volmodel;
     }
     
@@ -30,11 +30,11 @@ public class WorkflowVersionModel {
         this.wfmodel = wfmodel;
     }
 
-    public VolumeSelectionModel getVolumeSelectionModel() {
+    public VolumeSelectionModelType1 getVolumeSelectionModel() {
         return volumeSelectionModel;
     }
 
-    public void setVolumeSelectionModel(VolumeSelectionModel volumeSelectionModel) {
+    public void setVolumeSelectionModel(VolumeSelectionModelType1 volumeSelectionModel) {
         this.volumeSelectionModel = volumeSelectionModel;
     }
     
