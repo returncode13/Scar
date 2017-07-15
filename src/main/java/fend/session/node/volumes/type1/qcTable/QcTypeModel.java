@@ -47,7 +47,7 @@ public class QcTypeModel {
     }
     
     public BooleanProperty passQcProperty() {
-    System.out.println("fend.session.node.volumes.qcTable.QcTypeModel.passQcProperty(): Returning: "+passQc.get()+" for seq: "+name);
+    System.out.println("fend.session.node.volumes.qcTable.QcTypeModel.passQcProperty(): Returning: "+passQc.get()+" for type: "+name+" id: "+this);
     return passQc;
     }
     

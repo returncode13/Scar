@@ -313,22 +313,22 @@ public class JobStepType1Model implements JobStepType0Model{
   private  QcTableModel qcTableModel;
     private qcCheckListModel qcCheckListModel;
     
-    private QcMatrixModel qcMatrixModel;
+    /* private QcMatrixModel qcMatrixModel;
     
-
+    
     public QcMatrixModel getQcMatrixModel() {
-        if(qcMatrixModel==null) {
-            qcMatrixModel=new QcMatrixModel();
-            //qcMatrixModel.setVmodel(this);
-            qcMatrixModel.setJobmodel(this);
-        }
-        return qcMatrixModel;
+    if(qcMatrixModel==null) {
+    qcMatrixModel=new QcMatrixModel();
+    //qcMatrixModel.setVmodel(this);
+    qcMatrixModel.setJobmodel(this);
     }
-
-    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
-        this.qcMatrixModel = qcMatrixModel;
+    return qcMatrixModel;
     }
     
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+    this.qcMatrixModel = qcMatrixModel;
+    }
+    */
     public QcTableModel getQcTableModel() {
         if(qcTableModel==null){
             qcTableModel=new QcTableModel();

@@ -35,7 +35,7 @@ public class QcTableSequences {
     private final StringProperty subsurface = new SimpleStringProperty();
     private final LongProperty sequenceNumber = new SimpleLongProperty();
     SequenceHeaders sequence;
-    List<QcTypeModel> qctypes=new ArrayList();
+    List<QcTypeModel> qctypes=null;
     List<QcTableSubsurfaces> qcSubs=new ArrayList<>();
     
      Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
@@ -51,34 +51,16 @@ public class QcTableSequences {
         subsurface.set(this.sequence.getSubsurface());
         System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.setSequence(): added seq: "+sequenceNumber.get()+" and sub: "+subsurface.get());
         
-        Map<QcTypeModel,BooleanProperty> fmap=new HashMap<>();
+        /* Map<QcTypeModel,BooleanProperty> fmap=new HashMap<>();
         for (Iterator<QcTypeModel> iteratorq = qctypes.iterator(); iteratorq.hasNext();) {
-                QcTypeModel nextq = iteratorq.next();
-                 PassBP p=new PassBP();
-                fmap.put(nextq,p.passProperty());
-        }
+        QcTypeModel nextq = iteratorq.next();
+        PassBP p=new PassBP();
+        fmap.put(nextq,p.passProperty());
+        }*/
        
         
         
-        
-        for(SubSurfaceHeaders subs: sequence.getSubsurfaces()){
-            QcTableSubsurfaces qsub=new QcTableSubsurfaces();
-            List<QcTypeModel> qctypescopy=new ArrayList<>();
-            for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
-                QcTypeModel next1 = iterator1.next();
-                QcTypeModel n=new QcTypeModel();
-                n.setId(next1.getId());
-                n.setName(next1.getName());
-                n.setPassQc(next1.isPassQc());
-                qctypescopy.add(n);
-                
-            }
-            qsub.setQctypes(qctypescopy);
-            qsub.setQctypeMap(fmap);
-            qsub.setSequence(this.sequence);
-            qsub.setSub(subs);              //sequence and subsurface information is set within class
-            qcSubs.add(qsub);
-        }
+       
     }
     
     
@@ -140,6 +122,34 @@ public class QcTableSequences {
 
     public void setQctypeMap(Map<QcTypeModel, BooleanProperty> qctypeMap) {
         this.qctypeMap = qctypeMap;
+    }
+
+    void loadQcTypes() {
+        
+        for(SubSurfaceHeaders subs: sequence.getSubsurfaces()){
+            QcTableSubsurfaces qsub=new QcTableSubsurfaces();
+            
+            //    System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.setSequence()  qsub.getQctypes(): returned null");
+            List<QcTypeModel> qctypescopy=new ArrayList<>();
+            for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
+                QcTypeModel next1 = iterator1.next();
+                QcTypeModel n=new QcTypeModel();
+                n.setId(next1.getId());
+                n.setName(next1.getName());
+                n.setPassQc(next1.isPassQc());
+                qctypescopy.add(n);
+               // qctypescopy.add(next1);
+                
+            }
+            
+            qsub.setQctypes(qctypescopy);
+                 
+            
+         //   qsub.setQctypeMap(fmap);
+            qsub.setSequence(this.sequence);
+            qsub.setSub(subs);              //sequence and subsurface information is set within class
+            qcSubs.add(qsub);
+        }
     }
     
     

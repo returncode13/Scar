@@ -33,7 +33,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
     private final LongProperty sequenceNumber = new SimpleLongProperty();
     SubSurfaceHeaders sub;
     SequenceHeaders sequence;
-    List<QcTypeModel> qcfields=new ArrayList();
+    List<QcTypeModel> qcfields=null;
     
    // Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
     
