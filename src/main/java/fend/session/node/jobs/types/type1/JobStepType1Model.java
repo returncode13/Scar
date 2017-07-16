@@ -333,11 +333,13 @@ public class JobStepType1Model implements JobStepType0Model{
         if(qcTableModel==null){
             qcTableModel=new QcTableModel();
         }
+        qcTableModel.setJobmodel(this);
         return qcTableModel;
     }
 
-    public void setQcTableModel(QcTableModel qcMatrixModel) {
-        this.qcTableModel = qcMatrixModel;
+    public void setQcTableModel(QcTableModel qcTableModel) {
+        this.qcTableModel = qcTableModel;
+        this.qcTableModel.setJobmodel(this);
     }
     
      public qcCheckListModel getQcCheckListModel() {

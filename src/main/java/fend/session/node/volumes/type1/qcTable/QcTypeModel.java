@@ -5,6 +5,7 @@
  */
 package fend.session.node.volumes.type1.qcTable;
 
+import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,7 +15,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcTypeModel {
+public class QcTypeModel implements Comparator<QcTypeModel>,Comparable<QcTypeModel>{
     String name;
     Long id;
     
@@ -52,7 +53,9 @@ public class QcTypeModel {
     }
     
     
-    
+    public int compareTo(QcTypeModel q1){
+        return (this.id).compareTo(q1.id);
+    }
     
     
     
@@ -114,6 +117,11 @@ public class QcTypeModel {
     return qcStatus;
     }
     */
+
+    @Override
+    public int compare(QcTypeModel o1, QcTypeModel o2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

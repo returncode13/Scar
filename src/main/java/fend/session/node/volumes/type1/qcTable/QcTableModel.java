@@ -77,55 +77,7 @@ public class QcTableModel {
     
     
     public List<QcTableSequences> getQcTableSequences() {
-        /* qcTableSequences.clear();
-        qctypes=qcMatrixModel.getQcTypeModels();
-        Map<QcTypeModel,BooleanProperty> fmap=new HashMap<>();
-        for (Iterator<QcTypeModel> iteratorq = qctypes.iterator(); iteratorq.hasNext();) {
-        QcTypeModel nextq = iteratorq.next();
-        PassBP p=new PassBP();
-        fmap.put(nextq,p.passProperty());
-        }
         
-        
-        for (Iterator<QcTypeModel> iterator = qctypes.iterator(); iterator.hasNext();) {
-        QcTypeModel next = iterator.next();
-        System.out.println("fend.session.node.volumes.qcTable.QcTableModel.getQcTableSequences(): qctypes: "+next.getName());
-        }
-        
-        
-        for (Iterator<SequenceHeaders> iterator = sequences.iterator(); iterator.hasNext();) {
-        SequenceHeaders next = iterator.next();
-        QcTableSequences q=new QcTableSequences();;
-        //  System.out.println("fend.session.node.volumes.qcTable.QcTableModel.getQcTableSequences(): adding seq: "+next.getSequenceNumber());
-        if(q.getQctypes()==null){
-        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableModel.getQcTableSequences(): q.getQcTypes() is NULL");
-        List<QcTypeModel> qctypescopy=new ArrayList<>();
-        for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
-        QcTypeModel next1 = iterator1.next();
-        QcTypeModel n=new QcTypeModel();
-        n.setId(next1.getId());
-        n.setName(next1.getName());
-        n.setPassQc(next1.isPassQc());
-        qctypescopy.add(n);
-        //qctypescopy.add(next1);
-        
-        }
-        
-        q.setQctypes(qctypescopy);
-        }else{
-        q.setQctypes(q.getQctypes());
-        }
-        // ObservableList<QcTypeModel> o=FXCollections.observableList(qctypes);
-        
-        
-        //q.setQcs(o);
-        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableModel.getQcTableSequences(): Adding seq: "+next.getSequenceNumber());
-        q.setSequence(next);
-        q.setQctypeMap(fmap);
-        
-        qcTableSequences.add(q);
-        
-        }*/
         return qcTableSequences;
     }
 
@@ -177,7 +129,9 @@ public class QcTableModel {
             //q.setQcs(o);
             System.out.println("fend.session.node.volumes.type1.qcTable.QcTableModel.getQcTableSequences(): Adding seq: "+seq.getSequenceNumber());
             q.setSequence(seq);
+            q.setJobModel(jobmodel);
             q.loadQcTypes();
+            
             //q.setQctypeMap(fmap);
             
             qcTableSequences.add(q);

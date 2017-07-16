@@ -156,6 +156,7 @@ public class QcTableController extends Stage {
                          System.out.println("subObj: "+((QcTableSubsurfaces)qseq).getSub());
                      System.out.println("subSeqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber());
                      System.out.println(" and subSurface : "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                         System.out.println("iii: "+iii);
                      bprop=(SimpleBooleanProperty) ((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty();
                      }
                      else        

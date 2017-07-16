@@ -8,10 +8,12 @@ package fend.session.node.volumes.type1.qcTable;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections4.comparators.ComparableComparator;
 
 /**
  *
@@ -22,7 +24,7 @@ public class QcMatrixModel {
     Map<QcTypeModel,Boolean> qcTypePresMap=new HashMap<>();
     JobStepType0Model jobmodel;
    // List<QcMatrixRecord> qcmatrixRecords;
-    Map<QcTypeModel,Boolean> checkMap=new HashMap<>();      //use this map for keeping track of what's been checked/unchecked from the presMap
+    Map<QcTypeModel,Boolean> checkMap=new HashMap<>();      //use this map for keeping track of what's been checked/unchecked from the presMap <--not used anywhere
     
     
     public JobStepType0Model getJobmodel() {
@@ -80,6 +82,7 @@ public class QcMatrixModel {
     public List<QcTypeModel> getQcTypeModels(){   //the qctypes chosen for this job step
         Set<QcTypeModel> keys=qcTypePresMap.keySet();
         List<QcTypeModel> types=new ArrayList<>(keys);
+        Collections.sort(types);
         
         
         
