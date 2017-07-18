@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import midend.doubt.Doubt;
+import mid.doubt.Doubt;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 

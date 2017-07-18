@@ -235,6 +235,30 @@ public class QcTableSequences {
                     System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.loadQcTypes()");
                     List<QcTable> qctableObjList=qctserv.getQcTableFor(h);
                     
+                    if(qctableObjList.isEmpty()){
+                         
+                        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.loadQcTypes(): list is empty. creating copies of qctypes");
+            
+                        for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
+                           QcTypeModel next1 = iterator1.next();
+                           QcTypeModel n=new QcTypeModel();
+                           n.setId(next1.getId());
+                           n.setName(next1.getName());
+                           n.setPassQc(next1.isPassQc());
+                           qctypescopy.add(n);
+                          // qctypescopy.add(next1);
+
+                       }
+
+                        qsub.setQctypes(qctypescopy);
+                    qcSubs.add(qsub);
+                        
+                    }else{
+                        
+                   
+                    
+                    
+                    
                     for (Iterator<QcTable> iterator1 = qctableObjList.iterator(); iterator1.hasNext();) {
                         QcTable next = iterator1.next();
                         QcTypeModel n=new QcTypeModel();
@@ -248,6 +272,7 @@ public class QcTableSequences {
                     }
                      qsub.setQctypes(qctypescopy);
                     qcSubs.add(qsub);
+                     }
 
                 }else{
                     
