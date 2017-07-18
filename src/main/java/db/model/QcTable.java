@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="QcTable",schema="obpmanager")
-public class QcTable {
+public class QcTable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idQcTable;
@@ -38,18 +39,22 @@ public class QcTable {
     @JoinColumn(name="qcmatrix_fk",nullable=false)
     private QcMatrix qcmatrix;
     
+    @ManyToOne
+    @JoinColumn(name="headers_fk",nullable=false)
+    private Headers headers;
     
-    @Column(name="Seq")
+    
+    /*  @Column(name="Seq")
     private Long sequenceNumber;
     
     @Column(name="Subsurface",length=1025)
-    private String subsurface;
+    private String subsurface;*/
     
     @Column(name="time")
     private String time;
     
     @Column(name="result")
-    private String result;
+    private Boolean result;
     
     @Column(name="comment",length=100000)
     private String comment;
@@ -69,21 +74,21 @@ public class QcTable {
     public void setQctype(QcType qctype) {
     this.qctype = qctype;
     }*/
-    public Long getSequenceNumber() {
-        return sequenceNumber;
+    /* public Long getSequenceNumber() {
+    return sequenceNumber;
     }
-
+    
     public void setSequenceNumber(Long sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
+    this.sequenceNumber = sequenceNumber;
     }
-
+    
     public String getSubsurface() {
-        return subsurface;
+    return subsurface;
     }
-
+    
     public void setSubsurface(String subsurface) {
-        this.subsurface = subsurface;
-    }
+    this.subsurface = subsurface;
+    }*/
 
     public String getTime() {
         return time;
@@ -93,14 +98,15 @@ public class QcTable {
         this.time = time;
     }
 
-    public String getResult() {
+    public Boolean getResult() {
         return result;
     }
 
-    public void setResult(String result) {
+    public void setResult(Boolean result) {
         this.result = result;
     }
 
+   
     public String getComment() {
         return comment;
     }
@@ -123,6 +129,16 @@ public class QcTable {
     public Long getIdQcTable() {
         return idQcTable;
     }
+
+    public Headers getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Headers headers) {
+        this.headers = headers;
+    }
+    
+    
     
     
     

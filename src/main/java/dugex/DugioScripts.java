@@ -68,7 +68,7 @@ public class DugioScripts implements Serializable{
      
      
       private String subsurfaceLogContent="#!/bin/bash\n" +
-"for i in $1/*; do sed '30q;2,30p;d' $i | awk '/lineName|VERSION/ {print  \"'$i' \"$0}' ORS=\" \"  | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}' ;done";
+"for i in $1/*; do sed '100q;2,100p;d' $i | awk '/lineName|VERSION/ {print  \"'$i' \"$0}' ORS=\" \"  | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}' ;done";
       
       private String logstatusContentCompletedSuccessfully="#!/bin/bash\n" +
 " tail -100 $1 |awk '/JOB.*END.*STATUS=0/ {count++} END {if(count>0) print \"'$1' \"count}' ";

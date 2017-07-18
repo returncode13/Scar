@@ -5,6 +5,7 @@
  */
 package db.dao;
 
+import db.model.Headers;
 import db.model.QcMatrix;
 import db.model.QcTable;
 import db.model.QcType;
@@ -24,5 +25,6 @@ public interface QcTableDAO {
   //  public List<QcTable> getQcTableFor(Volume v);
   //  public List<QcTable> getQcTableFor(Volume v,QcType qctype);               //for column wise retrieval
     public List<QcTable> getQcTableFor(QcMatrix qmx);
-    
+    public List<QcTable> getQcTableFor(Headers h);                      
+    public List<QcTable> getQcTableFor(QcMatrix qmx,Headers h);
 }

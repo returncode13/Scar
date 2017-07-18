@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import midend.doubt.Doubt;
+import mid.doubt.Doubt;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -333,11 +333,13 @@ public class JobStepType1Model implements JobStepType0Model{
         if(qcTableModel==null){
             qcTableModel=new QcTableModel();
         }
+        qcTableModel.setJobmodel(this);
         return qcTableModel;
     }
 
-    public void setQcTableModel(QcTableModel qcMatrixModel) {
-        this.qcTableModel = qcMatrixModel;
+    public void setQcTableModel(QcTableModel qcTableModel) {
+        this.qcTableModel = qcTableModel;
+        this.qcTableModel.setJobmodel(this);
     }
     
      public qcCheckListModel getQcCheckListModel() {

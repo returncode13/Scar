@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
-import midend.doubt.Doubt;
+import mid.doubt.Doubt;
 
 /**
  *

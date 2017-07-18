@@ -13,6 +13,7 @@ import db.model.Sessions;
 import db.model.Volume;
 import java.util.List;
 import db.dao.QcTableDAO;
+import db.model.Headers;
 import db.model.QcMatrix;
 
 /**
@@ -56,6 +57,16 @@ public class QcTableServiceImpl implements QcTableService{
     @Override
     public List<QcTable> getQcTableFor(QcMatrix qmx) {
         return qcmDAO.getQcTableFor(qmx);
+    }
+
+    @Override
+    public List<QcTable> getQcTableFor(Headers h) {
+        return qcmDAO.getQcTableFor(h);
+    }
+
+    @Override
+    public List<QcTable> getQcTableFor(QcMatrix qmx, Headers h) {
+        return qcmDAO.getQcTableFor(qmx, h);
     }
     
     

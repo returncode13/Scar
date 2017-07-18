@@ -19,7 +19,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import midend.doubt.Doubt;
+import mid.doubt.Doubt;
 
 /**
  *

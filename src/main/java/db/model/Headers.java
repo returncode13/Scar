@@ -44,6 +44,9 @@ public class Headers implements Serializable{
     @OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<DoubtStatus> doubtstatus;
     
+     @OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<QcTable> qctable;
+    
     
     
     /* @Column(name= "Seq")

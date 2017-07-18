@@ -5,6 +5,7 @@
  */
 package db.dao;
 
+import db.model.Headers;
 import db.model.QcMatrix;
 import db.model.QcTable;
 import db.model.QcType;
@@ -61,8 +62,9 @@ public class QcTableDAOImpl implements QcTableDAO{
             QcTable h= (QcTable) session.get(QcTable.class, qid);
            // h.setVolume(newQ.getVolume());
             h.setTime(newQ.getTime());
-            h.setSequenceNumber(newQ.getSequenceNumber());
-            h.setSubsurface(newQ.getSubsurface());
+            /*h.setSequenceNumber(newQ.getSequenceNumber());
+            h.setSubsurface(newQ.getSubsurface());*/
+            h.setHeaders(newQ.getHeaders());
             h.setResult(newQ.getResult());
           //  h.setQctype(newQ.getQctype());
           h.setQcmatrix(newQ.getQcmatrix());
@@ -143,6 +145,45 @@ public class QcTableDAOImpl implements QcTableDAO{
         transaction=session.beginTransaction();
         Criteria criteria=session.createCriteria(QcTable.class);
         criteria.add(Restrictions.eq("qcmatrix", qmx));
+        result=criteria.list();
+        transaction.commit();
+        }catch(Exception e){
+        e.printStackTrace();
+        }finally{
+        session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<QcTable> getQcTableFor(Headers h) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<QcTable> result=null;
+        try{
+        transaction=session.beginTransaction();
+        Criteria criteria=session.createCriteria(QcTable.class);
+        criteria.add(Restrictions.eq("headers", h));
+        result=criteria.list();
+        transaction.commit();
+        }catch(Exception e){
+        e.printStackTrace();
+        }finally{
+        session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<QcTable> getQcTableFor(QcMatrix qmx, Headers h) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<QcTable> result=null;
+        try{
+        transaction=session.beginTransaction();
+        Criteria criteria=session.createCriteria(QcTable.class);
+        criteria.add(Restrictions.eq("qcmatrix", qmx));
+        criteria.add(Restrictions.eq("headers", h));
         result=criteria.list();
         transaction.commit();
         }catch(Exception e){
