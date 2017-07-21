@@ -38,6 +38,8 @@ import db.services.ParentService;
 import db.services.ParentServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
+import db.services.SessionsService;
+import db.services.SessionsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.overview.OverviewController;
@@ -566,7 +568,7 @@ public class SessionController implements Initializable {
     
     
    public void setAllLinksAndJobsForCommit(){
-       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit()");
+       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit() entered with SessionModel Id: "+model.getId()+" : "+model.getName());
        for (Iterator<Node> iterator = rightInteractivePane.getChildren().iterator(); iterator.hasNext();) {
             Node next = iterator.next();
             if(next instanceof  Links)
@@ -581,7 +583,14 @@ public class SessionController implements Initializable {
             
             
         }
-       
+       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): Debug for session: ");
+       SessionsService sstemp=new SessionsServiceImpl();
+       Sessions cbefore= sstemp.getSessions(model.getId());
+       if(cbefore==null){
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): Before deleting... couldn't find an entry for id: "+model.getId());
+       }else{
+            System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): Before deleting... Found an entry for id: "+cbefore.getIdSessions()+" : "+cbefore.getNameSessions());
+       }
        List<JobStepType0Model> jobsToBeDeleted=model.getJobsToBeDeleted();
        
        for (Iterator<JobStepType0Model> iterator = jobsToBeDeleted.iterator(); iterator.hasNext();) {
@@ -640,7 +649,7 @@ public class SessionController implements Initializable {
            
        }
        
-           model.setListOfJobs(obsModelList);
+           //model.setListOfJobs(obsModelList);
             
             for (Iterator<JobStepType0Model> iterator = jobStepModelList.iterator(); iterator.hasNext();) {
            JobStepType0Model next = iterator.next();
@@ -659,6 +668,15 @@ public class SessionController implements Initializable {
             //model.setListOfLinks(linksModelList);
             
             System.out.println("SC: model has ID: "+model.getId());
+           Sessions cafter= sstemp.getSessions(model.getId());
+       if(cafter==null){
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): After deleting... couldn't find an entry for id: "+model.getId());
+       }else{
+            System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): After deleting... Found an entry for id: "+cafter.getIdSessions()+" : "+cafter.getNameSessions());
+       } 
+            
+            
+            
    }
    
    

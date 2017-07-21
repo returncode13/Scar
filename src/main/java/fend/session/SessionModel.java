@@ -114,6 +114,12 @@ public class SessionModel implements Serializable{
     }
 
     List<JobStepType0Model> getJobsToBeDeleted() {
+        System.out.println("fend.session.SessionModel.getJobsToBeDeleted(): returning a list of size: "+jobsToBeDeleted.size());
+        for (Iterator<JobStepType0Model> iterator = jobsToBeDeleted.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
+            System.out.println("fend.session.SessionModel.getJobsToBeDeleted(): returning "+next.getId()+" : "+next.getJobStepText());
+            
+        }
         return jobsToBeDeleted;
     }
 

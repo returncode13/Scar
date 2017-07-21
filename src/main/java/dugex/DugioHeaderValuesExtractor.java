@@ -472,6 +472,12 @@ futures.add(
                            return null;
              }
         }));//.get();
+
+                if(count<10){
+                    for(Future f:futures){
+                        f.get();
+                    }
+                }
                if(count%50==0){
                    for(Future f:futures){
                        f.get();
@@ -607,7 +613,14 @@ futures.add(
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
-        }*/catch (Exception ex) {
+        }*/
+        catch(ExecutionException ex){
+            System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): "+ex.getMessage());
+        }
+        catch(ArrayIndexOutOfBoundsException aob){
+            System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): "+aob.getMessage());
+        }
+        catch (Exception ex) {
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
              

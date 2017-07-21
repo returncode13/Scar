@@ -118,12 +118,31 @@ public class HeadersViewController extends Stage implements Initializable {
      });
      */
      
+     //Begin
+     
+     
+     
+     //End
+     
+     
+     
+     
+     
+     
      treetableView.setRowFactory(ttv->{
          ContextMenu contextMenu = new ContextMenu();
+         //ContextMenu contextMenuOverride = new ContextMenu();
          MenuItem showLogsMenuItem=new MenuItem("Logs");
          MenuItem showWorkFlowVersion=new MenuItem("Workflow Versions");
+         MenuItem explainDoubt=new MenuItem("Explain this Doubt");
+         MenuItem showOverride=new MenuItem("Override Doubt");
          contextMenu.getItems().add(showLogsMenuItem);
          contextMenu.getItems().add(showWorkFlowVersion);
+         
+         /*contextMenuOverride.getItems().add(showLogsMenuItem);
+         contextMenuOverride.getItems().add(showWorkFlowVersion);
+         contextMenuOverride.getItems().add(showOverride);*/
+         
          TreeTableRow<SequenceHeaders> row=new TreeTableRow<SequenceHeaders>(){
              
              @Override
@@ -142,17 +161,36 @@ public class HeadersViewController extends Stage implements Initializable {
                     setContextMenu(contextMenu);
                 }if(item!=null && item.getDoubt().isDoubt() && item.isDependency()){
                     setStyle("-fx-background-color:purple");
-                    setTooltip(new Tooltip(item.getDoubt().getErrorMessage()));
+                    //setTooltip(new Tooltip(item.getDoubt().getErrorMessage()));
+                    contextMenu.getItems().add(explainDoubt);
+                    contextMenu.getItems().add(showOverride);
                     setContextMenu(contextMenu);
                 }
                 else
                 {
                     //setStyle("-fx-background-color:green");
                    // setStyle(../landingResources/landing.css)
+                    if(contextMenu.getItems().contains(showOverride)){
+                        contextMenu.getItems().remove(showOverride);
+                    }
+                    if(contextMenu.getItems().contains(explainDoubt)){
+                        contextMenu.getItems().remove(explainDoubt);
+                    }
+                    
                     setContextMenu(contextMenu);
                 }
             }
          };
+         
+       explainDoubt.setOnAction(evt->{
+       SequenceHeaders seq=row.getItem();
+       System.out.println("fend.session.node.headers.HeadersViewController.setModel(): explain Doubt clicked for "+seq.getSubsurface()+ " doubt is :"+seq.getDoubt().isDoubt()+" message is: "+seq.getDoubt().getErrorMessage());
+       });
+         
+       showOverride.setOnAction(evt->{
+           SequenceHeaders seq=row.getItem();
+           System.out.println("fend.session.node.headers.HeadersViewController.setModel(): override clicked for "+seq.getSubsurface()+ " doubt is :"+seq.getDoubt().isDoubt());
+       });
          
          showLogsMenuItem.setOnAction(evt->{
              SequenceHeaders seq=row.getItem();

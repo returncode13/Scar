@@ -657,7 +657,7 @@ public class LandingController implements Initializable,Serializable {
                 Child next1 = iterator1.next();
                 Long childjobId=next1.getChild();
                 SessionDetails childssd=ssDserv.getSessionDetails(childjobId);
-                //System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
+                System.out.println(beJobStep.getNameJobStep()+" :has Child: "+ childssd.getJobStep().getNameJobStep());
                 childAndJobMap.put(beJobStep, childssd.getJobStep());
                 
                 
