@@ -256,6 +256,101 @@ public class DugioHeaderValuesExtractor {
         }
         
         
+        
+        
+        /*
+        Volume type 2 :Segd load 
+        Start
+        */
+        
+        if(volumeType.equals(2L)){
+             headers.clear();
+            try{
+            ExecutorService executorService= Executors.newFixedThreadPool(1);
+            executorService.submit(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    synchronized(this){
+                        Process process=new ProcessBuilder(ds.getGetTimeSubsurfaces().getAbsolutePath(),volume.getAbsolutePath()).start();
+                    InputStream is = process.getInputStream();
+                    InputStreamReader isr=new InputStreamReader(is);
+                    BufferedReader br=new BufferedReader(isr);
+                    String line;
+                    
+                    while((line=br.readLine())!=null){
+                        String time = line.substring(0,line.indexOf(" "));
+                        String lineName= line.substring(line.indexOf(" ")+1,line.length());
+                        String seq=line.substring(line.indexOf("_")-3,line.indexOf("_"));
+                        Headers hdr=new Headers();
+                        
+                       // if(headers.size()==1) break;
+                        
+                       // System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Found Subsurface "+lineName);
+                        
+                        //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey(lineName));
+                        //Subsurface subexists=subserv.getSubsurfaceObjBysubsurfacename(lineName);
+                         //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey());
+                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+checkMap.containsKey(lineName));
+                       // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                       if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && checkMap.get(lineName).getTimeStamp().equals(time)){
+                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
+                            
+                        continue;
+                        }
+                        //if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
+                        if(!subsurfaceTimestamp.isEmpty() && checkMap.containsKey(lineName) && !checkMap.get(lineName).getTimeStamp().equals(time)){
+                            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+checkMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
+                            Set<Sub> keysubs=subsurfaceTimestamp.keySet();
+                            Sub skey=null;
+                            for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
+                                Sub next = iterator.next();
+                                if(next.getSubsurfaceName().equalsIgnoreCase(lineName)){
+                                    skey=next;
+                                    break;
+                                }
+                                
+                            }
+                            
+                            Headers h=subsurfaceTimestamp.get(skey);
+                            h.setModified(Boolean.TRUE);
+                            Long ver=h.getNumberOfRuns();
+                            h.setNumberOfRuns(++ver);
+                            h.setTimeStamp(time);
+                            existingHeaders.remove(h);
+                            headers.add(h);
+                            continue;
+                        //continue; //Comment this out later when implementing
+                        }
+                       System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+lineName);
+                        Subsurface hdrsub=subserv.getSubsurfaceObjBysubsurfacename(lineName);
+                        //hdr.setSubsurface(lineName);
+                         hdr.setSubsurface(hdrsub);
+                        hdr.setTimeStamp(time);
+                        //hdr.setSequenceNumber(Long.valueOf(seq));
+                        hdr.setSequence(hdrsub.getSequence());
+                        headers.add(hdr);
+                        
+                    }
+                    return null;
+                  }
+                    
+                }
+            }).get();
+        }catch(ExecutionException ex){
+        ex.printStackTrace();
+        
+        } catch (InterruptedException ex) {
+        Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
+        
+        /*
+        Volume type 2 :Segd load
+        End
+        */
+        
+        
         if(volumeType.equals(3L)){              //acq type
             headers.clear();
             for (Iterator<Subsurface> iterator = subList.iterator(); iterator.hasNext();) {
@@ -325,6 +420,11 @@ futures.add(
                                      Long offsetMax=0L;
                                      Long offsetMin=0L;
                                      Long offsetInc=0L;
+                                     
+                                     /*
+                                     Volume Type: Denoise, etc .volumes with logs in ../000_scratch/logs
+                                     */
+                                     
                                    if(volumetype.equals(1L))
                                      {
                                          try{
@@ -373,6 +473,67 @@ futures.add(
                                      offsetInc=-1L;
                         }
              }
+                                   
+                                   
+                                   /*
+                                   Volume Type: SEGD LOAD
+                                   Start
+                                   */
+                                   if(volumetype.equals(2L))
+                                     {
+                                         try{
+                                     traceCount=Long.valueOf(forTraces(hdr));
+                                     cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                                     cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                                     cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                                     
+                                     inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                                     inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                                     inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                                     xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                                     xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                                     xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                                     dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                                     dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                                     dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                                     dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                                     dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                                     dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                                     offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                                     offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                                     offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                        
+                        }
+                        catch(NumberFormatException nfe){
+                                     traceCount=-1L;
+                                     cmpMax=-1L;
+                                     cmpMin=-1L;
+                                     cmpInc=-1L;
+                                     
+                                     inlineMax=-1L;
+                                     inlineMin=-1L;
+                                     inlineInc=-1L;
+                                     xlineMax=-1L;
+                                     xlineMin=-1L;
+                                     xlineInc=-1L;
+                                     dugShotMax=-1L;
+                                     dugShotMin=-1L;
+                                     dugShotInc=-1L;
+                                     dugChannelMax=-1L;
+                                     dugChannelMin=-1L;
+                                     dugChannelInc=-1L;
+                                     offsetMax=-1L;
+                                     offsetMin=-1L;
+                                     offsetInc=-1L;
+                        }
+             }
+                                   
+                                   /*
+                                   Volume Type: SEGD LOAD
+                                   End
+                                   */
+                                   
+                                   
                                    
                                    
                                    

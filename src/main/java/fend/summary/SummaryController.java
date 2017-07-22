@@ -14,6 +14,7 @@ import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -211,15 +212,48 @@ public class SummaryController extends Stage{
                            try{
                              
                                Long type= param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
-                               if(!type.equals(3L)){
+                                /*
+                             Vol type 1L : denoise..etc
+                               Start
+                             */
+                               
+                               if(type.equals(1L)){
                                    VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                    return vol1.logstatusMapForSeqProperty().valueAt(param.getValue().getSeq());
-                               }else{
+                               }
+                               
+                              /*
+                             Vol type 1L : denoise..etc
+                             End
+                             */
+                             
+                             /*
+                             Vol type 2L :segdLoad
+                             Start
+                             */
+                               if(type.equals(2L)){
+                                   VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                                   return vol2.logstatusMapForSeqProperty().valueAt(param.getValue().getSeq());
+                               }
+                               /*
+                             Vol type 2L : segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Vol type 3L : acq
+                             Start
+                             */
+                               
+                               if(type.equals(3L)){
                                    AcquisitionVolumeModel acq=(AcquisitionVolumeModel) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                    return acq.getRunStatus();
                                }
                                
-                                
+                                 /*
+                             Vol type 3L : acq
+                             end
+                             */
                                
                            }catch(ArrayIndexOutOfBoundsException ae){
                                return param.getValue().notApplicableProperty();
@@ -229,6 +263,7 @@ public class SummaryController extends Stage{
                            }
                            
                          // return  param.getValue().runProperty();
+                        return null;
                         }
                     });
                     
@@ -246,7 +281,11 @@ public class SummaryController extends Stage{
                              
                              
                              Long type=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
-                             if(!type.equals(3L)){
+                              /*
+                             Vol type 1L : denoise..etc
+                             Start
+                             */
+                             if(type.equals(1L)){
                                   try{
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
@@ -283,14 +322,71 @@ public class SummaryController extends Stage{
                            }
                             
                             
-                        }else{
+                        }
+                              /*
+                             Vol type 1L : denoise..etc
+                             End
+                             */
+                             
+                             /*
+                             Vol type 2L :segdLoad
+                             Start
+                             */
+                             if(type.equals(2L)){
+                                  try{
+                                 VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                                 SequenceHeaders ss=vol2.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                             
+                               if(ss==null){
+                                   return param.getValue().notApplicableDependencyProperty();
+                               }
+                               else{
+                                   String dep=new String();
+                                   Boolean Pf=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model().getPendingFlagProperty().getValue();
+                                   //Boolean Qf=ss.getQcAlert();
+                                   Boolean Qf=ss.getDoubt().isDoubt();
+                                   System.out.println(".call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
+                                   
+                                   if(Pf){
+                                       dep="";
+                                   }
+                                   if(Qf){
+                                       dep="Q";
+                                   }
+                                   /*if(Pf && Qf){
+                                   dep="Q";
+                                   }*/
+                                   if(!Qf){
+                                       dep="OK";
+                                   }
+                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).dependencyProperty().set(dep);
+                                   return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).dependencyProperty();
+                               }
+                            }catch(ArrayIndexOutOfBoundsException ae){
+                                return param.getValue().notApplicableProperty();
+                            }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableProperty();
+                           }
+                            
+                            
+                        }
+                             /*
+                             Vol type 2L : segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Vol type 3L : acq
+                             Start
+                             */
+                             if(type.equals(3L)){
                              
                                  AcquisitionVolumeModel acq=(AcquisitionVolumeModel) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  return acq.getDependency();
                              }
                             
                             
-                            
+                            return null;
                         }
                     });
                     
@@ -320,7 +416,12 @@ public class SummaryController extends Stage{
                             // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).insightFlagProperty();
                             
                              Long type=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
-                             if(!type.equals(3L)){
+                              /*
+                             Vol type 1L : denoise
+                             Start
+                             */
+                             
+                             if(type.equals(1L)){
                                   try{
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                             
@@ -350,11 +451,67 @@ public class SummaryController extends Stage{
                                 return param.getValue().notApplicableProperty();
                            }
                         }
-                             else{
+                             
+                               /*
+                             Vol type 1L : denoise
+                             End
+                             */
+                             
+                             /*
+                             Vol type 2L : segdLoad
+                             Start
+                             
+                             */
+                             if(type.equals(2L)){
+                                  try{
+                                 VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                            
+                            
+                            
+                            
+                             
+                            //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                            SequenceHeaders ss=vol2.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableProperty(); 
+                               }
+                               else{
+                                   String inss=new String("");
+                                   Boolean insf=ss.insightFlagProperty().getValue();
+                                   if(insf){
+                                       inss="FAIL";
+                                   }else{
+                                       inss="PASS";
+                                   }
+                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().setValue(inss);
+                                   return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                               }
+                            }catch(ArrayIndexOutOfBoundsException ae){
+                                return param.getValue().notApplicableProperty();
+                            }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableProperty();
+                           }
+                        }
+                             /*
+                             Vol type 2L : segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Vol type 3L : acq
+                             Start
+                             */
+                             
+                             if(type.equals(3L)){
                                  AcquisitionVolumeModel acq=(AcquisitionVolumeModel) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  return acq.getInsight();
                              }
+                              /*
+                             Vol type 3L : acq
+                             End
+                             */
                              
+                             return null;
                         }
                     });
                     wf.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
@@ -364,7 +521,13 @@ public class SummaryController extends Stage{
                            // return  param.getValue().wfversionProperty().asObject();
                           //  return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).workflowVersionProperty().asObject();
                           Long type=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
-                             if(!type.equals(3L)){
+                             
+                          /*
+                             Vol type 1L: denoise
+                             Start
+                             */
+                          
+                          if(type.equals(1L)){
                                   try{
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                             
@@ -386,14 +549,67 @@ public class SummaryController extends Stage{
                                 return param.getValue().notApplicableProperty();
                            }
                            
-                        }else{
+                        }
+                          /*
+                             Vol type 1L: denoise
+                             End
+                             */
+                          
+                             /*
+                             Vol type 2L: segdload
+                             Start
+                             */
+                             if(type.equals(2L)){
+                                  try{
+                                 VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                            
+                            
+                            
+                            
+                             
+                            //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                            SequenceHeaders ss=vol2.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                               if(ss==null){
+                                   return param.getValue().notApplicableProperty(); 
+                               }
+                               else{
+                                   return  ss.workflowSeqPropertyProperty();
+                               }
+                           }catch(ArrayIndexOutOfBoundsException ae){
+                               return param.getValue().notApplicableProperty();
+                           }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableProperty();
+                           }
+                           
+                        }
+                             /*
+                             Vol type 2L: segdload
+                             End
+                             */
+                             
+                             
+                             /*
+                             Vol type 3L: acq
+                             Start
+                             */
+                             
+                             
+                             if(type.equals(3L)){
                                   AcquisitionVolumeModel acq=(AcquisitionVolumeModel) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  return acq.getWorkflowVersion();
                              
                              }
                              
+                              /*
+                             Vol type 3L: acq
+                            End
+                             */
+                             
+                             
+                        return null;
                         }
                     });
+                    
                     qc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
@@ -401,7 +617,13 @@ public class SummaryController extends Stage{
                              //return  param.getValue().qcflagProperty();
                             // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).qcStatusProperty();
                             Long type=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
-                             if(!type.equals(3L)){
+                             /*
+                             Volume type 1L: denoise
+                             Start
+                             */ 
+                            
+                            
+                            if(type.equals(1L)){
                                   try{
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                             
@@ -423,10 +645,54 @@ public class SummaryController extends Stage{
                                 return param.getValue().notApplicableProperty();
                            }
                         }
+                            /*
+                             Volume type 1L: denoise
+                             End
+                             */ 
+                             
+                             /*
+                             Volume type 2L: segdLoad
+                             Start
+                             */
+                             if(type.equals(2L)){
+                                  try{
+                                 VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                            
+                            
+                            
+                            
+                             
+                            //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                            SequenceHeaders ss=vol2.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                            if(ss==null){
+                                   return param.getValue().notApplicableProperty(); 
+                               }
+                               else{
+                                   return  ss.qcStatusProperty();
+                               }
+                            }catch(ArrayIndexOutOfBoundsException ae){
+                                return param.getValue().notApplicableProperty();
+                            }catch(IndexOutOfBoundsException ie){
+                                return param.getValue().notApplicableProperty();
+                           }
+                        }
+                             /*
+                             Volume type 2L: segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Volume type 3L: acq
+                             Start
+                             */
                              else{
                                  AcquisitionVolumeModel acq=(AcquisitionVolumeModel) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  return acq.getQcStatus();
                              }
+                              /*
+                             Volume type 3L: acq
+                             End
+                             */
                      }
                     });
                     
@@ -446,7 +712,13 @@ public class SummaryController extends Stage{
                                
                                System.out.println(".call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
                                Long type=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
-                               if(!type.equals(3L)){
+                                /*
+                             Volume type 1L: denoise
+                             Start
+                             */ 
+                            
+                               
+                               if(type.equals(1L)){
                                    
                               VolumeSelectionModelType1 vmod1=(VolumeSelectionModelType1) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                SequenceHeaders ss=vmod1.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
@@ -457,10 +729,43 @@ public class SummaryController extends Stage{
                                    HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
                                }
                                }
-                               else{
+                               /*
+                             Volume type 1L: denoise
+                             End
+                             */ 
+                             
+                             /*
+                             Volume type 2L: segdLoad
+                             Start
+                             */
+                               if(type.equals(2L)){
+                                   
+                              VolumeSelectionModelType2 vmod2=(VolumeSelectionModelType2) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod2.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod2.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 2L: segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Volume type 3L: acq
+                             Start
+                             */
+                               
+                               if(type.equals(3L)){
                                    System.out.println(".call():  AcquisitionModel implementation pending");
                                }
-                           
+                            /*
+                             Volume type 3L: acq
+                             End
+                             */
                            
                            });
                            contextMenu.getItems().add(showSeq);
@@ -470,31 +775,7 @@ public class SummaryController extends Stage{
                         }
                     });
                     
-                    /*for (Iterator<Sequences> iterator1 = seqs.iterator(); iterator1.hasNext();) {
-                    SequenceHeaders seq = iterator1.next();
                     
-                    SummarySequenceModel summarySequenceModel=new SummarySequenceModel();
-                    summarySequenceModel.setDepthlist(value);
-                    
-                    }*/
-                    
-                    /*TableColumn<Sequences,String> run=new TableColumn<>("Run");
-                    TableColumn<Sequences,String> dep=new TableColumn<>("Dependency");
-                    TableColumn<Sequences,Boolean> ins=new TableColumn<>("InsightVersion");
-                    TableColumn<Sequences,Long> wf=new TableColumn<>("Workflow");
-                    TableColumn<Sequences,String > qc=new TableColumn<>("QC");
-                    
-                    run.setCellValueFactory(new PropertyValueFactory<>("runStatus"));
-                    dep.setCellValueFactory(new PropertyValueFactory<>("dependencyStatus"));
-                    ins.setCellValueFactory(new PropertyValueFactory<>("insightFlag"));
-                    wf.setCellValueFactory(new PropertyValueFactory<>("workflowVersion"));
-                    qc.setCellValueFactory(new PropertyValueFactory<>("qcStatus"));*/
-                    /*
-                    TableView<Sequences> tempTable=new TableView();
-                    tempTable.getColumns().addAll(run,dep,wf,ins,qc);
-                    tempTable.setItems(seqs);
-                    */
-                    //vtc.getColumns().add(tempTable);
                     vtc.getColumns().addAll(dep,run,wf,ins,qc);
                     volsForJob.add(vtc);
                     summaryVolumeNodeModelList.add(summaryVolumeNodeModel);

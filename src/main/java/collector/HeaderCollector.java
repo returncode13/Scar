@@ -33,6 +33,7 @@ import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 //import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
@@ -103,18 +104,50 @@ public class HeaderCollector {
     //LogWatcher logForSub;
     final private static LogsService lserv=new LogsServiceImpl();
     
+     public void setFeVolumeSelModel(AcquisitionVolumeModel vmod) {
+       this.feVolumeSelModel=vmod;
+       this.headersModel=feVolumeSelModel.getHeadersModel();
+        dbVolume=volServ.getVolume(feVolumeSelModel.getId());
+        
+         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
+        System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
+       
+                
+       
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+         executorService.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               calculateAndCommitHeaders();
+            //logForSub.commitToDb();
+            return null;
+            }
+            
+        });
+    }
+    
+    
     
     public void setFeVolumeSelModel(VolumeSelectionModelType1 feVolumeSelModel) {
+        
         this.feVolumeSelModel = feVolumeSelModel;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(feVolumeSelModel.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
-        
+        Long type=this.feVolumeSelModel.getType();
+        System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): Volume of Type "+type+" found");
+       
+            
         
         System.out.println("HeaderColl: Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("HeaderColl: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
         logLocation=dbVolume.getPathOfVolume()+"/../../000scratch/logs";
                 
         System.out.println("collector.HeaderCollector: looking for logs in "+logLocation);
+        
+        
+        
+        
+        
         ExecutorService executorService = Executors.newFixedThreadPool(10);
          executorService.submit(new Callable<Void>() {
             @Override
@@ -127,6 +160,36 @@ public class HeaderCollector {
         });
                  
         
+    }
+    
+    
+    public void setFeVolumeSelModel(VolumeSelectionModelType2 model) {
+         this.feVolumeSelModel = model;
+        this.headersModel=this.feVolumeSelModel.getHeadersModel();
+        dbVolume = volServ.getVolume(model.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
+        Long type=this.feVolumeSelModel.getType();
+        System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): Volume of Type "+type+" found");
+       
+            
+        
+        
+                
+        System.out.println("collector.HeaderCollector: skipping logs!");
+        
+        
+        
+        
+        
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+         executorService.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               calculateAndCommitHeaders();
+            //logForSub.commitToDb();
+            return null;
+            }
+            
+        });
     }
     
     private void calculateAndCommitHeaders(){
@@ -276,6 +339,52 @@ public class HeaderCollector {
                     lserv.updateLogs(next1.getIdLogs(), next1);
                 }
             }
+                
+                
+                
+                /*
+                    For volume type 2: SEGD Load 
+                    Start
+                */
+                if(volumeType.equals(2L)){
+                
+                String lineN=next.getSubsurface().getSubsurface();
+                
+                
+                
+             
+                Long wfMaxVersion=-1L;
+                next.setNumberOfRuns(-1L);
+               
+                next.setWorkflowVersion(wfMaxVersion);
+                
+                /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
+                if(next.getModified()) 
+                {
+                    System.out.println(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
+                    hdrServ.updateHeaders(next.getIdHeaders(), next);       
+                }
+                else{
+                hdrServ.createHeaders(next);                             //commit to the db
+                }
+                
+                
+               
+            }
+                
+                 /*
+                    For volume type 2: SEGD Load 
+                    End
+                */
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 if(volumeType.equals(3L)){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Checking to see if headers exist for acquisition volume type: "+dbVolume.getNameVolume());
                     List<Headers> lhdr=hdrServ.getHeadersFor(dbVolume,next.getSubsurface());
@@ -380,33 +489,24 @@ public class HeaderCollector {
    // }
     }
 
-  public List<SequenceHeaders> getHeaderListForVolume(VolumeSelectionModelType1 vm){
-   
+  public List<SequenceHeaders> getHeaderListForVolume(VolumeSelectionModelType0 vm){
+      Long type=vm.getType();
+      if(type.equals(1L) || type.equals(2L)){
       headersModel=vm.getHeadersModel();
       return headersModel.getSequenceListInHeaders();                                                //the observable List is the list of sequences. which contains all the header information
+      }
+      else{
+          System.out.println("collector.HeaderCollector.getHeaderListForVolume(): not implemented for volume type: "+type);
+           throw new UnsupportedOperationException("collector.HeaderCollector.getHeaderListForVolume(): Implementation pending for volume type: "+type); 
+         
+      }
   }
 
-    public void setFeVolumeSelModel(AcquisitionVolumeModel vmod) {
-       this.feVolumeSelModel=vmod;
-       this.headersModel=feVolumeSelModel.getHeadersModel();
-        dbVolume=volServ.getVolume(feVolumeSelModel.getId());
-        
-         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
-        System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
-       
-                
-       
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-         executorService.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               calculateAndCommitHeaders();
-            //logForSub.commitToDb();
-            return null;
-            }
-            
-        });
-    }
+    
+
+   
+
+    
     
     
     

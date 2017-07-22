@@ -126,8 +126,14 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import mid.doubt.dependencies.Dep21;
+import mid.doubt.dependencies.DepA2;
+import mid.doubt.inheritance.Inherit21;
+import mid.doubt.inheritance.InheritA2;
 import mid.doubt.qc.Q11;
+import mid.doubt.qc.Q21;
 import mid.doubt.qc.QA1;
+import mid.doubt.qc.QA2;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
@@ -1904,14 +1910,26 @@ public class SessionController implements Initializable {
              return;
          }
         
+           if(parent.getType().equals(3L) && child.getType().equals(2L)){                       //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            DepA2 depA2=new DepA2(parent,child);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        } 
            
-        if(parent.getType().equals(3L) && child.getType().equals(1L)){
+           if(parent.getType().equals(2L) && child.getType().equals(1L)){                       //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Dep21 dep21=new Dep21(parent,child,model);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        } 
+           
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){                          //between parent=Acq and child=Denoise (type1)
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             DepA1 depA1=new DepA1(parent,child);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
         }   
            
            
-        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){                         //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             Dep11 dep11=new Dep11(parent, child,model);               //set doubt flags here
             
@@ -1934,12 +1952,24 @@ public class SessionController implements Initializable {
              return;
          }
         
-         if(parent.getType().equals(3L) && child.getType().equals(1L)){
+        if(parent.getType().equals(3L) && child.getType().equals(2L)){           //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            QA2 qa2=new QA2(parent, child);
+        } 
+        
+        if(parent.getType().equals(2L) && child.getType().equals(1L)){            //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Q21 q21=new Q21(parent, child);
+        } 
+        
+        
+        
+         if(parent.getType().equals(3L) && child.getType().equals(1L)){             //between parent=Acq and child=Denoise (type1)
             System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             QA1 qa1=new QA1(parent, child);
         } 
          
-         if(parent.getType().equals(1L) && child.getType().equals(1L)){
+         if(parent.getType().equals(1L) && child.getType().equals(1L)){             //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             Q11 qa1=new Q11(parent, child);
         } 
@@ -1962,13 +1992,22 @@ public class SessionController implements Initializable {
              return;
          }
         
+        if(parent.getType().equals(3L) && child.getType().equals(2L)){              //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            InheritA2 inhA2=new InheritA2(parent, child);
+        } 
         
-        if(parent.getType().equals(3L) && child.getType().equals(1L)){
+        if(parent.getType().equals(2L) && child.getType().equals(1L)){              //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Inherit21 inh21=new Inherit21(parent, child);
+        } 
+        
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){              //between parent=Acq and child=Denoise (type1)
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
             InheritA1 inhA1=new InheritA1(parent, child);
         } 
         
-        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){              //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
            Inherit11 inh11=new Inherit11(parent, child);                     
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): moving on..");
