@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<fx:root fx:id="anchorPane" onDragDetected="#handleOnDragDetected" onDragDone="#handleOnDragDone" onDragDropped="#handleOnDragDropped" onDragOver="#handleOnDragOver" onMouseDragEntered="#handleOnMouseDragEntered" prefHeight="93.0" prefWidth="334.0" style="-fx-border-color: green; -fx-background-color: #52585e; -fx-border-radius: 10; -fx-background-radius: 10;" stylesheets="@jobStepNode.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.session.node.jobs.types.type4.JobStepType4NodeController">
+   <children>
+      <HBox layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane fx:id="leftLinkHandle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onDragDetected="#onLinkDragDetected" onDragDropped="#onLinkDragDropped" prefHeight="10.0" prefWidth="1.0" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin></AnchorPane>
+            <GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="92.0" prefWidth="290.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="576.0" minWidth="10.0" prefWidth="277.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="NEVER" />
+                <RowConstraints />
+              </rowConstraints>
+               <children>
+                  <ListView fx:id="volumeSelView" opacity="0.79" style="-fx-background-color: ;" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES" />
+                  <HBox>
+                     <children>
+                        <HBox>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <children>
+                              <TextField fx:id="jobStepTextField" onAction="#handleJobStepLabelTextField" onMouseExited="#handleJobStepTextFieldMouseExited" prefHeight="22.0" prefWidth="191.0" promptText="P190s,ADS,Scalars..">
+                                 <font>
+                                    <Font name="Monospaced Regular" size="10.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <padding>
+                              <Insets right="10.0" />
+                           </padding>
+                        </HBox>
+                        <Button fx:id="addNewVolumeSelectionView" mnemonicParsing="false" onAction="#handleAddNewVolumeSelectionButton" prefHeight="26.0" prefWidth="62.0" text="T">
+                           <HBox.margin>
+                              <Insets bottom="2.0" right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="qmatBtn1" mnemonicParsing="false" onAction="#openQMatrix" text="[Q]" />
+                     </children>
+                  </HBox>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </GridPane>
+            <AnchorPane fx:id="rightLinkHandle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onDragDetected="#onLinkDragDetected" onDragDropped="#onLinkDragDropped" prefHeight="10.0" prefWidth="1.0" HBox.hgrow="NEVER" />
+         </children>
+      </HBox>
+   </children>
+   <effect>
+      <DropShadow height="27.07" radius="6.2675" width="0.0" />
+   </effect>
+   <padding>
+      <Insets right="30.0" />
+   </padding>
+</fx:root>

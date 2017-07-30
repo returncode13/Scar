@@ -34,6 +34,7 @@ import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.session.node.volumes.type2.VolumeSelectionModelType2;
+import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 //import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
@@ -181,6 +182,29 @@ public class HeaderCollector {
         
         
         ExecutorService executorService = Executors.newFixedThreadPool(10);
+         executorService.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               calculateAndCommitHeaders();
+            //logForSub.commitToDb();
+            return null;
+            }
+            
+        });
+    }
+    
+    
+    public void setFeVolumeSelModel(VolumeSelectionModelType4 vmod) {
+       this.feVolumeSelModel=vmod;
+       this.headersModel=feVolumeSelModel.getHeadersModel();
+        dbVolume=volServ.getVolume(feVolumeSelModel.getId());
+        
+         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
+        System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
+       
+                
+       
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
          executorService.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -380,7 +404,10 @@ public class HeaderCollector {
                 
                 
                 
-                
+                 /*
+                    For volume type 3: Acquisition Node 
+                    Start
+                */
                 
                 
                 
@@ -396,6 +423,23 @@ public class HeaderCollector {
                         hdrServ.createHeaders(next);
                     }
                 }
+                
+                 /*
+                    For volume type 3: Acquisition Node 
+                    End
+                */
+                 
+                  /*
+                    For volume type 4: Text Node 
+                    Start
+                 
+                */
+                  
+                  
+                   /*
+                    For volume type 4: Text Node 
+                    End
+                */
                 SubSurfaceHeaders s= new SubSurfaceHeaders();
           
                 s.setSequenceNumber(next.getSequence().getSequenceno());

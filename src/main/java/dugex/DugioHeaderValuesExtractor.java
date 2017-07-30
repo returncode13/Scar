@@ -350,6 +350,10 @@ public class DugioHeaderValuesExtractor {
         End
         */
         
+        /*
+        Volume type 3 :Acquisition
+        Start
+        */
         
         if(volumeType.equals(3L)){              //acq type
             headers.clear();
@@ -363,6 +367,34 @@ public class DugioHeaderValuesExtractor {
                 
             }
         }
+        
+        /*
+        Volume type 3 :Acquisition
+        End
+        */
+        
+         /*
+        Volume type 4 :Text
+        Start
+        */
+        
+        if(volumeType.equals(4L)){              //acq type
+            headers.clear();
+            for (Iterator<Subsurface> iterator = subList.iterator(); iterator.hasNext();) {
+                Subsurface sub = iterator.next();
+                Headers h=new Headers();
+                h.setSubsurface(sub);
+                h.setSequence(sub.getSequence());
+                h.setTimeStamp("acqtime");
+                headers.add(h);
+                
+            }
+        }
+        
+        /*
+        Volume type 4 :Text
+        End
+        */
         
         
     }
@@ -534,7 +566,10 @@ futures.add(
                                    */
                                    
                                    
-                                   
+                                    /*
+                                   Volume Type: Acquisition 
+                                   Start
+                                   */
                                    
                                    
                                    if(volumetype.equals(3L)){
@@ -560,6 +595,44 @@ futures.add(
                                      offsetInc=-100L;
                                    }
                                      
+                                   
+                                   /*
+                                   Volume Type: Acquisition 
+                                   End
+                                   */
+                                   
+                                   /*
+                                   Volume Type: Text 
+                                   Start
+                                   */
+                                    if(volumetype.equals(4L)){
+                                       traceCount=-100L;
+                                     cmpMax=-100L;
+                                     cmpMin=-100L;
+                                     cmpInc=-100L;
+                                     
+                                     inlineMax=-100L;
+                                     inlineMin=-100L;
+                                     inlineInc=-100L;
+                                     xlineMax=-100L;
+                                     xlineMin=-100L;
+                                     xlineInc=-100L;
+                                     dugShotMax=-100L;
+                                     dugShotMin=-100L;
+                                     dugShotInc=-100L;
+                                     dugChannelMax=-100L;
+                                     dugChannelMin=-100L;
+                                     dugChannelInc=-100L;
+                                     offsetMax=-100L;
+                                     offsetMin=-100L;
+                                     offsetInc=-100L;
+                                   }
+                                   /*
+                                   Volume Type: Text 
+                                   End
+                                   */
+                                   
+                                   
                                      /* Long[] values=new Long[dmh.metaHeaders.length];
                                      keyValueExtractor(hdr, values);*/
                                      

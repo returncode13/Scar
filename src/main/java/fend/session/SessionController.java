@@ -111,6 +111,8 @@ import fend.session.node.jobs.types.type0.JobStepType0Node;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.jobs.types.type2.JobStepType2Node;
+import fend.session.node.jobs.types.type4.JobStepType4Model;
+import fend.session.node.jobs.types.type4.JobStepType4Node;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.summary.SummaryModel;
@@ -215,6 +217,9 @@ public class SessionController implements Initializable {
     @FXML
     private Button addJobStepButton2;
     
+    @FXML
+    private Button addJobStepButton3;
+
     
     @FXML
     private Button addAcquistionJobNode;
@@ -250,6 +255,24 @@ public class SessionController implements Initializable {
        rightInteractivePane.getChildren().add((AcquisitionNode)jsn);
     }
  
+    @FXML
+    void handleAddJobStepType3Button(ActionEvent event) {
+            System.out.println("fend.session.SessionController.handleAddJobStepType3Button(): jobStepContents below");
+        
+        for (Iterator<JobStepType0Model> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
+            System.out.println("fend.session.SessionController.handleAddJobStepType3Button(): "+next.getJobStepText());
+            
+        }
+        model.addJobToSession(new JobStepType4Model(model));
+       // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
+        obsModelList=model.getListOfJobs();
+        
+        jsn=new JobStepType4Node((JobStepType4Model) obsModelList.get(obsModelList.size()-1));
+      
+        
+       rightInteractivePane.getChildren().add((JobStepType4Node)jsn);
+    }
     
      
      @FXML

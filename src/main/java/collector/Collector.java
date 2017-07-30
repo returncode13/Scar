@@ -61,6 +61,7 @@ import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
+import fend.session.node.jobs.types.type4.JobStepType4Model;
 import fend.session.node.volumes.acquisition.AcqHeaders;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -69,6 +70,7 @@ import fend.session.node.qcTable.QcTableSequences;
 import fend.session.node.qcTable.QcTableSubsurfaces;
 import fend.session.node.qcTable.QcTypeModel;
 import fend.session.node.volumes.type2.VolumeSelectionModelType2;
+import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -384,7 +386,100 @@ public class Collector {
                 for jobtype=2. SEGD LOAD
                 End
                 */
-                
+                /*
+                for jobtype=4. Text Nodes
+                Start
+                */
+                if(jsm.getType().equals(4L)){
+                    JobStepType4Model j4=(JobStepType4Model) jsm;
+                    
+                    //this block should exit if this job and session arent saved to begin with..
+                    JobStep job=jsServ.getJobStep(j4.getId());
+                    if(job!=null){
+                        
+                //    }
+                    
+                    QcTableModel qctabmod=j4.getQcTableModel();
+                    List<QcTableSequences> qctabSeqList=qctabmod.getQcTableSequences();
+                    for (Iterator<QcTableSequences> iterator = qctabSeqList.iterator(); iterator.hasNext();) {
+                        QcTableSequences qcseq = iterator.next();
+                        List<QcTableSubsurfaces> qcsubList=qcseq.getQcSubs();
+                        for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
+                            QcTableSubsurfaces qcsub = iterator1.next();
+                            SubSurfaceHeaders subh=qcsub.getSub();
+                            
+                            Subsurface subobj=subserv.getSubsurfaceObjBysubsurfacename(subh.getSubsurface());
+                            Headers hdr=null;
+                            Volume vol=null;
+                            
+                            List<VolumeSelectionModelType4> volList=j4.getVolList();
+                            for (Iterator<VolumeSelectionModelType4> iterator2 = volList.iterator(); iterator2.hasNext();) {
+                                VolumeSelectionModelType4 volm = iterator2.next();
+                                vol=volServ.getVolume(volm.getId());
+                                List<Headers> hlist=hserv.getHeadersFor(vol, subobj);
+                                if(hlist.isEmpty()){
+                                    
+                                }else if(hlist.size()==1){
+                                    hdr=hlist.get(0);
+                                    break;
+                                }else if(hlist.size()>1){
+                                    System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j4.getJobStepText()+" and volume: "+vol.getNameVolume());
+                                }
+                                
+                            }
+                            SessionDetails sd=ssdServ.getSessionDetails(job, sess);
+                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd);
+                            for (Iterator<QcMatrix> iterator2 = qcmatrixList.iterator(); iterator2.hasNext();) {
+                                QcMatrix qcmat = iterator2.next();
+                                
+                                QcTypeModel qctmod=null;    
+                                List<QcTypeModel> qctmodList=qcsub.getQctypes();            //finding the value of the qctype for this particular subsurface
+                                for (Iterator<QcTypeModel> iterator3 = qctmodList.iterator(); iterator3.hasNext();) {
+                                    QcTypeModel qcty = iterator3.next();
+                                    if(qcty.getId().equals(qcmat.getQctype().getIdQcType()) && qcty.getName().equals(qcmat.getQctype().getName())){
+                                        qctmod=qcty;
+                                    }
+                                    
+                                    
+                                }
+                                
+                                
+
+
+                                //check if an entry exists..if not create else update
+                                List<QcTable> qctList=qctabServ.getQcTableFor(qcmat, hdr);
+                                if(qctList.isEmpty()){
+                                    QcTable qct=new QcTable();
+                                    qct.setHeaders(hdr);
+                                    qct.setQcmatrix(qcmat);
+                                    qct.setResult(qctmod.isPassQc());
+                                    qctabServ.createQcTable(qct);
+                                    
+                                }else if(qctList.size()==1){
+                                    QcTable qct=qctList.get(0);
+                                    //qct.setHeaders(hdr);
+                                    Boolean oldval=qct.getResult();
+                                    qct.setResult(qctmod.isPassQc());
+                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    qctabServ.updateQcTable(qct.getIdQcTable(), qct);
+                                }
+                                
+                                
+                                
+                                
+                            }
+                            
+                            
+                            
+                        }
+                        
+                     }
+                  }
+                }
+                /*
+                for jobtype=4. Text Node
+                End
+                */
                 
                 JobStep jobstep;
                 /*if((jobstep=jsServ.getJobStep(jsm.getId()))==null){
@@ -482,6 +577,9 @@ public class Collector {
                     }
                     if(vsm.getType().equals(3L)){
                         vp.setPathOfVolume("no volume for acq");
+                    }
+                    if(vsm.getType().equals(4L)){
+                        vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
                     }
                     
                     
