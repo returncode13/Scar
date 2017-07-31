@@ -242,6 +242,8 @@ public class HeaderCollector {
             List<Headers> existingHeaders=null;
             //Map<String,Headers> subsurfaceHeaderMap=new HashMap<>();
             Map<Sub,Headers> subsurfaceHeaderMap=new HashMap<>();
+            Map<Seq,Headers> seqHeaderMap=new HashMap<>();
+            
             System.out.println("collector.HeaderCollector: calculating headers for "+volume.getAbsolutePath());
             
             if(dbVolume.getHeaderExtracted()){
@@ -254,6 +256,7 @@ public class HeaderCollector {
                     sub.setSeq(seq);
                     sub.setSubsurfaceName(h.getSubsurface().getSubsurface());
                     subsurfaceHeaderMap.put(sub, h);
+                    seqHeaderMap.put(seq,h);
                 } 
                 
                 
@@ -434,7 +437,17 @@ public class HeaderCollector {
                     Start
                  
                 */
-                  
+                  if(volumeType.equals(4L)){
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Checking to see if headers exist for Text type : "+dbVolume.getNameVolume());
+                    List<Headers> lhdr=hdrServ.getHeadersFor(dbVolume,next.getSubsurface());
+                    next.setWorkflowVersion(-100L);
+                    next.setInsightVersion("0.0");
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() size of headers for TextVolume : "+lhdr.size());
+                    if(lhdr.size()==0 ){
+                        System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): creating headers for "+next.getSubsurface().getSubsurface());
+                        hdrServ.createHeaders(next);
+                    }
+                }
                   
                    /*
                     For volume type 4: Text Node 

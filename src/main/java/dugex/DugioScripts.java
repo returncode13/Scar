@@ -28,7 +28,7 @@ public class DugioScripts implements Serializable{
     private File logStatusErrored;
     private File logStatusCancelled;
     private File workflowExtractor;
-    
+    private File p190TimeStampLineNameExtractor;
   
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
@@ -82,6 +82,12 @@ public class DugioScripts implements Serializable{
       private String workflowExtractorContents="#!/bin/bash\n" +
 "sed -n '/Process parameters:/,/Executing/p'  $1 |  awk '{$1=$2=$3=\"\";print $0}'";
      
+      
+       private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
+      "for i in $1; do  ls -ltr --time-style=+%Y%m%d%H%M%S $i | grep -o \"[[:digit:]]\\{14\\}.[[:alnum:]]*\"; done";
+      
+      /*private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
+      " ls -ltr --time-style=+%Y%m%d%H%M%S $i | grep -o \"[[:digit:]]\\{14\\}.[[:alnum:]]*\"";*/
      public DugioScripts()
     {
         try {
@@ -221,6 +227,20 @@ public class DugioScripts implements Serializable{
         }
         
         
+        try {
+            p190TimeStampLineNameExtractor=File.createTempFile("p190TimeStampLineNameExtractor", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(p190TimeStampLineNameExtractor));
+            bw.write(p190TimeStampLineNameExContents);
+            bw.close();
+            p190TimeStampLineNameExtractor.setExecutable(true,false);
+            
+            p190TimeStampLineNameExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }
     
     
@@ -260,6 +280,10 @@ public class DugioScripts implements Serializable{
 
     public File getWorkflowExtractor() {
         return workflowExtractor;
+    }
+
+    public File getP190TimeStampLineNameExtractor() {
+        return p190TimeStampLineNameExtractor;
     }
     
     
