@@ -821,12 +821,12 @@ public class JobStepType4NodeController implements JobStepType0NodeController{
 
     @Override
     public void setInsightVersionsModel(InsightVersionsModel insVerModel) {
-        throw new UnsupportedOperationException("Not supported yet for JobStep of type: "+model.getType()); //To change body of generated methods, choose Tools | Templates.
+        this.model.setInsightVersionsModel(insVerModel);
     }
 
     @Override
     public void setInsightListForFrontEndDisplay() {
-        throw new UnsupportedOperationException("Not supported yet for JobStep of type: "+model.getType()); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
    

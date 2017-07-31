@@ -43,7 +43,7 @@ import javafx.scene.layout.AnchorPane;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class JobStepType4Node extends AnchorPane implements JobStepType0Node{
-    private final Long type=2L;
+    private final Long type=4L;
     private JobStepType4NodeController jsnc;
     private FXMLLoader fXMLLoader;
     private final URL location;

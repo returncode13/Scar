@@ -746,6 +746,9 @@ public class SessionController implements Initializable {
            if(type.equals(3L)){
                jsn=new AcquisitionNode((AcquisitionJobStepModel)next);
            }
+           if(type.equals(4L)){
+               jsn=new JobStepType4Node((JobStepType4Model) next);
+           }
            
             JobStepType0NodeController jsc=jsn.getJsnc();
             
@@ -763,6 +766,9 @@ public class SessionController implements Initializable {
                         roots.add((JobStepType2Node) jsn);
                     }if(jsn instanceof AcquisitionNode){
                         roots.add((AcquisitionNode) jsn);
+                    }
+                    if(jsn instanceof JobStepType4Node){
+                        roots.add((JobStepType4Node) jsn);
                     }
                     
                 }
@@ -823,7 +829,18 @@ public class SessionController implements Initializable {
             
                         jsnAnchorMap.put((AcquisitionNode)jsn, mstart);
                     }
+            if(jsn instanceof JobStepType4Node){
+                        rightInteractivePane.getChildren().add((JobStepType4Node)jsn);
+                        centerX=((JobStepType4Node)jsn).boundsInLocalProperty().getValue().getMinX();
+                        centerY=((JobStepType4Node)jsn).boundsInLocalProperty().getValue().getMinY()+((JobStepType4Node)jsn).boundsInLocalProperty().get().getHeight()/2;
+                        mstart.setJob(next);
+                        mstart.setCenterX(centerX);
+                        mstart.setCenterY(centerY);
             
+           
+            
+                        jsnAnchorMap.put((JobStepType4Node)jsn, mstart);
+                    }
             
           /*  
            try {

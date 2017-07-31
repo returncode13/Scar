@@ -39,7 +39,7 @@ public class VolumeSelectionModelType4 implements VolumeSelectionModelType0{
     private BooleanProperty dependency=new SimpleBooleanProperty(Boolean.TRUE);
     
     private HeadersModel headersModel=new HeadersModel(this);                                    // the headers corresponding to this particular volume.
-    //private Set<SubSurfaceHeaders> subsurfaces;                                       //the subsurfaces in the volume.
+    private Set<SubSurfaceHeaders> subsurfaces;                                       //the subsurfaces in the volume.
    // private MultiMap<Long,SubSurfaceHeaders> seqSubsMap=new MultiValueMap<>();
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
@@ -286,7 +286,7 @@ public class VolumeSelectionModelType4 implements VolumeSelectionModelType0{
 
     @Override
     public void setSubsurfaces(Set<SubSurfaceHeaders> sl) {
-        throw new UnsupportedOperationException("Not supported for Volume type: "+this.type); //To change body of generated methods, choose Tools | Templates.
+        this.subsurfaces=sl;
     }
 
 }
