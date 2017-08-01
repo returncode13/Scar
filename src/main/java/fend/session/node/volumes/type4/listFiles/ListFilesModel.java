@@ -21,10 +21,23 @@ public class ListFilesModel {
     Integer to;
     List<String> charsForTextFlow=new ArrayList<>();  // each char is placed inside this array. "1234P15678"  => charsForText[0]="1",  charsForText[1]="2"....
     ObservableList<String> obs;
+    ObservableList<String> fileobs;
     
     public ListFilesModel(List<String> fileNL) {
         this.fileNames=fileNL;
-        
+        fileobs=FXCollections.observableArrayList(this.fileNames);
+        String textFlowStr=this.fileNames.get(0);
+        //setCharsForTextFlow(textFlowStr);
+        charsForTextFlow=new ArrayList<>();
+        char[] a=textFlowStr.toCharArray();
+        for(int i=0;i<a.length;i++){
+            charsForTextFlow.add(new String(""+a[i]));
+        }
+        obs=FXCollections.observableArrayList(charsForTextFlow);
+    }
+
+    public ObservableList<String> getFileobs() {
+        return fileobs;
     }
 
     
@@ -64,7 +77,7 @@ public class ListFilesModel {
         charsForTextFlow=new ArrayList<>();
         char[] a=s.toCharArray();
         for(int i=0;i<a.length;i++){
-            charsForTextFlow.add(s);
+            charsForTextFlow.add(new String(""+a[i]));
         }
         obs=FXCollections.observableArrayList(charsForTextFlow);
     }

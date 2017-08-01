@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -63,6 +64,7 @@ public class ListFilesController extends Stage{
             model.setFrom(from);
             model.setTo(to);
              System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.handleOK(): setting values inside model of From: "+from+" : TO: "+to);
+             close();
     }
 
     @FXML
@@ -72,55 +74,161 @@ public class ListFilesController extends Stage{
 
     @FXML
     void seqFromKeyReleased(KeyEvent event) {
+        try{
         from=Integer.valueOf(seqFromTF.getText());
-        
-        System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqFromKeyReleased()  from: "+from);
-        Node node=textFlow.getChildren().get(from);
-        if(to>=from){
-            
-            int i=from;
-            while(i<=to){
-                ((Text)textFlow.getChildren().get(i++)).setFill(Color.PURPLE);
+        //from--;               //BB
+        }catch(NumberFormatException nfe){
+            from=null;
+            List<Node> nodL=textFlow.getChildren();
+            for (Node node1 : nodL) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
             }
-                  
-            
-            
-        }else{
-            
-            ((Text)textFlow.getChildren().get(from)).setFill(Color.PURPLE);
-            System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqToKeyReleased(): \"to\" value cannot be less than \"from\"");
         }
         
         
-    }
-
-    @FXML
-    void seqToKeyReleased(KeyEvent event) {
-        to=Integer.valueOf(seqToTF.getText());
+        System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqFromKeyReleased()  from: "+from);
+        
+        if(from!=null && to==null){
+            List<Node> nodL=textFlow.getChildren();
+            for (Node node1 : nodL) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
+            
+            ((Text)textFlow.getChildren().get(from)).setFill(Color.PURPLE);
+        }
+        
+        if(from!=null && to!=null){
+            List<Node> nodL=textFlow.getChildren();
+            for (Node node1 : nodL) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
        
-        System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqToKeyReleased() to: "+to);
-        List<Node> tnodes=new ArrayList<>();
-        Node nodeFrom=textFlow.getChildren().get(from);
-        Node nodeTo=textFlow.getChildren().get(to);
+        
         if(to>=from){
             
             int i=from;
             while(i<=to){
-                ((Text)textFlow.getChildren().get(i++)).setFill(Color.PURPLE);
+                try{
+                    ((Text)textFlow.getChildren().get(i++)).setFill(Color.PURPLE);
+                }catch(ArrayIndexOutOfBoundsException ai){
+                    List<Node> nodL2=textFlow.getChildren();
+                    for (Node node1 : nodL2) {
+                        if(node1 instanceof Text){
+                            ((Text) node1).setFill(Color.BLACK);
+                        }
+                    }
+                }
+                
             }
                   
             
             
-        }else{
-            ((Text)textFlow.getChildren().get(to)).setFill(Color.PURPLE);
+        }
+        
+        if(to<from){
+            
+           // ((Text)textFlow.getChildren().get(from)).setFill(Color.PURPLE);
             System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqToKeyReleased(): \"to\" value cannot be less than \"from\"");
+            List<Node> nodLl=textFlow.getChildren();
+            for (Node node1 : nodLl) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
+        }
+        
+         }
+        
+        
+    }
+    
+
+    @FXML
+    void seqToKeyReleased(KeyEvent event) {
+        try{
+        to=Integer.valueOf(seqToTF.getText());
+        //to--;   //BB
+        }catch(NumberFormatException nfe){
+            to=null;
+            List<Node> nodL=textFlow.getChildren();
+            for (Node node1 : nodL) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
+        }
+       
+        if(to!=null && from==null){
+            List<Node> nodL=textFlow.getChildren();
+            for (Node node1 : nodL) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
+            
+            ((Text)textFlow.getChildren().get(to)).setFill(Color.PURPLE);
+        }
+        
+        
+        if(to!=null && from!=null){
+        System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqToKeyReleased() to: "+to);
+        List<Node> tnodes=new ArrayList<>();
+        /*Node nodeFrom=textFlow.getChildren().get(from);
+        Node nodeTo=textFlow.getChildren().get(to);*/
+        
+        List<Node> nodL=textFlow.getChildren();
+            for (Node node1 : nodL) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
+            
+        
+        if(to>=from){
+            
+            int i=from;
+            while(i<=to){
+                try{
+                    ((Text)textFlow.getChildren().get(i++)).setFill(Color.PURPLE);
+                }catch(ArrayIndexOutOfBoundsException ai){
+                    List<Node> nodL2=textFlow.getChildren();
+                    for (Node node1 : nodL2) {
+                        if(node1 instanceof Text){
+                            ((Text) node1).setFill(Color.BLACK);
+                        }
+                    }
+                }
+            }
+                  
+            
+            
+        }
+        if(to<from)
+        {
+           // ((Text)textFlow.getChildren().get(to)).setFill(Color.PURPLE);
+            List<Node> nodLl=textFlow.getChildren();
+            for (Node node1 : nodLl) {
+                if(node1 instanceof Text){
+                    ((Text) node1).setFill(Color.BLACK);
+                }
+            }
+            System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.seqToKeyReleased(): \"to\" value cannot be less than \"from\"");
+        }
         }
 
     }
     
+    
+    
     void setModel(ListFilesModel m) {
         this.model=m;
-        fileListView.setItems(model.getObs());
+        fileListView.setItems(model.getFileobs());
         List<String> charsForTF=model.getCharsForTextFlow();
         textList=FXCollections.observableArrayList();
         for (String s : charsForTF) {
