@@ -22,6 +22,8 @@ import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.qcTable.QcMatrixModel;
 import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
 import fend.session.node.volumes.type0.VolumeSelectionControllerType0;
+import fend.session.node.volumes.type4.listFiles.ListFilesModel;
+import fend.session.node.volumes.type4.listFiles.ListFilesNode;
 //import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +54,9 @@ public class VolumeSelectionControllerType4 implements VolumeSelectionController
     private SessionsService sserv=new SessionsServiceImpl();
     private VolumeService vserv=new VolumeServiceImpl();
     private QcMatrixService qcmserv=new QcMatrixServiceImpl();
+    private ListFilesModel listFilesModel;
+    
+    
     
     final private ChangeListener<String> VOLUME_LABEL_CHANGE_LISTENER=new ChangeListener<String>() {
 
@@ -121,6 +126,19 @@ public class VolumeSelectionControllerType4 implements VolumeSelectionController
              model.setLabel(f.getName());
              model.setHeaderButtonStatus(Boolean.FALSE);                    //Counter intuitive !:(
                 System.out.println("fend.session.node.volumes.VolumeSelectionController: starting the volume watch");
+                
+                List<String> filenames=new ArrayList<>();
+                File[] fileL=f.listFiles();
+                for(int i=0;i<fileL.length;i++){
+                    filenames.add(fileL[i].getName());
+                }
+                
+                System.out.println("fend.session.node.volumes.type4.VolumeSelectionControllerType4.handleSelectVolumeButton(): retrieved filenames: "+filenames);
+                
+                listFilesModel=new ListFilesModel(filenames);
+                ListFilesNode lfnode=new ListFilesNode(listFilesModel);
+                
+                
           //   model.startVolumeWatching();
             }
            // System.out.println("VSC: "+model.getId()+" label is "+model.getLabel());
