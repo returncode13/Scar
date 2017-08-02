@@ -38,6 +38,8 @@ import db.services.ParentService;
 import db.services.ParentServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
+import db.services.SessionsService;
+import db.services.SessionsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.overview.OverviewController;
@@ -109,6 +111,8 @@ import fend.session.node.jobs.types.type0.JobStepType0Node;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.jobs.types.type2.JobStepType2Node;
+import fend.session.node.jobs.types.type4.JobStepType4Model;
+import fend.session.node.jobs.types.type4.JobStepType4Node;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.summary.SummaryModel;
@@ -124,8 +128,14 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import mid.doubt.dependencies.Dep21;
+import mid.doubt.dependencies.DepA2;
+import mid.doubt.inheritance.Inherit21;
+import mid.doubt.inheritance.InheritA2;
 import mid.doubt.qc.Q11;
+import mid.doubt.qc.Q21;
 import mid.doubt.qc.QA1;
+import mid.doubt.qc.QA2;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
@@ -207,6 +217,9 @@ public class SessionController implements Initializable {
     @FXML
     private Button addJobStepButton2;
     
+    @FXML
+    private Button addJobStepButton3;
+
     
     @FXML
     private Button addAcquistionJobNode;
@@ -242,6 +255,24 @@ public class SessionController implements Initializable {
        rightInteractivePane.getChildren().add((AcquisitionNode)jsn);
     }
  
+    @FXML
+    void handleAddJobStepType3Button(ActionEvent event) {
+            System.out.println("fend.session.SessionController.handleAddJobStepType3Button(): jobStepContents below");
+        
+        for (Iterator<JobStepType0Model> iterator = obsModelList.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
+            System.out.println("fend.session.SessionController.handleAddJobStepType3Button(): "+next.getJobStepText());
+            
+        }
+        model.addJobToSession(new JobStepType4Model(model));
+       // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
+        obsModelList=model.getListOfJobs();
+        
+        jsn=new JobStepType4Node((JobStepType4Model) obsModelList.get(obsModelList.size()-1));
+      
+        
+       rightInteractivePane.getChildren().add((JobStepType4Node)jsn);
+    }
     
      
      @FXML
@@ -566,7 +597,7 @@ public class SessionController implements Initializable {
     
     
    public void setAllLinksAndJobsForCommit(){
-       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit()");
+       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit() entered with SessionModel Id: "+model.getId()+" : "+model.getName());
        for (Iterator<Node> iterator = rightInteractivePane.getChildren().iterator(); iterator.hasNext();) {
             Node next = iterator.next();
             if(next instanceof  Links)
@@ -581,7 +612,14 @@ public class SessionController implements Initializable {
             
             
         }
-       
+       System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): Debug for session: ");
+       SessionsService sstemp=new SessionsServiceImpl();
+       Sessions cbefore= sstemp.getSessions(model.getId());
+       if(cbefore==null){
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): Before deleting... couldn't find an entry for id: "+model.getId());
+       }else{
+            System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): Before deleting... Found an entry for id: "+cbefore.getIdSessions()+" : "+cbefore.getNameSessions());
+       }
        List<JobStepType0Model> jobsToBeDeleted=model.getJobsToBeDeleted();
        
        for (Iterator<JobStepType0Model> iterator = jobsToBeDeleted.iterator(); iterator.hasNext();) {
@@ -640,7 +678,7 @@ public class SessionController implements Initializable {
            
        }
        
-           model.setListOfJobs(obsModelList);
+           //model.setListOfJobs(obsModelList);
             
             for (Iterator<JobStepType0Model> iterator = jobStepModelList.iterator(); iterator.hasNext();) {
            JobStepType0Model next = iterator.next();
@@ -659,6 +697,15 @@ public class SessionController implements Initializable {
             //model.setListOfLinks(linksModelList);
             
             System.out.println("SC: model has ID: "+model.getId());
+           Sessions cafter= sstemp.getSessions(model.getId());
+       if(cafter==null){
+           System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): After deleting... couldn't find an entry for id: "+model.getId());
+       }else{
+            System.out.println("fend.session.SessionController.setAllLinksAndJobsForCommit(): After deleting... Found an entry for id: "+cafter.getIdSessions()+" : "+cafter.getNameSessions());
+       } 
+            
+            
+            
    }
    
    
@@ -699,6 +746,9 @@ public class SessionController implements Initializable {
            if(type.equals(3L)){
                jsn=new AcquisitionNode((AcquisitionJobStepModel)next);
            }
+           if(type.equals(4L)){
+               jsn=new JobStepType4Node((JobStepType4Model) next);
+           }
            
             JobStepType0NodeController jsc=jsn.getJsnc();
             
@@ -716,6 +766,9 @@ public class SessionController implements Initializable {
                         roots.add((JobStepType2Node) jsn);
                     }if(jsn instanceof AcquisitionNode){
                         roots.add((AcquisitionNode) jsn);
+                    }
+                    if(jsn instanceof JobStepType4Node){
+                        roots.add((JobStepType4Node) jsn);
                     }
                     
                 }
@@ -776,7 +829,18 @@ public class SessionController implements Initializable {
             
                         jsnAnchorMap.put((AcquisitionNode)jsn, mstart);
                     }
+            if(jsn instanceof JobStepType4Node){
+                        rightInteractivePane.getChildren().add((JobStepType4Node)jsn);
+                        centerX=((JobStepType4Node)jsn).boundsInLocalProperty().getValue().getMinX();
+                        centerY=((JobStepType4Node)jsn).boundsInLocalProperty().getValue().getMinY()+((JobStepType4Node)jsn).boundsInLocalProperty().get().getHeight()/2;
+                        mstart.setJob(next);
+                        mstart.setCenterX(centerX);
+                        mstart.setCenterY(centerY);
             
+           
+            
+                        jsnAnchorMap.put((JobStepType4Node)jsn, mstart);
+                    }
             
           /*  
            try {
@@ -1886,14 +1950,26 @@ public class SessionController implements Initializable {
              return;
          }
         
+           if(parent.getType().equals(3L) && child.getType().equals(2L)){                       //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            DepA2 depA2=new DepA2(parent,child);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        } 
            
-        if(parent.getType().equals(3L) && child.getType().equals(1L)){
+           if(parent.getType().equals(2L) && child.getType().equals(1L)){                       //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Dep21 dep21=new Dep21(parent,child,model);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        } 
+           
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){                          //between parent=Acq and child=Denoise (type1)
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             DepA1 depA1=new DepA1(parent,child);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
         }   
            
            
-        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){                         //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             Dep11 dep11=new Dep11(parent, child,model);               //set doubt flags here
             
@@ -1916,12 +1992,24 @@ public class SessionController implements Initializable {
              return;
          }
         
-         if(parent.getType().equals(3L) && child.getType().equals(1L)){
+        if(parent.getType().equals(3L) && child.getType().equals(2L)){           //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            QA2 qa2=new QA2(parent, child);
+        } 
+        
+        if(parent.getType().equals(2L) && child.getType().equals(1L)){            //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Q21 q21=new Q21(parent, child);
+        } 
+        
+        
+        
+         if(parent.getType().equals(3L) && child.getType().equals(1L)){             //between parent=Acq and child=Denoise (type1)
             System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             QA1 qa1=new QA1(parent, child);
         } 
          
-         if(parent.getType().equals(1L) && child.getType().equals(1L)){
+         if(parent.getType().equals(1L) && child.getType().equals(1L)){             //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             Q11 qa1=new Q11(parent, child);
         } 
@@ -1944,13 +2032,22 @@ public class SessionController implements Initializable {
              return;
          }
         
+        if(parent.getType().equals(3L) && child.getType().equals(2L)){              //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            InheritA2 inhA2=new InheritA2(parent, child);
+        } 
         
-        if(parent.getType().equals(3L) && child.getType().equals(1L)){
+        if(parent.getType().equals(2L) && child.getType().equals(1L)){              //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Inherit21 inh21=new Inherit21(parent, child);
+        } 
+        
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){              //between parent=Acq and child=Denoise (type1)
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
             InheritA1 inhA1=new InheritA1(parent, child);
         } 
         
-        if(parent.getType().equals(1L) && child.getType().equals(1L)){
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){              //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
            Inherit11 inh11=new Inherit11(parent, child);                     
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): moving on..");

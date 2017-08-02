@@ -6,7 +6,9 @@
 package mid.doubt;
 
 import fend.session.node.jobs.types.type0.JobStepType0Model;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
@@ -75,7 +77,23 @@ public class Doubt {
     Map<JobPair,String> doubtmap=new HashMap<>();
     private  BooleanProperty doubt = new SimpleBooleanProperty();
     private  StringProperty status = new SimpleStringProperty(this,"N");
+    private final BooleanProperty override = new SimpleBooleanProperty(false);
 
+    public boolean isOverride() {
+        return override.get();
+    }
+
+    public void setOverride(boolean value) {
+        override.set(value);
+    }
+
+    public BooleanProperty overrideProperty() {
+        return override;
+    }
+
+    
+    
+    
     public static String getDoubtTime() {
         return doubtTime;
     }
@@ -170,12 +188,12 @@ public class Doubt {
     }
     
     
-    public String getErrorMessage(){
-        String err=new String();
+    public List<String> getErrorMessage(){
+        List<String> err=new ArrayList<>();
         for (Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
             JobPair key = entry.getKey();
             String value = entry.getValue();
-            err+="\n"+value;
+            err.add(value);
         }
         return err;
     }

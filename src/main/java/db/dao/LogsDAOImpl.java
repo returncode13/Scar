@@ -22,7 +22,8 @@ import org.hibernate.transform.Transformers;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair  
+ * sharath.nair@polarcus.com
  */
 public class LogsDAOImpl implements LogsDAO{
 

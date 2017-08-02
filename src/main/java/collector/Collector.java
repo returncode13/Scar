@@ -60,13 +60,17 @@ import fend.session.SessionModel;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type2.JobStepType2Model;
+import fend.session.node.jobs.types.type4.JobStepType4Model;
 import fend.session.node.volumes.acquisition.AcqHeaders;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
-import fend.session.node.volumes.type1.qcTable.QcTableModel;
-import fend.session.node.volumes.type1.qcTable.QcTableSequences;
-import fend.session.node.volumes.type1.qcTable.QcTableSubsurfaces;
-import fend.session.node.volumes.type1.qcTable.QcTypeModel;
+import fend.session.node.qcTable.QcTableModel;
+import fend.session.node.qcTable.QcTableSequences;
+import fend.session.node.qcTable.QcTableSubsurfaces;
+import fend.session.node.qcTable.QcTypeModel;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
+import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -150,10 +154,19 @@ public class Collector {
         
          feSessionModel=smod;
          
-         
-        currentSession=new Sessions();
+         Sessions cs=sesServ.getSessions(feSessionModel.getId());
+         if(cs==null){
+             
+             System.out.println("collector.Collector.saveCurrentSession(): No existing entry for current session found with id: "+feSessionModel.getId());
+             
+             currentSession=new Sessions();
         currentSession.setIdSessions(feSessionModel.getId());
         currentSession.setNameSessions(feSessionModel.getName());
+         }else{
+             System.out.println("collector.Collector.saveCurrentSession(): Found an entry for existing session with id: "+feSessionModel.getId()+" setting it to the current Session");
+             currentSession=cs;
+         }
+        
         
      
         
@@ -279,6 +292,195 @@ public class Collector {
                 }
                 
                 
+                /*
+                for jobtype=2 . SEGD LOAD
+                Start
+                */
+                if(jsm.getType().equals(2L)){
+                    JobStepType2Model j2=(JobStepType2Model) jsm;
+                    
+                    //this block should exit if this job and session arent saved to begin with..
+                    JobStep job=jsServ.getJobStep(j2.getId());
+                    if(job!=null){
+                        
+                //    }
+                    
+                    QcTableModel qctabmod=j2.getQcTableModel();
+                    List<QcTableSequences> qctabSeqList=qctabmod.getQcTableSequences();
+                    for (Iterator<QcTableSequences> iterator = qctabSeqList.iterator(); iterator.hasNext();) {
+                        QcTableSequences qcseq = iterator.next();
+                        List<QcTableSubsurfaces> qcsubList=qcseq.getQcSubs();
+                        for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
+                            QcTableSubsurfaces qcsub = iterator1.next();
+                            SubSurfaceHeaders subh=qcsub.getSub();
+                            
+                            Subsurface subobj=subserv.getSubsurfaceObjBysubsurfacename(subh.getSubsurface());
+                            Headers hdr=null;
+                            Volume vol=null;
+                            
+                            List<VolumeSelectionModelType2> volList=j2.getVolList();
+                            for (Iterator<VolumeSelectionModelType2> iterator2 = volList.iterator(); iterator2.hasNext();) {
+                                VolumeSelectionModelType2 volm = iterator2.next();
+                                vol=volServ.getVolume(volm.getId());
+                                List<Headers> hlist=hserv.getHeadersFor(vol, subobj);
+                                if(hlist.isEmpty()){
+                                    
+                                }else if(hlist.size()==1){
+                                    hdr=hlist.get(0);
+                                    break;
+                                }else if(hlist.size()>1){
+                                    System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j2.getJobStepText()+" and volume: "+vol.getNameVolume());
+                                }
+                                
+                            }
+                            SessionDetails sd=ssdServ.getSessionDetails(job, sess);
+                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd);
+                            for (Iterator<QcMatrix> iterator2 = qcmatrixList.iterator(); iterator2.hasNext();) {
+                                QcMatrix qcmat = iterator2.next();
+                                
+                                QcTypeModel qctmod=null;    
+                                List<QcTypeModel> qctmodList=qcsub.getQctypes();            //finding the value of the qctype for this particular subsurface
+                                for (Iterator<QcTypeModel> iterator3 = qctmodList.iterator(); iterator3.hasNext();) {
+                                    QcTypeModel qcty = iterator3.next();
+                                    if(qcty.getId().equals(qcmat.getQctype().getIdQcType()) && qcty.getName().equals(qcmat.getQctype().getName())){
+                                        qctmod=qcty;
+                                    }
+                                    
+                                    
+                                }
+                                
+                                
+
+
+                                //check if an entry exists..if not create else update
+                                List<QcTable> qctList=qctabServ.getQcTableFor(qcmat, hdr);
+                                if(qctList.isEmpty()){
+                                    QcTable qct=new QcTable();
+                                    qct.setHeaders(hdr);
+                                    qct.setQcmatrix(qcmat);
+                                    qct.setResult(qctmod.isPassQc());
+                                    qctabServ.createQcTable(qct);
+                                    
+                                }else if(qctList.size()==1){
+                                    QcTable qct=qctList.get(0);
+                                    //qct.setHeaders(hdr);
+                                    Boolean oldval=qct.getResult();
+                                    qct.setResult(qctmod.isPassQc());
+                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    qctabServ.updateQcTable(qct.getIdQcTable(), qct);
+                                }
+                                
+                                
+                                
+                                
+                            }
+                            
+                            
+                            
+                        }
+                        
+                     }
+                  }
+                }
+                /*
+                for jobtype=2. SEGD LOAD
+                End
+                */
+                /*
+                for jobtype=4. Text Nodes
+                Start
+                */
+                if(jsm.getType().equals(4L)){
+                    JobStepType4Model j4=(JobStepType4Model) jsm;
+                    
+                    //this block should exit if this job and session arent saved to begin with..
+                    JobStep job=jsServ.getJobStep(j4.getId());
+                    if(job!=null){
+                        
+                //    }
+                    
+                    QcTableModel qctabmod=j4.getQcTableModel();
+                    List<QcTableSequences> qctabSeqList=qctabmod.getQcTableSequences();
+                    for (Iterator<QcTableSequences> iterator = qctabSeqList.iterator(); iterator.hasNext();) {
+                        QcTableSequences qcseq = iterator.next();
+                        List<QcTableSubsurfaces> qcsubList=qcseq.getQcSubs();
+                        for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
+                            QcTableSubsurfaces qcsub = iterator1.next();
+                            SubSurfaceHeaders subh=qcsub.getSub();
+                            
+                            Subsurface subobj=subserv.getSubsurfaceObjBysubsurfacename(subh.getSubsurface());
+                            Headers hdr=null;
+                            Volume vol=null;
+                            
+                            List<VolumeSelectionModelType4> volList=j4.getVolList();
+                            for (Iterator<VolumeSelectionModelType4> iterator2 = volList.iterator(); iterator2.hasNext();) {
+                                VolumeSelectionModelType4 volm = iterator2.next();
+                                vol=volServ.getVolume(volm.getId());
+                                List<Headers> hlist=hserv.getHeadersFor(vol, subobj);
+                                if(hlist.isEmpty()){
+                                    
+                                }else if(hlist.size()==1){
+                                    hdr=hlist.get(0);
+                                    break;
+                                }else if(hlist.size()>1){
+                                    System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j4.getJobStepText()+" and volume: "+vol.getNameVolume());
+                                }
+                                
+                            }
+                            SessionDetails sd=ssdServ.getSessionDetails(job, sess);
+                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd);
+                            for (Iterator<QcMatrix> iterator2 = qcmatrixList.iterator(); iterator2.hasNext();) {
+                                QcMatrix qcmat = iterator2.next();
+                                
+                                QcTypeModel qctmod=null;    
+                                List<QcTypeModel> qctmodList=qcsub.getQctypes();            //finding the value of the qctype for this particular subsurface
+                                for (Iterator<QcTypeModel> iterator3 = qctmodList.iterator(); iterator3.hasNext();) {
+                                    QcTypeModel qcty = iterator3.next();
+                                    if(qcty.getId().equals(qcmat.getQctype().getIdQcType()) && qcty.getName().equals(qcmat.getQctype().getName())){
+                                        qctmod=qcty;
+                                    }
+                                    
+                                    
+                                }
+                                
+                                
+
+
+                                //check if an entry exists..if not create else update
+                                List<QcTable> qctList=qctabServ.getQcTableFor(qcmat, hdr);
+                                if(qctList.isEmpty()){
+                                    QcTable qct=new QcTable();
+                                    qct.setHeaders(hdr);
+                                    qct.setQcmatrix(qcmat);
+                                    qct.setResult(qctmod.isPassQc());
+                                    qctabServ.createQcTable(qct);
+                                    
+                                }else if(qctList.size()==1){
+                                    QcTable qct=qctList.get(0);
+                                    //qct.setHeaders(hdr);
+                                    Boolean oldval=qct.getResult();
+                                    qct.setResult(qctmod.isPassQc());
+                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    qctabServ.updateQcTable(qct.getIdQcTable(), qct);
+                                }
+                                
+                                
+                                
+                                
+                            }
+                            
+                            
+                            
+                        }
+                        
+                     }
+                  }
+                }
+                /*
+                for jobtype=4. Text Node
+                End
+                */
+                
                 JobStep jobstep;
                 /*if((jobstep=jsServ.getJobStep(jsm.getId()))==null){
                 jobstep=new JobStep();
@@ -326,18 +528,23 @@ public class Collector {
                  
                //  dbJobSteps.clear();
                  
-               //  if(jsServ.getJobStep(jobStep.getIdJobStep())==null){
-                     System.out.println("collector.Collector.setupEntries(): New / Existing jobStep: Adding to dbJobSteps: "+jobstep.getNameJobStep());
+               //  if(jsServ.getJobStep(jobstep.getIdJobStep())==null){
+                     System.out.println("collector.Collector.setupEntries(): New / jobStep: Adding to dbJobSteps: "+jobstep.getNameJobStep());
                      dbJobSteps.add(jobstep);
-                 //}
+                // }
                  
                  
                  
                  
                  //setup SessionJob details. and add to db
-                 SessionDetails sd=new SessionDetails(jobstep, sess);
+                 
+                 //List<SessionDetails> test=ssdServ.getSessionDetails(jobstep, sess);
+                 
                  if(ssdServ.getSessionDetails(jobstep, sess)==null){
-                     System.out.println("collector.Collector.setupEntries(): Adding to dbSessionDetails: ");dbSessionDetails.add(sd);}
+                     
+                     SessionDetails sd=new SessionDetails(jobstep, sess);
+                     System.out.println("collector.Collector.setupEntries(): Adding to dbSessionDetails: ");
+                     dbSessionDetails.add(sd);}
                //  if(!dbSessions.contains(sd))dbSessionDetails.add(sd);
                  
                  
@@ -362,10 +569,17 @@ public class Collector {
                     //vp.setHeaderExtracted(Boolean.FALSE);
                     vp.setHeaderExtracted(vsm.getHeaderButtonStatus());
                     vp.setMd5Hash(null);                                //figure a way to calculate MD5
-                    if(!vsm.getType().equals(3L)){
+                    if(vsm.getType().equals(1L)){
                         vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
-                    }else{
+                    }
+                    if(vsm.getType().equals(2L)){
+                        vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
+                    }
+                    if(vsm.getType().equals(3L)){
                         vp.setPathOfVolume("no volume for acq");
+                    }
+                    if(vsm.getType().equals(4L)){
+                        vp.setPathOfVolume(vsm.getVolumeChosen().getAbsolutePath());
                     }
                     
                     
@@ -380,7 +594,12 @@ public class Collector {
                     
                    // if(!dbJobVolumeDetails.contains(jvd))dbJobVolumeDetails.add(jvd);
                    // if(jvdServ.getJobVolumeDetails(jobStep, vp)==null){dbJobVolumeDetails.add(jvd);}
-                   dbJobVolumeDetails.add(jvd);
+                   
+                   if(jvdServ.getJobVolumeDetails(jobstep, vp)==null){
+                       System.out.println("collector.Collector.setupEntries(): Adding a new entry to jobvolumedetails: for job: "+jobstep.getIdJobStep()+" : "+jobstep.getNameJobStep()+" vol: id: "+vp.getIdVolume()+" : "+vp.getNameVolume() );
+                       dbJobVolumeDetails.add(jvd);
+                   }
+                   
                 }
                       
                  
@@ -504,7 +723,9 @@ public class Collector {
         //add to the Jobs Table
         for (Iterator<JobStep> jsit = dbJobSteps.iterator(); jsit.hasNext();) {
             JobStep js = jsit.next();
-            if(jsServ.getJobStep(js.getIdJobStep())==null){jsServ.createJobStep(js);}
+            if(jsServ.getJobStep(js.getIdJobStep())==null){
+                System.out.println("collector.Collector.commitEntries(): Creating new jobstep: id: "+js.getIdJobStep()+" name: "+js.getNameJobStep());
+                jsServ.createJobStep(js);}
             else{
                 System.out.println("collector.Collector.commitEntries() Updating "+js.getNameJobStep());
                 String jsv=js.getInsightVersions();
@@ -599,23 +820,23 @@ public class Collector {
                 JobStep js=jsServ.getJobStep(jsm.getId());
                // dbAncestors=new ArrayList<>();
                 dbParent=new ArrayList<>();
-              //  System.out.println("collector.Collector.createAllAncestors() : JobStep: "+js.getNameJobStep()+ " :id: "+js.getIdJobStep());
+                System.out.println("collector.Collector.createAllAncestors() : JobStep: "+js.getNameJobStep()+ " :id: "+js.getIdJobStep());
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
-                   // System.out.println("collector.Collector.createAllAncestors(): CurrentSession: "+currentSession.getNameSessions());
-                   // System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
+                    System.out.println("collector.Collector.createAllAncestors(): CurrentSession: "+currentSession.getNameSessions());
+                    System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
                       ArrayList<JobStepType0Model> listOfParents=(ArrayList<JobStepType0Model>) jsm.getJsParents();
                  
                  for(Iterator<JobStepType0Model> pit = listOfParents.iterator(); pit.hasNext();) {
                      JobStepType0Model par = pit.next();
-              //       System.out.println("collector.Collector.createAllAncestors(): "+par.getJobStepText());
+                     System.out.println("collector.Collector.createAllAncestors(): "+par.getJobStepText());
                      
                    //  Ancestors ancestor=new Ancestors();  //
                      Parent parent=new Parent();
                      parent.setSessionDetails(sd);
                      JobStep parJs=jsServ.getJobStep(par.getId());
                      
-               //      System.out.println("collector.Collector.createAllAncestors()  ParentJobStep: "+parJs.getNameJobStep());
-               //      System.out.println("collector.Collector.createAllAncestors() CurrentSession: "+currentSession.getNameSessions());
+                     System.out.println("collector.Collector.createAllAncestors()  ParentJobStep: "+parJs.getNameJobStep());
+                     System.out.println("collector.Collector.createAllAncestors() CurrentSession: "+currentSession.getNameSessions());
                      SessionDetails parSSd=ssdServ.getSessionDetails(parJs, currentSession);
                     if(parSSd!=null)parent.setParent(parSSd.getIdSessionDetails());
                     
@@ -700,12 +921,12 @@ public class Collector {
          
          // Delete ALL entries from the Child table  for the current Session
          
-         //System.out.println("collector.Collector.createAllDescendants() : DELETING ALL ENTRIES FROM THE Child TABLE FOR THE SESSION : "+currentSession.getNameSessions());
+         System.out.println("collector.Collector.createAllDescendants() : DELETING ALL ENTRIES FROM THE Child TABLE FOR THE SESSION : "+currentSession.getNameSessions());
          
          
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);
          
-        // System.out.println("collector.Collector.createAllDescendants(): deleting ALL CHILD entries for the session: "+currentSession.getIdSessions());
+         System.out.println("collector.Collector.createAllDescendants(): deleting ALL CHILD entries for the session: "+currentSession.getIdSessions());
                 
          
          for (Iterator<SessionDetails> sli = sL.iterator(); sli.hasNext();) {
@@ -716,7 +937,7 @@ public class Collector {
                  Child chn = cit.next();
                  Long cid=chn.getIdChild();
                  
-                  //  System.out.println("deleting entry for : "+ssdServ.getSessionDetails(chn.getChild()).getJobStep().getNameJobStep()+ " :for job: "+sdn.getJobStep().getNameJobStep());
+//                    System.out.println("deleting entry for : "+ssdServ.getSessionDetails(chn.getChild()).getJobStep().getNameJobStep()+ " :for job: "+sdn.getJobStep().getNameJobStep());
                  
                   cServ.deleteChild(cid);
                     
@@ -734,27 +955,27 @@ public class Collector {
                 dbChild=new ArrayList<>();
             
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
-                   // System.out.println("collector.Collector.createAllDescendants(): CurrentSession: "+currentSession.getNameSessions());
+                    System.out.println("collector.Collector.createAllDescendants(): CurrentSession: "+currentSession.getNameSessions());
                       ArrayList<JobStepType0Model> listOfChildren=(ArrayList<JobStepType0Model>) jsm.getJsChildren();
                  
                  for (Iterator<JobStepType0Model> cit = listOfChildren.iterator(); cit.hasNext();) {
-                     JobStepType0Model child = cit.next();
-                   //  System.out.println("collector.Collector.createAllDescendants() :" +jsm.getJobStepText()+" : has child: "+child.getJobStepText() );
+                   JobStepType0Model child = cit.next();
+                     System.out.println("collector.Collector.createAllDescendants() :" +jsm.getJobStepText()+" : has child: "+child.getJobStepText() );
                    
                      Child c=new Child();
                   
                      c.setSessionDetails(sd);                            //This is the same as setting the parent of this child; in this case is the sessiondetails to which "js" belongs to.
-                  //   System.out.println("collector.Collector.createAllDescendants(): sessionDetailsID(Parent): "+c.getSessionDetails().getIdSessionDetails());
+                     System.out.println("collector.Collector.createAllDescendants(): sessionDetailsID(Parent): "+c.getSessionDetails().getIdSessionDetails());
                      JobStep childJs=jsServ.getJobStep(child.getId());
-                   //  System.out.println("collector.Collector.createAllDescendants(): childJobStep: "+childJs.getNameJobStep()+" :ID: "+childJs.getIdJobStep());
+                     System.out.println("collector.Collector.createAllDescendants(): childJobStep: "+childJs.getNameJobStep()+" :ID: "+childJs.getIdJobStep());
                      SessionDetails childSSd=ssdServ.getSessionDetails(childJs, currentSession);   //get the sessiondetails corresponding to the child.
-                   //  System.out.println("collector.Collector.createAllDescendants() : sessionDetailsID(Child): "+childSSd.getIdSessionDetails());
+                     System.out.println("collector.Collector.createAllDescendants() : sessionDetailsID(Child): "+childSSd.getIdSessionDetails());
                      c.setChild(childSSd.getIdSessionDetails());   // this adds the sessiondetails of the child to the table Child.
                                                                    // so the table entry will look like:      SSDofAjob, SSDofTheChild
                   
                     if(cServ.getChildFor(c.getSessionDetails(), c.getChild())==null){dbChild.add(c);}
                     //dbChild.add(c);
-                    // System.out.println("collector.Collector.createAllDescendants(): sizeof DbChild: "+dbChild.size());
+                     System.out.println("collector.Collector.createAllDescendants(): sizeof DbChild: "+dbChild.size());
                 }
                   //write the initial dbAncestors List to the database . for each jobStepModel
                 

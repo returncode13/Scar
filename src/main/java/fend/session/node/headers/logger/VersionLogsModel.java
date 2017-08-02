@@ -17,13 +17,13 @@ import java.util.Map;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 
 
 /**
- * The Logs class contains all the logs  belonging to a particular subsurface from a Volume
- * @author naila0152
+ * Class to hold the version of the logs
+ * @author sharath nair
  */
 
 

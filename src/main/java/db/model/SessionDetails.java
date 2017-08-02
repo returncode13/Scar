@@ -31,12 +31,12 @@ public class SessionDetails implements Serializable{
    private Long idSessionDetails;
    
     
-   @ManyToOne(cascade = CascadeType.ALL)
+   @ManyToOne()
    @JoinColumn(name = "jobStep_sessionDetails_fk",nullable = true)
    private JobStep jobStep;                                                 //mappedBy property in JobStep class definition // JoinColumn 1 in Dependencies
     
    
-   @ManyToOne(cascade = CascadeType.ALL)
+   @ManyToOne()
    @JoinColumn(name = "sessions_sessionDetails_fk",nullable = true)                        //refers to the idSessions member in Sessions class.
    private Sessions sessions;                                               //mappedBy property in Sessions class definition //JoinColumn 2 in Dependencies class def
 

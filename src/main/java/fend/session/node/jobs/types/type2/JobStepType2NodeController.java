@@ -38,13 +38,15 @@ import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
-import fend.session.node.volumes.type1.VolumeSelectionCell;
+import fend.session.node.volumes.type1.VolumeSelectionCellType1;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
-import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
-import fend.session.node.volumes.type1.qcTable.QcTableNode;
-import fend.session.node.volumes.type1.qcTable.QcTypeModel;
-import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
-import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListNode;
+import fend.session.node.qcTable.QcMatrixModel;
+import fend.session.node.qcTable.QcTableNode;
+import fend.session.node.qcTable.QcTypeModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListNode;
+import fend.session.node.volumes.type2.VolumeSelectionCellType2;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -90,10 +92,10 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     
     
     
-    final private ChangeListener<ObservableList<VolumeSelectionModelType1>> JOBSTEP_VOLUME_LIST_CHANGE_LISTENER =new ChangeListener<ObservableList<VolumeSelectionModelType1>>() {
+    final private ChangeListener<ObservableList<VolumeSelectionModelType2>> JOBSTEP_VOLUME_LIST_CHANGE_LISTENER =new ChangeListener<ObservableList<VolumeSelectionModelType2>>() {
 
         @Override
-        public void changed(ObservableValue<? extends ObservableList<VolumeSelectionModelType1>> observable, ObservableList<VolumeSelectionModelType1> oldValue, ObservableList<VolumeSelectionModelType1> newValue) {
+        public void changed(ObservableValue<? extends ObservableList<VolumeSelectionModelType2>> observable, ObservableList<VolumeSelectionModelType2> oldValue, ObservableList<VolumeSelectionModelType2> newValue) {
            /* System.out.println("OldValue List Contents ");
             for (Iterator<VolumeSelectionModel> iterator = oldValue.iterator(); iterator.hasNext();) {
                 VolumeSelectionModelType1 next = iterator.next();
@@ -126,8 +128,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         }
     };
     
-    private List<VolumeSelectionModelType1> volSelectionList=new ArrayList<>();
-    private ObservableList<VolumeSelectionModelType1> obsList=FXCollections.observableList(volSelectionList);
+    private List<VolumeSelectionModelType2> volSelectionList=new ArrayList<>();
+    private ObservableList<VolumeSelectionModelType2> obsList=FXCollections.observableList(volSelectionList);
     private int show=0;
     private JobStepType2Model model;
     private JobStepType2Node jsn;                                //the real node is jsn.getJobStepNode()
@@ -172,7 +174,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     private GridPane gridPaneJobStepNode;
 
     @FXML
-    private ListView<VolumeSelectionModelType1> volumeSelView;
+    private ListView<VolumeSelectionModelType2> volumeSelView;
     
     @FXML
     private Button insightVerButton;
@@ -200,8 +202,14 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     private SessionDetailsService ssdserv=new SessionDetailsServiceImpl();
     private JobStepService jserv=new JobStepServiceImpl();
        
-     @FXML
+      @FXML
     void openQMatrix(ActionEvent event) {
+        
+        qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
+        
+        if(qcMatrixModel.getQcTypePresMap().isEmpty()){
+            
+      
             SessionModel smodel=model.getSessionModel();
         Sessions currentsession= sserv.getSessions(smodel.getId());
         JobStep js= jserv.getJobStep(model.getId());
@@ -214,12 +222,28 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         
       //  List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForVolume(v);
         List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
-         //qcMatrixModel=vmodel.getQcMatrixModel();
-         qcMatrixModel=model.getQcMatrixModel();
+         
+         //qcMatrixModel=model.getQcMatrixModel();
+         
       //  List<QcType>
-        qcCheckListModel qcckmod=new qcCheckListModel();
+        
         //List<QcType> allQcTypes=qserv.getQcTypesForSession(currentsession);
         List<QcType> allQcTypes=qserv.getAllQcTypes();
+        
+        /*if(allQcTypes.isEmpty()){          //no qctypes declared for the entire session
+        for (Iterator<String> iterator = types.iterator(); iterator.hasNext();) {
+        String type = iterator.next();
+        QcType q=new QcType();
+        q.setName(type.toLowerCase());              //2Dstacks is the same as 2dstACks
+        // q.setSessions(currentsession);
+        qserv.createQcType(q);
+        
+        allQcTypes=qserv.getAllQcTypes();
+        }
+        */
+              //  allQcTypes=qserv.getQcTypesForSession(currentsession);
+             
+        
         List<String> qcTypesNames=new ArrayList<>();
         //qcCModel=vmodel.getQcCheckListModel(); 
         qcCModel=model.getQcCheckListModel();
@@ -230,7 +254,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         }
         qcCModel.setQcTypes(qcTypesNames);
       
-        if(qcmatdef.isEmpty()){                                
+        if(qcmatdef.isEmpty()){                     //no matrix defined for this job. ask for a definition           
            
             
             
@@ -352,7 +376,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
            
             
          //qcmatdef=qcmserv.getQcMatrixForVolume(v);   
-         qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
+         qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);             //only get the qctypes for which present=true
         }
         
         
@@ -360,17 +384,36 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         
        
            
-         showPopList(qcmatdef);
+         showPopList(qcmatdef);    //qcmatdef holds the definitions
        // }
         
-        
+       }else{
+            List<SequenceHeaders> seqsinJob=new ArrayList<>();
+           for(VolumeSelectionModelType2 vmod:obsList){
+               HeadersModel hmod=vmod.getHeadersModel();
+            List<SequenceHeaders> seqsinVol=hmod.getSequenceListInHeaders();
+            seqsinJob.addAll(seqsinVol);
+           }
+           
+          // vmodel.getQcTableModel().setSequences(seqsinVol);
+          model.getQcTableModel().setSequences(seqsinJob);
+          model.getQcTableModel().loadQcTypes();
+           
+          // QcTableNode qcMatrixNode=new QcTableNode(vmodel.getQcTableModel());
+          QcTableNode qcMatrixNode=new QcTableNode(model.getQcTableModel());
+        }   
         
         
     }
     
     void showPopList(List<QcMatrix> qcmatrices){
-        
-        qcMatrixModel.clear();
+       //if(model.getQcTableModel().getQcMatrixModel()==null){     //the resultant qcmatrix from this call is not the same as the models qcmatrix. aka, the qcMatrixModel variable
+       
+        System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.showPopList(): qcMatrixModel.getQcTypePresMap().isEmpty()?: "+qcMatrixModel.getQcTypePresMap().isEmpty());
+       
+       
+       if(qcMatrixModel.getQcTypePresMap().isEmpty()){                             //there is no definition of the qcmatrix in this job..so define it
+        //qcMatrixModel.clear();
         
         
            for (Iterator<QcMatrix> iterator = qcmatrices.iterator(); iterator.hasNext();) {
@@ -385,14 +428,20 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
             qctm.setName(qctype.getName());
             qcMatrixModel.addToQcTypePresMap(qctm, pres);
             
-        }
+            }
         
         //   vmodel.getQcTableModel().setQcMatrixModel(qcMatrixModel);
-        model.getQcTableModel().setQcMatrixModel(qcMatrixModel);
+        
+           model.getQcTableModel().setQcMatrixModel(qcMatrixModel); 
+        }
+       else
+       qcMatrixModel=model.getQcTableModel().getQcMatrixModel();            //qcmatrix has been defined. get it.
+        
+        
         
            //model.getQcTableModel().setQctypes(qctypeModels);
            List<SequenceHeaders> seqsinJob=new ArrayList<>();
-           for(VolumeSelectionModelType1 vmod:obsList){
+           for(VolumeSelectionModelType2 vmod:obsList){
                HeadersModel hmod=vmod.getHeadersModel();
             List<SequenceHeaders> seqsinVol=hmod.getSequenceListInHeaders();
             seqsinJob.addAll(seqsinVol);
@@ -400,10 +449,13 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
            
           // vmodel.getQcTableModel().setSequences(seqsinVol);
           model.getQcTableModel().setSequences(seqsinJob);
+          model.getQcTableModel().loadQcTypes();
            
           // QcTableNode qcMatrixNode=new QcTableNode(vmodel.getQcTableModel());
           QcTableNode qcMatrixNode=new QcTableNode(model.getQcTableModel());
     }
+    
+    
     
     
      
@@ -417,7 +469,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         }
              
         
-                obsList.add(new VolumeSelectionModelType1(true,1L,model));
+                obsList.add(new VolumeSelectionModelType2(true,2L,model));
                  volumeSelView.setItems(obsList);
                
                
@@ -426,8 +478,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
                 System.out.println("JSNC: Adding volumeModel "+obsList.get(obsList.size()-1).getId()+" to JobStepModel "+model.getId());
                 System.out.println("JSNC: At this point the jobStep model# "+model.getId()+" has the following Volumes ");
                 
-                for (Iterator<VolumeSelectionModelType1> iterator = model.getVolList().iterator(); iterator.hasNext();) {
-            VolumeSelectionModelType1 next = iterator.next();
+                for (Iterator<VolumeSelectionModelType2> iterator = model.getVolList().iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType2 next = iterator.next();
                     System.out.println("         id# "+next.getId()+" label: "+next.getLabel()+" headerButtonIsDisabled :"+next.isHeaderButtonIsDisabled());
             
         }
@@ -574,7 +626,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     }
     
    
-    public ObservableList<VolumeSelectionModelType1> getObsList() {
+    public ObservableList<VolumeSelectionModelType2> getObsList() {
         return obsList;
     }
 
@@ -675,15 +727,15 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
          
          
          
-      volumeSelView.setCellFactory(new Callback<ListView<VolumeSelectionModelType1>, ListCell<VolumeSelectionModelType1>>() {
+      volumeSelView.setCellFactory(new Callback<ListView<VolumeSelectionModelType2>, ListCell<VolumeSelectionModelType2>>() {
 
                         @Override
-                        public ListCell<VolumeSelectionModelType1> call(ListView<VolumeSelectionModelType1> param) {
+                        public ListCell<VolumeSelectionModelType2> call(ListView<VolumeSelectionModelType2> param) {
                             //System.out.println("JSNController: calling setCellFactory on  "+param.getItems().get(show).getLabel());
                             
                            
                             
-                             return new VolumeSelectionCell();
+                             return new VolumeSelectionCellType2();
                           
                         }
                     });
@@ -726,7 +778,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
         updateJobStepVolumeListView(model.getVolList());
     }
     
-    private void updateJobStepVolumeListView(ObservableList<VolumeSelectionModelType1> newValue){
+    private void updateJobStepVolumeListView(ObservableList<VolumeSelectionModelType2> newValue){
         volumeSelView.setItems(newValue);
     }
  /*
@@ -738,7 +790,7 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
 
                         @Override
                         public ListCell<VolumeSelectionModel> call(ListView<VolumeSelectionModel> param) {
-                             return new VolumeSelectionCell();
+                             return new VolumeSelectionCellType1();
                           
                         }
                     });
@@ -810,8 +862,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
     public void setVolumeModelsForFrontEndDisplay() {
         
         
-        for (Iterator<VolumeSelectionModelType1> iterator = obsList.iterator(); iterator.hasNext();) {
-            VolumeSelectionModelType1 next = iterator.next();
+        for (Iterator<VolumeSelectionModelType2> iterator = obsList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType2 next = iterator.next();
             volumeSelView.setItems(obsList);
                
                 
@@ -821,15 +873,15 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
                 System.out.println("JSNC: Adding volumeModel "+obsList.get(obsList.size()-1).getId()+" to JobStepModel "+model.getId());
                 System.out.println("JSNC: At this point the jobStep model# "+model.getId()+" has the following Volumes ");
                 
-                for (Iterator<VolumeSelectionModelType1> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
-            VolumeSelectionModelType1 next1 = iterator1.next();
+                for (Iterator<VolumeSelectionModelType2> iterator1 = model.getVolList().iterator(); iterator1.hasNext();) {
+            VolumeSelectionModelType2 next1 = iterator1.next();
                     System.out.println("         id# "+next1.getId()+" label: "+next1.getLabel()+" headerButtonIsDisabled :"+next1.isHeaderButtonIsDisabled());
                     
                     HeadersModel hmod=next1.getHeadersModel();
                     List<SequenceHeaders> seqL=hmod.getSequenceListInHeaders();
                     for (Iterator<SequenceHeaders> iterator2 = seqL.iterator(); iterator2.hasNext();) {
                         SequenceHeaders next2 = iterator2.next();
-                        System.out.println("fend.session.node.jobs.JobStepNodeController.setVolumeModelsForFrontEndDisplay() Sequence: "+next2.getSequenceNumber());
+                        System.out.println("fend.session.node.jobs.JobStepType2NodeController.setVolumeModelsForFrontEndDisplay() Sequence: "+next2.getSequenceNumber());
                     }
             
         }

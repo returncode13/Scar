@@ -19,6 +19,7 @@ import dugex.DugioScripts;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -110,16 +112,20 @@ public  class LogWatcher {
         LogWatcher.this.volumeModel=vmod;
         volume=vserv.getVolume(volumeModel.getId());
         LogWatcher.this.logsLocation=logsLocation;
-        List<Logs> logL=lserv.getLogsFor(volume);
-        if(logL!=null){
-            for (Iterator<Logs> iterator = logL.iterator(); iterator.hasNext();) {
-            Logs next = iterator.next();
-            LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSequence(),next.getSubsurfaces(), next.getInsightVersion());
-            //listOfExistingLogs.add(lw);
-            mapOfExistingLogs.put(next.getLogpath(), lw);
-            }
+        /*List<Logs> logL=lserv.getLogsFor(this.volume);
+        if(!logL.isEmpty()){
+        for (Iterator<Logs> iterator = logL.iterator(); iterator.hasNext();) {
+        Logs next = iterator.next();
+        LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSequence(),next.getSubsurfaces(), next.getInsightVersion());
+        //listOfExistingLogs.add(lw);
+        mapOfExistingLogs.put(next.getLogpath(), lw);
+        System.out.println("watcher.LogWatcher.<init>(): found existing log for  : "+next.getSubsurfaces()+" log under: "+next.getLogpath()+" adding to map");
         }
-        
+        }
+        else{
+        System.out.println("watcher.LogWatcher.<init>(): LogList was empty! Is this the first time this volume has been run? Volume in question: "+this.volume.getPathOfVolume());
+        }
+        */
             
                 extract();
                 commitToDb();
@@ -148,6 +154,25 @@ public  class LogWatcher {
                                 if(action.equals("Added")){
                                     
                                     System.out.println("watcher.LogWatcher. "+logfile+" was added");   
+                                    //check if the file is big enough to start reading.
+                                    boolean hasTooFewLines=true;
+                                    while(hasTooFewLines){
+                                    try(BufferedReader br=new BufferedReader(new FileReader(logfile))){
+                                        String line=br.readLine();
+                                        int count=0;
+                                        while(line!=null){
+                                            line=br.readLine();
+                                            count++;
+                                            if(count > 60) {
+                                                hasTooFewLines=false;
+                                                break;
+                                            }
+                                        }
+                                    } catch (IOException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+                                    
+                                    }
                                     try {
                                         Thread.sleep(5000);
                                     } catch (InterruptedException ex) {
@@ -158,7 +183,7 @@ public  class LogWatcher {
                                         commitToDb();
                                         
                                     }catch(ArrayIndexOutOfBoundsException aobe){
-                                        System.out.println("I think the log is still building..Will try again after 1 min");
+                                            System.out.println("I think the log is still building..Will try again in 60 secs");
                                         try {
                                             Thread.sleep(100000);
                                         } catch (InterruptedException ex) {
@@ -199,8 +224,20 @@ public  class LogWatcher {
     }
 
     private void extract(){
-        
-                      
+        mapOfExistingLogs.clear();
+                      List<Logs> logL=lserv.getLogsFor(this.volume);
+        if(!logL.isEmpty()){
+            for (Iterator<Logs> iterator = logL.iterator(); iterator.hasNext();) {
+            Logs next = iterator.next();
+            LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSequence(),next.getSubsurfaces(), next.getInsightVersion());
+            //listOfExistingLogs.add(lw);
+            mapOfExistingLogs.put(next.getLogpath(), lw);
+                System.out.println("watcher.LogWatcher.<init>(): found existing log for  : "+next.getSubsurfaces()+" log under: "+next.getLogpath()+" adding to map");
+            }
+        }
+        else{
+            System.out.println("watcher.LogWatcher.<init>(): LogList was empty! Is this the first time this volume has been run? Volume in question: "+this.volume.getPathOfVolume());
+            }
                     
                     
                     
@@ -208,6 +245,10 @@ public  class LogWatcher {
                         String logpath=logsLocation;                                     //../000scratch/logs
                         System.out.println("watcher.LogWatcher: LogLocation: "+logpath);
                         System.out.println("watcher.Logwatcher: Processing logs");
+                        
+                        
+                        
+                        
                         Process process=new ProcessBuilder(new DugioScripts().getSubsurfaceLog().getAbsolutePath(),logpath).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
@@ -217,37 +258,70 @@ public  class LogWatcher {
                         while((value=br.readLine())!=null){
                             Long maxVersion=0L;
                             System.out.println("watcher.LogWatcher.extract(): whileLoop: "+value);
-                            /* String[] parts=value.split("\\s");
-                            String date=parts[0].substring(parts[0].indexOf(":")+1);
-                            
-                            String time=parts[1];
-                            DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
-                            Date convjdate=jdate.parse(date+":"+time);
-                            String filename=parts[0].substring(parts[0].lastIndexOf("/")+1,parts[0].indexOf(":"));
-                            String linename=parts[2].split("=")[1];*/
-                            
-                            
-                            
-                            //   System.out.println("got: "+linename+" logsLocation: "+filename+" ");
-                            
-                             //New script results
-                             
-                             /* String filename;
-                             String date;
-                             String time;*/
+                         
                              
                              
-                             
+                             boolean skipped=true;
                              
                              
                                             String[] parts=value.split("\\s");
                                             System.out.println("watcher.LogWatcher.extract(): paths.length: "+parts.length);
-                                             if(parts.length!=16){
+                                            /* if(parts.length!=16){
                                             continue;
-                                            }
+                                            }*/
                                             /* for(int iii=0;iii<parts.length;iii++){
                                             System.out.println("wacther.Logwatcher():  "+iii+" = "+parts[iii]);
                                             }*/
+                                            
+                                            if(parts.length==15){
+                                                
+                                            skipped=false;
+                                            String filename=parts[0];
+                                            String date=parts[1];                                            
+                                            String time=parts[2];
+                                            DateFormat jdate=new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
+                                            Date convjdate=jdate.parse(date+":"+time);
+                                            
+                                            String linename=parts[7].split("=")[1];
+                                            String qes=new StringBuilder(linename.split("_")[0]).reverse().toString();
+                                          //  System.out.println("watcher.LogWatcher.extract(): qes: "+qes);
+                                            String seq=qes.substring(0,3);
+                                            //System.out.println("watcher.LogWatcher.extract(): seq: "+seq);
+                                            seq=new StringBuilder(seq).reverse().toString();
+                                            Long seqno=Long.valueOf(seq);
+                                            //System.out.println("watcher.LogWatcher.extract(): seqno: "+seqno);
+                                            String baseInsVersion=parts[14];
+                                            //String revInsVersion=parts[15];
+                                        //    String insVersion=baseInsVersion.concat(revInsVersion);
+                                            System.out.println("got: "+convjdate+" "+linename+" logsLocation: "+filename+" seq: "+seqno+" sub:"+linename+" insVersion: "+baseInsVersion);
+                                            
+                            
+                            LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename,seqno, linename,baseInsVersion);
+                            System.out.print(".");
+                           // if(!listOfExistingSubs.contains(linename)){
+                           Set<String> existingLogs=mapOfExistingLogs.keySet();
+                           if(existingLogs.contains(filename)){
+                               System.out.println("watcher.LogWatcher.extract(): MapOfExistingLogs: contains "+filename);
+                           }
+                           if(!existingLogs.contains(filename)){
+                               System.out.println("watcher.LogWatcher.extract():"+filename+" Adding to lwatcholder");
+                               lwatchHolderList.add(lwatchholder);
+                           }else{
+                               //System.out.println("watcher.LogWatcher.extract(): log "+filename+" already present in database...skipping");
+                               
+                           }
+                                
+                           // }
+                            }
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            if(parts.length==16){
+                                                
+                                            skipped=false;
                                             String filename=parts[0];
                                             String date=parts[1];                                            
                                             String time=parts[2];
@@ -271,7 +345,11 @@ public  class LogWatcher {
                             LogWatchHolder lwatchholder=new LogWatchHolder(convjdate.toString(), filename,seqno, linename,insVersion);
                             System.out.print(".");
                            // if(!listOfExistingSubs.contains(linename)){
-                           if(!mapOfExistingLogs.containsKey(filename)){
+                           Set<String> existingLogs=mapOfExistingLogs.keySet();
+                           if(existingLogs.contains(filename)){
+                               System.out.println("watcher.LogWatcher.extract(): MapOfExistingLogs: contains "+filename);
+                           }
+                           if(!existingLogs.contains(filename)){
                                System.out.println("watcher.LogWatcher.extract():"+filename+" Adding to lwatcholder");
                                lwatchHolderList.add(lwatchholder);
                            }else{
@@ -280,9 +358,9 @@ public  class LogWatcher {
                            }
                                 
                            // }
+                            }
                             
-                            
-                            System.out.println("watcher.LogWatcher.extract(): Moving on to the next log");
+                            System.out.println("watcher.LogWatcher.extract(): Skipped status for log: "+skipped);
                             
                         }
                         
@@ -324,7 +402,7 @@ public  class LogWatcher {
             //List<Logs>logsList=lserv.getLogsFor(volume);
             Set<String> keys=maplineLog.keySet();
             if(keys.size()>0){
-                 System.out.println("watcher.LogWatcher.commitToDb(): Committing logs");
+                 System.out.println("watcher.LogWatcher.commitToDb(): Committing "+keys.size()+" logs ");
             }else{
                 System.out.println("watcher.LogWatcher.commitToDb(): Nothing to commit..yet");
             }
@@ -347,7 +425,7 @@ public  class LogWatcher {
                             
                             l.setLogpath(lgw.filename);
                             l.setTimestamp(lgw.date);
-                            l.setVolume(volume);
+                            l.setVolume(LogWatcher.this.volume);
                             l.setInsightVersion(lgw.insightVersion);
                             l.setSubsurfaces(lgw.linename);
                            l.setSequence(lgw.seqno);

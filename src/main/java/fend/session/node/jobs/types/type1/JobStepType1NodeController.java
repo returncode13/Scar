@@ -80,7 +80,7 @@ import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.insightVersions.InsightVersionsNode;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 
-import fend.session.node.volumes.type1.VolumeSelectionCell;
+import fend.session.node.volumes.type1.VolumeSelectionCellType1;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
 import java.io.FileFilter;
@@ -92,11 +92,11 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.cell.CheckBoxListCell;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
-import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
-import fend.session.node.volumes.type1.qcTable.QcTableNode;
-import fend.session.node.volumes.type1.qcTable.QcTypeModel;
-import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
-import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListNode;
+import fend.session.node.qcTable.QcMatrixModel;
+import fend.session.node.qcTable.QcTableNode;
+import fend.session.node.qcTable.QcTypeModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListNode;
 import java.util.Map;
 
 
@@ -758,7 +758,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
                             
                            
                             
-                             return new VolumeSelectionCell();
+                             return new VolumeSelectionCellType1();
                           
                         }
                     });
@@ -813,7 +813,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
 
                         @Override
                         public ListCell<VolumeSelectionModel> call(ListView<VolumeSelectionModel> param) {
-                             return new VolumeSelectionCell();
+                             return new VolumeSelectionCellType1();
                           
                         }
                     });

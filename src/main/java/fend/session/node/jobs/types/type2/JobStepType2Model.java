@@ -8,13 +8,11 @@ package fend.session.node.jobs.types.type2;
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
 import fend.session.node.headers.SubSurfaceHeaders;
-import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
-import fend.session.node.volumes.type1.VolumeSelectionModelType1;
-import fend.session.node.volumes.type1.qcTable.QcMatrixModel;
-import fend.session.node.volumes.type1.qcTable.QcTableModel;
-import fend.session.node.volumes.type1.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.qcTable.QcTableModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,7 +36,7 @@ public class JobStepType2Model implements JobStepType0Model{
     
     private final Long type=2L;
     private final StringProperty jobStepTextProperty;
-    private final ListProperty<VolumeSelectionModelType1>volListProperty;
+    private final ListProperty<VolumeSelectionModelType2>volListProperty;
     private InsightVersionsModel insightVersionsModel;
     
     private BooleanProperty pendingFlagProperty=new SimpleBooleanProperty(Boolean.FALSE);
@@ -71,9 +69,10 @@ public class JobStepType2Model implements JobStepType0Model{
     public JobStepType2Model(String jobStepText,SessionModel smodel) {
        
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
-       ObservableList<VolumeSelectionModelType1> obs=FXCollections.observableArrayList();
+       ObservableList<VolumeSelectionModelType2> obs=FXCollections.observableArrayList();
         this.volListProperty = new SimpleListProperty<>(obs);
         this.sessionModel=smodel;
+        this.doubt=new Doubt();
         
         jsParents.add(this);                                                        //provision for root
         jsChildren.add(this);                                                       //provision for leaf
@@ -109,7 +108,7 @@ public class JobStepType2Model implements JobStepType0Model{
         this("Enter a name",smodel);
     }
 
-    public ListProperty<VolumeSelectionModelType1> getVolListProperty() {
+    public ListProperty<VolumeSelectionModelType2> getVolListProperty() {
         return volListProperty;
     }
 
@@ -126,11 +125,11 @@ public class JobStepType2Model implements JobStepType0Model{
         jobStepTextProperty.set(text);
     }
     
-    public ObservableList<VolumeSelectionModelType1> getVolList(){
+    public ObservableList<VolumeSelectionModelType2> getVolList(){
         return volListProperty.get();
     }
     
-    public void setVolList(ObservableList<VolumeSelectionModelType1> obsList){
+    public void setVolList(ObservableList<VolumeSelectionModelType2> obsList){
         volListProperty.set(obsList);
     }
  
@@ -287,31 +286,33 @@ public class JobStepType2Model implements JobStepType0Model{
   private  QcTableModel qcTableModel;
     private qcCheckListModel qcCheckListModel;
     
-    private QcMatrixModel qcMatrixModel;
+    /* private QcMatrixModel qcMatrixModel;
     
-
+    
     public QcMatrixModel getQcMatrixModel() {
-        if(qcMatrixModel==null) {
-            qcMatrixModel=new QcMatrixModel();
-            //qcMatrixModel.setVmodel(this);
-            qcMatrixModel.setJobmodel(this);
-        }
-        return qcMatrixModel;
+    if(qcMatrixModel==null) {
+    qcMatrixModel=new QcMatrixModel();
+    //qcMatrixModel.setVmodel(this);
+    qcMatrixModel.setJobmodel(this);
     }
-
-    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
-        this.qcMatrixModel = qcMatrixModel;
+    return qcMatrixModel;
     }
     
+    public void setQcMatrixModel(QcMatrixModel qcMatrixModel) {
+    this.qcMatrixModel = qcMatrixModel;
+    }
+    */
     public QcTableModel getQcTableModel() {
         if(qcTableModel==null){
             qcTableModel=new QcTableModel();
         }
+        qcTableModel.setJobmodel(this);
         return qcTableModel;
     }
 
-    public void setQcTableModel(QcTableModel qcMatrixModel) {
-        this.qcTableModel = qcMatrixModel;
+    public void setQcTableModel(QcTableModel qcTableModel) {
+        this.qcTableModel = qcTableModel;
+        this.qcTableModel.setJobmodel(this);
     }
     
      public qcCheckListModel getQcCheckListModel() {
@@ -324,6 +325,7 @@ public class JobStepType2Model implements JobStepType0Model{
     public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
         this.qcCheckListModel = qcCheckListModel;
     }
+    
     
    
 }

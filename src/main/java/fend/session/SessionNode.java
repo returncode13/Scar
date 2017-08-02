@@ -25,7 +25,7 @@ public class SessionNode extends AnchorPane{
     
     
     public SessionNode(SessionModel item){
-        this.location=getClass().getClassLoader().getResource("sessionResources/SessionView_1_1.fxml"); 
+        this.location=getClass().getClassLoader().getResource("sessionResources/SessionView_2.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

@@ -14,6 +14,7 @@ import db.services.VolumeServiceImpl;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +45,8 @@ import javafx.collections.ObservableMap;
 public class SummaryStatusWatcher {
     private LogsService lserv=new LogsServiceImpl();
     private VolumeService vserv=new VolumeServiceImpl();
-    private VolumeSelectionModelType1 volumeSelectionModel;
+    private VolumeSelectionModelType1 volumeSelectionModelT1;
+    private VolumeSelectionModelType2 volumeSelectionModelT2;
     private AcquisitionVolumeModel acqvolumemodel;
     private Volume volume;
     private List<Logs> logsWithDistinctSeq;
@@ -58,10 +60,14 @@ public class SummaryStatusWatcher {
     Timer timer;
 
     public SummaryStatusWatcher(VolumeSelectionModelType0 volumeSelectionModel) {
-        if(!volumeSelectionModel.getType().equals(3L)){
+        /*
+        Volume type 1L: Denoise etc
+        Start
+        */
+        if(volumeSelectionModel.getType().equals(1L)){
             
-        this.volumeSelectionModel = (VolumeSelectionModelType1) volumeSelectionModel;
-        this.volume=vserv.getVolume(this.volumeSelectionModel.getId());
+        this.volumeSelectionModelT1 = (VolumeSelectionModelType1) volumeSelectionModel;
+        this.volume=vserv.getVolume(this.volumeSelectionModelT1.getId());
            
         ExecutorService executorserv= Executors.newFixedThreadPool(1);
         try{
@@ -72,7 +78,7 @@ public class SummaryStatusWatcher {
                     task=new TimerTask(){
                         @Override
                         public void run() {
-                            System.out.println("watcher.SummaryStatusWatcher.<init>(). Checking for runstatus of logs for Volume: "+SummaryStatusWatcher.this.volumeSelectionModel.getLabel());
+                            System.out.println("watcher.SummaryStatusWatcher.<init>(). Checking for runstatus of logs for Volume: "+SummaryStatusWatcher.this.volumeSelectionModelT1.getLabel());
                             logsWithDistinctSeq=lserv.getSequencesFor(volume);
                             if(logsWithDistinctSeq==null){
                                 System.out.println("watcher.SummaryStatusWatcher.<init>().run(): NULL value encountered while retrieving sequence list from the Log table");
@@ -133,7 +139,7 @@ public class SummaryStatusWatcher {
                                 
                             }
                             
-                            SummaryStatusWatcher.this.volumeSelectionModel.setLogstatusMapForSeq(seqrunStatus);
+                            SummaryStatusWatcher.this.volumeSelectionModelT1.setLogstatusMapForSeq(seqrunStatus);
                             
                         }
                         
@@ -154,12 +160,43 @@ public class SummaryStatusWatcher {
               }
     
     }
+        /*
+        Volume type 1L: Denoise etc
+        End
+        */
         
         
-        else{
+        
+        
+        /*
+        Volume type 2L : segdLoad
+        Start
+        */
+        
+        if(volumeSelectionModel.getType().equals(2L)){
+            
+        this.volumeSelectionModelT2 = (VolumeSelectionModelType2) volumeSelectionModel;
+        this.volume=vserv.getVolume(this.volumeSelectionModelT2.getId());
+        
+     
+    }
+        /*
+        Volume type 2L: segdLoad
+        End
+        */
+        
+        /*
+        Volume type 3L: Acquisition 
+        Start
+        */
+        if(volumeSelectionModel.getType().equals(3L)){
             acqvolumemodel=(AcquisitionVolumeModel) volumeSelectionModel;
             System.out.println("watcher.SummaryStatusWatcher.<init>(): to be defined for type 3 Volumes");
         }
+        /*
+        Volume type 3L: Acquisition 
+        End
+        */
     
     
     }
