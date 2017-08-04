@@ -58,6 +58,7 @@ import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +86,7 @@ import javafx.scene.control.Button;
 import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
@@ -92,6 +94,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -115,6 +119,7 @@ import landing.settings.ssh.SShSettingsWrapper;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
+import org.openide.util.Exceptions;
 
 /**
  * FXML Controller class
@@ -129,7 +134,9 @@ public class LandingController implements Initializable,Serializable {
     
     private static final String sshSettingXml="src/main/resources/landingResources/settings/ssh/settings.xml";
     private static final String dbSettingXml="src/main/resources/landingResources/settings/database/databaseSettings.xml";
-
+    File file=new File("/d/home/adira0150/programming/php/submit.html");
+    URL url1;
+    
     public static String getSshSettingXml() {
         return sshSettingXml;
     }
@@ -147,7 +154,8 @@ public class LandingController implements Initializable,Serializable {
     private SessionModel smodel;
     private SessionNode snode;
     private SessionController scontr;
-    
+    final WebView wv=new WebView(); 
+    final WebEngine webEngine=wv.getEngine();
     
     private SShSettings settingsModel;
     private DataBaseSettings databaseSettingsModel;
@@ -179,6 +187,21 @@ public class LandingController implements Initializable,Serializable {
 
      @FXML
     private MenuItem dbsettings;
+     
+     @FXML
+    private Button bugReport;
+     
+     @FXML
+    void handleBugReport(ActionEvent event) {
+        try {
+            System.out.println("landing.LandingController.handleBugReport()");
+            url1=file.toURI().toURL();
+            
+             webEngine.load(url1.toString());
+        } catch (MalformedURLException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
      
      @FXML
     void dbsettings(ActionEvent event) {

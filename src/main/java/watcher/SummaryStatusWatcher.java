@@ -138,8 +138,12 @@ public class SummaryStatusWatcher {
                                 seqrunStatus.put(seq, runstatus);
                                 
                             }
+                            if(seqrunStatus!=null){
+                                SummaryStatusWatcher.this.volumeSelectionModelT1.setLogstatusMapForSeq(seqrunStatus);
+                            }else{
+                                System.out.println("watcher.SummaryStatusWatcher.<init>().run(): Encountered NULL for seqrunStatus");
+                            }
                             
-                            SummaryStatusWatcher.this.volumeSelectionModelT1.setLogstatusMapForSeq(seqrunStatus);
                             
                         }
                         

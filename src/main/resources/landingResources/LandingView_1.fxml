@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2048.0" prefWidth="2048.0" stylesheets="@landing.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="landing.LandingController">
+   <children>
+      <SplitPane dividerPositions="0.060784313725490195" orientation="VERTICAL" prefHeight="512.0" prefWidth="602.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" minWidth="0.0" prefHeight="27.0" prefWidth="2046.0" SplitPane.resizableWithParent="false">
+               <children>
+                  <HBox prefHeight="40.0" prefWidth="2046.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <MenuBar fx:id="menubar" prefHeight="29.0" prefWidth="1962.0">
+                          <menus>
+                            <Menu mnemonicParsing="false" text="File">
+                              <items>
+                                    <MenuItem fx:id="startSession" mnemonicParsing="false" onAction="#startNewSession" text="Start a new Session" />
+                                    <MenuItem fx:id="saveCurrentSession" mnemonicParsing="false" onAction="#saveCurrentSession" text="Save current Session" />
+                                    <MenuItem fx:id="saveSessionAs" mnemonicParsing="false" onAction="#saveSessionAs" text="Save Session As.." />
+                                    <MenuItem fx:id="loadSession" mnemonicParsing="false" onAction="#loadSession" text="Load Session" />
+                                <MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exitTheProgram" text="Exit" />
+                              </items>
+                            </Menu>
+                            <Menu mnemonicParsing="false" text="Edit">
+                              <items>
+      
+      
+                                    <MenuItem fx:id="settings" mnemonicParsing="false" onAction="#settings" text="SSH Settings" />
+                              
+      
+                                <MenuItem fx:id="dbsettings" mnemonicParsing="false" onAction="#dbsettings" text="Database Settings" />
+                              </items>
+                            </Menu>
+                            <Menu mnemonicParsing="false" text="Help">
+                              <items>
+                                <MenuItem mnemonicParsing="false" text="About" />
+                              </items>
+                            </Menu>
+                          </menus>
+                        </MenuBar>
+                        <Button fx:id="bugReport" mnemonicParsing="false" onAction="#handleBugReport" prefHeight="26.0" prefWidth="87.0" style="-fx-background-color: transparent; -fx-graphic: url(landingResources/images/doodle-png-image-13735.png);" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <StackPane fx:id="basePane" prefHeight="1988.0" prefWidth="2046.0" SplitPane.resizableWithParent="false" />
+        </items>
+      </SplitPane>
+   </children>
+</fx:root>

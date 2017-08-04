@@ -702,7 +702,36 @@ public class SummaryController extends Stage{
                     run.setCellFactory(new Callback<TableColumn<SummarySequenceModel, String>, TableCell<SummarySequenceModel, String>>() {
                         @Override
                         public TableCell<SummarySequenceModel, String> call(TableColumn<SummarySequenceModel, String> col) {
-                           TableCell<SummarySequenceModel,String> cell=new TableCell<>();
+                           TableCell<SummarySequenceModel,String> cell=new TableCell<SummarySequenceModel,String>(){
+                               @Override
+                               protected void updateItem(String item,boolean empty){
+                                   super.updateItem(item, empty);
+                                   if(item==null|empty){
+                                      // setText("");
+                                       setStyle("");
+                                   }
+                                   else{
+                                       
+                                   
+                                   if(item.equals("Success")){
+                                     //  setText(item);
+                                       setStyle("-fx-background-color:green");;
+                                   }
+                                    if(item.equals("Running")){
+                                     //  setText(item);
+                                       setStyle("-fx-background-color:orange");;
+                                   }
+                                     if(item.equals("Cancelled")){
+                                      // setText(item);
+                                       setStyle("-fx-background-color:yellow");;
+                                   }
+                                      if(item.equals("Errored")){
+                                     //  setText(item);
+                                       setStyle("-fx-background-color:red");;
+                                   }
+                                   }
+                               }
+                           };
                            cell.textProperty().bind(cell.itemProperty());
                            final ContextMenu contextMenu=new ContextMenu();
                            final MenuItem showSeq=new MenuItem("seq information");
@@ -770,6 +799,11 @@ public class SummaryController extends Stage{
                            });
                            contextMenu.getItems().add(showSeq);
                            cell.setContextMenu(contextMenu);
+                           
+                           
+                           
+                           
+                           
                                    
                            return cell;
                         }

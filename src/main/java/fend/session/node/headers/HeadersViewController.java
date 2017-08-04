@@ -424,7 +424,7 @@ public class HeadersViewController extends Stage implements Initializable {
         
         
         
-        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,alert,numberOfRuns,modified,deleted,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,workflowVersion);
+        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,numberOfRuns,workflowVersion,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,alert,modified,deleted);
         
      
      
