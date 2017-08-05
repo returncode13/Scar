@@ -78,7 +78,10 @@ public class Doubt {
     private  BooleanProperty doubt = new SimpleBooleanProperty();
     private  StringProperty status = new SimpleStringProperty(this,"N");
     private final BooleanProperty override = new SimpleBooleanProperty(false);
-
+    private List<String> errorMessageList=new ArrayList<>();
+    
+    
+    
     public boolean isOverride() {
         return override.get();
     }
@@ -188,15 +191,27 @@ public class Doubt {
     }
     
     
-    public List<String> getErrorMessage(){
+    public List<String> getErrorMessageList(){
+        
         List<String> err=new ArrayList<>();
         for (Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
             JobPair key = entry.getKey();
             String value = entry.getValue();
             err.add(value);
         }
-        return err;
+        //err.addAll(errorMessageList);              //UBB
+        errorMessageList.addAll(err);               //CBB
+        //return err;                               //UBB
+        return errorMessageList;                    //CBB    
+    }
+
+    public void setErrorMessageList(List<String> errorMessageList) {
+        this.errorMessageList = errorMessageList;
     }
     
     
+    
+    
 }
+
+

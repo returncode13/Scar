@@ -41,6 +41,7 @@ import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.session.node.volumes.type2.VolumeSelectionModelType2;
+import java.util.ArrayList;
 //import fend.session.node.jobs.types.type1.JobStepType1Model;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.HashSet;
@@ -446,7 +447,7 @@ public class Dep21 {
                                     
                                     if(parentDoubtstatTrace.size()==1){  //means an entry exists for the parent-child for this 
                                        DoubtStatus pds=parentDoubtstatTrace.get(0);
-                                      // String perr=pds.getErrorMessage();
+                                      // String perr=pds.getErrorMessageList();
                                        
                                        dsServ.deleteDoubtStatus(pds.getIdDoubtStatus());
                                        
@@ -523,7 +524,7 @@ public class Dep21 {
                                     //List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtrace,phdr);   //should be of size 1 or null
                                     List<DoubtStatus> parentChildDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtime,phdr); 
                                     List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtrace,phdr);   //should be of size 1 or null
-                                    
+                                    List<String> doubtMessageInChildSub=new ArrayList<>(); 
                                       
                                        
                                        
@@ -537,6 +538,9 @@ public class Dep21 {
                                                ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());
                                                ds.setStatus("Y");
                                                ds.setUser(null);
+                                               
+                                               
+                                               
                                                if(laterTimestamp){
                                                    ds.setErrorMessage(refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
                                                    +" ("+targetSub.getTimeStamp()+")");
@@ -571,6 +575,14 @@ public class Dep21 {
                                                                +" ("+targetSeq.getTimeStamp()+")");
                                                               targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTime, refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
                                                                +" ("+targetSub.getTimeStamp()+")");
+                                                              
+                                                               String err=refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
+                                                               +" ("+targetSub.getTimeStamp()+")";
+
+                                                               doubtMessageInChildSub.add(err);
+                                                              
+                                                             // refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                             // targetSub.setErrorMessageList(doubtMessageInChildSub);
 
 
                                                        }
@@ -590,7 +602,12 @@ public class Dep21 {
                                                                targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTime, refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has the same timestamp ("+refSub.getTimeStamp()+") as the one in the child job: "+child.getJobStepText()
                                                                 +" ("+targetSub.getTimeStamp()+")");
 
-
+                                                                String err=refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has the same timestamp ("+refSub.getTimeStamp()+") as the one in the child job: "+child.getJobStepText()
+                                                                +" ("+targetSub.getTimeStamp()+")";
+                                                                
+                                                         doubtMessageInChildSub.add(err);
+                                                        // refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                        // targetSub.setErrorMessageList(doubtMessageInChildSub);
 
 
                                                         } 
@@ -616,6 +633,11 @@ public class Dep21 {
                                                 this.child.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSeq.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSub.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error); 
+                                                
+                                                 
+                                                doubtMessageInChildSub.add(error);
+                                                //refSub.setErrorMessageList(doubtMessageInChildSub);
+                                               // targetSub.setErrorMessageList(doubtMessageInChildSub);
                                                     
                                            }
                                            
@@ -661,6 +683,13 @@ public class Dep21 {
                                                    +" ("+targetSub.getTraceCount()+")");
                                                   targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
+                                                  
+                                                  String err=refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                                   +" ("+targetSub.getTraceCount()+")";
+                                                  
+                                                  doubtMessageInChildSub.add(err);
+                                                 // refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                 // targetSub.setErrorMessageList(doubtMessageInChildSub);
                                            
                                            
                                             }else{            //When there is an entry in the db 
@@ -682,7 +711,12 @@ public class Dep21 {
                                                 this.child.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSeq.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSub.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error); 
-                                                    
+                                                
+                                                
+                                                doubtMessageInChildSub.add(error);
+                                                //refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                //targetSub.setErrorMessageList(doubtMessageInChildSub);
+                                                
                                            }
                                            
                                            

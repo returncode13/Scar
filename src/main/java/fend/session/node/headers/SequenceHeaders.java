@@ -75,6 +75,17 @@ public class SequenceHeaders implements Serializable{
     private final BooleanProperty passedQC = new SimpleBooleanProperty();
     
     private final BooleanProperty dependency = new SimpleBooleanProperty(Boolean.TRUE);
+    /*private List<String> errorMessageList=new ArrayList<>();
+    
+    public List<String> getErrorMessageList() {
+    return errorMessageList;
+    }
+    
+    public void setErrorMessageList(List<String> errorMessageList) {
+    this.errorMessageList = errorMessageList;
+    }*/
+    
+    
 
     public boolean isDependency() {
         return dependency.get();

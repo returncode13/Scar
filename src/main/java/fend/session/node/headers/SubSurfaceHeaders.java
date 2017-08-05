@@ -85,6 +85,16 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
 
     private final BooleanProperty passedQC = new SimpleBooleanProperty();
     
+    /*private List<String> doubtMessage=new ArrayList<>();
+    
+    public List<String> getErrorMessageList() {
+    return doubtMessage;
+    }
+    
+    public void setErrorMessageList(List<String> doubtMessage) {
+    this.doubtMessage = doubtMessage;
+    }*/
+    
    
 
     public SequenceHeaders getSequenceHeader() {

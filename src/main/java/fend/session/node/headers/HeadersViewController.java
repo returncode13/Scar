@@ -161,7 +161,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     setContextMenu(contextMenu);
                 }if(item!=null && item.getDoubt().isDoubt() && item.isDependency()){
                     setStyle("-fx-background-color:purple");
-                    //setTooltip(new Tooltip(item.getDoubt().getErrorMessage()));
+                    //setTooltip(new Tooltip(item.getDoubt().getErrorMessageList()));
                     contextMenu.getItems().add(explainDoubt);
                     contextMenu.getItems().add(showOverride);
                     setContextMenu(contextMenu);
@@ -184,7 +184,7 @@ public class HeadersViewController extends Stage implements Initializable {
          
        explainDoubt.setOnAction(evt->{
        SequenceHeaders seq=row.getItem();
-       System.out.println("fend.session.node.headers.HeadersViewController.setModel(): explain Doubt clicked for "+seq.getSubsurface()+ " doubt is :"+seq.getDoubt().isDoubt()+" message is: "+seq.getDoubt().getErrorMessage());
+       System.out.println("fend.session.node.headers.HeadersViewController.setModel(): explain Doubt clicked for "+seq.getSubsurface()+ " doubt is :"+seq.getDoubt().isDoubt()+" message is: "+seq.getDoubt().getErrorMessageList());
        });
          
        showOverride.setOnAction(evt->{
@@ -566,7 +566,7 @@ public class HeadersViewController extends Stage implements Initializable {
          int rww=treetableView.getRow(idxForTree.get(seqSelection));
          treetableView.getSelectionModel().select(rww);
          treetableView.getFocusModel().focus(rww);
-         treetableView.scrollTo(rww+12);
+         treetableView.scrollTo(rww+6);
          idxForTree.get(seqSelection).setExpanded(true);
      }
      else{

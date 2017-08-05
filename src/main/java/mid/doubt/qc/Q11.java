@@ -40,6 +40,7 @@ import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.session.node.qcTable.QcTableSequences;
 import fend.session.node.qcTable.QcTableSubsurfaces;
 import fend.session.node.qcTable.QcTypeModel;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -94,7 +95,7 @@ public class Q11 {
             Boolean hasPassed=true;
                 Boolean currentlyDoubtful=chsub.getDoubt().isDoubt();                                      //get current doubtboolean state of child subObj. this can be set by the previous step. dependencyChecks()
                 String currentDoubtStatus=new String("N");
-                
+                String currentError=new String();
                 //check if the database has an entry for this header and for this doubtype.qc.
                 //need to find out the correct doubt status if there is an entry
                                   Boolean exists=false;  
@@ -107,6 +108,7 @@ public class Q11 {
                                     Volume pVol=null;
                                     Headers ph=null;
                                     Integer once=0;
+                                     List<String> doubtMessage=new ArrayList<>();
                                         for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
                                             JobVolumeDetails jv = pjviterator.next();
                                             pVol=jv.getVolume();
@@ -133,6 +135,7 @@ public class Q11 {
                                         for (Iterator<DoubtStatus> iterator2 = dst.iterator(); iterator2.hasNext();) {
                                             DoubtStatus cdbt = iterator2.next();
                                             currentDoubtStatus=cdbt.getStatus();
+                                            currentError=cdbt.getErrorMessage();
                                             exists=true;
                                             once++;
                                         }
@@ -195,10 +198,21 @@ public class Q11 {
                            if(currentDoubtStatus.equals("Y")){
                                //dont do anything. it stays doubtful with status=Y for Doubt.qc type
                                chsub.getDoubt().setStatus("Y");
+                               chsub.getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, currentError);
+                               chsub.getDoubt().setDoubt(true);
+                               doubtMessage.add(currentError);
+                             //  chsub.setErrorMessageList(doubtMessage);
+                               
                            }
                            if(currentDoubtStatus.equals("O")){
                                //dont do anything. it stays doubtful with status=O for Doubt.qc type
                                chsub.getDoubt().setStatus("O");
+                               chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
+                               chsub.getDoubt().setDoubt(true);
+                               doubtMessage.add(currentError);
+                               
+                              // chsub.setErrorMessageList(doubtMessage);
+                              // chsub.getDoubt().setDoubt(false);
                            }
                        }
                        
@@ -206,7 +220,8 @@ public class Q11 {
                            String err=new String("subsurface "+chsub.getSubsurface()+" in parent job: "+this.parent.getJobStepText()+" has failed at one or more qc types");
                            chsub.getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, err);    //add to the childs doubt map
                            chsub.getDoubt().setStatus("Y");
-                           
+                           doubtMessage.add(currentError);
+                           //chsub.setErrorMessageList(doubtMessage);
                            DoubtStatus ds=new DoubtStatus();
                            ds.setDoubtType(dqc);
                            ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());

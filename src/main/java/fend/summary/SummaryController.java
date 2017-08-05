@@ -795,8 +795,8 @@ public class SummaryController extends Stage{
                                @Override
                                protected void updateItem(Boolean item,boolean empty){
                                    super.updateItem(item, empty);
-                                   if(item==null||empty){
-                                      // setText("");
+                                   if(empty||item==null){
+                                       setText("Empty");
                                        setStyle("");
                                    }
                                    else{
