@@ -85,7 +85,8 @@ public class LogStatusWatcher {
                                 BufferedReader brg=new BufferedReader(isrg);
                                 String valuesg;
                                 while((valuesg=brg.readLine())!=null){
-                                    System.out.println("watcher.LogStatusWatcher().init<>().call() Green: "+(valuesg!=null?valuesg+" : "+linename:" Values are null for "+linename));
+                                    System.out.println("watcher.LogStatusWatcher().init<>().call() Green: Value from script for success: "+valuesg);
+                                    System.out.println("watcher.LogStatusWatcher().init<>().call() Green: "+(valuesg!=null?valuesg+" : "+linename:" Values are null for "+linename));       //fix this in the next build. cause of realtime run status distruption
                                     log.setCompletedsuccessfully(Boolean.TRUE);
                                     log.setErrored(Boolean.FALSE);
                                     log.setRunning(Boolean.FALSE);

@@ -35,19 +35,20 @@ public class SummaryVolumeNodeModel {
     
     private final StringProperty qcflag = new SimpleStringProperty(this,"qcflag");
     private final LongProperty wfversion = new SimpleLongProperty(this,"wfversion");
-    private final StringProperty ins = new SimpleStringProperty("");
+    private final BooleanProperty ins = new SimpleBooleanProperty();
     private SummaryStatusWatcher summaryStatusWatcher;
     
 
-    public String getIns() {
+    public Boolean getIns() {
         return ins.get();
     }
 
-    public void setIns(String value) {
+    public void setIns(Boolean value) {
+        System.out.println("fend.summary.SummaryVolumeNodeModel.setIns(): setting InsightProp to: "+value);
         ins.set(value);
     }
 
-    public StringProperty insProperty() {
+    public BooleanProperty insProperty() {
         return ins;
     }
 

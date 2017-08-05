@@ -52,7 +52,7 @@ public class SequenceHeaders implements Serializable{
     private Long cmpMax;
     private Long cmpMin;
     private Long cmpInc;
-    private String insightVersion;
+    //private StringProperty insightVersion=new SimpleStringProperty();
     private BooleanProperty qcalert= new SimpleBooleanProperty(Boolean.FALSE);
     
     private Boolean modified;
@@ -75,6 +75,17 @@ public class SequenceHeaders implements Serializable{
     private final BooleanProperty passedQC = new SimpleBooleanProperty();
     
     private final BooleanProperty dependency = new SimpleBooleanProperty(Boolean.TRUE);
+    /*private List<String> errorMessageList=new ArrayList<>();
+    
+    public List<String> getErrorMessageList() {
+    return errorMessageList;
+    }
+    
+    public void setErrorMessageList(List<String> errorMessageList) {
+    this.errorMessageList = errorMessageList;
+    }*/
+    
+    
 
     public boolean isDependency() {
         return dependency.get();
@@ -95,6 +106,21 @@ public class SequenceHeaders implements Serializable{
     public void setDoubt(Doubt doubt) {
         this.doubt = doubt;
     }
+    private final StringProperty insightVersion = new SimpleStringProperty();
+
+    public String getInsightVersion() {
+        return insightVersion.get();
+    }
+
+    public void setInsightVersion(String value) {
+        insightVersion.set(value);
+    }
+
+    public StringProperty insightVersionProperty() {
+        return insightVersion;
+    }
+    
+    
     
     
    
@@ -237,10 +263,25 @@ public class SequenceHeaders implements Serializable{
             fend.session.node.headers.SubSurfaceHeaders next = iterator.next();
             next.setSequenceHeader(this);
             this.addTowfVersionSet(next.getWorkflowVersion());
+            //this.
         }
         this.sequenceNumber=Collections.min(subsurfaces, (SubSurfaceHeaders o1, SubSurfaceHeaders o2) -> {
             return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
         }).getSequenceNumber();
+        
+        String ins1=Collections.min(subsurfaces,(SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
+          return o1.getInsightVersion().compareTo(o2.getInsightVersion());
+        }).getInsightVersion();
+        
+         String ins2=Collections.max(subsurfaces,(SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
+          return o1.getInsightVersion().compareTo(o2.getInsightVersion());
+        }).getInsightVersion();
+         
+         if(ins1.equals(ins2)){
+             this.insightVersion.set(ins1);
+        }else{
+             this.insightVersion.set(new String(">1"));
+         }
         
         
     }
@@ -421,13 +462,13 @@ public class SequenceHeaders implements Serializable{
         this.cmpInc = cmpInc;
     }
 
-    public String getInsightVersion() {
-        return insightVersion;
+    /*public String getInsightVersion() {
+    return insightVersion;
     }
-
+    
     public void setInsightVersion(String insightVersion) {
-        this.insightVersion = insightVersion;
-    }
+    this.insightVersion = insightVersion;
+    }*/
 
     /* public Boolean getQcAlert() {
     return qcalert.get();

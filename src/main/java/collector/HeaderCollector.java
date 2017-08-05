@@ -325,6 +325,7 @@ public class HeaderCollector {
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
                     next.setInsightVersion(latestLog.getInsightVersion());
                     wfMaxVersion=latestLog.getWorkflow().getWfversion();
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Workflow from the latest log is: "+wfMaxVersion);
                 }else{
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
                     next.setInsightVersion(new String("no logs found"));

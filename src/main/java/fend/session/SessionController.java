@@ -1143,38 +1143,7 @@ public class SessionController implements Initializable {
          
          for(JobStepType0Model root : modelRoots){
         
-        // for (Iterator<JobStepModel> iteratorr = modelRoots.iterator(); iteratorr.hasNext();) {
-          //   JobStepModel root = iteratorr.next();
-             
-            
-             
-             
-           //  Set<SubSurface> rootsSubSurfaces=calculateSubsInJob(root);
-              //Set<SubSurface> rootsSubSurfaces=new HashSet(root.getSeqSubsInJob().values());
-             
-              /*  for (Iterator<SubSurface> iterator = rootsSubSurfaces.iterator(); iterator.hasNext();) {
-              SubSurfaceHeaders subinRoot = iterator.next();
-              jobSubString.add(subinRoot.getSubsurface().split("_")[0]);
-              //System.out.println("fend.session.SessionController.tracking(): in jobSubstring: found: "+jobSubString.get(jobSubString.size()-1));
-              
-              }
-              
-              List<String> acqStringBackedUp=new ArrayList(acqString);    //because acqString is about to go ba-bye!
-              
-              acqString.removeAll(jobSubString);    //remove the subs common to both acq and jobs. Since acq leads job , I guess it is logical to assume that acq be the larger list
-              List<String> remainingSubs=new ArrayList<>(acqString);
-              */
-              /*System.out.println("fend.session.SessionController.tracking(): remaining subs: "+remainingSubs);
-              
-              if(remainingSubs.size()>0){  //means jobs has subs that were acquired but weren't processed
-              //  root.setPendingFlagProperty(Boolean.TRUE);
-              System.out.println("fend.session.SessionController.tracking() setting PendingFlagProperty to TRUE: ");
-              
-              }
-              else{                       //all subs acquired are present in the job
-              /// root.setPendingFlagProperty(Boolean.FALSE);
-              System.out.println("fend.session.SessionController.tracking() setting PendingFlagProperty to FALSE: ");
-              }*/
+        
              
                 List<JobStepType0Model> children = root.getJsChildren();
                 for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
@@ -1186,9 +1155,7 @@ public class SessionController implements Initializable {
                             System.out.println("fend.session.SessionController.tracking(): child: "+child.getJobStepText()+" : has child: "+next.getJobStepText());
                         
                     }
-                    //    pendingarray=new ArrayList<>();
-               //  setPendingJobsFlag(root,child);
-               //     setQCFlag(root, child);
+                    
                     dependencyChecks(root, child);
                     
                     
@@ -1225,6 +1192,24 @@ public class SessionController implements Initializable {
                //  setPendingJobsFlag(root,child);
                //     setQCFlag(root, child);
                     inheritanceOfDoubt(root, child);
+                    
+                    
+             }
+                
+                
+                for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                 JobStepType0Model child = iterator.next();
+                    System.out.println("fend.session.SessionController.tracking(): Inheritance: to be called for Parent: "+root.getJobStepText()+" : child: "+child.getJobStepText());
+                    List<JobStepType0Model> gChild=child.getJsChildren();
+                        for (Iterator<JobStepType0Model> iterator1 = gChild.iterator(); iterator1.hasNext();) {
+                        JobStepType0Model next = iterator1.next();
+                            System.out.println("fend.session.SessionController.tracking(): child: "+child.getJobStepText()+" : has child: "+next.getJobStepText());
+                        
+                    }
+                        pendingarray=new ArrayList<>();
+               //  setPendingJobsFlag(root,child);
+               //     setQCFlag(root, child);
+                    insightCheck(root,child);
                     
                     
              }
@@ -2097,6 +2082,89 @@ public class SessionController implements Initializable {
                 }
         
     }
+
+    private void insightCheck(JobStepType0Model parent, JobStepType0Model child) {
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+                      
+            System.out.println("collector.Collector.insightCheck:  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+        
+        
+        if(child.getType().equals(3L)  ){              // parent=Acq (type3)
+            System.out.println("fend.session.SessionController.insightCheck("+parent.getJobStepText()+","+child.getJobStepText()+") on node: "+parent.getJobStepText());
+            
+        } 
+        
+        if(child.getType().equals(2L) ){              // parent=SEGDLoad(type2)
+            System.out.println("fend.session.SessionController.insightCheck("+parent.getJobStepText()+","+child.getJobStepText()+") on node: "+parent.getJobStepText());
+           
+        } 
+        
+        
+        
+        if(child.getType().equals(1L) ){              // parent=Denoise (type1)
+            System.out.println("fend.session.SessionController.insightCheck("+parent.getJobStepText()+","+child.getJobStepText()+") on node: "+child.getJobStepText());
+            checkInsightVersion(child);                 
+            
+         }
+        
+   
+        List<JobStepType0Model> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
+            JobStepType0Model gchild = iterator.next();
+             //System.out.println("fend.session.SessionController.insightCheck():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+              System.out.println("fend.session.SessionController.insightCheck("+child.getJobStepText() +","+gchild.getJobStepText()+")");
+            insightCheck(child, gchild);
+        }
+        
+        
+    }
+
+    private void checkInsightVersion(JobStepType0Model job) {
+        List<String> claims=job.getInsightVersionsModel().getCheckedVersions();
+        System.out.println("fend.session.SessionController.checkInsightVersion(): in job: "+job.getJobStepText());
+        System.out.println("fend.session.SessionController.checkInsightVersion(): versionClaims: "+claims);
+        Set<SequenceHeaders> seq=job.getSequencesInJob();
+        for (Iterator<SequenceHeaders> iterator = seq.iterator(); iterator.hasNext();) {
+            SequenceHeaders sq = iterator.next();
+            System.out.println("fend.session.SessionController.checkInsightVersion(): seq:  "+sq.getSequenceNumber()+" insightBefore: "+sq.isInsightFlag());
+            boolean present=false;
+            for(String claim:claims){
+                
+                
+                System.out.println("fend.session.SessionController.checkInsightVersion(): seq:  "+sq.getSequenceNumber()+" insightValue: "+sq.getInsightVersion()+" claim: "+claim);
+                
+                if(sq.getInsightVersion().equals(">1")){
+                    sq.setInsightFlag(false);
+                }
+                else
+                    if(custInsVerCompare(sq.getInsightVersion(),claim)){
+                //if(sq.getInsightVersion().equals(claim)){
+                    sq.setInsightFlag(true);
+                    present=true;
+                }else{
+                    if(!present){
+                        sq.setInsightFlag(false);
+                    }
+                }
+            }
+            System.out.println("fend.session.SessionController.checkInsightVersion(): seq:  "+sq.getSequenceNumber()+" insightFlagAfter: "+sq.isInsightFlag());
+            
+        }
+        
+    }
+
+    private boolean custInsVerCompare(String insightVersion, String claim) {
+       
+        String claimf=claim.replaceAll("([^\\w])","");
+        String versf=insightVersion.replaceAll("([^\\w])","");
+        
+        return claimf.equals(versf);
+        
+    }
+
+   
    
     
    

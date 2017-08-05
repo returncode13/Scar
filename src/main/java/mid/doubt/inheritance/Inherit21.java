@@ -181,17 +181,19 @@ public class Inherit21 {
                             
                          String parentSubDoubtStatus=refSub.getDoubt().getStatus();
                          String childSubDoubtStatus=targetSub.getDoubt().getStatus();
+                        List<String> doubtMessageInChildSubFromParentSub=refSub.getDoubt().getErrorMessageList();
+                       //  List<String> doubtMessageInChildSubFromParentSub=refSub.getDoubtMessage();
                          System.out.println("fend.session.node.jobs.dependencies.Inherit21.<init>(): for parent: "+parent.getJobStepText()+" child: "+child.getJobStepText()+" sub: "+refSub.getSubsurface()+" pdoubt: "+parentSubDoubtStatus+" cdoubt: "+childSubDoubtStatus);
 
-                            if(parentSubDoubtStatus.equals("O") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("O") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("O") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("Y") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("Y") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("Y") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);}
-                            if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("N");targetSub.getDoubt().setDoubt(false);}
+                            if(parentSubDoubtStatus.equals("O") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}            //if atleast one of the subs is doubtful ==> the seq is doubtful
+                            if(parentSubDoubtStatus.equals("O") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("O") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("Y") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("Y") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("Y") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
+                            if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("N");targetSub.getDoubt().setDoubt(false);/*targetSub.getSequenceHeader().getDoubt().setDoubt(true);*/}   //if ALL the subs have doubt=false then and only then does the seq has it doubt=false
                             
                         //Boolean refSubDoubt=refSub.getDoubt().isDoubt();
                         //targetSub.getDoubt().setDoubt(refSubDoubt);

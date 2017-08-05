@@ -7,6 +7,7 @@ package fend.session.node.jobs.types.type4;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
@@ -62,6 +63,7 @@ public class JobStepType4Model implements JobStepType0Model{
     /* public JobStepType1Model(String jobStepText, SessionModel smodel) {
     super(jobStepText, smodel);
     }*/
+    private Set<SequenceHeaders> sequencesInJob=new HashSet<>();
     
 
    
@@ -260,6 +262,10 @@ public class JobStepType4Model implements JobStepType0Model{
 
     public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsurfacesInJob) {
         this.subsurfacesInJob = subsurfacesInJob;
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfacesInJob.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            this.sequencesInJob.add(next.getSequenceHeader());
+        }
     }
 
     public SessionModel getSessionModel() {
@@ -329,5 +335,10 @@ public class JobStepType4Model implements JobStepType0Model{
 
     public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
         this.qcCheckListModel = qcCheckListModel;
+    }
+
+    @Override
+    public Set<SequenceHeaders> getSequencesInJob() {
+        return this.sequencesInJob;
     }
 }

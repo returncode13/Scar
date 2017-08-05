@@ -42,7 +42,7 @@ public class SessionsDAOImpl implements SessionsDAO {
       try{
           
           Sessions s=(Sessions) session.get(Sessions.class,sessionId);
-          System.out.println("SessDAOIMPL: checking for id "+sessionId+" and found "+(s==null?" NULL":s.getIdSessions()));
+         // System.out.println("SessDAOIMPL: checking for id "+sessionId+" and found "+(s==null?" NULL":s.getIdSessions()));
           return s;
           
       }catch(Exception e){

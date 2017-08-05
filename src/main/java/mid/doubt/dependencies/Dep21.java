@@ -41,6 +41,7 @@ import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.session.node.volumes.type2.VolumeSelectionModelType2;
+import java.util.ArrayList;
 //import fend.session.node.jobs.types.type1.JobStepType1Model;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.HashSet;
@@ -73,11 +74,20 @@ public class Dep21 {
     
     
     SessionModel session;
+    static Boolean Debug=Boolean.FALSE;
            
     public Dep21(JobStepType0Model parent, JobStepType0Model child,SessionModel model) {
         this.session=model;
         this.parent = (JobStepType2Model) parent;
         this.child = (JobStepType1Model)child;
+        JobStep parentjs=jserv.getJobStep(this.parent.getId());
+        Sessions sess=sessServ.getSessions(session.getId());
+        SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+        DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
+        
+        
+        JobStep childjs=jserv.getJobStep(this.child.getId());
+        SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
         
          if(parent.getType().equals(2L) && child.getType().equals(1L)){
             
@@ -95,13 +105,13 @@ public class Dep21 {
         
         */
         
-             System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): called");
+             if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): called");
        
         
         
         
           //this.child.setDependency(Boolean.FALSE);
-               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() Calculating subs in parent and child");
+              if(Debug) System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() Calculating subs in parent and child");
             calculateSubsInJob(this.child);
             calculateSubsInJob(this.parent);
        
@@ -109,7 +119,7 @@ public class Dep21 {
              
          Set<SubSurfaceHeaders> csubs=this.child.getSubsurfacesInJob();
              
-            System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): size of child and parent subs: "+csubs.size()+" : "+psubs.size());
+            if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): size of child and parent subs: "+csubs.size()+" : "+psubs.size());
             
          List<VolumeSelectionModelType1> cVolList=this.child.getVolList();
          List<VolumeSelectionModelType2> pVolList=this.parent.getVolList();
@@ -128,7 +138,7 @@ public class Dep21 {
             VolumeSelectionModelType2 refVol=new VolumeSelectionModelType2(2L,this.parent);
             SequenceHeaders targetSeq=new SequenceHeaders();
             SubSurfaceHeaders targetSub=c;
-             System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() Checking dependency(): parent:child: "+this.parent.getJobStepText()+" <-> "+this.child.getJobStepText()+" sub: "+targetSub.getSubsurface()+" dependency: "+targetSub.dependencyProperty().get());
+             if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() Checking dependency(): parent:child: "+this.parent.getJobStepText()+" <-> "+this.child.getJobStepText()+" sub: "+targetSub.getSubsurface()+" dependency: "+targetSub.dependencyProperty().get());
             SubSurfaceHeaders refSub=new SubSurfaceHeaders();
             SequenceHeaders refSeq=new SequenceHeaders();
             
@@ -137,9 +147,9 @@ public class Dep21 {
                         for (Iterator<VolumeSelectionModelType1> iterator1 = cVolList.iterator(); iterator1.hasNext();) {
                             VolumeSelectionModelType1 vc = iterator1.next();
                             Set<SubSurfaceHeaders> vcSub=vc.getSubsurfaces();
-                           System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): Checking if Job: "+this.child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
+                           if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): Checking if Job: "+this.child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                             if(vcSub.contains(targetSub)){
-                              System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
+                              if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.child.getJobStepText()+" :Volume: "+vc.getLabel()+" :contains: "+targetSub.getSubsurface());
                                 targetVol=vc;
                                 targetVol.setVolumeType(vc.getVolumeType());
                                 break;
@@ -158,7 +168,7 @@ public class Dep21 {
                 for (SequenceHeaders seq : seqList) {
                     if(targetSub.getSequenceNumber().equals(seq.getSequenceNumber())){
                         targetSeq=seq;
-                          System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
+                          if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.child.getJobStepText()+" :Seq: "+seq.getSequenceNumber()+" :contains: "+targetSub.getSubsurface());
                         break;
                     }
                     
@@ -188,7 +198,7 @@ public class Dep21 {
                           if(csubs.contains(p))
                           {
                               if(p.equals(c)){
-                              System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+p.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
+                              if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+p.getSubsurface()+" : in Parent job : "+parent.getJobStepText()+" : list");
                               refSub=p;
                               refSeq=refSub.getSequenceHeader();
                               
@@ -206,9 +216,9 @@ public class Dep21 {
                          for (Iterator<VolumeSelectionModelType2> iterator1 = pVolList.iterator(); iterator1.hasNext();) {
                             VolumeSelectionModelType2 vp = iterator1.next();
                             Set<SubSurfaceHeaders> vpSub=vp.getSubsurfaces();
-                           System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.parent.getJobStepText()+" :Volume: "+vp.getLabel()+" :contains: "+refSub.getSubsurface());
+                           if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.parent.getJobStepText()+" :Volume: "+vp.getLabel()+" :contains: "+refSub.getSubsurface());
                             if(vpSub.contains(refSub)){
-                              System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.parent.getJobStepText()+" :Volume: "+vp.getLabel()+" :contains: "+refSub.getSubsurface());
+                              if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): "+this.parent.getJobStepText()+" :Volume: "+vp.getLabel()+" :contains: "+refSub.getSubsurface());
                                 refVol=vp;
                                 refVol.setVolumeType(vp.getVolumeType());
                                 break;
@@ -225,7 +235,7 @@ public class Dep21 {
                                 passTraceCounts=false;
                                
                                 errorMessage+="Child "+targetSub.getSubsurface()+" in child job: "+this.child.getJobStepText()+" has more traces than in its parent job "+this.parent.getJobStepText();
-                                System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() "+"Sub "+targetSub.getSubsurface()+" in child job: "+this.child.getJobStepText()+" have non-equal traces compared to its parent job "+this.parent.getJobStepText());
+                                if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() "+"Sub "+targetSub.getSubsurface()+" in child job: "+this.child.getJobStepText()+" have non-equal traces compared to its parent job "+this.parent.getJobStepText());
                                 }
                         else{
                             passTraceCounts=true;                           //parent has more or equal number of traces as child
@@ -240,13 +250,13 @@ public class Dep21 {
                         
                         if(refTime > targetTime){         //parent created after child
                             passTimeStamps=false;
-                            System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>():  Sub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+" created after the child job: "+this.child.getJobStepText());
+                            if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>():  Sub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+" created after the child job: "+this.child.getJobStepText());
                             errorMessage+="\nSub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+"("+refSub.getTimeStamp()+") created after the child job: "+this.child.getJobStepText()+" ("+targetSub.getTimeStamp()+")";
                             laterTimestamp=true;
                         }
                         if(refTime.equals(targetTime)){         //parent created after child
                             passTimeStamps=false;
-                            System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>():  sub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+" has the same timestamp as in the child job: "+this.child.getJobStepText());
+                            if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>():  sub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+" has the same timestamp as in the child job: "+this.child.getJobStepText());
                             errorMessage+="\nSub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+"("+refSub.getTimeStamp()+") has the same timestamp as in the child job: "+this.child.getJobStepText()+" ("+targetSub.getTimeStamp()+")";
                             sameTimestamp=true;
                         }
@@ -262,9 +272,9 @@ public class Dep21 {
                         
                         //Start setting flags based on pass/fail of dependencies
                                passDependency=passTimeStamps && passTraceCounts;
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  passTimeStamps : "+passTimeStamps);
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  passTraceCounts: "+passTraceCounts);
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  passDependency : "+passDependency);
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  passTimeStamps : "+passTimeStamps);
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  passTraceCounts: "+passTraceCounts);
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  passDependency : "+passDependency);
                                
                         
                         //During the current walk. if the node(parent or child) was traversed before , then its dependency flag must have been set to true or false.
@@ -272,11 +282,11 @@ public class Dep21 {
                         // So save the existing dependency state and do a logic AND with the current dependency . the result is the new dependency state of the node
                         
                                Boolean existingParentDependency=this.parent.getDependency().get();
-                                System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingparentDependency for parent:"+ this.parent.getJobStepText()+" : "+existingParentDependency);
+                                if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingparentDependency for parent:"+ this.parent.getJobStepText()+" : "+existingParentDependency);
                                
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingTargetVolDependency for volume : "+refVol.getLabel()+" : "+refVol.getDependency().get() );
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingRefSeqDependency: for seq: "+refSeq.getSequenceNumber()+" : "+refSeq.dependencyProperty().get() );
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingRefSubDependency: for sub:"+refSub.getSubsurface()+" : "+refSub.dependencyProperty().get() );
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingTargetVolDependency for volume : "+refVol.getLabel()+" : "+refVol.getDependency().get() );
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingRefSeqDependency: for seq: "+refSeq.getSequenceNumber()+" : "+refSeq.dependencyProperty().get() );
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingRefSubDependency: for sub:"+refSub.getSubsurface()+" : "+refSub.dependencyProperty().get() );
                                
                                
                                this.parent.setDependency(existingParentDependency && passDependency);
@@ -291,10 +301,10 @@ public class Dep21 {
                                
                                 
                                
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingChildDependency for child: "+this.child.getJobStepText()+" : "+existingChildDependency);
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingTargetVolDependency for volume : "+targetVol.getLabel()+" : "+existingTargetVolDependency);
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingTargetSeqDependency for seq: "+targetSeq.getSequenceNumber()+" : "+targetSeq.dependencyProperty().get() );
-                               System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingTargetSubDependency for sub: "+targetSub.getSubsurface()+" : "+targetSub.dependencyProperty().get() );                             
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingChildDependency for child: "+this.child.getJobStepText()+" : "+existingChildDependency);
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>()  existingTargetVolDependency for volume : "+targetVol.getLabel()+" : "+existingTargetVolDependency);
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingTargetSeqDependency for seq: "+targetSeq.getSequenceNumber()+" : "+targetSeq.dependencyProperty().get() );
+                               if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>() existingTargetSubDependency for sub: "+targetSub.getSubsurface()+" : "+targetSub.dependencyProperty().get() );                             
                                
                                
                                this.child.setDependency(existingChildDependency && passDependency);
@@ -320,14 +330,13 @@ public class Dep21 {
                                 //set the doubt status of the node.sub and seq to "N"
                                 //remove the doubt from the doubtmap of the node,sub and seq
                                 
-                                    Sessions sess=sessServ.getSessions(session.getId());
-                                   DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
+                                    
                                    //DoubtType dtrace=dstypeServ.getDoubtTypeByName(Doubt.doubtTraces);
                                    
-                                   System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
+                                   if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
                                    //<--Prerequired Parent block start
-                                   JobStep parentjs=jserv.getJobStep(parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                   //JobStep parentjs=jserv.getJobStep(parent.getId());
+                                    //SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
                                     Subsurface rsub=subserv.getSubsurfaceObjBysubsurfacename(refSub.getSubsurface());
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
@@ -341,9 +350,10 @@ public class Dep21 {
                                    
                                    //<<--Prerequired Block for child! start...
                                    
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    //obStep childjs=jserv.getJobStep(this.child.getId());
+                                    //SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     Subsurface tsub=subserv.getSubsurfaceObjBysubsurfacename(targetSub.getSubsurface());
-                                    SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+                                    
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
@@ -398,14 +408,14 @@ public class Dep21 {
                                 //set the doubt status of the node.sub and seq to "N"
                                 //remove the doubt from the doubtmap of the node,sub and seq
                                 
-                                    Sessions sess=sessServ.getSessions(session.getId());
+                                   //Sessions sess=sessServ.getSessions(session.getId());
                                    //DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
                                    DoubtType dtrace=dstypeServ.getDoubtTypeByName(Doubt.doubtTraces);
                                    
-                                   System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
+                                   if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
                                    //<--Prerequired Parent block start
-                                   JobStep parentjs=jserv.getJobStep(this.parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                   //JobStep parentjs=jserv.getJobStep(this.parent.getId());
+                                    //SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
                                     Subsurface rsub=subserv.getSubsurfaceObjBysubsurfacename(refSub.getSubsurface());
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
@@ -418,9 +428,9 @@ public class Dep21 {
                                    
                                    //<<--Prerequired Block for child! start...
                                    
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    //JobStep childjs=jserv.getJobStep(this.child.getId());
                                     Subsurface tsub=subserv.getSubsurfaceObjBysubsurfacename(targetSub.getSubsurface());
-                                    SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+                                    //SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
@@ -437,7 +447,7 @@ public class Dep21 {
                                     
                                     if(parentDoubtstatTrace.size()==1){  //means an entry exists for the parent-child for this 
                                        DoubtStatus pds=parentDoubtstatTrace.get(0);
-                                      // String perr=pds.getErrorMessage();
+                                      // String perr=pds.getErrorMessageList();
                                        
                                        dsServ.deleteDoubtStatus(pds.getIdDoubtStatus());
                                        
@@ -482,16 +492,16 @@ public class Dep21 {
                                    
                                    //Stuff required to make the query!
                                    
-                                   Sessions sess=sessServ.getSessions(session.getId());
-                                   DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
+                                   //Sessions sess=sessServ.getSessions(session.getId());
+                                   //DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
                                    DoubtType dtrace=dstypeServ.getDoubtTypeByName(Doubt.doubtTraces);
                                    
-                                   System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
+                                   if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
                                    //<<--Block for child! start...
                                    
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    //JobStep childjs=jserv.getJobStep(this.child.getId());
                                     Subsurface tsub=subserv.getSubsurfaceObjBysubsurfacename(targetSub.getSubsurface());
-                                    SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+                                    //SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
@@ -504,8 +514,8 @@ public class Dep21 {
                                    
                                    //start of block for parent
                                    
-                                    JobStep parentjs=jserv.getJobStep(parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                    //JobStep parentjs=jserv.getJobStep(parent.getId());
+                                    //SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
                                     Subsurface rsub=subserv.getSubsurfaceObjBysubsurfacename(refSub.getSubsurface());
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
@@ -514,41 +524,7 @@ public class Dep21 {
                                     //List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtrace,phdr);   //should be of size 1 or null
                                     List<DoubtStatus> parentChildDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtime,phdr); 
                                     List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtrace,phdr);   //should be of size 1 or null
-                                    /*
-                                    DoubtStatus pdstime;
-                                    DoubtStatus pdstrace;
-                                    boolean poverride1=false;
-                                    boolean poverride2=false;*/
-                                
-                                    
-                                    /*  if(!parentChildDoubtstatTime.isEmpty() ){           //an entry exists for the parent-child link for this type
-                                    pdstime=parentChildDoubtstatTime.get(0);
-                                    if(pdstime.getStatus().equals("O")){
-                                    poverride1=true;
-                                    }
-                                    if(pdstime.getStatus().equals("Y")){
-                                    poverride1=false;
-                                    }
-                                    }
-                                    if(!parentChildDoubtStatTrace.isEmpty()){         //an entry exists for the parent-child link for this type
-                                    pdstrace=parentChildDoubtStatTrace.get(0);
-                                    if(pdstrace.getStatus().equals("O")){
-                                    poverride2=true;
-                                    }
-                                    if(pdstrace.getStatus().equals("Y")){
-                                    poverride2=false;
-                                    }
-                                    }
-                                    
-                                    boolean poverride= poverride1 && poverride2; //if both are overriden then state is poverride. else its Y*/
-                                   /*  if(poverride){
-                                   refSub.getDoubt().setStatus("O");
-                                   refSeq.getDoubt().setStatus("O");
-                                   parent.getDoubt().setStatus("O");*/
-                                 //  }else{                   //this will correspond to when there is no entry for this doubt in the db or when atleast one of them hasn't been overriden
-                                       /*refSub.getDoubt().setStatus("Y");
-                                       refSeq.getDoubt().setStatus("Y");
-                                       parent.getDoubt().setStatus("Y");*/
+                                    List<String> doubtMessageInChildSub=new ArrayList<>(); 
                                       
                                        
                                        
@@ -562,6 +538,9 @@ public class Dep21 {
                                                ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());
                                                ds.setStatus("Y");
                                                ds.setUser(null);
+                                               
+                                               
+                                               
                                                if(laterTimestamp){
                                                    ds.setErrorMessage(refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
                                                    +" ("+targetSub.getTimeStamp()+")");
@@ -596,6 +575,14 @@ public class Dep21 {
                                                                +" ("+targetSeq.getTimeStamp()+")");
                                                               targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTime, refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
                                                                +" ("+targetSub.getTimeStamp()+")");
+                                                              
+                                                               String err=refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
+                                                               +" ("+targetSub.getTimeStamp()+")";
+
+                                                               doubtMessageInChildSub.add(err);
+                                                              
+                                                             // refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                             // targetSub.setErrorMessageList(doubtMessageInChildSub);
 
 
                                                        }
@@ -615,7 +602,12 @@ public class Dep21 {
                                                                targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTime, refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has the same timestamp ("+refSub.getTimeStamp()+") as the one in the child job: "+child.getJobStepText()
                                                                 +" ("+targetSub.getTimeStamp()+")");
 
-
+                                                                String err=refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has the same timestamp ("+refSub.getTimeStamp()+") as the one in the child job: "+child.getJobStepText()
+                                                                +" ("+targetSub.getTimeStamp()+")";
+                                                                
+                                                         doubtMessageInChildSub.add(err);
+                                                        // refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                        // targetSub.setErrorMessageList(doubtMessageInChildSub);
 
 
                                                         } 
@@ -641,6 +633,11 @@ public class Dep21 {
                                                 this.child.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSeq.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSub.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error); 
+                                                
+                                                 
+                                                doubtMessageInChildSub.add(error);
+                                                //refSub.setErrorMessageList(doubtMessageInChildSub);
+                                               // targetSub.setErrorMessageList(doubtMessageInChildSub);
                                                     
                                            }
                                            
@@ -686,6 +683,13 @@ public class Dep21 {
                                                    +" ("+targetSub.getTraceCount()+")");
                                                   targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
+                                                  
+                                                  String err=refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                                   +" ("+targetSub.getTraceCount()+")";
+                                                  
+                                                  doubtMessageInChildSub.add(err);
+                                                 // refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                 // targetSub.setErrorMessageList(doubtMessageInChildSub);
                                            
                                            
                                             }else{            //When there is an entry in the db 
@@ -707,7 +711,12 @@ public class Dep21 {
                                                 this.child.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSeq.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 targetSub.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error); 
-                                                    
+                                                
+                                                
+                                                doubtMessageInChildSub.add(error);
+                                                //refSub.setErrorMessageList(doubtMessageInChildSub);
+                                                //targetSub.setErrorMessageList(doubtMessageInChildSub);
+                                                
                                            }
                                            
                                            
@@ -731,7 +740,7 @@ public class Dep21 {
                                   
                                }
                               
-                               System.out.println("fend.session.SessionController.D21(): ErrorMessage "+errorMessage);
+                               if(Debug)System.out.println("fend.session.SessionController.D21(): ErrorMessage "+errorMessage);
                                //targetSeq.setErrorMessage(errorMessage);
                                //targetSub.setErrorMessage(errorMessage);
                         
@@ -741,7 +750,7 @@ public class Dep21 {
 
 
          //At the end of this loop
-             System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): at the end of the iteration for "+parent.getJobStepText()+" : "+child.getJobStepText());
+             if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): at the end of the iteration for "+parent.getJobStepText()+" : "+child.getJobStepText());
             for (Iterator<SubSurfaceHeaders> iterator = psubs.iterator(); iterator.hasNext();) {
                  SubSurfaceHeaders next = iterator.next();
                  System.out.println(parent.getJobStepText()+" :    "+next.getSubsurface()+" :dep: "+next.isDependency()+" :doubt: "+next.getDoubt().isDoubt()+ " :stat: "+next.getDoubt().getStatus());
@@ -763,7 +772,7 @@ public class Dep21 {
     }
     
     private Set<SubSurfaceHeaders> calculateSubsInJob(JobStepType0Model job){
-        System.out.println("fend.session.node.jobs.dependencies.Dep21.calculateSubsInJob(): entered");
+        if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.calculateSubsInJob(): entered");
         if(job instanceof JobStepType1Model){                   //for 2D case (denoise etc)
             List<VolumeSelectionModelType1> volList=job.getVolList();
         Set<SubSurfaceHeaders> subsInJob=new HashSet<>();
@@ -789,7 +798,7 @@ public class Dep21 {
         System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
         }*/
         
-        System.out.println("fend.session.node.jobs.dependencies.Dep21.calculateSubsInJob(): returning sublist of size: "+subsInJob.size());
+       if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.calculateSubsInJob(): returning sublist of size: "+subsInJob.size());
         return subsInJob;
         }
         
@@ -818,7 +827,7 @@ public class Dep21 {
         System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
         }*/
         
-        System.out.println("fend.session.node.jobs.dependencies.Dep21.calculateSubsInJob(): returning sublist of size: "+subsInJob.size());
+        if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.calculateSubsInJob(): returning sublist of size: "+subsInJob.size());
         return subsInJob;
         }
         
