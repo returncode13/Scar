@@ -9,6 +9,7 @@ package fend.session.node.jobs.types.type1;
 import com.sun.org.apache.xpath.internal.axes.SubContextList;
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
@@ -61,6 +62,8 @@ public class JobStepType1Model implements JobStepType0Model{
     private Long id;
     
     private Set<SubSurfaceHeaders> subsurfacesInJob=new HashSet<>();
+    
+    private Set<SequenceHeaders> sequencesInJob=new HashSet<>();
     private SessionModel sessionModel;
     
 
@@ -68,24 +71,6 @@ public class JobStepType1Model implements JobStepType0Model{
     
     
     private Doubt doubt;
-    
-    /*private final StringProperty doubt = new SimpleStringProperty(this,"N");
-    
-    public String getDoubt() {
-    return doubt.get();
-    }
-    
-    public void setDoubt(String value) {
-    doubt.set(value);
-    }
-    
-    public StringProperty doubtProperty() {
-    return doubt;
-    }*/
-    
-   
-
-   
     
 
     public JobStepType1Model(String jobStepText,SessionModel smodel) {
@@ -278,10 +263,15 @@ public class JobStepType1Model implements JobStepType0Model{
     @Override
     public Set<SubSurfaceHeaders> getSubsurfacesInJob() {
         return subsurfacesInJob;
+        
     }
 
     public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsurfacesInJob) {
         this.subsurfacesInJob = subsurfacesInJob;
+         for (Iterator<SubSurfaceHeaders> iterator = subsurfacesInJob.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            this.sequencesInJob.add(next.getSequenceHeader());
+        }
     }
 
     public SessionModel getSessionModel() {
@@ -351,6 +341,12 @@ public class JobStepType1Model implements JobStepType0Model{
 
     public void setQcCheckListModel(qcCheckListModel qcCheckListModel) {
         this.qcCheckListModel = qcCheckListModel;
+    }
+
+    @Override
+    public Set<SequenceHeaders> getSequencesInJob() {
+       
+        return this.sequencesInJob;
     }
     
     

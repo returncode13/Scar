@@ -7,6 +7,7 @@ package fend.session.node.jobs.types.type0;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
@@ -20,7 +21,7 @@ import mid.doubt.Doubt;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
  */
 public interface JobStepType0Model {
 
@@ -49,6 +50,7 @@ public interface JobStepType0Model {
     public void setSubsurfacesInJob(Set<SubSurfaceHeaders> subsInJob);
     public void setPendingFlagProperty(Boolean TRUE);
     public Set<SubSurfaceHeaders> getSubsurfacesInJob();
+    public Set<SequenceHeaders> getSequencesInJob();
     public void setDependency(Boolean FALSE);
 
     public Doubt getDoubt();

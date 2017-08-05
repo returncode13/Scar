@@ -201,7 +201,7 @@ public class SummaryController extends Stage{
                     
                     TableColumn<SummarySequenceModel,String> run=new TableColumn<>("Run");
                     TableColumn<SummarySequenceModel,String> dep=new TableColumn<>("Dependency");
-                    TableColumn<SummarySequenceModel,String> ins=new TableColumn<>("InsightVersion");
+                    TableColumn<SummarySequenceModel,Boolean> ins=new TableColumn<>("InsightVersion");
                     TableColumn<SummarySequenceModel,String> wf=new TableColumn<>("Workflow");
                     TableColumn<SummarySequenceModel,String > qc=new TableColumn<>("QC");
                   //The values that the columns read  
@@ -266,10 +266,7 @@ public class SummaryController extends Stage{
                         return null;
                         }
                     });
-                    
-                    
-                    
-                    
+ 
                     dep.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
                         public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
@@ -389,28 +386,10 @@ public class SummaryController extends Stage{
                             return null;
                         }
                     });
-                    
-                    
-                    /*dep.setCellFactory(column->{
-                    return new TableCell<SummarySequenceModel,String>(){
-                    @Override
-                    protected void updateItem(String item,boolean empty){
-                    super.updateItem(item,empty);
-                    if(empty || item==null){
-                    setText(null);
-                    }else{
-                    if(item.equalsIgnoreCase("Q"))
-                    setText()
-                    }
-                    
-                    }
-                    };
-                    });*/
-                    
-                    
-                    ins.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
+
+                    ins.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, Boolean>, ObservableValue<Boolean>>() {
                         @Override
-                        public ObservableValue<String> call(TableColumn.CellDataFeatures<SummarySequenceModel, String> param) {
+                        public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<SummarySequenceModel, Boolean> param) {
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getQcmodel().insProperty();
                             // return  param.getValue().insProperty();
                             // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceListInHeaders().get(0).insightFlagProperty();
@@ -432,7 +411,7 @@ public class SummaryController extends Stage{
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
                             SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                                if(ss==null){
-                                   return param.getValue().notApplicableProperty(); 
+                                   return param.getValue().notApplicableBooleanProperty(); 
                                }
                                else{
                                    String inss=new String("");
@@ -442,13 +421,15 @@ public class SummaryController extends Stage{
                                    }else{
                                        inss="PASS";
                                    }
-                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().setValue(inss);
+                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insf);
+                                   System.out.println(".call(): returning: "+param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().get());
                                    return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                                   //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq()).insightFlagProperty();
                                }
                             }catch(ArrayIndexOutOfBoundsException ae){
-                                return param.getValue().notApplicableProperty();
+                                return param.getValue().notApplicableBooleanProperty();
                             }catch(IndexOutOfBoundsException ie){
-                                return param.getValue().notApplicableProperty();
+                                return param.getValue().notApplicableBooleanProperty();
                            }
                         }
                              
@@ -473,7 +454,7 @@ public class SummaryController extends Stage{
                             //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
                             SequenceHeaders ss=vol2.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
                                if(ss==null){
-                                   return param.getValue().notApplicableProperty(); 
+                                   return param.getValue().notApplicableBooleanProperty(); 
                                }
                                else{
                                    String inss=new String("");
@@ -483,13 +464,14 @@ public class SummaryController extends Stage{
                                    }else{
                                        inss="PASS";
                                    }
-                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().setValue(inss);
+                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insf);
                                    return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
+                                   //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq()).insightFlagProperty();
                                }
                             }catch(ArrayIndexOutOfBoundsException ae){
-                                return param.getValue().notApplicableProperty();
+                                return param.getValue().notApplicableBooleanProperty();
                             }catch(IndexOutOfBoundsException ie){
-                                return param.getValue().notApplicableProperty();
+                                return param.getValue().notApplicableBooleanProperty();
                            }
                         }
                              /*
@@ -808,7 +790,32 @@ public class SummaryController extends Stage{
                            return cell;
                         }
                     });
-                    
+                    ins.setCellFactory(e->{
+                        TableCell<SummarySequenceModel,Boolean> cell=new TableCell<SummarySequenceModel,Boolean>(){
+                               @Override
+                               protected void updateItem(Boolean item,boolean empty){
+                                   super.updateItem(item, empty);
+                                   if(item==null||empty){
+                                      // setText("");
+                                       setStyle("");
+                                   }
+                                   else{
+                                   
+                                   if(item){
+                                       setText(item.toString());
+                                       setStyle("-fx-background-color:green");;
+                                   }
+                                    if(!item){
+                                       setText(item.toString());
+                                       setStyle("-fx-background-color:red");;
+                                   }
+                                     
+                                   }
+                               }
+                           };
+                        //cell.textProperty().bind(cell.itemProperty());
+                        return cell;
+                    });
                     
                     vtc.getColumns().addAll(dep,run,wf,ins,qc);
                     volsForJob.add(vtc);

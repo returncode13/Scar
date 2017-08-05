@@ -79,6 +79,14 @@ public class Dep21 {
         this.session=model;
         this.parent = (JobStepType2Model) parent;
         this.child = (JobStepType1Model)child;
+        JobStep parentjs=jserv.getJobStep(this.parent.getId());
+        Sessions sess=sessServ.getSessions(session.getId());
+        SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+        DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
+        
+        
+        JobStep childjs=jserv.getJobStep(this.child.getId());
+        SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
         
          if(parent.getType().equals(2L) && child.getType().equals(1L)){
             
@@ -321,14 +329,13 @@ public class Dep21 {
                                 //set the doubt status of the node.sub and seq to "N"
                                 //remove the doubt from the doubtmap of the node,sub and seq
                                 
-                                    Sessions sess=sessServ.getSessions(session.getId());
-                                   DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
+                                    
                                    //DoubtType dtrace=dstypeServ.getDoubtTypeByName(Doubt.doubtTraces);
                                    
                                    if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
                                    //<--Prerequired Parent block start
-                                   JobStep parentjs=jserv.getJobStep(parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                   //JobStep parentjs=jserv.getJobStep(parent.getId());
+                                    //SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
                                     Subsurface rsub=subserv.getSubsurfaceObjBysubsurfacename(refSub.getSubsurface());
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
@@ -342,9 +349,10 @@ public class Dep21 {
                                    
                                    //<<--Prerequired Block for child! start...
                                    
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    //obStep childjs=jserv.getJobStep(this.child.getId());
+                                    //SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     Subsurface tsub=subserv.getSubsurfaceObjBysubsurfacename(targetSub.getSubsurface());
-                                    SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+                                    
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
@@ -399,14 +407,14 @@ public class Dep21 {
                                 //set the doubt status of the node.sub and seq to "N"
                                 //remove the doubt from the doubtmap of the node,sub and seq
                                 
-                                    Sessions sess=sessServ.getSessions(session.getId());
+                                   //Sessions sess=sessServ.getSessions(session.getId());
                                    //DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
                                    DoubtType dtrace=dstypeServ.getDoubtTypeByName(Doubt.doubtTraces);
                                    
                                    if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
                                    //<--Prerequired Parent block start
-                                   JobStep parentjs=jserv.getJobStep(this.parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                   //JobStep parentjs=jserv.getJobStep(this.parent.getId());
+                                    //SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
                                     Subsurface rsub=subserv.getSubsurfaceObjBysubsurfacename(refSub.getSubsurface());
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
@@ -419,9 +427,9 @@ public class Dep21 {
                                    
                                    //<<--Prerequired Block for child! start...
                                    
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    //JobStep childjs=jserv.getJobStep(this.child.getId());
                                     Subsurface tsub=subserv.getSubsurfaceObjBysubsurfacename(targetSub.getSubsurface());
-                                    SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+                                    //SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
@@ -483,16 +491,16 @@ public class Dep21 {
                                    
                                    //Stuff required to make the query!
                                    
-                                   Sessions sess=sessServ.getSessions(session.getId());
-                                   DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
+                                   //Sessions sess=sessServ.getSessions(session.getId());
+                                   //DoubtType dtime=dstypeServ.getDoubtTypeByName(Doubt.doubtTime);
                                    DoubtType dtrace=dstypeServ.getDoubtTypeByName(Doubt.doubtTraces);
                                    
                                    if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep21.<init>(): inside the failed block: ");
                                    //<<--Block for child! start...
                                    
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    //JobStep childjs=jserv.getJobStep(this.child.getId());
                                     Subsurface tsub=subserv.getSubsurfaceObjBysubsurfacename(targetSub.getSubsurface());
-                                    SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+                                    //SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
@@ -505,8 +513,8 @@ public class Dep21 {
                                    
                                    //start of block for parent
                                    
-                                    JobStep parentjs=jserv.getJobStep(parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                    //JobStep parentjs=jserv.getJobStep(parent.getId());
+                                    //SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
                                     Subsurface rsub=subserv.getSubsurfaceObjBysubsurfacename(refSub.getSubsurface());
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
@@ -515,41 +523,7 @@ public class Dep21 {
                                     //List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtrace,phdr);   //should be of size 1 or null
                                     List<DoubtStatus> parentChildDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtime,phdr); 
                                     List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtrace,phdr);   //should be of size 1 or null
-                                    /*
-                                    DoubtStatus pdstime;
-                                    DoubtStatus pdstrace;
-                                    boolean poverride1=false;
-                                    boolean poverride2=false;*/
-                                
                                     
-                                    /*  if(!parentChildDoubtstatTime.isEmpty() ){           //an entry exists for the parent-child link for this type
-                                    pdstime=parentChildDoubtstatTime.get(0);
-                                    if(pdstime.getStatus().equals("O")){
-                                    poverride1=true;
-                                    }
-                                    if(pdstime.getStatus().equals("Y")){
-                                    poverride1=false;
-                                    }
-                                    }
-                                    if(!parentChildDoubtStatTrace.isEmpty()){         //an entry exists for the parent-child link for this type
-                                    pdstrace=parentChildDoubtStatTrace.get(0);
-                                    if(pdstrace.getStatus().equals("O")){
-                                    poverride2=true;
-                                    }
-                                    if(pdstrace.getStatus().equals("Y")){
-                                    poverride2=false;
-                                    }
-                                    }
-                                    
-                                    boolean poverride= poverride1 && poverride2; //if both are overriden then state is poverride. else its Y*/
-                                   /*  if(poverride){
-                                   refSub.getDoubt().setStatus("O");
-                                   refSeq.getDoubt().setStatus("O");
-                                   parent.getDoubt().setStatus("O");*/
-                                 //  }else{                   //this will correspond to when there is no entry for this doubt in the db or when atleast one of them hasn't been overriden
-                                       /*refSub.getDoubt().setStatus("Y");
-                                       refSeq.getDoubt().setStatus("Y");
-                                       parent.getDoubt().setStatus("Y");*/
                                       
                                        
                                        

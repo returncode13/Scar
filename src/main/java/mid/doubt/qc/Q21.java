@@ -76,7 +76,14 @@ public class Q21 {
         this.session=this.parent.getSessionModel();
         
         JobStep parentJs=jserv.getJobStep(this.parent.getId());
-        List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
+        List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);Sessions sess=sessServ.getSessions(session.getId());
+        DoubtType dqc=dstypeServ.getDoubtTypeByName(Doubt.doubtQc);
+        JobStep parentjs=jserv.getJobStep(this.parent.getId());
+        SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+        
+        JobStep childjs=jserv.getJobStep(this.child.getId());
+        SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+        
         
         
         System.out.println("mid.doubt.qc.Q21.<init>(): parentJob: "+parent.getJobStepText()+" childJob: "+child.getJobStepText());
@@ -94,15 +101,15 @@ public class Q21 {
                 //need to find out the correct doubt status if there is an entry
                                   Boolean exists=false;  
                         
-                                    Sessions sess=sessServ.getSessions(session.getId());
-                                    DoubtType dqc=dstypeServ.getDoubtTypeByName(Doubt.doubtQc);
-                                    JobStep parentjs=jserv.getJobStep(parent.getId());
-                                    SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
+                                  /* Sessions sess=sessServ.getSessions(session.getId());
+                                  DoubtType dqc=dstypeServ.getDoubtTypeByName(Doubt.doubtQc);
+                                  JobStep parentjs=jserv.getJobStep(parent.getId());
+                                  SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);*/
                                     Subsurface subObj=subserv.getSubsurfaceObjBysubsurfacename(chsub.getSubsurface());
                                     
-                                    JobStep childjs=jserv.getJobStep(this.child.getId());
+                                    /*JobStep childjs=jserv.getJobStep(this.child.getId());
                                     SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
-                                    
+                                    */
                                     Volume pVol=null;
                                     Headers ph=null;
                                     Integer once=0;

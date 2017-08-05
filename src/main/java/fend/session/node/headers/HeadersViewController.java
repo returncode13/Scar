@@ -566,7 +566,7 @@ public class HeadersViewController extends Stage implements Initializable {
          int rww=treetableView.getRow(idxForTree.get(seqSelection));
          treetableView.getSelectionModel().select(rww);
          treetableView.getFocusModel().focus(rww);
-         treetableView.scrollTo(rww);
+         treetableView.scrollTo(rww+12);
          idxForTree.get(seqSelection).setExpanded(true);
      }
      else{

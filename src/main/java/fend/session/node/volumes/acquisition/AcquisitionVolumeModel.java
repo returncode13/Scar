@@ -11,6 +11,7 @@ import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
 import java.util.Set;
 import java.util.UUID;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 
@@ -120,10 +121,12 @@ public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
         return new SimpleStringProperty("Ok");
     }
 
-    public ObservableValue<String> getInsight() {
-        return new SimpleStringProperty("OK");
+    public ObservableValue<Boolean> getInsight() {
+        return new SimpleBooleanProperty(true);
     }
 
+    
+    
     public ObservableValue<String> getWorkflowVersion() {
         return new SimpleStringProperty("v0");
     }

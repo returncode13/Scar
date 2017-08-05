@@ -7,6 +7,7 @@ package fend.session.node.jobs.types.acquisitionType;
 
 import fend.session.SessionModel;
 import fend.session.edges.LinksModel;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
@@ -262,6 +263,11 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
 
     public void setVolList(ObservableList<AcquisitionVolumeModel> obva) {
         volListProperty.set(obva);
+    }
+
+    @Override
+    public Set<SequenceHeaders> getSequencesInJob() {
+        return new HashSet<>();
     }
 
     
