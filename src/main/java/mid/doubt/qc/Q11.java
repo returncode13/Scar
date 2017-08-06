@@ -33,6 +33,7 @@ import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
+import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
@@ -198,6 +199,7 @@ public class Q11 {
                            if(currentDoubtStatus.equals("Y")){
                                //dont do anything. it stays doubtful with status=Y for Doubt.qc type
                                chsub.getDoubt().setStatus("Y");
+                               chsub.getSequenceHeader().getDoubt().setStatus("Y");
                                chsub.getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, currentError);
                                chsub.getDoubt().setDoubt(true);
                                doubtMessage.add(currentError);
@@ -208,6 +210,7 @@ public class Q11 {
                                //dont do anything. it stays doubtful with status=O for Doubt.qc type
                                chsub.getDoubt().setStatus("O");
                                chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
+                               setSeqDoubtStatus(chsub);
                                chsub.getDoubt().setDoubt(true);
                                doubtMessage.add(currentError);
                                
@@ -220,6 +223,7 @@ public class Q11 {
                            String err=new String("subsurface "+chsub.getSubsurface()+" in parent job: "+this.parent.getJobStepText()+" has failed at one or more qc types");
                            chsub.getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, err);    //add to the childs doubt map
                            chsub.getDoubt().setStatus("Y");
+                           chsub.getSequenceHeader().getDoubt().setStatus("Y");
                            doubtMessage.add(currentError);
                            //chsub.setErrorMessageList(doubtMessage);
                            DoubtStatus ds=new DoubtStatus();
@@ -244,10 +248,12 @@ public class Q11 {
                             dsServ.deleteDoubtStatus(d.getIdDoubtStatus());
                             chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
                             chsub.getDoubt().setStatus("N");
+                             setSeqDoubtStatus(chsub);
                         }
                         if(!exists){
                                         //do nothing
-                            chsub.getDoubt().setStatus("N");
+                            //chsub.getDoubt().setStatus("N");
+                             //setSeqDoubtStatus(chsub);
                         }
                     }
                     
@@ -290,6 +296,59 @@ public class Q11 {
         }
         else{
             throw new UnsupportedOperationException("calculateSubsinJob for job type. "+job.getType()+" not defined");
+        }
+        
+    }
+
+    private void setSeqDoubtStatus(SubSurfaceHeaders chsub) {
+        SequenceHeaders seq=chsub.getSequenceHeader();
+        boolean seqover=false;
+        boolean seqno=true;
+        boolean seqyes=false;
+        
+        List<SubSurfaceHeaders> subs=seq.getSubsurfaces();
+        for (Iterator<SubSurfaceHeaders> iterator = subs.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            boolean over=true;
+            boolean no=false;
+            boolean yes=true;
+            if(next.getDoubt().getStatus().equals("O")){
+                over=true;
+                no=false;
+                yes=false;
+            }
+            if(next.getDoubt().getStatus().equals("N")){
+                over=false;
+                no=true;
+                yes=false;
+            }
+            if(next.getDoubt().getStatus().equals("Y")){
+                over=false;
+                no=false;
+                yes=true;
+            }
+            
+            seqover= seqover || over;       //if atleast one of the subs is overriden then the seq is overriden
+            seqno=seqno && no;              //if all of the subs are NO then the seq is No;
+            seqyes=seqyes || yes;           //if atleast one of the subs is doubtful (Y) then the seq is doubtful (Y)
+            
+            
+        }
+        
+        if(seqyes){
+            seq.getDoubt().setStatus("Y");
+            seq.getDoubt().setDoubt(true);
+            return;
+        }
+        
+        if(seqover){
+            seq.getDoubt().setStatus("O");
+            seq.getDoubt().setDoubt(true);
+            return;
+        }
+        if(seqno){
+            seq.getDoubt().setStatus("N");
+            seq.getDoubt().setDoubt(false);
         }
         
     }

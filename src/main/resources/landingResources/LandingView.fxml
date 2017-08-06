@@ -45,7 +45,7 @@
                             </Menu>
                           </menus>
                         </MenuBar>
-                        <Button fx:id="bugReport" mnemonicParsing="false" onAction="#handleBugReport" prefHeight="26.0" prefWidth="87.0" style="-fx-background-color: transparent; -fx-graphic: url(landingResources/images/doodle-png-image-13735.png);" />
+                        <Button fx:id="bugReport" mnemonicParsing="false" onAction="#handleBugReport" prefHeight="26.0" prefWidth="87.0" style="-fx-background-color: transparent; -fx-graphic: url(landingResources/images/ladyBug_24x24.png);" />
                      </children>
                   </HBox>
                </children>

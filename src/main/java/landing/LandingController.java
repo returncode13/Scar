@@ -106,6 +106,8 @@ import javax.xml.bind.Unmarshaller;
 import landing.loadingSession.LoadSessionController;
 import landing.loadingSession.LoadSessionModel;
 import landing.loadingSession.LoadSessionNode;
+import landing.reporter.ReporterModel;
+import landing.reporter.ReporterNode;
 import landing.saveSession.SaveSessionController;
 import landing.saveSession.SaveSessionModel;
 import landing.saveSession.SaveSessionNode;
@@ -193,14 +195,8 @@ public class LandingController implements Initializable,Serializable {
      
      @FXML
     void handleBugReport(ActionEvent event) {
-        try {
-            System.out.println("landing.LandingController.handleBugReport()");
-            url1=file.toURI().toURL();
-            
-             webEngine.load(url1.toString());
-        } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+         ReporterModel rm=new ReporterModel();
+         ReporterNode rnode=new ReporterNode(rm);
     }
      
      @FXML
