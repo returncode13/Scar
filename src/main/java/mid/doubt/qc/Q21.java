@@ -77,13 +77,15 @@ public class Q21 {
         this.child = (JobStepType1Model) child;
         this.session=this.parent.getSessionModel();
         
-        JobStep parentJs=jserv.getJobStep(this.parent.getId());
-        List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);Sessions sess=sessServ.getSessions(session.getId());
+        //JobStep parentJs=jserv.getJobStep(this.parent.getId());
+        //List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
+        Sessions sess=sessServ.getSessions(session.getId());
         DoubtType dqc=dstypeServ.getDoubtTypeByName(Doubt.doubtQc);
         JobStep parentjs=jserv.getJobStep(this.parent.getId());
         SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
         
         JobStep childjs=jserv.getJobStep(this.child.getId());
+        List<JobVolumeDetails> chjvList=jvserv.getJobVolumeDetails(childjs);
         SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
         
         
@@ -112,15 +114,30 @@ public class Q21 {
                                     /*JobStep childjs=jserv.getJobStep(this.child.getId());
                                     SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
                                     */
-                                    Volume pVol=null;
+                                    //Volume pVol=null;
+                                    Volume chVol=null;
                                     Headers ph=null;
                                     Integer once=0;
                                     List<String> doubtMessage=new ArrayList<>();
                                     
-                                        for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
-                                            JobVolumeDetails jv = pjviterator.next();
-                                            pVol=jv.getVolume();
-                                            List<Headers> hdrlist=hserv.getHeadersFor(pVol, subObj);
+                                    /*for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
+                                    JobVolumeDetails jv = pjviterator.next();
+                                    pVol=jv.getVolume();
+                                    List<Headers> hdrlist=hserv.getHeadersFor(pVol, subObj);
+                                    if(hdrlist.isEmpty()){
+                                    
+                                    }else if(hdrlist.size()==1){
+                                    ph=hdrlist.get(0);
+                                    
+                                    once++;
+                                    }
+                                    
+                                    
+                                    }*/
+                                        for (Iterator<JobVolumeDetails> chjviterator = chjvList.iterator(); chjviterator.hasNext();) {
+                                            JobVolumeDetails jv = chjviterator.next();
+                                            chVol=jv.getVolume();
+                                            List<Headers> hdrlist=hserv.getHeadersFor(chVol, subObj);
                                             if(hdrlist.isEmpty()){
                                                 
                                             }else if(hdrlist.size()==1){

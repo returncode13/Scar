@@ -74,8 +74,11 @@ public class Q11 {
         this.child = (JobStepType1Model) child;
         this.session=this.parent.getSessionModel();
         
-        JobStep parentJs=jserv.getJobStep(this.parent.getId());
-        List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
+        /*JobStep parentJs=jserv.getJobStep(this.parent.getId());
+        List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);*/
+        // JobStep childJs=jserv.getJobStep(this.child.getId());
+         JobStep childjs=jserv.getJobStep(this.child.getId());
+        List<JobVolumeDetails> chjvList=jvserv.getJobVolumeDetails(childjs);
         
         
         Sessions sess=sessServ.getSessions(session.getId());
@@ -83,7 +86,7 @@ public class Q11 {
         JobStep parentjs=jserv.getJobStep(this.parent.getId());
         SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
         
-        JobStep childjs=jserv.getJobStep(this.child.getId());
+        
         SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
         
         System.out.println("mid.doubt.qc.Q11.<init>(): parentJob: "+parent.getJobStepText()+" childJob: "+child.getJobStepText());
@@ -106,30 +109,48 @@ public class Q11 {
                                     
                                     
                                     
-                                    Volume pVol=null;
-                                    Headers ph=null;
+                                    //Volume pVol=null;
+                                    Volume chVol=null;
+                                    Headers ch=null;
                                     Integer once=0;
                                      List<String> doubtMessage=new ArrayList<>();
-                                        for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
-                                            JobVolumeDetails jv = pjviterator.next();
-                                            pVol=jv.getVolume();
-                                            List<Headers> hdrlist=hserv.getHeadersFor(pVol, subObj);
+                                     /*for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
+                                     JobVolumeDetails jv = pjviterator.next();
+                                     pVol=jv.getVolume();
+                                     List<Headers> hdrlist=hserv.getHeadersFor(pVol, subObj);
+                                     if(hdrlist.isEmpty()){
+                                     
+                                     }else if(hdrlist.size()==1){
+                                     ch=hdrlist.get(0);
+                                     
+                                     once++;
+                                     }
+                                     
+                                     
+                                     }*/
+                                        for (Iterator<JobVolumeDetails> chjviterator = chjvList.iterator(); chjviterator.hasNext();) {
+                                            JobVolumeDetails jv = chjviterator.next();
+                                            chVol=jv.getVolume();
+                                            List<Headers> hdrlist=hserv.getHeadersFor(chVol, subObj);
                                             if(hdrlist.isEmpty()){
                                                 
                                             }else if(hdrlist.size()==1){
-                                                ph=hdrlist.get(0);
+                                                ch=hdrlist.get(0);
                                                 
                                                 once++;
                                             }
                                         
 
                                         }
+                                        
+                                        
+                                        
                                         if(once>1){
                                             System.out.println("mid.doubt.qc.Q11.<init>(): sub: "+subObj.getSubsurface()+" found multiple times in job: "+this.parent.getJobStepText());
                                             return;
                                         }
                                     once=0;    
-                                    List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ph);  //looking for doubt in child based on qc failure in parent.
+                                    List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ch);  //looking for doubt in child based on qc failure in parent.
                                     if(dst.isEmpty()){ //no entry ..no doubt for child
                                         
                                     }else{              //doubt exists in child. now determine if the status is  overridden  or yes
@@ -230,7 +251,7 @@ public class Q11 {
                            ds.setDoubtType(dqc);
                            ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());
                            ds.setParentSessionDetails(parentSsd);
-                           ds.setHeaders(ph);
+                           ds.setHeaders(ch);
                            ds.setUser(null);
                            ds.setStatus("Y");
                            ds.setErrorMessage(err);

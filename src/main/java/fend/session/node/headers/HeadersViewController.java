@@ -21,6 +21,9 @@ import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
+import fend.session.node.headers.doubtoverride.OverrideModel;
+import fend.session.node.headers.doubtoverride.OverrideNode;
+import fend.session.node.headers.doubtoverride.entries.Entries;
 import fend.session.node.headers.logger.LogsModel;
 import fend.session.node.headers.logger.LogsNode;
 import fend.session.node.headers.logger.VersionLogsModel;
@@ -159,11 +162,27 @@ public class HeadersViewController extends Stage implements Initializable {
                     setContextMenu(null);
                 }//else if(item.getQcAlert()){
                 if(item!=null)System.out.println(".updateItem() seq: "+item.getSequenceNumber()+" sub: "+item.getSubsurface()+" isDependency(): "+item.isDependency()+" Doubt: "+item.getDoubt().isDoubt()+" Status: "+item.getDoubt().getStatus());
-                if(item!=null && !item.isDependency()){
+                
+                //doubts because of dependency failures
+                
+                if(item!=null && item.getDoubt().isDoubt() && !item.isDependency() && item.getDoubt().getStatus().equals("Y")){
                     setStyle("-fx-background-color:orange");
                     setTooltip(new Tooltip(item.getErrorMessage()));
+                    contextMenu.getItems().add(explainDoubt);
+                    contextMenu.getItems().add(showOverride);
                     setContextMenu(contextMenu);
-                }if(item!=null && item.getDoubt().isDoubt() && item.isDependency() && item.getDoubt().getStatus().equals("Y")){
+                }else if(item!=null && item.getDoubt().isDoubt() && !item.isDependency() && item.getDoubt().getStatus().equals("O")){
+                    setStyle("-fx-background-color: #fff99");
+                    setTooltip(new Tooltip(item.getErrorMessage()));
+                    contextMenu.getItems().add(explainDoubt);
+                    contextMenu.getItems().add(showOverride);
+                    setContextMenu(contextMenu);
+                }
+                
+                
+                //doubts because of QC failures
+                
+                    if(item!=null && item.getDoubt().isDoubt() && item.isDependency() && item.getDoubt().getStatus().equals("Y")){
                     setStyle("-fx-background-color:purple");
                     //setTooltip(new Tooltip(item.getDoubt().getErrorMessageList()));
                     contextMenu.getItems().add(explainDoubt);
@@ -171,7 +190,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     setContextMenu(contextMenu);
                 }
                 else if(item!=null && item.getDoubt().isDoubt() && item.isDependency() && item.getDoubt().getStatus().equals("O")){
-                    setStyle("-fx-background-color:pink");
+                    setStyle("-fx-background-color:#f0c2e0");
                     //setTooltip(new Tooltip(item.getDoubt().getErrorMessageList()));
                     contextMenu.getItems().add(explainDoubt);
                     contextMenu.getItems().add(showOverride);
@@ -209,11 +228,28 @@ public class HeadersViewController extends Stage implements Initializable {
            if(h.size()==1){
                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): searching for doubttype for header ID: "+h.get(0).getIdHeaders());
                List<DoubtStatus> doubtStatusList=dbstatusServ.getDoubtStatusListForJobInSession(h.get(0));
+               List<Entries> entries=new ArrayList<>();
                for (Iterator<DoubtStatus> iterator = doubtStatusList.iterator(); iterator.hasNext();) {
                    DoubtStatus next = iterator.next();
                    System.out.println("fend.session.node.headers.HeadersViewController.setModel(): DoubtType: "+next.getDoubtType().getName()+" DoubtMessage: "+next.getErrorMessage()+" DoubtStatus: "+next.getStatus());
+                   Entries entry=new Entries();
+                   entry.setSubsurface(sub.getSubsurface());
+                   entry.setStatus(next.getStatus());
+                   entry.setErrorMessage(next.getErrorMessage());
+                   entry.setDoubtType(next.getDoubtType().getName());
+                   
+                   
+                   entries.add(entry);
                    
                }
+                    
+               
+               
+               OverrideModel overrideModel=new OverrideModel();
+               overrideModel.setObsentries(entries);
+               OverrideNode overrideNode=new OverrideNode(overrideModel);
+               
+               
                
            }else{
                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): sub:  "+sub.getSubsurface()+" in volume: "+v.getNameVolume()+" has a header size NOT EQUAL TO ONE");
