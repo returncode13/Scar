@@ -237,7 +237,7 @@ public class HeadersViewController extends Stage implements Initializable {
                    entry.setStatus(next.getStatus());
                    entry.setErrorMessage(next.getErrorMessage());
                    entry.setDoubtType(next.getDoubtType().getName());
-                   
+                   entry.setDoubtStatusObject(next);
                    
                    entries.add(entry);
                    

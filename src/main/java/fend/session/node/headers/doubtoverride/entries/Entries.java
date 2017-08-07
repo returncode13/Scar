@@ -5,6 +5,7 @@
  */
 package fend.session.node.headers.doubtoverride.entries;
 
+import db.model.DoubtStatus;
 import fend.session.node.headers.doubtoverride.entries.comments.CommentModel;
 
 /**
@@ -17,6 +18,20 @@ public class Entries {
     String subsurface=new String();
     String status=new String();
     CommentModel comment=new CommentModel(this);
+    DoubtStatus doubtStatusObject;
+
+    public DoubtStatus getDoubtStatusObject() {
+        return doubtStatusObject;
+    }
+
+    public void setDoubtStatusObject(DoubtStatus doubtStatusObject) {
+        this.doubtStatusObject = doubtStatusObject;
+    }
+    
+    
+    
+    
+    
 
     public String getErrorMessage() {
         return errorMessage;

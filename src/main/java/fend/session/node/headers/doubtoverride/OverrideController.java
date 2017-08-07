@@ -5,6 +5,10 @@
  */
 package fend.session.node.headers.doubtoverride;
 
+import db.model.DoubtStatus;
+import db.services.DoubtStatusService;
+import db.services.DoubtStatusServiceImpl;
+import db.services.DoubtTypeService;
 import fend.session.node.headers.doubtoverride.entries.Entries;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +37,8 @@ public class OverrideController extends Stage {
     OverrideModel model;
     OverrideNode node;
     Map<Entries,Boolean> commitMap=new HashMap<>();
+    DoubtStatusService dss=new DoubtStatusServiceImpl();
+    
     
    @FXML
     private TableView<Entries> tableView;
@@ -54,7 +60,13 @@ public class OverrideController extends Stage {
             Entries key = entry.getKey();
             Boolean value = entry.getValue();
             
-                if(value) System.out.println("fend.session.node.headers.doubtoverride.OverrideController.overrideBtnHandle(): Overriding: "+key.getSubsurface()+" Dtype: "+key.getDoubtType()+" DStatus : "+key.getStatus()+" to override ");
+                if(value) {
+                    System.out.println("fend.session.node.headers.doubtoverride.OverrideController.overrideBtnHandle(): Overriding: "+key.getSubsurface()+" Dtype: "+key.getDoubtType()+" DStatus : "+key.getStatus()+" to override "+" with comment: "+key.getComment().getComment());
+                    DoubtStatus doubtStatus=key.getDoubtStatusObject();
+                    
+                    doubtStatus.setStatus("O");
+                    dss.updateDoubtStatus(doubtStatus.getIdDoubtStatus(), doubtStatus);
+                }
             
         }
             close();
