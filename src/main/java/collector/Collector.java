@@ -7,6 +7,7 @@ package collector;
 
 import core.Seq;
 import core.Sub;
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.Acquisition;
 import db.model.Ancestors;
 import db.model.Child;
@@ -94,6 +95,8 @@ import javafx.collections.ObservableList;
  */
 public class Collector {
     //from frontEnd. user
+    Logger logger=Logger.getLogger(Collector.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     
     private SessionModel feSessionModel;
     //private ArrayList<JobStepModel> feJobModel=new ArrayList<>();
@@ -140,6 +143,8 @@ public class Collector {
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
+       logger.addHandler(obpManagerLogDatabaseHandler);
+       logger.setLevel(Level.ALL);
     }
 
     public void setFeJobGraphModel(SessionModel feJobGraphModel) {
@@ -158,12 +163,14 @@ public class Collector {
          if(cs==null){
              
              System.out.println("collector.Collector.saveCurrentSession(): No existing entry for current session found with id: "+feSessionModel.getId());
+             logger.info("No existing entry for current session found with id: "+feSessionModel.getId());
              
              currentSession=new Sessions();
         currentSession.setIdSessions(feSessionModel.getId());
         currentSession.setNameSessions(feSessionModel.getName());
          }else{
              System.out.println("collector.Collector.saveCurrentSession(): Found an entry for existing session with id: "+feSessionModel.getId()+" setting it to the current Session");
+             logger.info("Found an entry for existing session with id: "+feSessionModel.getId()+" setting it to the current Session");
              currentSession=cs;
          }
         
@@ -175,6 +182,7 @@ public class Collector {
          for (Iterator<JobStepType0Model> iterator = feJobModel.iterator(); iterator.hasNext();) {
              JobStepType0Model next = iterator.next();
              System.out.println("collector.Collector.saveCurrentSession(): List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
+             logger.info("List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
          }
         dbSessions.add(currentSession);
        // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
@@ -238,6 +246,7 @@ public class Collector {
                                     break;
                                 }else if(hlist.size()>1){
                                     System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j1.getJobStepText()+" and volume: "+vol.getNameVolume());
+                                    logger.warning("Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j1.getJobStepText()+" and volume: "+vol.getNameVolume());
                                 }
                                 
                             }
@@ -275,6 +284,7 @@ public class Collector {
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                     System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    logger.info("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -330,6 +340,7 @@ public class Collector {
                                     break;
                                 }else if(hlist.size()>1){
                                     System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j2.getJobStepText()+" and volume: "+vol.getNameVolume());
+                                    logger.warning("Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j2.getJobStepText()+" and volume: "+vol.getNameVolume());
                                 }
                                 
                             }
@@ -367,6 +378,7 @@ public class Collector {
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                     System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    logger.warning("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -424,6 +436,7 @@ public class Collector {
                                     break;
                                 }else if(hlist.size()>1){
                                     System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j4.getJobStepText()+" and volume: "+vol.getNameVolume());
+                                    logger.warning("Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j4.getJobStepText()+" and volume: "+vol.getNameVolume());
                                 }
                                 
                             }
@@ -461,6 +474,7 @@ public class Collector {
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                     System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    logger.info("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -515,14 +529,16 @@ public class Collector {
                  for (Iterator<String> iterator = insightVers.iterator(); iterator.hasNext();) {
                     String next = iterator.next();
                      System.out.println("collector.Collector.setupEntries(): InsVersL : "+next);
+                     logger.info("InsVersL : "+next);
                      versionString=versionString.concat(next+";");
                 }
                  System.out.println("collector.Collector.setupEntries()  Concatenated String : "+versionString); 
+                 logger.info("Concatenated String : "+versionString);
                  jobstep.setInsightVersions(versionString);
                  
                  
                  System.out.println("collector.Collector.setupEntries(): jobStep: "+jobstep.getNameJobStep()+" :ID: "+jobstep.getIdJobStep());
-                 
+                 logger.info("jobStep: "+jobstep.getNameJobStep()+" :ID: "+jobstep.getIdJobStep());
                  //add to db
                  //if(!dbJobSteps.contains(jobStep))dbJobSteps.add(jobStep);
                  
@@ -530,6 +546,7 @@ public class Collector {
                  
                //  if(jsServ.getJobStep(jobstep.getIdJobStep())==null){
                      System.out.println("collector.Collector.setupEntries(): New / jobStep: Adding to dbJobSteps: "+jobstep.getNameJobStep());
+                     logger.info("New / jobStep: Adding to dbJobSteps: "+jobstep.getNameJobStep());
                      dbJobSteps.add(jobstep);
                 // }
                  
@@ -544,6 +561,7 @@ public class Collector {
                      
                      SessionDetails sd=new SessionDetails(jobstep, sess);
                      System.out.println("collector.Collector.setupEntries(): Adding to dbSessionDetails: ");
+                     logger.info("Adding to dbSessionDetails: "+sd.getIdSessionDetails());
                      dbSessionDetails.add(sd);}
                //  if(!dbSessions.contains(sd))dbSessionDetails.add(sd);
                  
@@ -562,6 +580,7 @@ public class Collector {
                     VolumeSelectionModelType0 vsm = vit.next();
                     Volume vp=new Volume();
                      System.out.println("collector.Collector.setupEntries(): Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
+                     logger.info("Volume: "+vsm.getLabel()+" :id: "+vsm.getId());
                     vp.setIdVolume(vsm.getId());
                     vp.setNameVolume(vsm.getLabel());
                     vp.setVolumeType(vsm.getVolumeType());
@@ -597,6 +616,7 @@ public class Collector {
                    
                    if(jvdServ.getJobVolumeDetails(jobstep, vp)==null){
                        System.out.println("collector.Collector.setupEntries(): Adding a new entry to jobvolumedetails: for job: "+jobstep.getIdJobStep()+" : "+jobstep.getNameJobStep()+" vol: id: "+vp.getIdVolume()+" : "+vp.getNameVolume() );
+                       logger.info("Adding a new entry to jobvolumedetails: for job: "+jobstep.getIdJobStep()+" : "+jobstep.getNameJobStep()+" vol: id: "+vp.getIdVolume()+" : "+vp.getNameVolume());
                        dbJobVolumeDetails.add(jvd);
                    }
                    

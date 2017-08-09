@@ -20,9 +20,9 @@ import org.openide.util.Exceptions;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class ReporterController extends Stage{
-    private final String htmlLocation="/d/home/adira0150/programming/php/submit.html";
-    final File file=new File(htmlLocation);
-    private URL url;
+    /*private final String htmlLocation="/d/home/adira0150/programming/php/submit.html";
+    final File file=new File(htmlLocation);*/
+    private String url;
     
     @FXML
     private WebView webView;
@@ -32,18 +32,17 @@ public class ReporterController extends Stage{
     
     void setModel(ReporterModel lsm) {
        this.model=lsm;
-        try {
-            url=file.toURI().toURL();
-        } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        
+           // url=file.toURI().toURL();
+           url="http://10.11.1.180/obpmanager/report.html";
+         
        
     }
 
     void setView(ReporterNode aThis) {
         node=aThis;
         final WebEngine webengine=webView.getEngine();
-        webengine.load(url.toString());
+        webengine.load(url);
         this.setTitle("Reporter");
         this.setScene(new Scene(node));
         this.showAndWait();

@@ -172,7 +172,7 @@ public class HeadersViewController extends Stage implements Initializable {
                     contextMenu.getItems().add(showOverride);
                     setContextMenu(contextMenu);
                 }else if(item!=null && item.getDoubt().isDoubt() && !item.isDependency() && item.getDoubt().getStatus().equals("O")){
-                    setStyle("-fx-background-color: #fff99");
+                    setStyle("-fx-background-color: pink");
                     setTooltip(new Tooltip(item.getErrorMessage()));
                     contextMenu.getItems().add(explainDoubt);
                     contextMenu.getItems().add(showOverride);
