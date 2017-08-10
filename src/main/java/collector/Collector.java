@@ -147,6 +147,7 @@ public class Collector {
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
+       obpManagerLogDatabaseHandler.clear();                    //remove existing logs before starting to log
        logger.addHandler(obpManagerLogDatabaseHandler);
        logger.setLevel(Level.ALL);
     }

@@ -46,8 +46,8 @@ public class ReporterNode extends AnchorPane{
                
                // sc.setId(Long.valueOf(getId()));
                 
-                lsc.setModel(lsm);
-                lsc.setView(this) ;
+                lsc.setModel(lsm,this);
+                //lsc.setView(this) ;
                 
                
                 System.out.println("landing.reporter.ReporterNode.<init>()");

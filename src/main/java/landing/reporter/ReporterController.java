@@ -47,7 +47,7 @@ public class ReporterController extends Stage{
     ReporterNode node;
     ObpManagerLogService oserv=new ObpManagerLogServiceImpl();
     
-    void setModel(ReporterModel lsm) throws FileNotFoundException {
+    void setModel(ReporterModel lsm,ReporterNode aThis) throws FileNotFoundException {
        this.model=lsm;
       List<ObpManagerLog> logs=oserv.getObpManagerLogs();
       List<String> contents=new ArrayList<>();
@@ -56,28 +56,62 @@ public class ReporterController extends Stage{
             String s=next.getTimeEntered()+" : "+next.getLevel()+" : "+next.getSourceClass()+" : "+next.getSourceMethod()+" : "+next.getMessage();
             contents.add(s);
         }
-        String htmlcontent=new String();
+        String logContent=new String();
         System.out.println("landing.reporter.ReporterController.setModel(): Printing log contents");
-        for (String content : contents) {
-            System.out.println(content);
-            htmlcontent+=content;
+        /*for (String content : contents) {
+        System.out.println(content);
+        content+="\n\'";
+        logContent+=content;
+        //htmlcontent+="\n";
+        }*/
+        for(int i=0;i<contents.size();i++){
+            
+            if(i==contents.size()-1){
+               String content=contents.get(i);
+           // content+="\'";
+            logContent+="\'"+content; 
+            break;
+            }
+            
+            if(i==0){
+                String content=contents.get(i);
+            content+="\\n\' +\n";
+            logContent+=content;
+            continue;
+            }
+            
+            
+            String content=contents.get(i);
+            content+="\\n\' +\n";
+            logContent+="\'"+content;
+            
+            
         }
         
         
-        page.setLogcontent(htmlcontent);
+        page.setLogcontent(logContent);
         /*try {
         url=file.toURI().toURL();
         } catch (MalformedURLException ex) {
         Exceptions.printStackTrace(ex);
         }*/
+        System.out.println("landing.reporter.ReporterController.setModel(): finished setting logContent to : "+logContent);
+        Writer writer=null;
         try{
-            Writer writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+            writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
             writer.write(page.getHtmlContent());
         }catch(IOException ioe){
-            
+            ioe.printStackTrace();
+        }finally{
+           try {
+               writer.close();
+           } catch (IOException ex) {
+               Exceptions.printStackTrace(ex);
+           }
         }
         
-         
+         this.node=aThis;
+         setView();
        
     }
 
@@ -85,8 +119,20 @@ public class ReporterController extends Stage{
         node=aThis;
         final WebEngine webengine=webView.getEngine();
         //webengine.load(url);
-        //webengine.load(url.toString());
-        webengine.load(page.getHtmlContent());
+        System.out.println("landing.reporter.ReporterController.setView(): Loading "+file.getAbsolutePath());
+        webengine.load(file.getAbsolutePath());
+       // webengine.load(page.getHtmlContent());
+        this.setTitle("Reporter");
+        this.setScene(new Scene(node));
+        this.showAndWait();
+    }
+
+    private void setView() {
+        final WebEngine webengine=webView.getEngine();
+        //webengine.load(url);
+        System.out.println("landing.reporter.ReporterController.setView(): Loading "+file.getAbsolutePath());
+        webengine.loadContent(page.getHtmlContent());
+       // webengine.load(page.getHtmlContent());
         this.setTitle("Reporter");
         this.setScene(new Scene(node));
         this.showAndWait();

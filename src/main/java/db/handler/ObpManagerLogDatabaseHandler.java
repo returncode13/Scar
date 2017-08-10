@@ -10,6 +10,8 @@ import db.model.Sessions;
 import db.services.ObpManagerLogService;
 import db.services.ObpManagerLogServiceImpl;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -71,7 +73,12 @@ public class ObpManagerLogDatabaseHandler extends Handler{
     }
     
     public void clear(){
-        
+        List<ObpManagerLog> existingLogs=oserv.getObpManagerLogs();
+        for (Iterator<ObpManagerLog> iterator = existingLogs.iterator(); iterator.hasNext();) {
+            ObpManagerLog next = iterator.next();
+            oserv.deleteObpManagerLog(next.getIdObpManagerLog());
+            
+        }
     }
     
 }

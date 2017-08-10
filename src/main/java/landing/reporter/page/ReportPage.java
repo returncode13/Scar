@@ -11,16 +11,16 @@ package landing.reporter.page;
  */
 public class ReportPage {
     
-    String phplocation="http://10.11.1.180/obpmanager/php/process.php";
+    String phplocation="http://10.11.1.180/obpmanager/php/process3.php";
     
     String htmlContent1="<html lang=\"en\">\n" +
 "<head>\n" +
 "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
 "  <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">\n" +
-"  <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>\n" +
-"  <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>\n" +
+"  \n" +
 "</head>\n" +
 "<body>\n" +
+"</div>\n" +
 "<form class=\"form-horizontal\" action= >\n" +
 "  <br>\n" +
 "  <div class=\"form-group\">\n" +
@@ -79,10 +79,70 @@ public class ReportPage {
 "  <div class=\"form-group\"> \n" +
 "    \n" +
 "    <div class=\"col-sm-offset-2 col-sm-10\">\n" +
-"      <button type=\"submit\" class=\"btn btn-default\" id=\"idSubmitLogs\">Submit with Logs</button>\n" +
+"      <button type=\"button\" class=\"btn btn-default\" id=\"idSubmitLogs\">Submit with Logs</button>\n" +
 "    </div>\n" +
 "  </div>\n" +
 "</form>\n" +
+"</div>\n" +
+"\n" +
+"<div id=\"idSuccessModal\" role=\"dialog\" class=\"modal fade\">\n" +
+"    <div class=\"modal-dialog modal-sm\">\n" +
+"      <div class=modal-content>\n" +
+"        <div class=\"modal-header\">\n" +
+"          <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>\n" +
+"          <h4 class=\"modal-title\">Success</h4>\n" +
+"        </div>\n" +
+"        <div class=\"modal-body\">\n" +
+"          <p>A ticket has been submitted to obpswsupport@polarcus.com</p>\n" +
+"        </div>\n" +
+"        <div class=\"modal-footer\">\n" +
+"          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n" +
+"        </div>\n" +
+"        \n" +
+"      </div>\n" +
+"    </div>\n" +
+"  </div>\n" +
+"  \n" +
+"  <div id=\"idErrorModal\" role=\"dialog\" class=\"modal fade\">\n" +
+"    <div class=\"modal-dialog modal-lg\">\n" +
+"      <div class=modal-content>\n" +
+"        <div class=\"modal-header\">\n" +
+"          <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>\n" +
+"          <h4 class=\"modal-title\">Error</h4>\n" +
+"        </div>\n" +
+"        <div class=\"modal-body\">\n" +
+"          <p>Sorry but I am currently unable to confirm if this ticket was indeed submitted to obpswsupport@polarcus.com.\nPlease check your email for an automated response in case of delivery.\n You also have an option to save the logs and submit them to obpsupport@polarcus.com. Please include the term \"Obpmanager\" in the subject of the email.</p>\n" +
+"        </div>\n" +
+"        <div class=\"modal-footer\">\n" +
+"          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n" +
+"        </div>\n" +
+"        \n" +
+"      </div>\n" +
+"    </div>\n" +
+"  </div>\n" +
+"  \n" +
+"  <div id=\"idUsualErrModal\" role=\"dialog\" class=\"modal fade\">\n" +
+"    <div class=\"modal-dialog modal-lg\">\n" +
+"      <div class=modal-content>\n" +
+"        <div class=\"modal-header\">\n" +
+"          <button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>\n" +
+"          <h4 class=\"modal-title\">Error</h4>\n" +
+"        </div>\n" +
+"        <div class=\"modal-body\">\n" +
+"          <p>Error 401. This usually means a ticket has been submitted to obpswsupport@polarcus.com.Please check your email for an automated response to the ticket.</p>\n" +
+"        </div>\n" +
+"        <div class=\"modal-footer\">\n" +
+"          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n" +
+"        </div>\n" +
+"        \n" +
+"      </div>\n" +
+"    </div>\n" +
+"  </div>\n" +
+"\n" +
+"    <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>\n" +
+"  <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>\n" +
+"\n" +
+"\n" +
 "  </body>\n" +
 "</html>\n" +
 "<script>\n" +
@@ -106,12 +166,19 @@ public class ReportPage {
 "    var email=$(\"#idEmail\").val();\n" +
 "    var report=$(\"#idDescription\").val();\n" +
 "    var priority=$(\"#idButton\").text();\n" +
-"    var location=$(\"#idLocButton\").text();"
-            + "var logContent=\"";
+"    var location=$(\"#idLocButton\").text();"+
+            
+            
+            "\n"
+            + "var logContent=\'";
 
 String logcontent=new String();
 
-String htmlContent2="\";"+
+String htmlContent2="\';\n"+
+        
+        
+        
+        
         
         "console.log(\"name:\"+ name+\"\\n email:\"+email+\"\\n desc: \"+report+\"\\n priority: \"+priority+\" \\n location: \"+location);\n" +
 "    \n" +
@@ -119,13 +186,22 @@ String htmlContent2="\";"+
 "    $.ajax({\n" +
 "      type: \"POST\",\n" +
 "      url: \""+phplocation+"\",\n" +
-"      data: \"name=\"+ name +\"&email=\"+email+\"&location=\"+location+\"&priority=\"+priority+\"&report=\"+report,\n" +"\"&logContent=\"+logContent,"+
+"      data: \"name=\"+ name +\"&email=\"+email+\"&location=\"+location+\"&priority=\"+priority+\"&report=\"+report+\"&logContent=\"+logContent,\n" +
 "      success: function(text){\n" +
 "        if(text == \"success\"){\n" +
 "          console.log(\"success!!\");\n" +
-"        }else{\n" +
-"            console.log(text);\n" +
+"          $(\"#idSuccessModal\").modal('show');\n" +
 "        }\n" +
+"      },\n" +
+"      error: function(xhr,ajaxOptions,thrownError){\n" +
+"        switch(xhr.status){\n" +
+"            case 401:\n" +
+"                $(\"#idUsualErrModal\").modal('show');\n" +
+"            default:\n" +
+"                $(\"#idErrorModal\").modal('show');\n" +
+"                \n" +
+"        }\n" +
+"        \n" +
 "      }\n" +
 "      \n" +
 "      \n" +
