@@ -5,11 +5,10 @@
  */
 package db.dao;
 
-import db.model.ObpManagerLog;
 
+import db.model.NodeType;
 import hibUtil.HibernateUtil;
 import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,29 +18,29 @@ import org.hibernate.criterion.Restrictions;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class ObpManagerLogDAOImpl  implements ObpManagerLogDAO {
+public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
-    public void createObpManagerLog(ObpManagerLog o) {
-       Session session = HibernateUtil.getSessionFactory().openSession();
+    public void createNodeType(NodeType n) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            session.saveOrUpdate(o);
+            session.saveOrUpdate(n);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
         }finally{
             session.close();
-        } 
+        }
     }
 
     @Override
-    public ObpManagerLog getObpManagerLog(Long oid) {
+    public NodeType getNodeType(Long nid) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
-            ObpManagerLog l= (ObpManagerLog) session.get(ObpManagerLog.class, oid);
-            return l;
+            NodeType ll=(NodeType) session.get(NodeType.class,nid);
+            return ll;
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -51,20 +50,16 @@ public class ObpManagerLogDAOImpl  implements ObpManagerLogDAO {
     }
 
     @Override
-    public void updateObpManagerLog(Long oid, ObpManagerLog newO) {
+    public void updateNodeType(Long nid, NodeType newNodeType) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            ObpManagerLog ll= (ObpManagerLog) session.get(ObpManagerLog.class, oid);
-            ll.setLevel(newO.getLevel());
-            ll.setLogger(newO.getLogger());
-            ll.setMessage(newO.getMessage());
-            ll.setSourceClass(newO.getSourceClass());
-            ll.setSourceMethod(newO.getSourceMethod());
-            ll.setThreadId(newO.getThreadId());
-            ll.setTimeEntered(newO.getTimeEntered());
-//            ll.setSessions(newO.getSessions());
+            NodeType ll=(NodeType) session.get(NodeType.class,nid);
+            ll.setActualnodeid(newNodeType.getActualnodeid());
+            ll.setName(newNodeType.getName());
+            
+          //  ll.setSessions(newQcType.getSessions());
             session.update(ll);
             
             
@@ -77,13 +72,13 @@ public class ObpManagerLogDAOImpl  implements ObpManagerLogDAO {
     }
 
     @Override
-    public void deleteObpManagerLog(Long oid) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+    public void deleteNodeType(Long nid) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            ObpManagerLog h= (ObpManagerLog) session.get(ObpManagerLog.class, oid);
-            session.delete(h);
+            NodeType ll=(NodeType) session.get(NodeType.class,nid);
+            session.delete(ll);
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -93,24 +88,28 @@ public class ObpManagerLogDAOImpl  implements ObpManagerLogDAO {
     }
 
     @Override
-    public List<ObpManagerLog> getObpManagerLogs() {
-       Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<ObpManagerLog> result=null;
+    public NodeType getNodeTypeObjForType(Long type) {
+        Session sess = HibernateUtil.getSessionFactory().openSession();
+        List<NodeType> result=null;
+        Transaction transaction=null;
         try{
-        transaction=session.beginTransaction();
-        Criteria criteria=session.createCriteria(ObpManagerLog.class);
-       
-        result=criteria.list();
-        transaction.commit();
+            transaction=sess.beginTransaction();
+            Criteria criteria= sess.createCriteria(NodeType.class);
+            criteria.add(Restrictions.eq("actualnodeid", type));
+        
+            result=criteria.list();
+            transaction.commit();
+           if(result.size()==1){
+               return result.get(0);
+           }else{
+               return null;
+           }
         }catch(Exception e){
-        e.printStackTrace();
-        }finally{
-        session.close();
+            e.printStackTrace();
         }
-        return result;
+        
+        return null;
     }
-
-   
+    
     
 }

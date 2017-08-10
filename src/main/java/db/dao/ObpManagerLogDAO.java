@@ -6,6 +6,7 @@
 package db.dao;
 
 import db.model.ObpManagerLog;
+import java.util.List;
 import java.util.logging.Handler;
 
 /**
@@ -17,4 +18,5 @@ public interface ObpManagerLogDAO {
     public ObpManagerLog getObpManagerLog(Long oid);
     public void updateObpManagerLog(Long oid,ObpManagerLog newO);
     public void deleteObpManagerLog(Long oid);
+    public List<ObpManagerLog> getObpManagerLogs();
 }

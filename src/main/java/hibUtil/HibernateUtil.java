@@ -89,8 +89,8 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory(){
         System.out.println("hibUtil.HibernateUtil.buildSessionFactory() : Loading the connection configurations "+LandingController.getSshSettingXml());
         
-         File sFile=new File(LandingController.getSshSettingXml());
-         File dbFile=new File(LandingController.getDbSettingXml());
+         File sFile=new File(System.getProperty("user.home"),LandingController.getSshSettingXml());
+         File dbFile=new File(System.getProperty("user.home"),LandingController.getDbSettingXml());
          
          JAXBContext contextObj;
          JAXBContext dbcontext;

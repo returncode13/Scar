@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.ObpManagerLog;
+import java.util.List;
 
 /**
  *
@@ -16,4 +17,5 @@ public interface ObpManagerLogService {
     public ObpManagerLog getObpManagerLog(Long oid);
     public void updateObpManagerLog(Long oid,ObpManagerLog newO);
     public void deleteObpManagerLog(Long oid);
+    public List<ObpManagerLog> getObpManagerLogs();
 }

@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -45,8 +47,15 @@ public class JobStep implements Serializable{
     @Column(name = "alert",nullable = true)
     private Boolean alert;
     
-    @Column(name = "type",nullable=false)
-    private Long type;
+    /*@Column(name = "type",nullable=false)
+    private Long type;*/
+    
+   
+    
+    @ManyToOne
+    @JoinColumn(name="nodetype_fk",nullable=false)
+    private NodeType nodetype;
+    
     
     /*@Column(name = "pending",nullable = true)
     private Boolean pending;*/
@@ -56,13 +65,22 @@ public class JobStep implements Serializable{
     @OneToMany(mappedBy = "jobStep",cascade = CascadeType.ALL,orphanRemoval = true)                             //create a member named "jobStep" in the SessionDetails class definition
     private Set<SessionDetails> sessionDetails;
 
-    public JobStep(String nameJobStep, Boolean alert,String insightVersion,Long type) {
+    /*public JobStep(String nameJobStep, Boolean alert,String insightVersion,Long type) {
+    this.nameJobStep = nameJobStep;
+    this.alert = alert;
+    this.insightVersions=insightVersion;
+    this.type=type;
+    }
+    */
+
+    
+    public JobStep(String nameJobStep, Boolean alert,String insightVersion,NodeType type) {
         this.nameJobStep = nameJobStep;
         this.alert = alert;
         this.insightVersions=insightVersion;
-        this.type=type;
+        this.nodetype=type;
     }
-
+    
     public JobStep() {
     }
     
@@ -140,13 +158,23 @@ public class JobStep implements Serializable{
     }
     */
 
-    public Long getType() {
-        return type;
+    /* public Long getType() {
+    return type;
+    }
+    
+    public void setType(Long type) {
+    this.type = type;
+    }*/
+
+    public NodeType getType() {
+        return nodetype;
     }
 
-    public void setType(Long type) {
-        this.type = type;
+    public void setType(NodeType type) {
+        this.nodetype = type;
     }
+    
+    
 
     
 

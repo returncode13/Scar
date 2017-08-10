@@ -11,6 +11,7 @@ import db.model.Child;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.NodeType;
 import db.model.Parent;
 import db.model.SessionDetails;
 import db.model.Sessions;
@@ -25,6 +26,8 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.NodeTypeService;
+import db.services.NodeTypeServiceImpl;
 import db.services.ParentService;
 import db.services.ParentServiceImpl;
 import db.services.SessionDetailsService;
@@ -57,8 +60,13 @@ import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,8 +142,16 @@ public class LandingController implements Initializable,Serializable {
      * Initializes the controller class.
      */
     
-    private static final String sshSettingXml="src/main/resources/landingResources/settings/ssh/settings.xml";
-    private static final String dbSettingXml="src/main/resources/landingResources/settings/database/databaseSettings.xml";
+    //private static final String sshSettingXml="src/main/resources/landingResources/settings/ssh/settings.xml";
+    //private static final String dbSettingXml="src/main/resources/landingResources/settings/database/databaseSettings.xml";
+    
+   // private static final String dbSettingXml="landingResources/settings/database/databaseSettings.xml";
+    /*private static final String sshSettingXml="landingResources/settings/ssh/settings.xml";
+    private static final String dbSettingXml="landingResources/settings/database/databaseSettings.xml";*/
+    
+    private static final String sshSettingXml="settings.xml";
+    private static final String dbSettingXml="databaseSettings.xml";
+    
     File file=new File("/d/home/adira0150/programming/php/submit.html");
     URL url1;
     
@@ -197,77 +213,121 @@ public class LandingController implements Initializable,Serializable {
     void handleBugReport(ActionEvent event) {
          ReporterModel rm=new ReporterModel();
          ReporterNode rnode=new ReporterNode(rm);
+         
+         
     }
      
      @FXML
     void dbsettings(ActionEvent event) {
-        databaseSettingsModel=new DataBaseSettings();
-        File dbFile=new File(dbSettingXml);
-        
+        InputStream is=null;
         try {
-            JAXBContext contextObj = JAXBContext.newInstance(DataBaseSettings.class);
+            databaseSettingsModel=new DataBaseSettings();
+            //    System.out.println("landing.LandingController.dbsettings(): looking for "+getClass().getClassLoader().getResource(dbSettingXml).getFile());
+            //File dbFile=new File(dbSettingXml);
+            /*ClassLoader classLoader=Thread.currentThread().getContextClassLoader();
+            InputStream is=classLoader.getResourceAsStream(dbSettingXml);*/
+            // File dbFile=new File(getClass().getClassLoader().getResource(dbSettingXml).getFile());
+            // File dbFile=
+            System.out.println("landing.LandingController.settings() looking for "+System.getProperty("user.home")+ "  file: "+dbSettingXml);
+            File dbFile=new File(System.getProperty("user.home"),dbSettingXml);
+            is = new FileInputStream(dbFile);
+            try {
+                JAXBContext contextObj = JAXBContext.newInstance(DataBaseSettings.class);
+                
+                //try unmarshalling the file. if the fields are not null. populate settingsmodel
+                
+                Unmarshaller unm=contextObj.createUnmarshaller();
+                // DataBaseSettings dbsett=(DataBaseSettings) unm.unmarshal(dbFile);
+                DataBaseSettings dbsett=(DataBaseSettings) unm.unmarshal(is);
+                System.out.println("landing.LandingController.settings():  unmarshalled: "+dbsett.getChosenDatabase());
+                
+                databaseSettingsModel.setDbUser(dbsett.getDbUser());
+                databaseSettingsModel.setDbPassword(dbsett.getDbPassword());
+                databaseSettingsModel.setChosenDatabase(dbsett.getChosenDatabase());
+                
+                DataBaseSettingsNode dbnode=new DataBaseSettingsNode(databaseSettingsModel);
+                DataBaseSettingsController dcontrl=dbnode.getDataBaseSettingsController();
+                
+                Marshaller marshallerObj = contextObj.createMarshaller();
+                marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                marshallerObj.marshal(databaseSettingsModel, new File(System.getProperty("user.home"),dbSettingXml));
+                
+            } catch (JAXBException ex) {
+                Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-            //try unmarshalling the file. if the fields are not null. populate settingsmodel
-            
-            Unmarshaller unm=contextObj.createUnmarshaller();
-            DataBaseSettings dbsett=(DataBaseSettings) unm.unmarshal(dbFile);
-            System.out.println("landing.LandingController.settings():  unmarshalled: "+dbsett.getChosenDatabase());
-            
-            databaseSettingsModel.setDbUser(dbsett.getDbUser());
-            databaseSettingsModel.setDbPassword(dbsett.getDbPassword());
-            databaseSettingsModel.setChosenDatabase(dbsett.getChosenDatabase());
-            
-            DataBaseSettingsNode dbnode=new DataBaseSettingsNode(databaseSettingsModel);
-            DataBaseSettingsController dcontrl=dbnode.getDataBaseSettingsController();
-            
-            Marshaller marshallerObj = contextObj.createMarshaller();
-            marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshallerObj.marshal(databaseSettingsModel, new File(dbSettingXml));
-            
-        } catch (JAXBException ex) {
-            Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
     }
     
     @FXML
-    void settings(ActionEvent event) {
+    void settings(ActionEvent event) throws URISyntaxException {
         
-         settingsModel=new SShSettings();
-         File sFile=new File(sshSettingXml);
-        
+        InputStream is=null;
         try {
-            JAXBContext contextObj = JAXBContext.newInstance(SShSettings.class);
+            settingsModel=new SShSettings();
+            /*URL sshLocationURL=getClass().getClassLoader().getResource(sshSettingXml);
+            File sFile=new File(sshSettingXml);*/
+            //System.out.println("landing.LandingController.settings(): looking for "+sshLocationURL.getFile());
+            //File sFile=new File(sshLocationURL.getFile());
             
-            //try unmarshalling the file. if the fields are not null. populate settingsmodel
-            
-            Unmarshaller unm=contextObj.createUnmarshaller();
-            SShSettings sett=(SShSettings) unm.unmarshal(sFile);
-            System.out.println("landing.LandingController.settings():  unmarshalled: "+sett.getSshHost() );
-            
-            
-            
-            if(sett.isPopulated()){
-                settingsModel.setDbPassword(sett.getDbPassword());
-                settingsModel.setDbUser(sett.getDbUser());
-                settingsModel.setId(sett.getId());
-                settingsModel.setSshHost(sett.getSshHost());
-                settingsModel.setSshPassword(sett.getSshPassword());
-                settingsModel.setSshUser(sett.getSshUser());
+            /* ClassLoader classLoader=Thread.currentThread().getContextClassLoader();
+            InputStream is=classLoader.getResourceAsStream(sshSettingXml);*/
+            System.out.println("landing.LandingController.settings() looking for "+System.getProperty("user.home")+ "  file: "+sshSettingXml);
+            File sFile=new File(System.getProperty("user.home"),sshSettingXml);
+            is = new FileInputStream(sFile);
+            try {
+                JAXBContext contextObj = JAXBContext.newInstance(SShSettings.class);
+                
+                //try unmarshalling the file. if the fields are not null. populate settingsmodel
+                
+                Unmarshaller unm=contextObj.createUnmarshaller();
+                // SShSettings sett=(SShSettings) unm.unmarshal(sFile);
+                SShSettings sett=(SShSettings) unm.unmarshal(is);
+                System.out.println("landing.LandingController.settings():  unmarshalled: "+sett.getSshHost() );
+                
+                
+                
+                if(sett.isPopulated()){
+                    settingsModel.setDbPassword(sett.getDbPassword());
+                    settingsModel.setDbUser(sett.getDbUser());
+                    settingsModel.setId(sett.getId());
+                    settingsModel.setSshHost(sett.getSshHost());
+                    settingsModel.setSshPassword(sett.getSshPassword());
+                    settingsModel.setSshUser(sett.getSshUser());
+                }
+                
+                SShSettingsNode setnode=new SShSettingsNode(settingsModel);
+                SShSettingsController sc=new SShSettingsController();
+                
+                //save the xml
+                
+                
+                Marshaller marshallerObj = contextObj.createMarshaller();
+                marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                marshallerObj.marshal(settingsModel, new File(System.getProperty("user.home"),sshSettingXml));
+                
+                
+            } catch (JAXBException ex) {
+                Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            SShSettingsNode setnode=new SShSettingsNode(settingsModel);
-            SShSettingsController sc=new SShSettingsController();
-            
-            //save the xml
-            
-            
-            Marshaller marshallerObj = contextObj.createMarshaller();
-            marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshallerObj.marshal(settingsModel, new File(sshSettingXml));
-            
            
-        } catch (JAXBException ex) {
-            Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
         
         
@@ -431,6 +491,12 @@ public class LandingController implements Initializable,Serializable {
         JobVolumeDetailsService jvdserv=new JobVolumeDetailsServiceImpl();
         HeadersService hdrServ=new HeadersServiceImpl(); 
         
+        NodeTypeService nserv=new NodeTypeServiceImpl();
+        
+        
+        
+        
+        
         Map<JobStep,JobStep> parentAndJobMap=new HashMap<>();   
         Map<JobStep,JobStep> childAndJobMap=new HashMap<>();                        //Use these maps to link the cubic curves
         
@@ -443,7 +509,14 @@ public class LandingController implements Initializable,Serializable {
             js.add(beJobStep);
             
             JobStepType0Model fejsm=null;//=new JobStepType0Model(null);
-            Long type=beJobStep.getType();
+            
+            NodeType ntype=beJobStep.getType();
+            
+            
+           // Long type=beJobStep.getType();
+           Long type=ntype.getActualnodeid();
+           
+           
             if(type.equals(1L)){
                 fejsm=new JobStepType1Model(null);
             }
@@ -708,7 +781,11 @@ public class LandingController implements Initializable,Serializable {
             
             Sessions beSessions=next.getSessions();
             JobStep beJobStep=next.getJobStep();                                    //beJobstep belongs to beSessions
-            Long type=beJobStep.getType();
+           
+            NodeType ntype=beJobStep.getType();
+            
+           // Long type=beJobStep.getType();
+           Long type=ntype.getActualnodeid();
             
             JobStepType0Model fejsm=null;
             if(type.equals(1L)){

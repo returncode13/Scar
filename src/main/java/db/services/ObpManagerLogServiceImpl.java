@@ -8,6 +8,7 @@ package db.services;
 import db.dao.ObpManagerLogDAO;
 import db.dao.ObpManagerLogDAOImpl;
 import db.model.ObpManagerLog;
+import java.util.List;
 
 /**
  *
@@ -34,6 +35,11 @@ public class ObpManagerLogServiceImpl implements ObpManagerLogService{
     @Override
     public void deleteObpManagerLog(Long oid) {
         odao.deleteObpManagerLog(oid);
+    }
+
+    @Override
+    public List<ObpManagerLog> getObpManagerLogs() {
+        return odao.getObpManagerLogs();
     }
     
 }

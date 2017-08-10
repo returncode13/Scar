@@ -107,6 +107,7 @@ public class HeadersViewController extends Stage implements Initializable {
       hmodel=lsm;  
       vname=hmodel.getVolmodel().getVolumeChosen().getName();
      seqListObs=hmodel.getSequenceListInHeaders();
+        System.out.println("fend.session.node.headers.HeadersViewController.setModel(): size of seqlist: "+seqListObs.size());
      /*
      treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
      @Override

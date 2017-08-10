@@ -15,6 +15,7 @@ import db.model.Descendants;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.NodeType;
 import db.model.OrcaView;
 import db.model.Parent;
 import db.model.QcMatrix;
@@ -39,6 +40,8 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.NodeTypeService;
+import db.services.NodeTypeServiceImpl;
 import db.services.OrcaViewService;
 import db.services.OrcaViewServiceImpl;
 import db.services.ParentService;
@@ -140,6 +143,7 @@ public class Collector {
     final private HeadersService hserv=new HeadersServiceImpl();
     final private QcMatrixService qcmatserv=new QcMatrixServiceImpl();
     final private QcTableService qctabServ=new QcTableServiceImpl();
+    final private NodeTypeService nserv=new NodeTypeServiceImpl();
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
@@ -507,7 +511,9 @@ public class Collector {
                     jobstep.setIdJobStep(jsm.getId());
 
                     jobstep.setAlert(Boolean.FALSE);
-                    jobstep.setType(jsm.getType());
+                    NodeType ntype=nserv.getNodeTypeObjForType(jsm.getType());
+                    //jobstep.setType(jsm.getType());
+                    jobstep.setType(ntype);
                     //jsServ.updateJobStep(jobstep.getIdJobStep(), jobstep);
                // }
                 //JobStepModel jsm = jit.next();
