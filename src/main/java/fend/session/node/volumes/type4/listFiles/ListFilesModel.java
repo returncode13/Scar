@@ -5,6 +5,7 @@
  */
 package fend.session.node.volumes.type4.listFiles;
 
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import javafx.collections.ObservableList;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class ListFilesModel {
+     VolumeSelectionModelType0 vmodel0;
     List<String> fileNames=new ArrayList<>();
     Integer from;
     Integer to;
@@ -23,7 +25,7 @@ public class ListFilesModel {
     ObservableList<String> obs;
     ObservableList<String> fileobs;
     
-    public ListFilesModel(List<String> fileNL) {
+    public ListFilesModel(List<String> fileNL,VolumeSelectionModelType0 vmodel0) {
         this.fileNames=fileNL;
         fileobs=FXCollections.observableArrayList(this.fileNames);
         String textFlowStr=this.fileNames.get(0);
@@ -34,8 +36,16 @@ public class ListFilesModel {
             charsForTextFlow.add(new String(""+a[i]));
         }
         obs=FXCollections.observableArrayList(charsForTextFlow);
+        
+        
+        
+        this.vmodel0 = vmodel0;
     }
 
+    
+
+    
+    
     public ObservableList<String> getFileobs() {
         return fileobs;
     }
@@ -85,9 +95,11 @@ public class ListFilesModel {
     public ObservableList<String> getObs() {
         return obs;
     }
-    
-    
-    
+
+    public VolumeSelectionModelType0 getVmodel0() {
+        return vmodel0;
+    }
+
     
     
     

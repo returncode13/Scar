@@ -13,8 +13,11 @@ import db.model.Descendants;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.NodeProperty;
+import db.model.NodeType;
 import db.model.OrcaView;
 import db.model.Parent;
+import db.model.PropertyType;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
@@ -32,10 +35,16 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.NodePropertyService;
+import db.services.NodePropertyServiceImpl;
+import db.services.NodeTypeService;
+import db.services.NodeTypeServiceImpl;
 import db.services.OrcaViewService;
 import db.services.OrcaViewServiceImpl;
 import db.services.ParentService;
 import db.services.ParentServiceImpl;
+import db.services.PropertyTypeService;
+import db.services.PropertyTypeServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
@@ -106,6 +115,7 @@ import javafx.util.Callback;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.types.type1.JobStepType1NodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type0.JobStepType0Node;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
@@ -113,6 +123,7 @@ import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.jobs.types.type2.JobStepType2Node;
 import fend.session.node.jobs.types.type4.JobStepType4Model;
 import fend.session.node.jobs.types.type4.JobStepType4Node;
+import fend.session.node.jobs.types.type4.properties.JobStepType4ModelProperties;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.summary.SummaryModel;
@@ -189,7 +200,9 @@ public class SessionController implements Initializable {
     private HeadersService hdrServ=new HeadersServiceImpl();
     private ParentService pserv=new ParentServiceImpl();
     private ChildService cserv=new ChildServiceImpl();
-    
+    private NodeTypeService nodeserv=new NodeTypeServiceImpl();
+    private NodePropertyService npropserv=new NodePropertyServiceImpl();
+    private PropertyTypeService propServ=new PropertyTypeServiceImpl();
 
     @FXML
     private VBox buttonHolderVBox;
@@ -246,7 +259,8 @@ public class SessionController implements Initializable {
             System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
             
         }
-        model.addJobToSession(new AcquisitionJobStepModel(model));
+        List<JobModelProperty> job3Props=new ArrayList<>();
+        model.addJobToSession(new AcquisitionJobStepModel(model,job3Props));
        // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
         obsModelList=model.getListOfJobs();
         jsn=new AcquisitionNode((AcquisitionJobStepModel) obsModelList.get(obsModelList.size()-1));
@@ -264,7 +278,60 @@ public class SessionController implements Initializable {
             System.out.println("fend.session.SessionController.handleAddJobStepType3Button(): "+next.getJobStepText());
             
         }
-        model.addJobToSession(new JobStepType4Model(model));
+        //check if a type 4L exists in the nodeType table 
+        //if not then create it
+        if(nodeserv.getNodeTypeObjForType(4L)==null){
+            NodeType n=new NodeType();
+            n.setActualnodeid(4L);
+            n.setName("Text");
+            nodeserv.createNodeType(n);
+        }
+        
+        //check if property type exists for 4. defined in class fend.session.node.jobs.types.type4.properties.JobStepType4ModelProperties
+        JobStepType4ModelProperties jstmp=new JobStepType4ModelProperties();
+        List<String> j4props=jstmp.getProperties();
+        for (Iterator<String> iterator = j4props.iterator(); iterator.hasNext();) {
+            String jprop = iterator.next();
+            if(propServ.getPropertyTypeObjForName(jprop)==null){
+                PropertyType prop=new PropertyType();
+                prop.setName(jprop);
+                propServ.createPropertyType(prop);
+            }
+        }
+        
+        
+        //check if the nodepropertydefinitions table entries exist. i.e. check if entries like 
+        /// type 4 job has the property "to"
+        //type 4 job has the property "from" in the database
+        //if not create
+        //
+        NodeType nodeType=nodeserv.getNodeTypeObjForType(4L);
+        if(npropserv.getPropertyTypesFor(nodeType).isEmpty()){
+           
+            for (Iterator<String> iterator = j4props.iterator(); iterator.hasNext();) {
+                 NodeProperty nodeProperty=new NodeProperty();
+                nodeProperty.setNodeType(nodeType);
+                String j4prop = iterator.next();
+                PropertyType prop=propServ.getPropertyTypeObjForName(j4prop);
+                nodeProperty.setPropertyType(prop);
+                
+                npropserv.createNodeProperty(nodeProperty);
+            }
+        }
+        
+        
+       // NodeType nodetype=nodeserv.getNodeTypeObjForType(4L);
+        List<NodeProperty> node4Props=npropserv.getPropertyTypesFor(nodeType );
+        
+        List<JobModelProperty> job4Props=new ArrayList<>();
+        for (Iterator<NodeProperty> iterator = node4Props.iterator(); iterator.hasNext();) {
+            NodeProperty next = iterator.next();
+            JobModelProperty jp=new JobModelProperty();
+            jp.setPropertyName(next.getPropertyType().getName());
+                    
+            job4Props.add(jp);
+        }
+        model.addJobToSession(new JobStepType4Model(model,job4Props));
        // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
         obsModelList=model.getListOfJobs();
         
@@ -290,7 +357,7 @@ public class SessionController implements Initializable {
          PendingJobsController pcontr=new PendingJobsController();
          
          for (Iterator<JobStepType0Model> iterator = jobs.iterator(); iterator.hasNext();) {
-         JobStepType0Model job = iterator.next();
+         JobStepType0Model job = iterator.jprop();
          OverviewItem jobOverview=new OverviewItem();
          jobOverview.setName(job.getJobStepText());
          jobOverview.setpFlag(job.getPendingFlagProperty().get());
@@ -347,7 +414,8 @@ public class SessionController implements Initializable {
             System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
             
         }
-        model.addJobToSession(new JobStepType2Model(model));
+        List<JobModelProperty> job2Props=new ArrayList<>();
+        model.addJobToSession(new JobStepType2Model(model,job2Props));
        // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
         obsModelList=model.getListOfJobs();
         jsn=new JobStepType2Node((JobStepType2Model) obsModelList.get(obsModelList.size()-1));
@@ -371,7 +439,8 @@ public class SessionController implements Initializable {
             System.out.println("fend.session.SessionController.handleAddJobStepButton(): "+next.getJobStepText());
             
         }
-        model.addJobToSession(new JobStepType1Model(model));
+        List<JobModelProperty> job1Props=new ArrayList<>();
+        model.addJobToSession(new JobStepType1Model(model,job1Props));
        // obsModelList.add(model.getListOfJobs().get(model.getListOfJobs().size()-1));
         obsModelList=model.getListOfJobs();
         jsn=new JobStepType1Node((JobStepType1Model) obsModelList.get(obsModelList.size()-1));
@@ -495,17 +564,17 @@ public class SessionController implements Initializable {
         
      /*   System.out.println("Inside fend.session.SessionController.setObsModelList()");
        for (Iterator<JobStepModel> iterator = obsModelList.iterator(); iterator.hasNext();) {
-            JobStepModel next = iterator.next();
-            List<JobStepModel> children=next.getJsChildren();
+            JobStepModel jprop = iterator.jprop();
+            List<JobStepModel> children=jprop.getJsChildren();
                 for (Iterator<JobStepModel> iterator1 = children.iterator(); iterator1.hasNext();) {
-                JobStepModel next1 = iterator1.next();
+                JobStepModel next1 = iterator1.jprop();
                 List<JobStepModel> gchildren=next1.getJsChildren();
                 
                 
-                    System.out.println("job: "+next.getJobStepText()+" : has child: "+next1.getJobStepText());
+                    System.out.println("job: "+jprop.getJobStepText()+" : has child: "+next1.getJobStepText());
                     
                         for (Iterator<JobStepModel> iterator2 = gchildren.iterator(); iterator2.hasNext();) {
-                        JobStepModel next2 = iterator2.next();
+                        JobStepModel next2 = iterator2.jprop();
                             System.out.println("child: "+next1.getJobStepText()+" : has gchild: "+next2.getJobStepText());
                     }
                 
@@ -532,7 +601,7 @@ public class SessionController implements Initializable {
         //    System.out.print(printSpace(root.getJobStepText().length()+2)+"|--");
             for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
                 JobStepType0Model next = iterator1.next();
-                //System.out.print(next.getJobStepText());
+                //System.out.print(jprop.getJobStepText());
                
                 walk(root,next,root.getJobStepText().length()+2);
             }
@@ -558,7 +627,7 @@ public class SessionController implements Initializable {
             for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
                 JobStepType0Model next = iterator.next();
                 if(!next.getId().equals(child.getId())){
-                    //System.out.println(printSpace(ii)+"|--"+next.getJobStepText());
+                    //System.out.println(printSpace(ii)+"|--"+jprop.getJobStepText());
                     ii+=next.getJobStepText().length();
                 }
                 
@@ -688,7 +757,7 @@ public class SessionController implements Initializable {
                 
                 for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
                     JobStepType0Model child1 = iterator1.next();
-                //    System.out.println("SessContr Parent: "+next.getJobStepText()+"   Child: "+child1.getJobStepText());
+                //    System.out.println("SessContr Parent: "+jprop.getJobStepText()+"   Child: "+child1.getJobStepText());
                     
                 }
            
@@ -720,20 +789,20 @@ public class SessionController implements Initializable {
            System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): display contents");
            
            JobStepType0Model next = iterator.next();
-           /*List<VolumeSelectionModel> testvm=next.getVolList();*/
+           /*List<VolumeSelectionModel> testvm=jprop.getVolList();*/
            
            InsightVersionsModel insVerModel=next.getInsightVersionsModel();
            
            /*List<String>vv = insVerModel.getCheckedVersions();
            
            for (Iterator<String> iterator1 = vv.iterator(); iterator1.hasNext();) {
-           String next1 = iterator1.next();
+           String next1 = iterator1.jprop();
            System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay() VERSIONS FOUND: "+next1);
            }*/
            
            
            /*for (Iterator<VolumeSelectionModel> iterator1 = testvm.iterator(); iterator1.hasNext();) {
-           VolumeSelectionModelType1 next1 = iterator1.next();
+           VolumeSelectionModelType1 next1 = iterator1.jprop();
            System.out.println("fend.session.SessionController.setAllModelsForFrontEndDisplay(): "+next1.getLabel());
            }*/
            Long type=next.getType();
@@ -889,12 +958,12 @@ public class SessionController implements Initializable {
         
         JobStepType0Model jsmod=next.getJsnc().getModel();
         AnchorModel mstart=new AnchorModel();
-        /*Double centerX=next.boundsInLocalProperty().getValue().getMinX()+310;
-        Double centerY=next.boundsInLocalProperty().getValue().getMinY()+72;*/
+        /*Double centerX=jprop.boundsInLocalProperty().getValue().getMinX()+310;
+        Double centerY=jprop.boundsInLocalProperty().getValue().getMinY()+72;*/
           Double centerX=((AnchorPane)next).boundsInLocalProperty().getValue().getMaxX();
             Double centerY=((AnchorPane)next).boundsInLocalProperty().getValue().getMaxY()/2;
-         // Double centerX=next.layoutXProperty().doubleValue();
-         // Double centerY=next.layoutYProperty().doubleValue();//next.getHeight();
+         // Double centerX=jprop.layoutXProperty().doubleValue();
+         // Double centerY=jprop.layoutYProperty().doubleValue();//next.getHeight();
             
             mstart.setJob(next.getJsnc().getModel());
             mstart.setCenterX(centerX);
@@ -960,18 +1029,18 @@ public class SessionController implements Initializable {
                     key.getJsnc().getModel().addToListOfLinksModel(lm);
                     
                    
-                    // DoubleProperty d= new SimpleDoubleProperty(next.layoutXProperty().get()+310);
+                    // DoubleProperty d= new SimpleDoubleProperty(jprop.layoutXProperty().get()+310);
                    // curve.startXProperty().bindBidirectional(d);
                     
                     //
-                    //curve.startYProperty().bindBidirectional(new SimpleDoubleProperty(next.layoutYProperty().get()+72));
-                    //Bindings.add(next.layoutXProperty(), next.boundsInLocalProperty().get().getMinX()+310);
-                   // Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMinY()+72);
+                    //curve.startYProperty().bindBidirectional(new SimpleDoubleProperty(jprop.layoutYProperty().get()+72));
+                    //Bindings.add(jprop.layoutXProperty(), jprop.boundsInLocalProperty().get().getMinX()+310);
+                   // Bindings.add(jprop.layoutYProperty(),jprop.boundsInLocalProperty().get().getMinY()+72);
                    
-                  //  curve.startXProperty().bindBidirectional(next.layoutXProperty());
-                    //curve.startYProperty().bindBidirectional(next.layoutYProperty());
+                  //  curve.startXProperty().bindBidirectional(jprop.layoutXProperty());
+                    //curve.startYProperty().bindBidirectional(jprop.layoutYProperty());
                     
-                 //   System.out.println("fend.session.SessionController.drawCurve():  for: "+next.getJsnc().getModel().getJobStepText()+" : child: "+key.getJsnc().getModel().getJobStepText());
+                 //   System.out.println("fend.session.SessionController.drawCurve():  for: "+jprop.getJsnc().getModel().getJobStepText()+" : child: "+key.getJsnc().getModel().getJobStepText());
                     if(!next.getJsnc().getModel().getType().equals(3L)){
                         curve.startXProperty().bind(Bindings.add(((AnchorPane)next).layoutXProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinX()+515));         //next is the parent node
                         curve.startYProperty().bind(Bindings.add(((AnchorPane)next).layoutYProperty(),((AnchorPane)next).boundsInLocalProperty().get().getMinY()+74));
@@ -981,22 +1050,22 @@ public class SessionController implements Initializable {
                     }
                             
                     
-                    /*curve.startXProperty().bind(Bindings.add(next.layoutXProperty(),next.boundsInLocalProperty().get().getMaxX()));         //next is the parent node
-                    curve.startYProperty().bind(Bindings.add(next.layoutYProperty(),next.boundsInLocalProperty().get().getMaxY()/2));*/
+                    /*curve.startXProperty().bind(Bindings.add(jprop.layoutXProperty(),jprop.boundsInLocalProperty().get().getMaxX()));         //next is the parent node
+                    curve.startYProperty().bind(Bindings.add(jprop.layoutYProperty(),jprop.boundsInLocalProperty().get().getMaxY()/2));*/
                     curve.endXProperty().bind(Bindings.add(((AnchorPane)key).layoutXProperty(),((AnchorPane)key).boundsInLocalProperty().get().getMinX()));           //key in the child node
                     curve.endYProperty().bind(Bindings.add(((AnchorPane)key).layoutYProperty(),((AnchorPane)key).boundsInLocalProperty().get().getMinY()+74));       // this is HARDCODED!!! find a way to get the height of the node!
                    
                     /*curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getMinY()));
-                    System.out.println("Next MaxX(): "+next.boundsInLocalProperty().get().getMaxX());
-                    System.out.println("Next MinX(): "+next.boundsInLocalProperty().get().getMinX());
-                    System.out.println("Next MaxY(): "+next.boundsInLocalProperty().get().getMaxY());
-                    System.out.println("Next MinY(): "+next.boundsInLocalProperty().get().getMinY());
-                    System.out.println("Next PHeight(): "+next.boundsInLocalProperty().get().getHeight());
-                    System.out.println("Next PWidth(): "+next.boundsInParentProperty().get().getWidth());
-                    System.out.println("Next PMaxX(): "+next.boundsInParentProperty().get().getMaxX());
-                    System.out.println("Next PMinX(): "+next.boundsInParentProperty().get().getMinX());
-                    System.out.println("Next PMaxY(): "+next.boundsInParentProperty().get().getMaxY());
-                    System.out.println("Next PMinY(): "+next.boundsInParentProperty().get().getMinY());
+                    System.out.println("Next MaxX(): "+jprop.boundsInLocalProperty().get().getMaxX());
+                    System.out.println("Next MinX(): "+jprop.boundsInLocalProperty().get().getMinX());
+                    System.out.println("Next MaxY(): "+jprop.boundsInLocalProperty().get().getMaxY());
+                    System.out.println("Next MinY(): "+jprop.boundsInLocalProperty().get().getMinY());
+                    System.out.println("Next PHeight(): "+jprop.boundsInLocalProperty().get().getHeight());
+                    System.out.println("Next PWidth(): "+jprop.boundsInParentProperty().get().getWidth());
+                    System.out.println("Next PMaxX(): "+jprop.boundsInParentProperty().get().getMaxX());
+                    System.out.println("Next PMinX(): "+jprop.boundsInParentProperty().get().getMinX());
+                    System.out.println("Next PMaxY(): "+jprop.boundsInParentProperty().get().getMaxY());
+                    System.out.println("Next PMinY(): "+jprop.boundsInParentProperty().get().getMinY());
                     
                     System.out.println("Key MaxX(): "+key.boundsInLocalProperty().get().getMaxX());
                     System.out.println("Key MinX(): "+key.boundsInLocalProperty().get().getMinX());
@@ -1006,8 +1075,8 @@ public class SessionController implements Initializable {
                     System.out.println("Key Width(): "+key.boundsInLocalProperty().get().getWidth());*/
                     
                     // curve.endYProperty().bind(Bindings.add(key.layoutYProperty(),key.boundsInLocalProperty().get().getHeight()/2));
-                  //  System.out.println("fend.session.SessionController.drawCurve(): for parent "+next.getJsnc().getModel().getJobStepText()+"   :Setting startX : :next.boundsInLocalProperty().get().getMaxX():  "+next.boundsInLocalProperty().get().getMaxX());
-                  //  System.out.println("fend.session.SessionController.drawCurve(): for child  "+key.getJsnc().getModel().getJobStepText() +"   :Setting  endX  : :next.boundsInLocalProperty().get().getMaxX():  "+key.boundsInLocalProperty().get().getMaxX());
+                  //  System.out.println("fend.session.SessionController.drawCurve(): for parent "+jprop.getJsnc().getModel().getJobStepText()+"   :Setting startX : :jprop.boundsInLocalProperty().get().getMaxX():  "+jprop.boundsInLocalProperty().get().getMaxX());
+                  //  System.out.println("fend.session.SessionController.drawCurve(): for child  "+key.getJsnc().getModel().getJobStepText() +"   :Setting  endX  : :jprop.boundsInLocalProperty().get().getMaxX():  "+key.boundsInLocalProperty().get().getMaxX());
                     rightInteractivePane.getChildren().add(0,ln);
                     
                     
@@ -1111,7 +1180,7 @@ public class SessionController implements Initializable {
         }
         job.setSubsurfacesInJob(subsInJob);
         /*for (Iterator<SubSurface> iterator = subsInJob.iterator(); iterator.hasNext();) {
-        SubSurfaceHeaders subinJob = iterator.next();
+        SubSurfaceHeaders subinJob = iterator.jprop();
         System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
         }*/
         
@@ -1250,7 +1319,7 @@ public class SessionController implements Initializable {
              
             /* List<JobStepType0Model> children = root.getJsChildren();
             for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
-            JobStepType0Model child = iterator1.next();
+            JobStepType0Model child = iterator1.jprop();
             System.out.println("fend.session.SessionController.mapping(): adding child: "+child.getJobStepText());
             mapi.put(1,child);
             
@@ -1260,7 +1329,7 @@ public class SessionController implements Initializable {
          }
          
          /*for (Iterator<JobStepType0Model> iterator = modelRoots.iterator(); iterator.hasNext();) {
-         JobStepType0Model root = iterator.next();
+         JobStepType0Model root = iterator.jprop();
          System.out.println("fend.session.SessionController.mapping(): Inside the function: inside for loop with root: " +root.getJobStepText());
          /* }
          for(JobStepType0Model root : modelRoots){*/
@@ -1272,7 +1341,7 @@ public class SessionController implements Initializable {
          
          List<JobStepType0Model> children = root.getJsChildren();
          for (Iterator<JobStepType0Model> iterator1 = children.iterator(); iterator1.hasNext();) {
-             JobStepType0Model child = iterator1.next();
+             JobStepType0Model child = iterator1.jprop();
              System.out.println("fend.session.SessionController.mapping(): adding child: "+child.getJobStepText());
              mapi.put(1,child);
              
@@ -2113,7 +2182,7 @@ public class SessionController implements Initializable {
         List<JobStepType0Model> grandChildren=child.getJsChildren();
          for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
             JobStepType0Model gchild = iterator.next();
-             //System.out.println("fend.session.SessionController.insightCheck():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+             //System.out.println("fend.session.SessionController.insightCheck():  Calling the jprop child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
               System.out.println("fend.session.SessionController.insightCheck("+child.getJobStepText() +","+gchild.getJobStepText()+")");
             insightCheck(child, gchild);
         }

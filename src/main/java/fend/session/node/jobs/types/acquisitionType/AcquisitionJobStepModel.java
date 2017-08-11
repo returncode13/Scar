@@ -10,6 +10,7 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
@@ -58,7 +59,7 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
      private AcquisitionVolumeModel volmodel;
      private Doubt doubt;
      
-    public AcquisitionJobStepModel(String jobStepText, SessionModel sessionModel) {
+    public AcquisitionJobStepModel(String jobStepText, SessionModel sessionModel,List<JobModelProperty> jobModelProperties) {
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
         this.sessionModel = sessionModel;
         jsParents.add(this);
@@ -73,8 +74,8 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
                 
     }
 
-    public AcquisitionJobStepModel(SessionModel sessionModel) {
-        this("Acquisition",sessionModel);
+    public AcquisitionJobStepModel(SessionModel sessionModel,List<JobModelProperty> jobModelProperties) {
+        this("Acquisition",sessionModel,jobModelProperties);
     }
     
     
@@ -268,6 +269,16 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
     @Override
     public Set<SequenceHeaders> getSequencesInJob() {
         return new HashSet<>();
+    }
+
+    @Override
+    public List<JobModelProperty> getJobProperties() {
+       return new ArrayList<>();
+    }
+
+    @Override
+    public void setJobProperties(List<JobModelProperty> jobModelProperties) {
+        
     }
 
     

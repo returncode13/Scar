@@ -11,6 +11,7 @@ import db.model.Child;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.NodePropertyValue;
 import db.model.NodeType;
 import db.model.Parent;
 import db.model.SessionDetails;
@@ -26,6 +27,8 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.NodePropertyValueService;
+import db.services.NodePropertyValueServiceImpl;
 import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
 import db.services.ParentService;
@@ -47,6 +50,7 @@ import fend.session.node.jobs.types.acquisitionType.AcquisitionJobStepModel;
 //import fend.session.node.jobs.type1.JobStepType1Model;
 //import fend.session.node.jobs.type1.JobStepType1NodeController;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
@@ -492,6 +496,7 @@ public class LandingController implements Initializable,Serializable {
         HeadersService hdrServ=new HeadersServiceImpl(); 
         
         NodeTypeService nserv=new NodeTypeServiceImpl();
+        NodePropertyValueService npvserve=new NodePropertyValueServiceImpl();
         
         
         
@@ -511,6 +516,18 @@ public class LandingController implements Initializable,Serializable {
             JobStepType0Model fejsm=null;//=new JobStepType0Model(null);
             
             NodeType ntype=beJobStep.getType();
+            List<NodePropertyValue> npvList=npvserve.getNodePropertyValuesFor(beJobStep);
+            List<JobModelProperty> jbprops=new ArrayList<>();
+            for (Iterator<NodePropertyValue> iterator1 = npvList.iterator(); iterator1.hasNext();) {
+                NodePropertyValue next1 = iterator1.next();
+                JobModelProperty jb=new JobModelProperty();
+                jb.setPropertyName(next1.getNodeProperty().getPropertyType().getName());
+                jb.setPropertyValue(next1.getValue());
+                jbprops.add(jb);
+                
+            }
+            
+            
             
             
            // Long type=beJobStep.getType();
@@ -518,16 +535,16 @@ public class LandingController implements Initializable,Serializable {
            
            
             if(type.equals(1L)){
-                fejsm=new JobStepType1Model(null);
+                fejsm=new JobStepType1Model(null,jbprops);
             }
             if(type.equals(2L)){
-                fejsm=new JobStepType2Model(null);
+                fejsm=new JobStepType2Model(null,jbprops);
             }
             if(type.equals(3L)){
-                fejsm=new AcquisitionJobStepModel(null);
+                fejsm=new AcquisitionJobStepModel(null,jbprops);
             }
             if(type.equals(4L)){
-                fejsm=new JobStepType4Model(null);
+                fejsm=new JobStepType4Model(null,jbprops);
             }
             fejsm.setJobStepText(beJobStep.getNameJobStep());
             fejsm.setId(beJobStep.getIdJobStep());
@@ -743,7 +760,7 @@ public class LandingController implements Initializable,Serializable {
                      ((AcquisitionJobStepModel)fejsm).setVolList(obva);
                     
                 }
-                if(typev.equals(4L)){                                      //SEGD load
+                if(typev.equals(4L)){                                      //Text 
                     
                     ObservableList<VolumeSelectionModelType0> obv=FXCollections.observableArrayList(feVols);
                     ObservableList<VolumeSelectionModelType4> obv4=FXCollections.observableArrayList();
@@ -784,18 +801,30 @@ public class LandingController implements Initializable,Serializable {
            
             NodeType ntype=beJobStep.getType();
             
+            List<NodePropertyValue> npvList=npvserve.getNodePropertyValuesFor(beJobStep);
+            List<JobModelProperty> jbprops=new ArrayList<>();
+            for (Iterator<NodePropertyValue> iterator1 = npvList.iterator(); iterator1.hasNext();) {
+                NodePropertyValue next1 = iterator1.next();
+                JobModelProperty jb=new JobModelProperty();
+                jb.setPropertyName(next1.getNodeProperty().getPropertyType().getName());
+                jb.setPropertyValue(next1.getValue());
+                jbprops.add(jb);
+                
+            }
+            
+            
            // Long type=beJobStep.getType();
            Long type=ntype.getActualnodeid();
             
             JobStepType0Model fejsm=null;
             if(type.equals(1L)){
-                fejsm=new JobStepType1Model(null);
+                fejsm=new JobStepType1Model(null,jbprops);
             }if(type.equals(2L)){
-                fejsm=new JobStepType2Model(null);
+                fejsm=new JobStepType2Model(null,jbprops);
             }if(type.equals(3L)){
-                fejsm=new AcquisitionJobStepModel(null);
+                fejsm=new AcquisitionJobStepModel(null,jbprops);
             }if(type.equals(4L)){
-                fejsm=new JobStepType4Model(null);
+                fejsm=new JobStepType4Model(null,jbprops);
             }
             
            
@@ -1009,7 +1038,7 @@ public class LandingController implements Initializable,Serializable {
 
     @FXML
     void exitTheProgram(ActionEvent event) {
-
+                //save current session and exit
     }
     @Override
     public void initialize(URL url, ResourceBundle rb) {

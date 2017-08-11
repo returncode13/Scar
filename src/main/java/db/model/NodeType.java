@@ -19,6 +19,7 @@ import javax.persistence.Table;
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * values entered during install
  */
 @Entity
 @Table(name="NodeType",schema="obpmanager")
@@ -40,8 +41,10 @@ private Set<JobStep> jobsteps;
     
     
     
-    @OneToMany(mappedBy="nodetype",cascade=CascadeType.ALL,orphanRemoval = true)
-    private Set<JobProperty> jobProperties;
+   
+    
+    @OneToMany(mappedBy = "nodeType",cascade = CascadeType.ALL,orphanRemoval = true)                              //create a member named "jobStep" in the JobVolumeDetails class definition
+    private Set<NodeProperty> nodePropertyType;
 
     public Long getIdNodeType() {
         return idNodeType;

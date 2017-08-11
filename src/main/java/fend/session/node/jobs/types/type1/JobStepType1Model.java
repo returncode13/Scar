@@ -12,6 +12,7 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //import fend.session.node.volumes.type0.VolumeSelectionModelType0;
@@ -41,7 +42,8 @@ import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair  
+ * sharath.nair@polarcus.com
  */
 public class JobStepType1Model implements JobStepType0Model{
     private final Long type=1L;
@@ -72,8 +74,8 @@ public class JobStepType1Model implements JobStepType0Model{
     
     private Doubt doubt;
     
-
-    public JobStepType1Model(String jobStepText,SessionModel smodel) {
+    
+    public JobStepType1Model(String jobStepText,SessionModel smodel,List<JobModelProperty> jobModelProperties) {
    
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
        ObservableList<VolumeSelectionModelType1> obs=FXCollections.observableArrayList();
@@ -116,8 +118,8 @@ public class JobStepType1Model implements JobStepType0Model{
     
     
 
-    public JobStepType1Model(SessionModel smodel) {
-        this("Enter a name",smodel);
+    public JobStepType1Model(SessionModel smodel,List<JobModelProperty> jobModelProperties) {
+        this("Enter a name",smodel,jobModelProperties);
     }
 
     public ListProperty<VolumeSelectionModelType1> getVolListProperty() {
@@ -347,6 +349,16 @@ public class JobStepType1Model implements JobStepType0Model{
     public Set<SequenceHeaders> getSequencesInJob() {
        
         return this.sequencesInJob;
+    }
+
+    @Override
+    public List<JobModelProperty> getJobProperties() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void setJobProperties(List<JobModelProperty> jobModelProperties) {
+       
     }
     
     

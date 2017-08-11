@@ -15,9 +15,12 @@ import db.model.Descendants;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.NodeProperty;
+import db.model.NodePropertyValue;
 import db.model.NodeType;
 import db.model.OrcaView;
 import db.model.Parent;
+import db.model.PropertyType;
 import db.model.QcMatrix;
 import db.model.QcTable;
 import db.model.Sequence;
@@ -40,12 +43,18 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.NodePropertyService;
+import db.services.NodePropertyServiceImpl;
+import db.services.NodePropertyValueService;
+import db.services.NodePropertyValueServiceImpl;
 import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
 import db.services.OrcaViewService;
 import db.services.OrcaViewServiceImpl;
 import db.services.ParentService;
 import db.services.ParentServiceImpl;
+import db.services.PropertyTypeService;
+import db.services.PropertyTypeServiceImpl;
 import db.services.QcMatrixService;
 import db.services.QcMatrixServiceImpl;
 import db.services.QcTableService;
@@ -62,6 +71,7 @@ import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
 import fend.session.node.headers.SubSurfaceHeaders;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
@@ -118,6 +128,7 @@ public class Collector {
     private ArrayList<Child> dbChild = new ArrayList<>();
    // private ArrayList<Ancestors> dbAncestors=new ArrayList<>();
     private ArrayList<Descendants> dbDescendants = new ArrayList<>();
+    private ArrayList<NodePropertyValue> dbNodePropertyValues=new ArrayList<>();
     
      private Sessions currentSession;
     
@@ -144,6 +155,9 @@ public class Collector {
     final private QcMatrixService qcmatserv=new QcMatrixServiceImpl();
     final private QcTableService qctabServ=new QcTableServiceImpl();
     final private NodeTypeService nserv=new NodeTypeServiceImpl();
+    final private PropertyTypeService proServ=new PropertyTypeServiceImpl();
+    final private NodePropertyService npserv=new NodePropertyServiceImpl();
+    final private NodePropertyValueService npvserv=new NodePropertyValueServiceImpl();
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
@@ -207,6 +221,7 @@ public class Collector {
         dbJobSteps.clear();                         //clear previous jobmodel array. set current entries here
        dbVolumes.clear();
         dbJobVolumeDetails.clear();
+        dbNodePropertyValues.clear();
         
         //for every session
        // for (Iterator<Sessions> iterator = dbSessions.iterator(); iterator.hasNext();) {
@@ -216,6 +231,39 @@ public class Collector {
             for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
                 
                 JobStepType0Model jsm=jit.next();
+                NodeType ntype=nserv.getNodeTypeObjForType(jsm.getType());
+                List<JobModelProperty> jobPropertiesFe=jsm.getJobProperties();
+                
+                JobStep jjb=jsServ.getJobStep(jsm.getId());
+                if(jjb!=null){              //job has been previously saved in the db
+                    
+                List<NodePropertyValue> nodePropertyValues=npvserv.getNodePropertyValuesFor(jjb);
+                   
+                    
+                for (Iterator<JobModelProperty> iterator = jobPropertiesFe.iterator(); iterator.hasNext();) {
+                    JobModelProperty jmp = iterator.next();
+                    
+                     for (Iterator<NodePropertyValue> npviterator = nodePropertyValues.iterator(); npviterator.hasNext();) {
+                        NodePropertyValue npv = npviterator.next();
+                        if(npv.getNodeProperty().getPropertyType().getName().equals(jmp.getPropertyName())){
+                                                     System.out.println("collector.Collector.setupEntries(): Before updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+
+                            npv.setValue(jmp.getPropertyValue());
+                            System.out.println("collector.Collector.setupEntries(): After updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+                        npvserv.updateNodePropertyValue(npv.getIdNodePropertyValue(), npv);
+                        }
+                         
+
+                        
+                    }
+                }
+                
+               
+                
+                
+            }
+                
+                
                 
                 if(jsm.getType().equals(1L)){
                     JobStepType1Model j1=(JobStepType1Model) jsm;
@@ -512,10 +560,30 @@ public class Collector {
                     jobstep.setIdJobStep(jsm.getId());
 
                     jobstep.setAlert(Boolean.FALSE);
-                    NodeType ntype=nserv.getNodeTypeObjForType(jsm.getType());
+                   
                     //jobstep.setType(jsm.getType());
                     jobstep.setType(ntype);
                     //jsServ.updateJobStep(jobstep.getIdJobStep(), jobstep);
+                    if(jsServ.getJobStep(jsm.getId())==null){       //first time saving this job
+                        for (Iterator<JobModelProperty> iterator = jobPropertiesFe.iterator(); iterator.hasNext();) {
+                    JobModelProperty jmp = iterator.next();
+                    
+                    NodePropertyValue npv=new NodePropertyValue();
+                    npv.setJobStep(jobstep);
+                    PropertyType pro=proServ.getPropertyTypeObjForName(jmp.getPropertyName());
+                    NodeProperty nprop=npserv.getNodeProperty(ntype, pro);
+                    npv.setNodeProperty(nprop);
+                    npv.setValue(jmp.getPropertyValue());
+                    System.out.println("collector.Collector.setupEntries(): Adding new entries nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+
+                    dbNodePropertyValues.add(npv);
+                    
+                        }
+                    }
+                    
+                    
+                    
+                    
                // }
                 //JobStepModel jsm = jit.next();
                 /*JobStep jobStep=new JobStep();
@@ -625,6 +693,7 @@ public class Collector {
                        System.out.println("collector.Collector.setupEntries(): Adding a new entry to jobvolumedetails: for job: "+jobstep.getIdJobStep()+" : "+jobstep.getNameJobStep()+" vol: id: "+vp.getIdVolume()+" : "+vp.getNameVolume() );
                        logger.info("Adding a new entry to jobvolumedetails: for job: "+jobstep.getIdJobStep()+" : "+jobstep.getNameJobStep()+" vol: id: "+vp.getIdVolume()+" : "+vp.getNameVolume());
                        dbJobVolumeDetails.add(jvd);
+                       
                    }
                    
                 }
@@ -790,6 +859,19 @@ public class Collector {
             if(jvdServ.getJobVolumeDetails(next.getJobStep(), next.getVolume())==null)jvdServ.createJobVolumeDetails(next);
             
         }
+        
+        
+        //add to the NodePropertyValue table
+        for (Iterator<NodePropertyValue> iterator = dbNodePropertyValues.iterator(); iterator.hasNext();) {
+            NodePropertyValue npv = iterator.next();
+            if(npvserv.getNodePropertyValueFor(npv.getJobStep(),npv.getNodeProperty())==null){
+               System.out.println("collector.Collector.setupEntries(): New Entries been created nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+
+                npvserv.createNodePropertyValue(npv);
+            }
+            
+        }
+        
         
         //
         ExecutorService executorService = Executors.newFixedThreadPool(10);

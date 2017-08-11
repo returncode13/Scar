@@ -10,6 +10,7 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.qcTable.QcTableModel;
 import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
@@ -31,7 +32,8 @@ import mid.doubt.Doubt;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class JobStepType2Model implements JobStepType0Model{
     
@@ -69,7 +71,7 @@ public class JobStepType2Model implements JobStepType0Model{
    
     
 
-    public JobStepType2Model(String jobStepText,SessionModel smodel) {
+    public JobStepType2Model(String jobStepText,SessionModel smodel,List<JobModelProperty> jobModelProperties) {
        
         this.jobStepTextProperty = new SimpleStringProperty(jobStepText);
        ObservableList<VolumeSelectionModelType2> obs=FXCollections.observableArrayList();
@@ -107,8 +109,8 @@ public class JobStepType2Model implements JobStepType0Model{
     
     
 
-    public JobStepType2Model(SessionModel smodel) {
-        this("Enter a name",smodel);
+    public JobStepType2Model(SessionModel smodel,List<JobModelProperty> jobModelProperties) {
+        this("Enter a name",smodel,jobModelProperties);
     }
 
     public ListProperty<VolumeSelectionModelType2> getVolListProperty() {
@@ -336,6 +338,16 @@ public class JobStepType2Model implements JobStepType0Model{
     @Override
     public Set<SequenceHeaders> getSequencesInJob() {
          return this.sequencesInJob;
+    }
+
+    @Override
+    public List<JobModelProperty> getJobProperties() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void setJobProperties(List<JobModelProperty> jobModelProperties) {
+        
     }
     
     

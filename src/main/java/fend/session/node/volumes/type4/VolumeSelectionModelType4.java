@@ -132,6 +132,13 @@ public class VolumeSelectionModelType4 implements VolumeSelectionModelType0{
         
         
     }
+
+    public JobStepType0Model getParentjob() {
+        return parentjob;
+    }
+    
+    
+    
     
     @Override
     public void setId(Long id) {

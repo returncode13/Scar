@@ -32,8 +32,8 @@ public class PropertyType implements Serializable {
     private String name;
     
     
-    @OneToMany(mappedBy="propertytype",cascade=CascadeType.ALL,orphanRemoval = true)
-    private Set<JobProperty> jobProperties;
+    @OneToMany(mappedBy="propertyType",cascade=CascadeType.ALL,orphanRemoval = true)
+    private Set<NodeProperty> nodePropertyType;
     
 
     public Long getIdNodeType() {
