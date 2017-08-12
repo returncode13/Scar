@@ -575,7 +575,7 @@ public class Collector {
                     npv.setNodeProperty(nprop);
                     npv.setValue(jmp.getPropertyValue());
                     System.out.println("collector.Collector.setupEntries(): Adding new entries nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
-
+                    logger.info("Adding new entries nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
                     dbNodePropertyValues.add(npv);
                     
                         }
@@ -758,8 +758,10 @@ public class Collector {
                 sub.setSequence(seq);
                 sub.setSubsurface(ov.getDugSubsurface());
                 System.out.println("collector.Collector.commitEntries(): Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
+                logger.log(Level.INFO, "Looking for {0}  sub: {1} cab:{2} gun:{3}", new Object[]{ov.getDugSubsurface(), ov.getSubsurfaceLineNames(), ov.getCables(), ov.getGuns()});
                 if(subserv.getSubsurfaceObjBysubsurfacename(ov.getDugSubsurface())==null){
                     System.out.println("collector.Collector.commitEntries(): creating "+ov.getDugSubsurface());
+                    logger.log(Level.INFO, "creating {0}", ov.getDugSubsurface());
                     subserv.createSubsurface(sub);
                     Sub sb=new Sub();
                     sb.setSeq(cseq);
@@ -810,6 +812,7 @@ public class Collector {
             {
               
                 System.out.println("Coll: SessID: "+sess.getIdSessions()+" returned null");
+                logger.log(Level.INFO, "SessID: {0} returned null..creating a new entry", sess.getIdSessions());
                 sesServ.createSessions(sess);
             }
             
@@ -821,9 +824,11 @@ public class Collector {
             JobStep js = jsit.next();
             if(jsServ.getJobStep(js.getIdJobStep())==null){
                 System.out.println("collector.Collector.commitEntries(): Creating new jobstep: id: "+js.getIdJobStep()+" name: "+js.getNameJobStep());
+                logger.log(Level.INFO, "Creating new jobstep: id: {0} name: {1}", new Object[]{js.getIdJobStep(), js.getNameJobStep()});
                 jsServ.createJobStep(js);}
             else{
                 System.out.println("collector.Collector.commitEntries() Updating "+js.getNameJobStep());
+                logger.log(Level.INFO, "Updating {0}", js.getNameJobStep());
                 String jsv=js.getInsightVersions();
                 System.out.println("collector.Collector.commitEntries() About to commit the string of Versions: "+jsv); 
                 
@@ -838,7 +843,11 @@ public class Collector {
         for (Iterator<SessionDetails> iterator = dbSessionDetails.iterator(); iterator.hasNext();) {
             SessionDetails next = iterator.next();
             System.out.println("collector.Collector.commitEntries(): About to create SessionDetails for: job: "+next.getJobStep().getNameJobStep() +" with id: "+next.getJobStep().getIdJobStep()+" :for session: "+next.getSessions().getNameSessions()+" id: "+next.getSessions().getIdSessions());
-            if(ssdServ.getSessionDetails(next.getJobStep(), next.getSessions())==null)ssdServ.createSessionDetails(next);
+            
+            if(ssdServ.getSessionDetails(next.getJobStep(), next.getSessions())==null){
+                logger.log(Level.INFO, "About to create SessionDetails for: job: {0} with id: {1} :for session: {2} id: {3}", new Object[]{next.getJobStep().getNameJobStep(), next.getJobStep().getIdJobStep(), next.getSessions().getNameSessions(), next.getSessions().getIdSessions()});
+                ssdServ.createSessionDetails(next);
+            }
         }
        /* 
         
@@ -848,7 +857,10 @@ public class Collector {
         //add to the Volumes Table
         for (Iterator<Volume> iterator = dbVolumes.iterator(); iterator.hasNext();) {
            Volume next = iterator.next();
-           if(volServ.getVolume(next.getIdVolume())==null) volServ.createVolume(next);
+           if(volServ.getVolume(next.getIdVolume())==null) {
+               logger.log(Level.INFO, "Creating volume entry : Volume : name: {0} id: {1}", new Object[]{next.getPathOfVolume(), next.getIdVolume()});
+               volServ.createVolume(next);
+           }
             
         }
         
@@ -856,7 +868,10 @@ public class Collector {
         //add to the JobVolumeDetails Table
         for (Iterator<JobVolumeDetails> iterator = dbJobVolumeDetails.iterator(); iterator.hasNext();) {
             JobVolumeDetails next = iterator.next();
-            if(jvdServ.getJobVolumeDetails(next.getJobStep(), next.getVolume())==null)jvdServ.createJobVolumeDetails(next);
+            if(jvdServ.getJobVolumeDetails(next.getJobStep(), next.getVolume())==null){
+                logger.log(Level.INFO, "Creating jobVolumeDetails entry: id :{0}", next.getIdJobVolumeDetails());
+                jvdServ.createJobVolumeDetails(next);
+            }
             
         }
         
@@ -866,7 +881,7 @@ public class Collector {
             NodePropertyValue npv = iterator.next();
             if(npvserv.getNodePropertyValueFor(npv.getJobStep(),npv.getNodeProperty())==null){
                System.out.println("collector.Collector.setupEntries(): New Entries been created nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
-
+               logger.log(Level.INFO, "New Entries been created nodePropertyValues for type 4 with  {0} : job: {1} : nodeProperty-Node: {2} : nodeProperty-Property: {3} : value: {4}", new Object[]{npv.getIdNodePropertyValue(), npv.getJobStep(), npv.getNodeProperty().getNodeType().getActualnodeid(), npv.getNodeProperty().getPropertyType().getName(), npv.getValue()});
                 npvserv.createNodePropertyValue(npv);
             }
             
@@ -902,17 +917,20 @@ public class Collector {
          
          
          System.out.println("collector.Collector.createAllAncestors(): DELETING ALL ENTRIES FROM THE PARENT TABLE FOR THE SESSION : "+currentSession.getNameSessions());
+         logger.log(Level.INFO, "deleting all entries from the parent table for session {0}", currentSession.getNameSessions());
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);
          
          for (Iterator<SessionDetails> sli = sL.iterator(); sli.hasNext();) {
              SessionDetails sdn = sli.next();
              System.out.println("collector.Collector.createAllAncestors(): Searching for parent of sessionDetails: "+sdn.getIdSessionDetails());
+             logger.log(Level.INFO, "Searching for parent of sessionDetails: {0}", sdn.getIdSessionDetails());
              List<Parent> pl=pServ.getParentsFor(sdn);
              
                 for (Iterator<Parent> pit = pl.iterator(); pit.hasNext();) {
                  Parent pan = pit.next();
                  Long pin=pan.getIdParent();
                  System.out.println("collector.Collector.createAllAncestors(): deleting parent id: "+pin);
+                 logger.log(Level.INFO, "deleting parent id: {0}", pin);
                  pServ.deleteParent(pin);
                  
              }
@@ -920,6 +938,7 @@ public class Collector {
          }
          
          System.out.println("collector.Collector.createAllAncestors(): Done deleting parents");
+         logger.info("done deleting parents");
          
          
          //load the dbAncestor List
@@ -930,8 +949,10 @@ public class Collector {
                // dbAncestors=new ArrayList<>();
                 dbParent=new ArrayList<>();
                 System.out.println("collector.Collector.createAllAncestors() : JobStep: "+js.getNameJobStep()+ " :id: "+js.getIdJobStep());
+                logger.log(Level.INFO, "JobStep: {0} :id: {1}", new Object[]{js.getNameJobStep(), js.getIdJobStep()});
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
                     System.out.println("collector.Collector.createAllAncestors(): CurrentSession: "+currentSession.getNameSessions());
+                    logger.log(Level.INFO, "CurrentSession: {0}", currentSession.getNameSessions());
                     System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
                       ArrayList<JobStepType0Model> listOfParents=(ArrayList<JobStepType0Model>) jsm.getJsParents();
                  
@@ -959,6 +980,7 @@ public class Collector {
                     Parent next = iterator.next();
                     
                     //if(pServ.getParentRowFor(next.getSessionDetails(), next.getParent())==null){pServ.addParent(next);}
+                    logger.info("Adding parent: "+next.getIdParent());
                     pServ.addParent(next);
                 }
        
@@ -994,6 +1016,7 @@ public class Collector {
          for (Map.Entry<SessionDetails, Set<Long>> entrySet : ancestorMap.entrySet()) {
           SessionDetails key = entrySet.getKey();
           Set<Long> value = entrySet.getValue();
+          logger.info("making the ancestor table for "+key.getJobStep().getNameJobStep()+" in session "+key.getSessions().getNameSessions()+" value=ancestors sessionId = "+value);
           ancServ.makeAncestorsTableFor(key, value);
           
       }
