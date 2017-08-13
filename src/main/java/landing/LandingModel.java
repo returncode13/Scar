@@ -7,7 +7,8 @@ package landing;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class LandingModel {
     private Long id;

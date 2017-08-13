@@ -11,7 +11,7 @@ package landing.reporter.page;
  */
 public class ReportPage {
     
-    String phplocation="http://10.11.1.180/obpmanager/php/process3.php";
+    String phplocation="http://10.11.1.180/obpmanager/php/process4.php";
     
     String htmlContent1="<html lang=\"en\">\n" +
 "<head>\n" +

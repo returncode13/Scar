@@ -98,6 +98,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -161,8 +162,9 @@ public class Collector {
     
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
-       obpManagerLogDatabaseHandler.clear();                    //remove existing logs before starting to log
-       logger.addHandler(obpManagerLogDatabaseHandler);
+      // obpManagerLogDatabaseHandler.clear();                    //remove existing logs before starting to log   ---moved to the main class (Landing.class)
+      LogManager.getLogManager().reset(); 
+      logger.addHandler(obpManagerLogDatabaseHandler);
        logger.setLevel(Level.ALL);
     }
 
@@ -183,14 +185,14 @@ public class Collector {
          if(cs==null){
              
              System.out.println("collector.Collector.saveCurrentSession(): No existing entry for current session found with id: "+feSessionModel.getId());
-             logger.log(Level.INFO, "No existing entry for current session found with id: {0}  so creating a new Sessions object", feSessionModel.getId());
+             logger.info("No existing entry for current session found with id: "+ feSessionModel.getId()+"  so creating a new Sessions object");
              
              currentSession=new Sessions();
         currentSession.setIdSessions(feSessionModel.getId());
         currentSession.setNameSessions(feSessionModel.getName());
          }else{
              System.out.println("collector.Collector.saveCurrentSession(): Found an entry for existing session with id: "+feSessionModel.getId()+" setting it to the current Session");
-             logger.log(Level.INFO, "Found an entry for existing session with id: {0} setting it to the current Session", feSessionModel.getId());
+             logger.info("Found an entry for existing session with id: "+feSessionModel.getId()+" setting it to the current Session");
              currentSession=cs;
          }
         
@@ -202,7 +204,8 @@ public class Collector {
          for (Iterator<JobStepType0Model> iterator = feJobModel.iterator(); iterator.hasNext();) {
              JobStepType0Model next = iterator.next();
              System.out.println("collector.Collector.saveCurrentSession(): List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
-             logger.log(Level.INFO, "List of Jobs in session: {0} :ID: {1}", new Object[]{next.getJobStepText(), next.getId()});
+             //logger.log(Level.INFO, "List of Jobs in session: {0} :ID: {1}", new Object[]{next.getJobStepText(), next.getId()});
+             logger.info("List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
          }
         dbSessions.add(currentSession);
        // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
@@ -300,7 +303,8 @@ public class Collector {
                                     break;
                                 }else if(hlist.size()>1){
                                     System.out.println("collector.Collector.setupEntries(): Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j1.getJobStepText()+" and volume: "+vol.getNameVolume());
-                                    logger.log(Level.WARNING, "Found multiple header entries for seq :{0} sub: {1} for job: {2} and volume: {3}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), vol.getNameVolume()});
+                                   // logger.log(Level.WARNING, "Found multiple header entries for seq :{0} sub: {1} for job: {2} and volume: {3}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), vol.getNameVolume()});
+                                   logger.severe("Found multiple header entries for seq :"+subh.getSequenceHeader().getSequenceNumber() +" sub: "+subh.getSubsurface()+" for job: "+j1.getJobStepText()+" and volume: "+vol.getNameVolume());
                                 }
                                 
                             }
@@ -338,7 +342,8 @@ public class Collector {
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                     System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
-                                    logger.log(Level.INFO, "updating seq: {0} sub: {1} in job: {2} qctype: (id,name) : ({3},{4}) from: {5} to: {6}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), qctmod.getId(), qctmod.getName(), oldval, qctmod.isPassQc()});
+                                    //logger.log(Level.INFO, "updating seq: {0} sub: {1} in job: {2} qctype: (id,name) : ({3},{4}) from: {5} to: {6}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), qctmod.getId(), qctmod.getName(), oldval, qctmod.isPassQc()});
+                                    logger.info(subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -759,10 +764,10 @@ public class Collector {
                 sub.setSequence(seq);
                 sub.setSubsurface(ov.getDugSubsurface());
                 System.out.println("collector.Collector.commitEntries(): Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
-                logger.log(Level.INFO, "Looking for {0}  sub: {1} cab:{2} gun:{3}", new Object[]{ov.getDugSubsurface(), ov.getSubsurfaceLineNames(), ov.getCables(), ov.getGuns()});
+                logger.info("Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
                 if(subserv.getSubsurfaceObjBysubsurfacename(ov.getDugSubsurface())==null){
                     System.out.println("collector.Collector.commitEntries(): creating "+ov.getDugSubsurface());
-                    logger.log(Level.INFO, "creating {0}", ov.getDugSubsurface());
+                    logger.info("creating "+ov.getDugSubsurface());
                     subserv.createSubsurface(sub);
                     Sub sb=new Sub();
                     sb.setSeq(cseq);
@@ -813,7 +818,7 @@ public class Collector {
             {
               
                 System.out.println("Coll: SessID: "+sess.getIdSessions()+" returned null");
-                logger.log(Level.INFO, "SessID: {0} returned null..creating a new entry", sess.getIdSessions());
+                logger.info("SessID: "+sess.getIdSessions()+" returned null");
                 sesServ.createSessions(sess);
             }
             
@@ -825,11 +830,11 @@ public class Collector {
             JobStep js = jsit.next();
             if(jsServ.getJobStep(js.getIdJobStep())==null){
                 System.out.println("collector.Collector.commitEntries(): Creating new jobstep: id: "+js.getIdJobStep()+" name: "+js.getNameJobStep());
-                logger.log(Level.INFO, "Creating new jobstep: id: {0} name: {1}", new Object[]{js.getIdJobStep(), js.getNameJobStep()});
+                logger.info("Creating new jobstep: id: "+js.getIdJobStep()+" name: "+js.getNameJobStep());
                 jsServ.createJobStep(js);}
             else{
                 System.out.println("collector.Collector.commitEntries() Updating "+js.getNameJobStep());
-                logger.log(Level.INFO, "Updating {0}", js.getNameJobStep());
+                logger.info("Updating "+js.getNameJobStep());
                 String jsv=js.getInsightVersions();
                 System.out.println("collector.Collector.commitEntries() About to commit the string of Versions: "+jsv); 
                 
@@ -846,7 +851,7 @@ public class Collector {
             System.out.println("collector.Collector.commitEntries(): About to create SessionDetails for: job: "+next.getJobStep().getNameJobStep() +" with id: "+next.getJobStep().getIdJobStep()+" :for session: "+next.getSessions().getNameSessions()+" id: "+next.getSessions().getIdSessions());
             
             if(ssdServ.getSessionDetails(next.getJobStep(), next.getSessions())==null){
-                logger.log(Level.INFO, "About to create SessionDetails for: job: {0} with id: {1} :for session: {2} id: {3}", new Object[]{next.getJobStep().getNameJobStep(), next.getJobStep().getIdJobStep(), next.getSessions().getNameSessions(), next.getSessions().getIdSessions()});
+                logger.info("About to create SessionDetails for: job: "+next.getJobStep().getNameJobStep() +" with id: "+next.getJobStep().getIdJobStep()+" :for session: "+next.getSessions().getNameSessions()+" id: "+next.getSessions().getIdSessions());
                 ssdServ.createSessionDetails(next);
             }
         }
@@ -859,7 +864,7 @@ public class Collector {
         for (Iterator<Volume> iterator = dbVolumes.iterator(); iterator.hasNext();) {
            Volume next = iterator.next();
            if(volServ.getVolume(next.getIdVolume())==null) {
-               logger.log(Level.INFO, "Creating volume entry : Volume : name: {0} id: {1}", new Object[]{next.getPathOfVolume(), next.getIdVolume()});
+               logger.info("Creating volume entry : Volume : name: "+next.getPathOfVolume()+" id: "+ next.getIdVolume());
                volServ.createVolume(next);
            }
             
@@ -870,7 +875,7 @@ public class Collector {
         for (Iterator<JobVolumeDetails> iterator = dbJobVolumeDetails.iterator(); iterator.hasNext();) {
             JobVolumeDetails next = iterator.next();
             if(jvdServ.getJobVolumeDetails(next.getJobStep(), next.getVolume())==null){
-                logger.log(Level.INFO, "Creating jobVolumeDetails entry: id :{0}", next.getIdJobVolumeDetails());
+                logger.info("Creating jobVolumeDetails entry: id "+ next.getIdJobVolumeDetails());
                 jvdServ.createJobVolumeDetails(next);
             }
             
@@ -882,7 +887,7 @@ public class Collector {
             NodePropertyValue npv = iterator.next();
             if(npvserv.getNodePropertyValueFor(npv.getJobStep(),npv.getNodeProperty())==null){
                System.out.println("collector.Collector.setupEntries(): New Entries been created nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
-               logger.log(Level.INFO, "New Entries been created nodePropertyValues for type 4 with  {0} : job: {1} : nodeProperty-Node: {2} : nodeProperty-Property: {3} : value: {4}", new Object[]{npv.getIdNodePropertyValue(), npv.getJobStep(), npv.getNodeProperty().getNodeType().getActualnodeid(), npv.getNodeProperty().getPropertyType().getName(), npv.getValue()});
+               logger.info("New Entries been created nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
                 npvserv.createNodePropertyValue(npv);
             }
             
@@ -918,20 +923,20 @@ public class Collector {
          
          
          System.out.println("collector.Collector.createAllAncestors(): DELETING ALL ENTRIES FROM THE PARENT TABLE FOR THE SESSION : "+currentSession.getNameSessions());
-         logger.log(Level.INFO, "deleting all entries from the parent table for session {0}", currentSession.getNameSessions());
+         logger.info("deleting all entries from the parent table for session "+ currentSession.getNameSessions());
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);
          
          for (Iterator<SessionDetails> sli = sL.iterator(); sli.hasNext();) {
              SessionDetails sdn = sli.next();
              System.out.println("collector.Collector.createAllAncestors(): Searching for parent of sessionDetails: "+sdn.getIdSessionDetails());
-             logger.log(Level.INFO, "Searching for parent of sessionDetails: {0}", sdn.getIdSessionDetails());
+             logger.info("Searching for parent of sessionDetails: "+ sdn.getIdSessionDetails());
              List<Parent> pl=pServ.getParentsFor(sdn);
              
                 for (Iterator<Parent> pit = pl.iterator(); pit.hasNext();) {
                  Parent pan = pit.next();
                  Long pin=pan.getIdParent();
                  System.out.println("collector.Collector.createAllAncestors(): deleting parent id: "+pin);
-                 logger.log(Level.INFO, "deleting parent id: {0}", pin);
+                 logger.info( "deleting parent id: "+ pin);
                  pServ.deleteParent(pin);
                  
              }
@@ -950,10 +955,10 @@ public class Collector {
                // dbAncestors=new ArrayList<>();
                 dbParent=new ArrayList<>();
                 System.out.println("collector.Collector.createAllAncestors() : JobStep: "+js.getNameJobStep()+ " :id: "+js.getIdJobStep());
-                logger.log(Level.INFO, "JobStep: {0} :id: {1}", new Object[]{js.getNameJobStep(), js.getIdJobStep()});
+                logger.info("JobStep: "+js.getNameJobStep()+ " :id: "+js.getIdJobStep());
                     SessionDetails sd=ssdServ.getSessionDetails(js, currentSession);
                     System.out.println("collector.Collector.createAllAncestors(): CurrentSession: "+currentSession.getNameSessions());
-                    logger.log(Level.INFO, "CurrentSession: {0}", currentSession.getNameSessions());
+                    logger.info( "CurrentSession: "+currentSession.getNameSessions());
                     System.out.println("collector.Collector.createAllAncestors(): SessionDetails: "+sd.getSessions().getNameSessions());// +" :currentSession:  "+currentSession.getNameSessions()+" :jobStep: "+js.getNameJobStep());
                       ArrayList<JobStepType0Model> listOfParents=(ArrayList<JobStepType0Model>) jsm.getJsParents();
                  
@@ -967,6 +972,7 @@ public class Collector {
                      JobStep parJs=jsServ.getJobStep(par.getId());
                      
                      System.out.println("collector.Collector.createAllAncestors()  ParentJobStep: "+parJs.getNameJobStep());
+                     logger.info("ParentJobStep: "+parJs.getNameJobStep());
                      System.out.println("collector.Collector.createAllAncestors() CurrentSession: "+currentSession.getNameSessions());
                      SessionDetails parSSd=ssdServ.getSessionDetails(parJs, currentSession);
                     if(parSSd!=null)parent.setParent(parSSd.getIdSessionDetails());
@@ -1056,7 +1062,7 @@ public class Collector {
          // Delete ALL entries from the Child table  for the current Session
          
          System.out.println("collector.Collector.createAllDescendants() : DELETING ALL ENTRIES FROM THE Child TABLE FOR THE SESSION : "+currentSession.getNameSessions());
-         logger.log(Level.INFO, "deleting all entries from the Child Table for the session {0}", currentSession.getNameSessions());
+         logger.info("deleting all entries from the Child Table for the session "+ currentSession.getNameSessions());
          
          List<SessionDetails> sL=ssdServ.getSessionDetails(currentSession);
          
@@ -1072,7 +1078,7 @@ public class Collector {
                  Long cid=chn.getIdChild();
                  
 //                    System.out.println("deleting entry for : "+ssdServ.getSessionDetails(chn.getChild()).getJobStep().getNameJobStep()+ " :for job: "+sdn.getJobStep().getNameJobStep());
-                 logger.log(Level.INFO, "deleting entry for : {0} from child table", cid);
+                 logger.info("deleting entry for "+cid+"from child table");
                   cServ.deleteChild(cid);
                     
              }
@@ -1095,24 +1101,25 @@ public class Collector {
                  for (Iterator<JobStepType0Model> cit = listOfChildren.iterator(); cit.hasNext();) {
                    JobStepType0Model child = cit.next();
                      System.out.println("collector.Collector.createAllDescendants() :" +jsm.getJobStepText()+" : has child: "+child.getJobStepText() );
-                     logger.log(Level.INFO, "{0} : has child: {1}", new Object[]{jsm.getJobStepText(), child.getJobStepText()});
+                     logger.info(jsm.getJobStepText()+" : has child: "+child.getJobStepText());
                    
                      Child c=new Child();
                   
                      c.setSessionDetails(sd);                            //This is the same as setting the parent of this child; in this case is the sessiondetails to which "js" belongs to.
                      System.out.println("collector.Collector.createAllDescendants(): sessionDetailsID(Parent): "+c.getSessionDetails().getIdSessionDetails());
-                     logger.log(Level.INFO, "sessionDetailsID(Parent): {0}", c.getSessionDetails().getIdSessionDetails());
+                     //logger.info("sessionDetailsID(Parent): "+c.getSessionDetails().getIdSessionDetails());
+                     logger.info("sessionDetailsID(Parent): "+c.getSessionDetails().getIdSessionDetails());
                      JobStep childJs=jsServ.getJobStep(child.getId());
                      System.out.println("collector.Collector.createAllDescendants(): childJobStep: "+childJs.getNameJobStep()+" :ID: "+childJs.getIdJobStep());
-                     logger.log(Level.INFO, "childJobStep: {0} :ID: {1}", new Object[]{childJs.getNameJobStep(), childJs.getIdJobStep()});
+                     logger.info("childJobStep: "+childJs.getNameJobStep()+" :ID: "+childJs.getIdJobStep());
                      SessionDetails childSSd=ssdServ.getSessionDetails(childJs, currentSession);   //get the sessiondetails corresponding to the child.
                      System.out.println("collector.Collector.createAllDescendants() : sessionDetailsID(Child): "+childSSd.getIdSessionDetails());
-                     logger.log(Level.INFO, "sessionDetailsID(Child): {0}", childSSd.getIdSessionDetails());
+                     logger.info("sessionDetailsID(Child): "+childSSd.getIdSessionDetails());
                      c.setChild(childSSd.getIdSessionDetails());   // this adds the sessiondetails of the child to the table Child.
                                                                    // so the table entry will look like:      SSDofAjob, SSDofTheChild
                   
                     if(cServ.getChildFor(c.getSessionDetails(), c.getChild())==null){
-                        logger.log(Level.INFO, "Adding child: {0} to the list of Children", c.getSessionDetails().getJobStep().getNameJobStep());
+                        logger.info( "Adding child: "+ c.getSessionDetails().getJobStep().getNameJobStep()+" to the list of Children");
                         dbChild.add(c);
                     }
                     //dbChild.add(c);
@@ -1154,7 +1161,7 @@ public class Collector {
           for(Long a:descTableList){
             
              System.out.println("job: "+ssd.getJobStep().getNameJobStep()+" has descendant: "+ssdServ.getSessionDetails(a).getJobStep().getNameJobStep());
-             logger.log(Level.INFO, "job: {0} has descendant: {1}", new Object[]{ssd.getJobStep().getNameJobStep(), ssdServ.getSessionDetails(a).getJobStep().getNameJobStep()});
+             logger.info(ssd.getJobStep().getNameJobStep()+" has descendant: "+ssdServ.getSessionDetails(a).getJobStep().getNameJobStep());
         }
         descendantMap.put(ssd, descTableList);
        }
@@ -1183,7 +1190,7 @@ public class Collector {
              for (Iterator<VolumeSelectionModelType0> iterator = vsmlist.iterator(); iterator.hasNext();) {
              VolumeSelectionModelType0 next = iterator.next();
              System.out.println("collector.Collector.startWatching(): "+next.getLabel());
-             logger.log(Level.INFO, "starting to watch {0}", next.getLabel());
+             logger.info("startWatching(): "+next.getLabel());
              next.startWatching();
              
              }
