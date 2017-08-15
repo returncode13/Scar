@@ -34,7 +34,7 @@ public class ObpManagerLog implements Serializable {
     @Column(name="logger",nullable=false)
     private String logger;
     
-    @Column(name="message",nullable=false)
+    @Column(name="message",nullable=false,length = 8192)
     private String message;
     
     @Column(name="sourceclass",nullable=false)

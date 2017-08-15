@@ -165,7 +165,7 @@ public class LandingController extends Stage implements Initializable,Serializab
     //URL url1;
 
     public LandingController() {
-        LogManager.getLogManager().reset();
+        //LogManager.getLogManager().reset();
         logger.addHandler(obpManagerLogDatabaseHandler);
         logger.setLevel(Level.ALL);
     }
@@ -272,12 +272,14 @@ public class LandingController extends Stage implements Initializable,Serializab
                 
             } catch (JAXBException ex) {
                 Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
-                logger.log(Level.SEVERE, null, ex);
+                //logger.log(Level.SEVERE, null, ex);
+                logger.severe("JAXBException: "+ex.getMessage());
             }
             
         } catch (FileNotFoundException ex) {
-            logger.log(Level.SEVERE, "File not found!: {0}", ex.getMessage());
-            logger.log(Level.SEVERE, null, ex);
+            //logger.log(Level.SEVERE, "File not found!: {0}", ex.getMessage());
+            logger.severe("File not foun");
+            //logger.log(Level.SEVERE, null, ex);
             Exceptions.printStackTrace(ex);
             
             
@@ -285,7 +287,7 @@ public class LandingController extends Stage implements Initializable,Serializab
             try {
                 is.close();
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                logger.severe("Couldn't close file");
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -420,7 +422,11 @@ public class LandingController extends Stage implements Initializable,Serializab
             System.out.println("landing.LandingController.saveCurrentSession(): Job id# "+next.getId()+" Parent:" +next.getParent().getJobStepText()+ " Child: "+next.getChild().getJobStepText());
             logger.info("Job id# "+next.getId()+" Parent:" +next.getParent().getJobStepText()+ " Child: "+next.getChild().getJobStepText());
         }
-            collector.saveCurrentSession(smodel);
+            try{
+                collector.saveCurrentSession(smodel);
+            }catch(Exception ex){
+                logger.severe("NULL Encountered while trying to save session");
+            }
     }
 
     @FXML

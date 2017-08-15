@@ -5,6 +5,7 @@
  */
 package fend.session.node.headers;
 
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.DoubtStatus;
 import db.model.Headers;
 import db.model.Logs;
@@ -69,10 +70,11 @@ import watcher.LogWatcher;
  *
  * @author sharath
  */
-public class HeadersViewController extends Stage implements Initializable {
+public class HeadersViewController extends Stage  {
 
      private Map<Integer,TreeItem<SequenceHeaders>> idxForTree=new HashMap<>();
-    
+    Logger logger=Logger.getLogger(HeadersViewController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     private HeadersModel hmodel;
     private HeadersNode hnode;
     ObservableList<SequenceHeaders> seqListObs;
@@ -81,6 +83,15 @@ public class HeadersViewController extends Stage implements Initializable {
     LogsService lserv=new LogsServiceImpl();
     SubsurfaceService subserv=new SubsurfaceServiceImpl();
     DoubtStatusService dbstatusServ=new DoubtStatusServiceImpl();
+
+    public HeadersViewController() {
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
+    }
+    
+    
+    
+    
     
     String vname=new String();        
    
@@ -95,12 +106,13 @@ public class HeadersViewController extends Stage implements Initializable {
      * 
      */
        
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+       
 
     void setModel(HeadersModel lsm,int seqSelection) {
+        
+        
+        try{
+        
         if(lsm==null){
             System.out.println("fend.session.node.headers.setModel: lsm is NULL");
         }
@@ -254,6 +266,7 @@ public class HeadersViewController extends Stage implements Initializable {
                
            }else{
                System.out.println("fend.session.node.headers.HeadersViewController.setModel(): sub:  "+sub.getSubsurface()+" in volume: "+v.getNameVolume()+" has a header size NOT EQUAL TO ONE");
+               logger.severe("sub:  "+sub.getSubsurface()+" in volume: "+v.getNameVolume()+" has a header size NOT EQUAL TO ONE");
            }
            
        });
@@ -272,6 +285,7 @@ public class HeadersViewController extends Stage implements Initializable {
              if(h.size()==1){
                  
                  System.out.println("fend.session.node.headers.setRowFactory(): Headers : sub: "+h.get(0).getSubsurface()+" id: "+h.get(0).getIdHeaders());
+                 logger.info("sub: "+h.get(0).getSubsurface()+" id: "+h.get(0).getIdHeaders());
                  List<Logs> loglist=lserv.getLogsFor(h.get(0));
                  if(loglist.isEmpty()){
                      /* String logLocation=v.getPathOfVolume();
@@ -350,6 +364,7 @@ public class HeadersViewController extends Stage implements Initializable {
             
             if(h.size()!=1){
                 System.out.println("fend.session.node.headers.HeadersViewController.setModel(): Something's unusual. more than more header entry found for :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+                logger.severe("Something's unusual. more than more header entry found for :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
             }
             if(h!=null){
                 List<Logs> loglist=lserv.getLogsFor(h.get(0));
@@ -382,6 +397,7 @@ public class HeadersViewController extends Stage implements Initializable {
             }
             else{
                 System.out.println("fend.session.node.headers.HeadersViewController.setModel(): No header entry found! :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+                logger.severe("No header entry found! :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
             }
           });
          
@@ -642,15 +658,23 @@ public class HeadersViewController extends Stage implements Initializable {
      }
      
      
-   
+    }catch(Exception ex){
+    logger.severe(ex.getMessage());
+    }
      
     }
 
     void setView(HeadersNode aThis) {
+        
+        
+        try{
         hnode=aThis;
         this.setTitle("Results for "+vname);
         this.setScene(new Scene(hnode));
         this.showAndWait();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
     

@@ -163,22 +163,26 @@ public class Collector {
     public Collector(){
        // dbSessions.add(new Sessions("+twoSessions", "gamma123"));                               //fixing on one session for the presentation
       // obpManagerLogDatabaseHandler.clear();                    //remove existing logs before starting to log   ---moved to the main class (Landing.class)
-      LogManager.getLogManager().reset(); 
+     // LogManager.getLogManager().reset(); 
       logger.addHandler(obpManagerLogDatabaseHandler);
-       logger.setLevel(Level.ALL);
+       logger.setLevel(Level.SEVERE);
     }
 
     public void setFeJobGraphModel(SessionModel feJobGraphModel) {
+        try{
         this.feSessionModel = feJobGraphModel;
         System.out.println("Collector: Set the graphModel ");
         logger.info("set the graphModel");
         setupEntries();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
 
     
      public void saveCurrentSession(SessionModel smod) {
-        
+        try{
          feSessionModel=smod;
          
          Sessions cs=sesServ.getSessions(feSessionModel.getId());
@@ -210,6 +214,9 @@ public class Collector {
         dbSessions.add(currentSession);
        // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
         setupEntries();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     /*
@@ -220,7 +227,7 @@ public class Collector {
     //The code for setting up the sessions datastructures go here   <=== DONT FORGET.
     
     private void setupEntries(){
-        
+        try{
         dbSessionDetails.clear();
         dbJobSteps.clear();                         //clear previous jobmodel array. set current entries here
        dbVolumes.clear();
@@ -719,11 +726,15 @@ public class Collector {
         
         
         commitEntries();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     //codes for commiting the transactions
        
     private void commitEntries(){
+        try{
         //update list of sequences;
         //get entries of shot lines from orcaview
         List<OrcaView> orcaList=oserv.getOrcaView();            //list of acquisitions
@@ -763,8 +774,8 @@ public class Collector {
                 Subsurface sub=new Subsurface();
                 sub.setSequence(seq);
                 sub.setSubsurface(ov.getDugSubsurface());
-                System.out.println("collector.Collector.commitEntries(): Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
-                logger.info("Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
+                //System.out.println("collector.Collector.commitEntries(): Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
+               // logger.info("Looking for "+ov.getDugSubsurface()+"  sub: "+ov.getSubsurfaceLineNames()+" cab:"+ ov.getCables()+" gun:"+ov.getGuns());
                 if(subserv.getSubsurfaceObjBysubsurfacename(ov.getDugSubsurface())==null){
                     System.out.println("collector.Collector.commitEntries(): creating "+ov.getDugSubsurface());
                     logger.info("creating "+ov.getDugSubsurface());
@@ -913,9 +924,13 @@ public class Collector {
         }
        
         startWatching();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
    
      private void createAllAncestors() {
+         try{
          
          /*
          Delete ALL entries from the Parent table for the current Session
@@ -1028,7 +1043,10 @@ public class Collector {
           ancServ.makeAncestorsTableFor(key, value);
           
       }
-                   
+         }catch(Exception ex){
+             logger.severe(ex.getMessage());
+         }
+         
     }
      
      private void createAllDescendants() {
@@ -1036,7 +1054,7 @@ public class Collector {
          /*
          Debug
          */
-         
+         try{
          for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();){
              JobStepType0Model jsm = jit.next();
              
@@ -1174,9 +1192,13 @@ public class Collector {
         
           
       }
+         }catch(Exception ex){
+             logger.severe(ex.getMessage());
+         }
     }
 
     private void startWatching() {
+        try{
         for (Iterator<JobStepType0Model> jit = feJobModel.iterator(); jit.hasNext();) {
             JobStepType0Model jsm = jit.next();
             //ObservableList<VolumeSelectionModelType1> vsmlist= jsm.getVolList();
@@ -1194,6 +1216,9 @@ public class Collector {
              next.startWatching();
              
              }
+        }
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
         }
     }
 

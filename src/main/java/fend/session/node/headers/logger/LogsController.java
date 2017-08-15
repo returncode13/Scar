@@ -5,6 +5,7 @@
  */
 package fend.session.node.headers.logger;
 
+import db.handler.ObpManagerLogDatabaseHandler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,10 +37,13 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class LogsController extends Stage implements Initializable{
     
+    Logger logger=Logger.getLogger(LogsController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     private LogsModel lmodel;
     private LogsNode lnode;
     ObservableList<Long> versionsObsList;
@@ -49,6 +53,8 @@ public class LogsController extends Stage implements Initializable{
     private TabPane tabPane;
 
     void setModel(LogsModel lsm) {
+        
+        try{
         lmodel=lsm;
         List<VersionLogsModel> tabContents=lmodel.getLogsmodel();
         
@@ -56,6 +62,7 @@ public class LogsController extends Stage implements Initializable{
             VersionLogsModel versionsTab = iterator.next();
             File logfile=versionsTab.getLogfile();
             System.out.println("fend.session.node.headers.logger.LogsController.setModel:  Am trying to read the logfile  "+logfile.getAbsolutePath());
+            logger.info("Am trying to read the logfile  "+logfile.getAbsolutePath());
             FileReader fr=null;
             BufferedReader br= null;
             int max=100;
@@ -78,8 +85,11 @@ public class LogsController extends Stage implements Initializable{
                 
                 System.out.println("fend.session.node.headers.logger.LogsController.setModel(): contents.size(): "+contents.length());
             } catch (FileNotFoundException ex) {
+                logger.severe(ex.getMessage());
                 Logger.getLogger(LogsController.class.getName()).log(Level.SEVERE, null, ex);
+                
             } catch (IOException ex) {
+                logger.severe(ex.getMessage());
                 Logger.getLogger(LogsController.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 try{
@@ -87,6 +97,7 @@ public class LogsController extends Stage implements Initializable{
                     if(fr!=null)fr.close();
                     
                 } catch (IOException ex) {
+                    logger.severe(ex.getMessage());
                     Logger.getLogger(LogsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -118,15 +129,29 @@ public class LogsController extends Stage implements Initializable{
             tab.setContent(hbox);
             tabPane.getTabs().add(tab);
         }
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
         
     }
 
     void setView(LogsNode aThis) {
+        try{
        lnode=aThis;
        this.setScene(new Scene(lnode));
        this.showAndWait();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
+    public LogsController() {
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
+    }
+    
+    
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         

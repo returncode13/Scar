@@ -5,6 +5,7 @@
  */
 package fend.session.node.headers.doubtoverride;
 
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.DoubtStatus;
 import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
@@ -12,6 +13,8 @@ import db.services.DoubtTypeService;
 import fend.session.node.headers.doubtoverride.entries.Entries;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -34,6 +37,8 @@ import javafx.util.Callback;
  */
 public class OverrideController extends Stage {
 
+    Logger logger=Logger.getLogger(OverrideController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     OverrideModel model;
     OverrideNode node;
     Map<Entries,Boolean> commitMap=new HashMap<>();
@@ -56,12 +61,14 @@ public class OverrideController extends Stage {
 
     @FXML
     void overrideBtnHandle(ActionEvent event) {
+        try{
             for (Map.Entry<Entries, Boolean> entry : commitMap.entrySet()) {
             Entries key = entry.getKey();
             Boolean value = entry.getValue();
             
                 if(value) {
                     System.out.println("fend.session.node.headers.doubtoverride.OverrideController.overrideBtnHandle(): Overriding: "+key.getSubsurface()+" Dtype: "+key.getDoubtType()+" DStatus : "+key.getStatus()+" to override "+" with comment: "+key.getComment().getComment());
+                    logger.info("Overriding: "+key.getSubsurface()+" Dtype: "+key.getDoubtType()+" DStatus : "+key.getStatus()+" to override "+" with comment: "+key.getComment().getComment());
                     DoubtStatus doubtStatus=key.getDoubtStatusObject();
                     
                     doubtStatus.setStatus("O");
@@ -70,13 +77,25 @@ public class OverrideController extends Stage {
             
         }
             close();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
+    }
+
+    public OverrideController() {
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
     }
 
    
     
+    
    
 
     void setModel(OverrideModel lsm) {
+        
+        try{
+        
         this.model=lsm;
         
         TableColumn subsurfaceCol=new TableColumn("Subsurface");
@@ -113,17 +132,25 @@ public class OverrideController extends Stage {
         ObservableList<Entries> dataForTable=this.model.getObsentries();
         
         tableView.setItems(dataForTable);
-                
+    }catch(Exception ex){
+        logger.severe(ex.getMessage());
+    }        
     }
     
     
     
      void setView(OverrideNode aThis){ 
+         
+         
+         try{
             this.node=aThis;
         this.setTitle("Override");
         this.setScene(new Scene(node));
         this.initModality(Modality.APPLICATION_MODAL);
         this.showAndWait();
+         }catch(Exception ex){
+             logger.severe(ex.getMessage());
+         }
     }
     
 }

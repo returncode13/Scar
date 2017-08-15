@@ -5,8 +5,11 @@
  */
 package fend.session.node.headers.doubtoverride.entries.comments;
 
+import db.handler.ObpManagerLogDatabaseHandler;
 import fend.session.node.headers.doubtoverride.entries.comments.confirm.ConfirmModel;
 import fend.session.node.headers.doubtoverride.entries.comments.confirm.ConfirmNode;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -21,6 +24,8 @@ import javafx.stage.Stage;
  */
 public class CommentController extends Stage{
 
+    Logger logger=Logger.getLogger(CommentController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     CommentModel model;
     CommentNode node;
     
@@ -41,6 +46,7 @@ public class CommentController extends Stage{
 
     @FXML
     void okBtnHandle(ActionEvent event) {
+        try{
         String comm=textArea.getText();
         
         ConfirmModel cmod=new ConfirmModel();
@@ -49,28 +55,47 @@ public class CommentController extends Stage{
         if(cmod.getStatus() && comm.length()>0){
         
             System.out.println("fend.session.node.headers.doubtoverride.entries.comments.CommentController.okBtnHandle(): Proceeding with commit");
+            logger.info("Proceeding with commit");
             this.model.setComment(comm);
             this.model.setStatus(Boolean.TRUE);
         close();
         
         }
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
         
+    }
+
+    public CommentController() {
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
     }
     
     
+    
+    
     void setModel(CommentModel lsm) {
+        try{
         this.model=lsm;
         if(this.model.getComment().length()>0){
             textArea.setText(this.model.getComment());
         }
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
     void setView(CommentNode aThis) {
+        try{
            this.node=aThis;
         this.setTitle("Comment");
         this.setScene(new Scene(node));
         this.initModality(Modality.APPLICATION_MODAL);
         this.showAndWait();
+    }catch(Exception ex){
+    logger.severe(ex.getMessage());
+}
     }
     
 }

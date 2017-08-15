@@ -249,7 +249,7 @@ public class SessionController implements Initializable {
     // private MultiValueMap<JobStepType0Model,List<JobStepType0Model>> graphMap=new MultiValueMap<>();                           //for multiple roots. The map will store the root job and its corresponding adjacency list of children. this list will be the graph traversed
 
     public SessionController() {
-        LogManager.getLogManager().reset();
+        //LogManager.getLogManager().reset();
         logger.addHandler(obpManagerLogDatabaseHandler);
         logger.setLevel(Level.ALL);
     }

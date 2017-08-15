@@ -19,7 +19,8 @@ import javafx.util.Callback;
 
 /**
  *
- * @author sharath
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class LoadSessionController extends Stage{
 
@@ -39,6 +40,7 @@ public class LoadSessionController extends Stage{
         
         lsmodel.setSessionToBeLoaded(selectedSession);
         System.out.println("landing.loadingSession.LoadSessionController.handleLoadButton() will load : "+selectedSession.getNameSessions());
+        
         close();
     }
     

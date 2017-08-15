@@ -111,9 +111,9 @@ public class HeaderCollector {
 
     public HeaderCollector() {
         
-        LogManager.getLogManager().reset();
+        //LogManager.getLogManager().reset();
         logger.addHandler(obpManagerLogDatabaseHandler);
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.SEVERE);
         
     }
     
@@ -122,6 +122,7 @@ public class HeaderCollector {
     
     
      public void setFeVolumeSelModel(AcquisitionVolumeModel vmod) {
+         try{
        this.feVolumeSelModel=vmod;
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
@@ -142,12 +143,15 @@ public class HeaderCollector {
             }
             
         });
+         }catch(Exception ex){
+             logger.severe(ex.getMessage());
+         }
     }
     
     
     
     public void setFeVolumeSelModel(VolumeSelectionModelType1 feVolumeSelModel) {
-        
+        try{
         this.feVolumeSelModel = feVolumeSelModel;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(feVolumeSelModel.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
@@ -179,12 +183,16 @@ public class HeaderCollector {
             }
             
         });
-                 
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }         
         
     }
     
     
     public void setFeVolumeSelModel(VolumeSelectionModelType2 model) {
+        
+        try{
          this.feVolumeSelModel = model;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(model.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
@@ -211,10 +219,14 @@ public class HeaderCollector {
             }
             
         });
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     
     public void setFeVolumeSelModel(VolumeSelectionModelType4 vmod) {
+        try{
        this.feVolumeSelModel=vmod;
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
@@ -235,13 +247,16 @@ public class HeaderCollector {
             }
             
         });
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     private void calculateAndCommitHeaders(){
                         
 
         
-            
+            try{
             
            
                System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): started");
@@ -294,14 +309,14 @@ public class HeaderCollector {
              final Map<Sub,Headers> finalsubMap=subsurfaceHeaderMap;
             final List<Headers> finalExistingHeaders=existingHeaders;
              System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
-             logger.info("running on Thread: "+Thread.currentThread().getName()+" forking");
+          //   logger.info("running on Thread: "+Thread.currentThread().getName()+" forking");
                        
                        ExecutorService exec1=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
                        exec1.submit(new Callable<ArrayList<Headers>>(){
                            @Override
                            public ArrayList<Headers> call() throws Exception {
                                System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() about to call dugHve.calculateHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
-                               logger.info("about to call dugHve.calculateHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
+                              // logger.info("about to call dugHve.calculateHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
                                headerList.addAll(dugHve.calculatedHeaders(finalsubMap, finalExistingHeaders,volumeType));
                                return headerList;
                            }
@@ -309,7 +324,7 @@ public class HeaderCollector {
                        
                    
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" joining");
-            logger.info("running on Thread: "+Thread.currentThread().getName()+" joining");
+            //logger.info("running on Thread: "+Thread.currentThread().getName()+" joining");
             if(finalExistingHeaders!=null){
                 headerList.addAll(finalExistingHeaders);                                                         //append any old headers
             }
@@ -585,9 +600,13 @@ public class HeaderCollector {
         
        // feVolumeSelModel.setHeaderButtonStatus(Boolean.TRUE);
    // }
+            }catch(Exception ex){
+                logger.severe(ex.getMessage());
+            }
     }
 
   public List<SequenceHeaders> getHeaderListForVolume(VolumeSelectionModelType0 vm){
+      try{
       Long type=vm.getType();
       if(type.equals(1L) || type.equals(2L)){
       headersModel=vm.getHeadersModel();
@@ -598,6 +617,11 @@ public class HeaderCollector {
           logger.info(" Throwing  not implemented for volume type: "+type);
            throw new UnsupportedOperationException("collector.HeaderCollector.getHeaderListForVolume(): Implementation pending for volume type: "+type); 
          
+      }
+      }
+      catch(Exception ex){
+          logger.severe(ex.getMessage());
+          throw ex; 
       }
   }
 
