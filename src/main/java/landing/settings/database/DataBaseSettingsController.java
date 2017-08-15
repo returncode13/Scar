@@ -105,7 +105,7 @@ public class DataBaseSettingsController extends Stage{
     
     @FXML
     void lookUpDatabases(ActionEvent event) throws JAXBException {
-        File sFile=new File(LandingController.getSshSettingXml());
+        File sFile=new File(System.getProperty("user.home"),LandingController.getSshSettingXml());
          
          JAXBContext contextObj;
         try {

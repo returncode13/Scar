@@ -10,6 +10,7 @@ import fend.session.edges.LinksModel;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -54,6 +55,8 @@ public interface JobStepType0Model {
     public void setDependency(Boolean FALSE);
 
     public Doubt getDoubt();
+    public List<JobModelProperty> getJobProperties();
+    public void setJobProperties(List<JobModelProperty> jobModelProperties);
     
     
     

@@ -135,7 +135,7 @@ public class VolumeSelectionControllerType4 implements VolumeSelectionController
                 
                 System.out.println("fend.session.node.volumes.type4.VolumeSelectionControllerType4.handleSelectVolumeButton(): retrieved filenames: "+filenames);
                 
-                listFilesModel=new ListFilesModel(filenames);
+                listFilesModel=new ListFilesModel(filenames,this.model);
                 ListFilesNode lfnode=new ListFilesNode(listFilesModel);
                 
                 

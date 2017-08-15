@@ -5,7 +5,9 @@
  */
 package dugex;
 
+
 import core.Sub;
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.Headers;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -28,12 +30,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import org.openide.util.Exceptions;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 
 
@@ -117,6 +121,8 @@ class LongHolder{
 
 
 public class DugioHeaderValuesExtractor {
+    Logger logger=Logger.getLogger(DugioHeaderValuesExtractor.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     private DugioScripts ds=new DugioScripts();
     private DugioMetaHeaders dmh=new DugioMetaHeaders();
     private File volume;
@@ -124,17 +130,28 @@ public class DugioHeaderValuesExtractor {
     private SubsurfaceService subserv=new SubsurfaceServiceImpl();
     
     public DugioHeaderValuesExtractor(){
-        
+        //LogManager.getLogManager().reset();
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.ALL);
     }
 
     public void setVolume(File volume) {
+        try{
         this.volume = volume;
+        }catch(Exception ex){
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
+        }
     }
     
     
     
     
     public ArrayList<Headers> calculatedHeaders(final Map<Sub,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders,final Long volumeType) throws InterruptedException, ExecutionException{
+        try{
         calculateSubsurfaceLines(subsurfaceTimestamp,existingHeaders,volumeType);
        
        /* for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
@@ -143,6 +160,8 @@ public class DugioHeaderValuesExtractor {
         }*/
         
        System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in "+Thread.currentThread().getName()+"joining");
+      // logger.info("running in "+Thread.currentThread().getName()+"joining");
+       
        Long startTime=System.currentTimeMillis();
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.submit(new Callable<Void>() {
@@ -150,21 +169,31 @@ public class DugioHeaderValuesExtractor {
             @Override
             public Void call() throws Exception {
                 System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders ..calling calculateRemainingHeaders in "+Thread.currentThread().getName()+" forking");
+              //  logger.info("calling calculateRemainingHeaders in "+Thread.currentThread().getName()+" forking");
                 return calculateRemainingHeaders(volumeType);
                // System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in"+Thread.currentThread().getName()+"joining");
             }
         }).get();
         System.out.println("dugex.DugioHeaderValuesExtractor.calculatedHeaders running in "+Thread.currentThread().getName()+"joining");
+      //  logger.info("running in "+Thread.currentThread().getName()+"joining");
         Long endTime=System.currentTimeMillis();
         Long deltaTime=endTime-startTime;
         System.out.println("Time Taken: "+deltaTime+" headers.size(): "+headers.size());
+        logger.info("Time Taken: "+deltaTime+" headers.size(): "+headers.size());
          
-         
+        }catch(Exception ex){
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
+        }
         
         return headers;
     }
     
     private void calculateSubsurfaceLines(final Map<Sub,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders,final Long volumeType){
+        try{
        List<Subsurface> subList=subserv.getSubsurfaceList();                   //get all subs
        Set<Sequence> seqList=null;
        Set<Sub> keysubs=subsurfaceTimestamp.keySet();
@@ -207,15 +236,17 @@ public class DugioHeaderValuesExtractor {
                         //Subsurface subexists=subserv.getSubsurfaceObjBysubsurfacename(lineName);
                          //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey());
                          System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+checkSubMap.containsKey(lineName));
+                         //logger.info("Map contains "+lineName+" ? "+checkSubMap.containsKey(lineName));
                        // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                        if(!subsurfaceTimestamp.isEmpty() && checkSubMap.containsKey(lineName) && checkSubMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
-                            
+                            logger.info(" Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
                         continue;
                         }
                         //if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                         if(!subsurfaceTimestamp.isEmpty() && checkSubMap.containsKey(lineName) && !checkSubMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+checkSubMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
+                            logger.info("Subsurface "+lineName+" exists in the database but with timestamp "+checkSubMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
                             Set<Sub> keysubs=subsurfaceTimestamp.keySet();
                             Sub skey=null;
                             for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
@@ -238,6 +269,7 @@ public class DugioHeaderValuesExtractor {
                         //continue; //Comment this out later when implementing
                         }
                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+lineName);
+                       //logger.info("Setting Subsurface "+lineName);
                         Subsurface hdrsub=subserv.getSubsurfaceObjBysubsurfacename(lineName);
                         //hdr.setSubsurface(lineName);
                          hdr.setSubsurface(hdrsub);
@@ -254,8 +286,10 @@ public class DugioHeaderValuesExtractor {
             }).get();
         }catch(ExecutionException ex){
         ex.printStackTrace();
+        logger.severe(ex.getMessage());
         
         } catch (InterruptedException ex) {
+            logger.severe(ex.getMessage());
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
         }
@@ -297,15 +331,17 @@ public class DugioHeaderValuesExtractor {
                         //Subsurface subexists=subserv.getSubsurfaceObjBysubsurfacename(lineName);
                          //System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+subsurfaceTimestamp.containsKey());
                          System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+lineName+" ? "+checkSubMap.containsKey(lineName));
+                         //logger.info("Map contains "+lineName+" ? "+checkSubMap.containsKey(lineName));
                        // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                        if(!subsurfaceTimestamp.isEmpty() && checkSubMap.containsKey(lineName) && checkSubMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
-                            
+                            logger.info("Subsurface "+lineName+" with the same timestamp "+time+" exists in the database. I will not be extracting the headers for this line");
                         continue;
                         }
                         //if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && !subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                         if(!subsurfaceTimestamp.isEmpty() && checkSubMap.containsKey(lineName) && !checkSubMap.get(lineName).getTimeStamp().equals(time)){
                             System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Subsurface "+lineName+" exists in the database but with timestamp "+checkSubMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
+                            logger.info("Subsurface "+lineName+" exists in the database but with timestamp "+checkSubMap.get(lineName).getTimeStamp()+" And the latest timestamp is: "+time);
                             Set<Sub> keysubs=subsurfaceTimestamp.keySet();
                             Sub skey=null;
                             for (Iterator<Sub> iterator = keysubs.iterator(); iterator.hasNext();) {
@@ -328,6 +364,7 @@ public class DugioHeaderValuesExtractor {
                         //continue; //Comment this out later when implementing
                         }
                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+lineName);
+                       //logger.info("calculateSubsurfaceLines:  Setting Subsurface "+lineName);
                         Subsurface hdrsub=subserv.getSubsurfaceObjBysubsurfacename(lineName);
                         //hdr.setSubsurface(lineName);
                          hdr.setSubsurface(hdrsub);
@@ -344,9 +381,11 @@ public class DugioHeaderValuesExtractor {
             }).get();
         }catch(ExecutionException ex){
         ex.printStackTrace();
+        logger.severe(ex.getMessage());
         
         } catch (InterruptedException ex) {
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        logger.severe(ex.getMessage());
         }
         }
         
@@ -401,7 +440,10 @@ public class DugioHeaderValuesExtractor {
                         String sailline= line.substring(line.indexOf(" ")+1,line.length());
                         Headers hdr=new Headers();
                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: found "+sailline+" time: "+time);
+                        
                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+sailline+" ? "+checkSubMap.containsKey(sailline));
+                        
+                        logger.info("found "+sailline+" time: "+time+ " : Map contains "+sailline+" ? "+checkSubMap.containsKey(sailline));
                        // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                        
                        //To DO ..update on dissimilar timestamp
@@ -455,8 +497,10 @@ public class DugioHeaderValuesExtractor {
                 }).get();
             } catch (InterruptedException ex) {
                Exceptions.printStackTrace(ex);
+               logger.severe(ex.getMessage());
            } catch (ExecutionException ex) {
                Exceptions.printStackTrace(ex);
+               logger.severe(ex.getMessage());
            }
             
             
@@ -471,7 +515,13 @@ public class DugioHeaderValuesExtractor {
         Volume type 4 :Text
         End
         */
-        
+        }catch(Exception ex){
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
+        }
         
     }
     
@@ -508,6 +558,7 @@ futures.add(
                  Headers hdr = iterator.next();
                          //if(hdr.getTimeStamp().)
                          System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders for "+hdr.getSubsurface().getSubsurface() +" on thread: "+Thread.currentThread().getName());
+                         logger.info("for "+hdr.getSubsurface().getSubsurface() +" on thread: "+Thread.currentThread().getName());
                                      Long traceCount=0L;
                                      Long cmpMax=0L;
                                      Long cmpMin=0L;
@@ -779,6 +830,7 @@ futures.add(
                                      hdr.setOffsetInc(offsetInc);
                                 
                          System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): finished storing headers for : "+hdr.getSubsurface().getSubsurface()+" on Thread: "+Thread.currentThread().getName());
+                         logger.info("finished storing headers for : "+hdr.getSubsurface().getSubsurface()+" on Thread: "+Thread.currentThread().getName());
                            return null;
              }
         }));//.get();
@@ -926,12 +978,16 @@ futures.add(
         }*/
         catch(ExecutionException ex){
             System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): "+ex.getMessage());
+            logger.warning(ex.getMessage());
         }
         catch(ArrayIndexOutOfBoundsException aob){
             System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): "+aob.getMessage());
+            logger.warning(aob.getMessage());
         }
         catch (Exception ex) {
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        logger.log(Level.SEVERE, null, ex);
+        logger.severe(ex.getMessage());
         }
              
                     
@@ -958,7 +1014,7 @@ futures.add(
     private String forEachKey(Headers hdr,String key) throws IOException {
                        /// System.out.println("Inside forEach key with key ="+key);
         
-         
+         try{
                  Process process=new ProcessBuilder(ds.getDugioHeaderValuesSh().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface().getSubsurface(),key).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
@@ -969,7 +1025,9 @@ futures.add(
                         //    System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
                             return value;
                         }
-                       
+         }catch(Exception ex){
+             logger.severe(ex.getMessage());
+         }         
            return null;
                  
                        
@@ -978,6 +1036,7 @@ futures.add(
     
     private String forTraces(Headers hdr) throws IOException{
                       //  System.out.println("Inside forTraces key with NO key");
+                      try{
                         Process process=new ProcessBuilder(ds.getDugioGetTraces().getAbsolutePath(),volume.getAbsolutePath(),hdr.getSubsurface().getSubsurface()).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
@@ -988,7 +1047,9 @@ futures.add(
                          //   System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
                             return value;
                         }
-                       
+                      }catch(Exception ex){
+                          logger.severe(ex.getMessage());
+                      }
                         return null;
                         
     }

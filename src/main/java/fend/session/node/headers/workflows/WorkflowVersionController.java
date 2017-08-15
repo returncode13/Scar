@@ -5,6 +5,7 @@
  */
 package fend.session.node.headers.workflows;
 
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.Volume;
 import db.model.Workflow;
 import db.services.LogsService;
@@ -32,6 +33,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import de.cismet.custom.visualdiff.VersionHolder;
 import de.cismet.custom.visualdiff.WorkflowDifferenceModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.StackPane;
@@ -40,9 +43,13 @@ import javax.swing.SwingUtilities;
 import org.openide.util.Exceptions;
 /**
  *
- * @author adira0150
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class WorkflowVersionController extends Stage implements Initializable{
+    
+    Logger logger=Logger.getLogger(WorkflowVersionController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     private WorkflowVersionModel model;
     private WorkflowVersionNode node;
     ObservableList<Long> versionsObsList;
@@ -78,11 +85,13 @@ public class WorkflowVersionController extends Stage implements Initializable{
             
            
         } catch (Exception ex) {
+            logger.severe(ex.getMessage());
             Exceptions.printStackTrace(ex);
         }
     }
 
     void setModel(WorkflowVersionModel lsm) {
+        try{
         model=lsm;
         List<WorkflowVersionTabModel> tabContents=model.getWfmodel();
         Volume v= vserv.getVolume(lsm.getVolumeSelectionModel().getId());
@@ -122,12 +131,27 @@ public class WorkflowVersionController extends Stage implements Initializable{
             tabpane.getTabs().add(tab);
             
         }
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
     void setView(WorkflowVersionNode aThis) {
+        try{
         this.node=aThis;
         this.setScene(new Scene(node));
         this.showAndWait();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
+
+    public WorkflowVersionController() {
+    logger.addHandler(obpManagerLogDatabaseHandler);
+    logger.setLevel(Level.SEVERE);
+    }
+    
+    
+    
     
 }

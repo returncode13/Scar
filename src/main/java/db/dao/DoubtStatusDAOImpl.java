@@ -176,6 +176,28 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
         }
         return result;             
     }
+
+    @Override
+    public List<DoubtStatus> getDoubtStatusListForJobInSession(Headers hd) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<DoubtStatus> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(DoubtStatus.class);
+            criteria.add(Restrictions.eq("headers", hd));
+            
+            
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;             
+    }
+
     
     
 }

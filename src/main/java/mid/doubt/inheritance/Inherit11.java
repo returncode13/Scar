@@ -161,7 +161,7 @@ public class Inherit11 {
                          
                          
                          
-                         System.out.println("fend.session.node.jobs.dependencies.Inherit11.<init>(): for seq: "+refSeq.getSequenceNumber()+" pdoubt: "+parentSeqDoubtStatus+" cdoubt: "+childSeqDoubtStatus  +" child string equals Y? : "+ childSeqDoubtStatus.equals("Y") + "parent string equals N? :"+parentSeqDoubtStatus.equals("N"));
+                         System.out.println("fend.session.node.jobs.dependencies.Inherit11.<init>(): for seq: "+refSeq.getSequenceNumber()+" pdoubt: "+parentSeqDoubtStatus+" cdoubt: "+childSeqDoubtStatus  +" child string equals Y ? : "+ childSeqDoubtStatus.equals("Y") + " parent string equals N ? :"+parentSeqDoubtStatus.equals("N"));
                             if(parentSeqDoubtStatus.equals("O") &&  childSeqDoubtStatus.equals("O") ) {targetSeq.getDoubt().setStatus("O");targetSeq.getDoubt().setDoubt(true);};
                             if(parentSeqDoubtStatus.equals("O") &&  childSeqDoubtStatus.equals("Y") ) {targetSeq.getDoubt().setStatus("Y");targetSeq.getDoubt().setDoubt(true);};
                             if(parentSeqDoubtStatus.equals("O") &&  childSeqDoubtStatus.equals("N") ) {targetSeq.getDoubt().setStatus("O");targetSeq.getDoubt().setDoubt(true);};
@@ -193,6 +193,10 @@ public class Inherit11 {
                             if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("O") ) {targetSub.getDoubt().setStatus("O");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
                             if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("Y") ) {targetSub.getDoubt().setStatus("Y");targetSub.getDoubt().setDoubt(true);targetSub.getSequenceHeader().getDoubt().setDoubt(true);targetSub.getDoubt().setErrorMessageList(doubtMessageInChildSubFromParentSub);}
                             if(parentSubDoubtStatus.equals("N") &&  childSubDoubtStatus.equals("N") ) {targetSub.getDoubt().setStatus("N");targetSub.getDoubt().setDoubt(false);/*targetSub.getSequenceHeader().getDoubt().setDoubt(true);*/}   //if ALL the subs have doubt=false then and only then does the seq has it doubt=false
+                            
+                            
+                            SequenceHeaders tseq=targetSub.getSequenceHeader();
+                            
                             
                         //Boolean refSubDoubt=refSub.getDoubt().isDoubt();
                         //targetSub.getDoubt().setDoubt(refSubDoubt);

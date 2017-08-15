@@ -8,6 +8,7 @@ package collector;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import core.Seq;
 import core.Sub;
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.Acquisition;
 import db.model.Headers;
 import db.model.Logs;
@@ -51,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -77,8 +79,10 @@ class TempArrayHolder{
     
 }
 public class HeaderCollector {
-    //from frontEnd. user
     
+    //from frontEnd. user
+    Logger logger=Logger.getLogger(HeaderCollector.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     //private VolumeSelectionModelType1 feVolumeSelModel;
     private VolumeSelectionModelType0 feVolumeSelModel;
     //private AcquisitionVolumeModel acqmodel;
@@ -104,15 +108,29 @@ public class HeaderCollector {
     private String logLocation;
     //LogWatcher logForSub;
     final private static LogsService lserv=new LogsServiceImpl();
+
+    public HeaderCollector() {
+        
+        //LogManager.getLogManager().reset();
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
+        
+    }
+    
+    
+    
+    
     
      public void setFeVolumeSelModel(AcquisitionVolumeModel vmod) {
+         try{
        this.feVolumeSelModel=vmod;
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
         
          System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
+         logger.info("Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
-       
+        logger.info("volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
                 
        
         ExecutorService executorService = Executors.newFixedThreadPool(2);
@@ -125,25 +143,31 @@ public class HeaderCollector {
             }
             
         });
+         }catch(Exception ex){
+             logger.severe(ex.getMessage());
+         }
     }
     
     
     
     public void setFeVolumeSelModel(VolumeSelectionModelType1 feVolumeSelModel) {
-        
+        try{
         this.feVolumeSelModel = feVolumeSelModel;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(feVolumeSelModel.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
         Long type=this.feVolumeSelModel.getType();
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): Volume of Type "+type+" found");
        
-            
+            logger.info("Volume of Type "+type+" found");
         
         System.out.println("HeaderColl: Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("HeaderColl: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
+        
+        logger.info("volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
         logLocation=dbVolume.getPathOfVolume()+"/../../000scratch/logs";
                 
         System.out.println("collector.HeaderCollector: looking for logs in "+logLocation);
+        logger.info("looking for logs in "+logLocation);
         
         
         
@@ -159,24 +183,28 @@ public class HeaderCollector {
             }
             
         });
-                 
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }         
         
     }
     
     
     public void setFeVolumeSelModel(VolumeSelectionModelType2 model) {
+        
+        try{
          this.feVolumeSelModel = model;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(model.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
         Long type=this.feVolumeSelModel.getType();
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): Volume of Type "+type+" found");
-       
+       logger.info("Volume of Type "+type+" found");
             
         
         
                 
         System.out.println("collector.HeaderCollector: skipping logs!");
-        
+        logger.info(" skipping logs!");
         
         
         
@@ -191,16 +219,21 @@ public class HeaderCollector {
             }
             
         });
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     
     public void setFeVolumeSelModel(VolumeSelectionModelType4 vmod) {
+        try{
        this.feVolumeSelModel=vmod;
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
         
          System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
+        logger.info("volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
        
                 
        
@@ -214,13 +247,16 @@ public class HeaderCollector {
             }
             
         });
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     private void calculateAndCommitHeaders(){
                         
 
         
-            
+            try{
             
            
                System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): started");
@@ -230,6 +266,7 @@ public class HeaderCollector {
             
             File volume=feVolumeSelModel.getVolumeChosen();
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): started");
+            logger.info("started");
             final Long volumeType=feVolumeSelModel.getVolumeType();
             dugHve.setVolume(volume);
          //   logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
@@ -245,9 +282,10 @@ public class HeaderCollector {
             Map<Seq,Headers> seqHeaderMap=new HashMap<>();
             
             System.out.println("collector.HeaderCollector: calculating headers for "+volume.getAbsolutePath());
-            
+            logger.info("calculating headers for "+volume.getAbsolutePath());
             if(dbVolume.getHeaderExtracted()){
                 System.out.println("collector.HeaderCollector: Headers have been extracted for Volume: "+dbVolume.getNameVolume());
+                logger.info("Headers have been extracted for Volume: "+dbVolume.getNameVolume());
                 existingHeaders=hdrServ.getHeadersFor(dbVolume);
                 for(Headers h:existingHeaders){
                     Seq seq=new Seq();
@@ -271,13 +309,14 @@ public class HeaderCollector {
              final Map<Sub,Headers> finalsubMap=subsurfaceHeaderMap;
             final List<Headers> finalExistingHeaders=existingHeaders;
              System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
-          
+          //   logger.info("running on Thread: "+Thread.currentThread().getName()+" forking");
                        
                        ExecutorService exec1=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
                        exec1.submit(new Callable<ArrayList<Headers>>(){
                            @Override
                            public ArrayList<Headers> call() throws Exception {
                                System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() about to call dugHve.calculateHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
+                              // logger.info("about to call dugHve.calculateHeaders(): running on Thread: "+Thread.currentThread().getName()+" forking");
                                headerList.addAll(dugHve.calculatedHeaders(finalsubMap, finalExistingHeaders,volumeType));
                                return headerList;
                            }
@@ -285,15 +324,18 @@ public class HeaderCollector {
                        
                    
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" joining");
+            //logger.info("running on Thread: "+Thread.currentThread().getName()+" joining");
             if(finalExistingHeaders!=null){
                 headerList.addAll(finalExistingHeaders);                                                         //append any old headers
             }
             if (headerList.isEmpty()){
                 System.out.println("collector.HeaderCollector: headerList is empty");
+                logger.info("headerList is empty");
                // return null;                     // the while loop will break when there are no more headers to process.
             }
             else
-                System.out.println("collector.HeaderCollector: headerList is NOT empty : size: "+headerList.size());                    
+                System.out.println("collector.HeaderCollector: headerList is NOT empty : size: "+headerList.size()); 
+            logger.info("headerList is NOT empty : size: "+headerList.size());
             /*sl=new ArrayList<>();*/
             sl=new HashSet<>();
            seqList=new ArrayList<>();
@@ -304,6 +346,7 @@ public class HeaderCollector {
                     
            // Map<String,String> subInsightVersionFromLogMap=logForSub.getsubInsightVersionMap();
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): committing headers to the database");
+            logger.info("committing headers to the database");
             for (Iterator<Headers> iterator = headerList.iterator(); iterator.hasNext();) {
                 Headers next = iterator.next();
                 next.setVolume(dbVolume);
@@ -322,12 +365,15 @@ public class HeaderCollector {
              
                 Long wfMaxVersion=0L;
                 if(latestLog!=null){
-                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp()+" with insight version: "+latestLog.getInsightVersion());
+                    logger.info("LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp()+" with insight version: "+latestLog.getInsightVersion());
                     next.setInsightVersion(latestLog.getInsightVersion());
                     wfMaxVersion=latestLog.getWorkflow().getWfversion();
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Workflow from the latest log is: "+wfMaxVersion);
+                    logger.info("Workflow from the latest log is: "+wfMaxVersion);
                 }else{
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
+                    logger.info("I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
                     next.setInsightVersion(new String("no logs found"));
                     
                 }
@@ -354,9 +400,12 @@ public class HeaderCollector {
                 if(next.getModified()) 
                 {
                     System.out.println(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
+                    logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
+                    
                     hdrServ.updateHeaders(next.getIdHeaders(), next);       
                 }
                 else{
+                    logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be created!");
                 hdrServ.createHeaders(next);                             //commit to the db
                 }
                 
@@ -390,9 +439,11 @@ public class HeaderCollector {
                 if(next.getModified()) 
                 {
                     System.out.println(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
+                    logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
                     hdrServ.updateHeaders(next.getIdHeaders(), next);       
                 }
                 else{
+                    logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be created!");
                 hdrServ.createHeaders(next);                             //commit to the db
                 }
                 
@@ -418,12 +469,14 @@ public class HeaderCollector {
                 
                 if(volumeType.equals(3L)){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Checking to see if headers exist for acquisition volume type: "+dbVolume.getNameVolume());
+                    logger.info("Checking to see if headers exist for acquisition volume type: "+dbVolume.getNameVolume());
                     List<Headers> lhdr=hdrServ.getHeadersFor(dbVolume,next.getSubsurface());
                     next.setWorkflowVersion(-100L);
                     next.setInsightVersion("0.0");
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() size of headers for Acqvol: "+lhdr.size());
                     if(lhdr.size()==0 ){
                         System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): creating headers for "+next.getSubsurface().getSubsurface());
+                        logger.info("creating headers for "+next.getSubsurface().getSubsurface());
                         hdrServ.createHeaders(next);
                     }
                 }
@@ -440,12 +493,14 @@ public class HeaderCollector {
                 */
                   if(volumeType.equals(4L)){
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Checking to see if headers exist for Text type : "+dbVolume.getNameVolume());
+                    logger.info("Checking to see if headers exist for Text type : "+dbVolume.getNameVolume());
                     List<Headers> lhdr=hdrServ.getHeadersFor(dbVolume,next.getSubsurface());
                     next.setWorkflowVersion(-100L);
                     next.setInsightVersion("0.0");
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders() size of headers for TextVolume : "+lhdr.size());
                     if(lhdr.size()==0 ){
                         System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): creating headers for "+next.getSubsurface().getSubsurface());
+                        logger.info("creating headers for "+next.getSubsurface().getSubsurface());
                         hdrServ.createHeaders(next);
                     }
                 }
@@ -545,9 +600,19 @@ public class HeaderCollector {
         
        // feVolumeSelModel.setHeaderButtonStatus(Boolean.TRUE);
    // }
+            }catch(Exception ex){
+              //ex.printStackTrace();
+              if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
+                    
+            }
     }
 
   public List<SequenceHeaders> getHeaderListForVolume(VolumeSelectionModelType0 vm){
+      try{
       Long type=vm.getType();
       if(type.equals(1L) || type.equals(2L)){
       headersModel=vm.getHeadersModel();
@@ -555,8 +620,18 @@ public class HeaderCollector {
       }
       else{
           System.out.println("collector.HeaderCollector.getHeaderListForVolume(): not implemented for volume type: "+type);
+          logger.info(" Throwing  not implemented for volume type: "+type);
            throw new UnsupportedOperationException("collector.HeaderCollector.getHeaderListForVolume(): Implementation pending for volume type: "+type); 
          
+      }
+      }
+      catch(Exception ex){
+          if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
+          throw ex; 
       }
   }
 

@@ -6,7 +6,11 @@
 package fend.session.node.volumes.type4.listFiles;
 
 import com.sun.xml.internal.ws.api.ha.StickyFeature;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
+import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +35,7 @@ import javafx.stage.Stage;
  */
 public class ListFilesController extends Stage{
 
+   
     ListFilesModel model;
     ListFilesNode node;
     ObservableList<Text> textList;
@@ -64,6 +69,18 @@ public class ListFilesController extends Stage{
             model.setFrom(from);
             model.setTo(to);
              System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.handleOK(): setting values inside model of From: "+from+" : TO: "+to);
+             List<JobModelProperty> jobProps=((VolumeSelectionModelType4)this.model.getVmodel0()).getParentjob().getJobProperties();
+             for (Iterator<JobModelProperty> iterator = jobProps.iterator(); iterator.hasNext();) {
+            JobModelProperty jp = iterator.next();
+            if(jp.getPropertyName().equals("from")){
+                jp.setPropertyValue(new String(""+this.from));
+            }
+            if(jp.getPropertyName().equals("to")){
+                jp.setPropertyValue(new String(""+this.to));
+            }
+        }
+             
+             
              close();
     }
 
@@ -246,5 +263,10 @@ public class ListFilesController extends Stage{
         this.setScene(new Scene(node));
         this.showAndWait();
     }
+
+    
+    
+    
+    
     
 }

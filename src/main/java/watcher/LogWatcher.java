@@ -430,6 +430,7 @@ public  class LogWatcher {
                             l.setInsightVersion(lgw.insightVersion);
                             l.setSubsurfaces(lgw.linename);
                            l.setSequence(lgw.seqno);
+                           
                             lserv.createLogs(l);
                             
                             //   preVersion++;

@@ -6,8 +6,13 @@
  */
 package landing;
 
+
+import db.handler.ObpManagerLogDatabaseHandler;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,13 +27,32 @@ import javafx.stage.Stage;
  */
 public class Landing extends Application {
     
+    Logger logger=Logger.getLogger(Landing.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
+    
+    
+    
     @Override 
     public void start(Stage primaryStage) {
-       LandingNode ln=new LandingNode(new LandingModel());
-        Scene scene = new Scene(ln);
+        System.out.println("landing.Landing.start(): clearing previous logs..");
+        obpManagerLogDatabaseHandler.clear();  //clear existing logs. start a new log entry in db
         
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        LogManager.getLogManager().reset();
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.ALL);
+        
+        try{
+       LandingNode ln=new LandingNode(new LandingModel());
+        }catch(NullPointerException npe){
+            logger.severe("Null pointer exception caught ");
+        }
+        catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
+       /* Scene scene = new Scene(ln);
+       
+       primaryStage.setScene(scene);
+       primaryStage.show();*/
     }
 
     /**

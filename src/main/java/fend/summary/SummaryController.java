@@ -75,6 +75,7 @@ public class SummaryController extends Stage{
                 return param.getValue().seqProperty().asObject();
             }
         });
+        //System.out.println("fend.summary.SummaryController.setModel()");
        
         TableColumn<SummarySequenceModel,String> linenameTableColumn=new TableColumn<>("linename");
         linenameTableColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
@@ -258,7 +259,7 @@ public class SummaryController extends Stage{
                            }catch(ArrayIndexOutOfBoundsException ae){
                                return param.getValue().notApplicableProperty();
                            }catch(IndexOutOfBoundsException ie){
-                               System.out.println(".call(): looking for volindex: "+volindex+" in job: "+jobindex+" depth: "+depindex);
+                               System.out.println("fend.summary.SummaryController.setModel().call(): looking for volindex: "+volindex+" in job: "+jobindex+" depth: "+depindex);
                                 return param.getValue().notApplicableProperty();
                            }
                            
@@ -295,7 +296,7 @@ public class SummaryController extends Stage{
                                    Boolean Pf=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model().getPendingFlagProperty().getValue();
                                    //Boolean Qf=ss.getQcAlert();
                                    Boolean Qf=ss.getDoubt().isDoubt();
-                                   System.out.println(".call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
+                                  // System.out.println("fend.summary.SummaryController.setModel().call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
                                    
                                    if(Pf){
                                        dep="";
@@ -342,7 +343,7 @@ public class SummaryController extends Stage{
                                    Boolean Pf=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model().getPendingFlagProperty().getValue();
                                    //Boolean Qf=ss.getQcAlert();
                                    Boolean Qf=ss.getDoubt().isDoubt();
-                                   System.out.println(".call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
+                                   //System.out.println("fend.summary.SummaryController.setModel().call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
                                    
                                    if(Pf){
                                        dep="";
@@ -414,15 +415,22 @@ public class SummaryController extends Stage{
                                    return param.getValue().notApplicableBooleanProperty(); 
                                }
                                else{
-                                   String inss=new String("");
-                                   Boolean insf=ss.insightFlagProperty().getValue();
+                                   String inss=ss.getInsightVersion();
+                                   /*Boolean insf=ss.insightFlagProperty().getValue();
+                                   
                                    if(insf){
-                                       inss="FAIL";
+                                   inss="FAIL";
                                    }else{
-                                       inss="PASS";
-                                   }
-                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insf);
-                                   System.out.println(".call(): returning: "+param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().get());
+                                   inss="PASS";
+                                   }*/
+                                   
+                                   Boolean insightflag=false;
+                                   if(inss.equals(">1")) insightflag=false;
+                                   else insightflag=true;
+                                   
+                                   //param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insf);
+                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insightflag);
+                                   System.out.println("fend.summary.SummaryController.setModel().call(): returning: "+param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().get());
                                    return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
                                    //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq()).insightFlagProperty();
                                }
@@ -721,7 +729,7 @@ public class SummaryController extends Stage{
                                String cellString=cell.getItem();
                                SummarySequenceModel summarySequenceModel=(SummarySequenceModel) cell.getTableRow().getItem();
                                
-                               System.out.println(".call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
+                               System.out.println("fend.summary.SummaryController.setModel().call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
                                Long type=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
                                 /*
                              Volume type 1L: denoise
@@ -771,7 +779,7 @@ public class SummaryController extends Stage{
                              */
                                
                                if(type.equals(3L)){
-                                   System.out.println(".call():  AcquisitionModel implementation pending");
+                                   System.out.println("fend.summary.SummaryController.setModel().call():  AcquisitionModel implementation pending");
                                }
                             /*
                              Volume type 3L: acq
@@ -1022,7 +1030,7 @@ public class SummaryController extends Stage{
     }
     
     
-    final List<String> depthcolors=Arrays.asList("DimGray","DarkGray");
+    final List<String> depthcolors=Arrays.asList("DIMGRAY","DARKGRAY");
 }
 
 class SHolder{

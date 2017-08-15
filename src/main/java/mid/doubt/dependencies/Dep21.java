@@ -386,7 +386,7 @@ public class Dep21 {
                                     this.parent.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTime);
                                     refSeq.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTime);
                                     refSub.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTime);
-                                    
+                                    setSeqDoubtStatus(refSub);
                                     //this.child.getDoubt().setStatus("N");
                                     //targetSeq.getDoubt().setStatus("N");
                                     //targetSub.getDoubt().setStatus("N");
@@ -394,7 +394,7 @@ public class Dep21 {
                                     this.child.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTime);
                                     targetSeq.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTime);
                                     targetSub.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTime);
-                                    
+                                    setSeqDoubtStatus(targetSub);
                                     
                                     
                                     
@@ -463,7 +463,7 @@ public class Dep21 {
                                     this.parent.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTraces);
                                     refSeq.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTraces);
                                     refSub.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTraces);
-                                    
+                                    setSeqDoubtStatus(refSub);
                                      //this.child.getDoubt().setStatus("N");
                                     //targetSeq.getDoubt().setStatus("N");
                                     //targetSub.getDoubt().setStatus("N");
@@ -471,7 +471,7 @@ public class Dep21 {
                                     this.child.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTraces);
                                     targetSeq.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTraces);
                                     targetSub.getDoubt().removeFromDoubtMap(this.parent,this.child,Doubt.doubtTraces);
-                                    
+                                    setSeqDoubtStatus(targetSub);
                                     
                                     
                                     
@@ -553,12 +553,15 @@ public class Dep21 {
                                                dsServ.createDoubtStatus(ds);
                                                
                                                     this.parent.getDoubt().setStatus("Y");
-                                                    refSeq.getDoubt().setStatus("Y");
+                                                    //refSeq.getDoubt().setStatus("Y");
                                                     refSub.getDoubt().setStatus("Y");
+                                                    setSeqDoubtStatus(refSub);
+                                                    
 
                                                     this.child.getDoubt().setStatus("Y");
-                                                    targetSeq.getDoubt().setStatus("Y");
+                                                    //targetSeq.getDoubt().setStatus("Y");
                                                     targetSub.getDoubt().setStatus("Y");
+                                                    setSeqDoubtStatus(targetSub);
                                                     
                                                                 if(laterTimestamp){
                                                            this.parent.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTime, refSeq.getSequenceNumber()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSeq.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
@@ -619,12 +622,14 @@ public class Dep21 {
                                                 String error=parentChildDoubtstatTime.get(0).getErrorMessage();
                                                 String dtype=parentChildDoubtstatTime.get(0).getDoubtType().getName();
                                                 this.parent.getDoubt().setStatus(status);
-                                                refSeq.getDoubt().setStatus(status);
+                                                //refSeq.getDoubt().setStatus(status);
                                                 refSub.getDoubt().setStatus(status);
+                                                setSeqDoubtStatus(refSub);
                                                     
                                                 this.child.getDoubt().setStatus(status);
-                                                targetSeq.getDoubt().setStatus(status);
+                                                //targetSeq.getDoubt().setStatus(status);
                                                 targetSub.getDoubt().setStatus(status);
+                                                setSeqDoubtStatus(targetSub);
                                                     
                                                 this.parent.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 refSeq.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
@@ -662,12 +667,14 @@ public class Dep21 {
                                                dsServ.createDoubtStatus(ds);  
                                                
                                            this.parent.getDoubt().setStatus("Y");
-                                           refSeq.getDoubt().setStatus("Y");
+                                           //refSeq.getDoubt().setStatus("Y");
                                            refSub.getDoubt().setStatus("Y");
+                                           setSeqDoubtStatus(refSub);
                                            
                                            this.child.getDoubt().setStatus("Y");
-                                           targetSeq.getDoubt().setStatus("Y");
+                                           //targetSeq.getDoubt().setStatus("Y");
                                            targetSub.getDoubt().setStatus("Y");
+                                           setSeqDoubtStatus(targetSub);
                                            
                                            this.parent.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
@@ -697,12 +704,14 @@ public class Dep21 {
                                                 String error=parentChildDoubtStatTrace.get(0).getErrorMessage();
                                                 String dtype=parentChildDoubtStatTrace.get(0).getDoubtType().getName();
                                                 this.parent.getDoubt().setStatus(status);
-                                                refSeq.getDoubt().setStatus(status);
+                                                //refSeq.getDoubt().setStatus(status);
                                                 refSub.getDoubt().setStatus(status);
+                                                setSeqDoubtStatus(refSub);
                                                     
                                                 this.child.getDoubt().setStatus(status);
-                                                targetSeq.getDoubt().setStatus(status);
+                                                //targetSeq.getDoubt().setStatus(status);
                                                 targetSub.getDoubt().setStatus(status);
+                                                setSeqDoubtStatus(targetSub);
                                                     
                                                 this.parent.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
                                                 refSeq.getDoubt().addToDoubtMap(this.parent,this.child,dtype, error);
@@ -846,4 +855,56 @@ public class Dep21 {
         this.session = session;
     }
     
+    private void setSeqDoubtStatus(SubSurfaceHeaders chsub) {
+        SequenceHeaders seq=chsub.getSequenceHeader();
+        boolean seqover=false;
+        boolean seqno=true;
+        boolean seqyes=false;
+        
+        List<SubSurfaceHeaders> subs=seq.getSubsurfaces();
+        for (Iterator<SubSurfaceHeaders> iterator = subs.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            boolean over=true;
+            boolean no=false;
+            boolean yes=true;
+            if(next.getDoubt().getStatus().equals("O")){
+                over=true;
+                no=false;
+                yes=false;
+            }
+            if(next.getDoubt().getStatus().equals("N")){
+                over=false;
+                no=true;
+                yes=false;
+            }
+            if(next.getDoubt().getStatus().equals("Y")){
+                over=false;
+                no=false;
+                yes=true;
+            }
+            
+            seqover= seqover || over;       //if atleast one of the subs is overriden then the seq is overriden
+            seqno=seqno && no;              //if all of the subs are NO then the seq is No;
+            seqyes=seqyes || yes;           //if atleast one of the subs is doubtful (Y) then the seq is doubtful (Y)
+            
+            
+        }
+        
+        if(seqyes){
+            seq.getDoubt().setStatus("Y");
+            seq.getDoubt().setDoubt(true);
+            return;
+        }
+        
+        if(seqover){
+            seq.getDoubt().setStatus("O");
+            seq.getDoubt().setDoubt(true);
+            return;
+        }
+        if(seqno){
+            seq.getDoubt().setStatus("N");
+            seq.getDoubt().setDoubt(false);
+        }
+        
+    }
 }

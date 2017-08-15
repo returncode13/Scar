@@ -50,7 +50,7 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     private   LongProperty cmpMax= new SimpleLongProperty();
     private   LongProperty cmpMin= new SimpleLongProperty();
     private   LongProperty cmpInc= new SimpleLongProperty();
-    private   StringProperty insightVersion=new SimpleStringProperty("to be implemented");             //get from notes.txt
+    private   StringProperty insightVersion=new SimpleStringProperty(this,"insightVersion");             //get from notes.txt
             
     private   BooleanProperty alert=new SimpleBooleanProperty();
     private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
@@ -94,6 +94,21 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     public void setErrorMessageList(List<String> doubtMessage) {
     this.doubtMessage = doubtMessage;
     }*/
+
+    @Override
+    public String getInsightVersion() {
+        return insightVersion.get();
+    }
+
+    public void setInsightVersion(String insightVersion) {
+        this.insightVersion.set(insightVersion);
+    }
+    
+    @Override
+    public StringProperty insightVersionProperty() {
+        return insightVersion;
+    }
+    
     
    
 

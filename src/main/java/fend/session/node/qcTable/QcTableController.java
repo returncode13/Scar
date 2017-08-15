@@ -297,7 +297,7 @@ public class QcTableController extends Stage {
 
     void setView(QcTableNode aThis) {
         node=aThis;
-        this.setTitle("QC Matrix");
+        this.setTitle("QC Table");
         this.setScene(new Scene(node));
         this.showAndWait();
     }

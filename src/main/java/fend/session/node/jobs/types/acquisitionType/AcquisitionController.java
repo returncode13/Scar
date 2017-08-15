@@ -6,6 +6,7 @@
 package fend.session.node.jobs.types.acquisitionType;
 
 import collector.HeaderCollector;
+import db.handler.ObpManagerLogDatabaseHandler;
 import db.services.SequenceService;
 import db.services.SequenceServiceImpl;
 import db.services.SubsurfaceService;
@@ -19,6 +20,8 @@ import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -56,6 +59,8 @@ public class AcquisitionController implements JobStepType0NodeController{
         }
     };
      
+     Logger logger=Logger.getLogger(AcquisitionController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
      
       private AcquisitionJobStepModel model;
     private AcquisitionNode jsn;                                //the real node is jsn.getJobStepNode()
@@ -92,18 +97,35 @@ public class AcquisitionController implements JobStepType0NodeController{
     
     @FXML
     private Button acquisitionBtn;
+
+    public AcquisitionController() {
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
+    }
+    
+    
+    
     
     @FXML
     void showAcqTable(ActionEvent event) {
+        try{
         AcquisitionVolumeModel vmod=(AcquisitionVolumeModel) model.getVolList().get(0);
         System.out.println("fend.session.node.jobs.types.acquisitionType.AcquisitionController.showAcqTable(): loaded volume model: "+vmod.getLabel()+" id: "+vmod.getId());
         hcollector.setFeVolumeSelModel(vmod);
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
      @FXML
     void handleJobStepLabelTextField(ActionEvent event) {
+        try{
             String name=jobStepTextField.getText();
             if(name!=null)model.setJobStepText(name);
+        }
+        catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
     
     
@@ -116,17 +138,25 @@ public class AcquisitionController implements JobStepType0NodeController{
     void onLinkDragDropped(DragEvent event) {
         //jsn.getParent().setOnDragOver(null);
       //  jsn.getParent().setOnDragDropped(null);
+      try{
         System.out.println("JSNC: LinkDragDropped On");
         event.setDropCompleted(true);
         event.consume();
+      }catch(Exception ex){
+          logger.severe(ex.getMessage());
+      }
         
 
     }
     
        @FXML
     void handleOnMouseDragEntered(MouseEvent event) {
+        try{
             System.out.println("Drag Mouse Entered on "+model.getId());
-            
+        }
+        catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
             
             
     }

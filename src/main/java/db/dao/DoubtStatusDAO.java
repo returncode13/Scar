@@ -28,6 +28,7 @@ public interface DoubtStatusDAO {
     public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails sd, DoubtType dt);
 
     public List<DoubtStatus> getDoubtStatusListForJobInSession(SessionDetails parentsd, Long childsdId,DoubtType dt, Headers hd);
+     public List<DoubtStatus> getDoubtStatusListForJobInSession(Headers hd);
     
     
 }

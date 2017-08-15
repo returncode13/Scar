@@ -75,6 +75,9 @@ public class SequenceHeaders implements Serializable{
     private final BooleanProperty passedQC = new SimpleBooleanProperty();
     
     private final BooleanProperty dependency = new SimpleBooleanProperty(Boolean.TRUE);
+    
+    private Set<String> insightSet=new HashSet<>();
+    
     /*private List<String> errorMessageList=new ArrayList<>();
     
     public List<String> getErrorMessageList() {
@@ -106,9 +109,15 @@ public class SequenceHeaders implements Serializable{
     public void setDoubt(Doubt doubt) {
         this.doubt = doubt;
     }
-    private final StringProperty insightVersion = new SimpleStringProperty();
+    private final StringProperty insightVersion = new SimpleStringProperty(this,"insightVersion");
 
     public String getInsightVersion() {
+        if(insightSet.size()>1){
+            insightVersion.set(new String(">1"));
+        }else{
+            insightVersion.set(new ArrayList<String>(insightSet).get(0));
+        }
+        
         return insightVersion.get();
     }
 
@@ -117,6 +126,11 @@ public class SequenceHeaders implements Serializable{
     }
 
     public StringProperty insightVersionProperty() {
+        if(insightSet.size()>1){
+            insightVersion.set(new String(">1"));
+        }else{
+            insightVersion.set(new ArrayList<String>(insightSet).get(0));
+        }
         return insightVersion;
     }
     
@@ -269,19 +283,26 @@ public class SequenceHeaders implements Serializable{
             return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
         }).getSequenceNumber();
         
-        String ins1=Collections.min(subsurfaces,(SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
-          return o1.getInsightVersion().compareTo(o2.getInsightVersion());
+        
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            this.insightSet.add(next.getInsightVersion());
+            
+        }
+        
+        /* String ins1=Collections.min(subsurfaces,(SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
+        return o1.getInsightVersion().compareTo(o2.getInsightVersion());
         }).getInsightVersion();
         
-         String ins2=Collections.max(subsurfaces,(SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
-          return o1.getInsightVersion().compareTo(o2.getInsightVersion());
+        String ins2=Collections.max(subsurfaces,(SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
+        return o1.getInsightVersion().compareTo(o2.getInsightVersion());
         }).getInsightVersion();
-         
-         if(ins1.equals(ins2)){
-             this.insightVersion.set(ins1);
+        
+        if(ins1.equals(ins2)){
+        this.insightVersion.set(ins1);
         }else{
-             this.insightVersion.set(new String(">1"));
-         }
+        this.insightVersion.set(new String(">1"));
+        }*/
         
         
     }

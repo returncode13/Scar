@@ -5,11 +5,15 @@
  */
 package fend.session.node.headers;
 
+import db.handler.ObpManagerLogDatabaseHandler;
+import db.model.DoubtStatus;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workflow;
+import db.services.DoubtStatusService;
+import db.services.DoubtStatusServiceImpl;
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
@@ -18,6 +22,9 @@ import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
+import fend.session.node.headers.doubtoverride.OverrideModel;
+import fend.session.node.headers.doubtoverride.OverrideNode;
+import fend.session.node.headers.doubtoverride.entries.Entries;
 import fend.session.node.headers.logger.LogsModel;
 import fend.session.node.headers.logger.LogsNode;
 import fend.session.node.headers.logger.VersionLogsModel;
@@ -40,6 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -55,6 +63,7 @@ import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.hibernate.annotations.common.util.impl.Log;
 import watcher.LogWatcher;
 
@@ -63,10 +72,11 @@ import watcher.LogWatcher;
  *
  * @author sharath
  */
-public class HeadersViewController extends Stage implements Initializable {
+public class HeadersViewController extends Stage  {
 
      private Map<Integer,TreeItem<SequenceHeaders>> idxForTree=new HashMap<>();
-    
+    Logger logger=Logger.getLogger(HeadersViewController.class.getName());
+    ObpManagerLogDatabaseHandler obpManagerLogDatabaseHandler=new ObpManagerLogDatabaseHandler();
     private HeadersModel hmodel;
     private HeadersNode hnode;
     ObservableList<SequenceHeaders> seqListObs;
@@ -74,6 +84,16 @@ public class HeadersViewController extends Stage implements Initializable {
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
     SubsurfaceService subserv=new SubsurfaceServiceImpl();
+    DoubtStatusService dbstatusServ=new DoubtStatusServiceImpl();
+
+    public HeadersViewController() {
+        logger.addHandler(obpManagerLogDatabaseHandler);
+        logger.setLevel(Level.SEVERE);
+    }
+    
+    
+    
+    
     
     String vname=new String();        
    
@@ -88,18 +108,20 @@ public class HeadersViewController extends Stage implements Initializable {
      * 
      */
        
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+       
 
     void setModel(HeadersModel lsm,int seqSelection) {
+        
+        
+        try{
+        
         if(lsm==null){
             System.out.println("fend.session.node.headers.setModel: lsm is NULL");
         }
       hmodel=lsm;  
       vname=hmodel.getVolmodel().getVolumeChosen().getName();
      seqListObs=hmodel.getSequenceListInHeaders();
+        System.out.println("fend.session.node.headers.HeadersViewController.setModel(): size of seqlist: "+seqListObs.size());
      /*
      treetableView.setRowFactory(tv-> new TreeTableRow<Sequences>(){
      @Override
@@ -154,19 +176,42 @@ public class HeadersViewController extends Stage implements Initializable {
                     setStyle("");
                     setContextMenu(null);
                 }//else if(item.getQcAlert()){
-                if(item!=null)System.out.println(".updateItem() seq: "+item.getSequenceNumber()+" sub: "+item.getSubsurface()+" isDependency(): "+item.isDependency()+" Doubt: "+item.getDoubt().isDoubt());
-                if(item!=null && !item.isDependency()){
+                if(item!=null)System.out.println(".updateItem() seq: "+item.getSequenceNumber()+" sub: "+item.getSubsurface()+" isDependency(): "+item.isDependency()+" Doubt: "+item.getDoubt().isDoubt()+" Status: "+item.getDoubt().getStatus());
+                
+                //doubts because of dependency failures
+                
+                if(item!=null && item.getDoubt().isDoubt() && !item.isDependency() && item.getDoubt().getStatus().equals("Y")){
                     setStyle("-fx-background-color:orange");
                     setTooltip(new Tooltip(item.getErrorMessage()));
+                    contextMenu.getItems().add(explainDoubt);
+                    contextMenu.getItems().add(showOverride);
                     setContextMenu(contextMenu);
-                }if(item!=null && item.getDoubt().isDoubt() && item.isDependency()){
+                }else if(item!=null && item.getDoubt().isDoubt() && !item.isDependency() && item.getDoubt().getStatus().equals("O")){
+                    setStyle("-fx-background-color: pink");
+                    setTooltip(new Tooltip(item.getErrorMessage()));
+                    contextMenu.getItems().add(explainDoubt);
+                    contextMenu.getItems().add(showOverride);
+                    setContextMenu(contextMenu);
+                }
+                
+                
+                //doubts because of QC failures
+                
+                    if(item!=null && item.getDoubt().isDoubt() && item.isDependency() && item.getDoubt().getStatus().equals("Y")){
                     setStyle("-fx-background-color:purple");
                     //setTooltip(new Tooltip(item.getDoubt().getErrorMessageList()));
                     contextMenu.getItems().add(explainDoubt);
                     contextMenu.getItems().add(showOverride);
                     setContextMenu(contextMenu);
                 }
-                else
+                else if(item!=null && item.getDoubt().isDoubt() && item.isDependency() && item.getDoubt().getStatus().equals("O")){
+                    setStyle("-fx-background-color:#f0c2e0");
+                    //setTooltip(new Tooltip(item.getDoubt().getErrorMessageList()));
+                    contextMenu.getItems().add(explainDoubt);
+                    contextMenu.getItems().add(showOverride);
+                    setContextMenu(contextMenu);
+                }
+                else if(item!=null && !item.getDoubt().isDoubt())
                 {
                     //setStyle("-fx-background-color:green");
                    // setStyle(../landingResources/landing.css)
@@ -187,10 +232,48 @@ public class HeadersViewController extends Stage implements Initializable {
        System.out.println("fend.session.node.headers.HeadersViewController.setModel(): explain Doubt clicked for "+seq.getSubsurface()+ " doubt is :"+seq.getDoubt().isDoubt()+" message is: "+seq.getDoubt().getErrorMessageList());
        });
          
+       
        showOverride.setOnAction(evt->{
            SequenceHeaders seq=row.getItem();
            System.out.println("fend.session.node.headers.HeadersViewController.setModel(): override clicked for "+seq.getSubsurface()+ " doubt is :"+seq.getDoubt().isDoubt());
+           System.out.println("fend.session.node.headers.HeadersViewController.setModel(): displaying list of doubts");
+           Volume v=vserv.getVolume(lsm.getVolmodel().getId());
+           Subsurface sub= subserv.getSubsurfaceObjBysubsurfacename(seq.getSubsurface());
+           List<Headers> h=hdserv.getHeadersFor(v, sub);
+           if(h.size()==1){
+               System.out.println("fend.session.node.headers.HeadersViewController.setModel(): searching for doubttype for header ID: "+h.get(0).getIdHeaders());
+               List<DoubtStatus> doubtStatusList=dbstatusServ.getDoubtStatusListForJobInSession(h.get(0));
+               List<Entries> entries=new ArrayList<>();
+               for (Iterator<DoubtStatus> iterator = doubtStatusList.iterator(); iterator.hasNext();) {
+                   DoubtStatus next = iterator.next();
+                   System.out.println("fend.session.node.headers.HeadersViewController.setModel(): DoubtType: "+next.getDoubtType().getName()+" DoubtMessage: "+next.getErrorMessage()+" DoubtStatus: "+next.getStatus());
+                   Entries entry=new Entries();
+                   entry.setSubsurface(sub.getSubsurface());
+                   entry.setStatus(next.getStatus());
+                   entry.setErrorMessage(next.getErrorMessage());
+                   entry.setDoubtType(next.getDoubtType().getName());
+                   entry.setDoubtStatusObject(next);
+                   
+                   entries.add(entry);
+                   
+               }
+                    
+               
+               
+               OverrideModel overrideModel=new OverrideModel();
+               overrideModel.setObsentries(entries);
+               OverrideNode overrideNode=new OverrideNode(overrideModel);
+               
+               
+               
+           }else{
+               System.out.println("fend.session.node.headers.HeadersViewController.setModel(): sub:  "+sub.getSubsurface()+" in volume: "+v.getNameVolume()+" has a header size NOT EQUAL TO ONE");
+               logger.severe("sub:  "+sub.getSubsurface()+" in volume: "+v.getNameVolume()+" has a header size NOT EQUAL TO ONE");
+           }
+           
        });
+       
+       
          
          showLogsMenuItem.setOnAction(evt->{
              SequenceHeaders seq=row.getItem();
@@ -204,6 +287,7 @@ public class HeadersViewController extends Stage implements Initializable {
              if(h.size()==1){
                  
                  System.out.println("fend.session.node.headers.setRowFactory(): Headers : sub: "+h.get(0).getSubsurface()+" id: "+h.get(0).getIdHeaders());
+                 logger.info("sub: "+h.get(0).getSubsurface()+" id: "+h.get(0).getIdHeaders());
                  List<Logs> loglist=lserv.getLogsFor(h.get(0));
                  if(loglist.isEmpty()){
                      /* String logLocation=v.getPathOfVolume();
@@ -282,6 +366,7 @@ public class HeadersViewController extends Stage implements Initializable {
             
             if(h.size()!=1){
                 System.out.println("fend.session.node.headers.HeadersViewController.setModel(): Something's unusual. more than more header entry found for :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+                logger.severe("Something's unusual. more than more header entry found for :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
             }
             if(h!=null){
                 List<Logs> loglist=lserv.getLogsFor(h.get(0));
@@ -314,6 +399,7 @@ public class HeadersViewController extends Stage implements Initializable {
             }
             else{
                 System.out.println("fend.session.node.headers.HeadersViewController.setModel(): No header entry found! :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
+                logger.severe("No header entry found! :Volume: "+v.getNameVolume()+" : sub: "+seq.getSubsurface());
             }
           });
          
@@ -345,7 +431,8 @@ public class HeadersViewController extends Stage implements Initializable {
         TreeTableColumn<SequenceHeaders,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
         TreeTableColumn<SequenceHeaders,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
         TreeTableColumn<SequenceHeaders,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
-        TreeTableColumn<SequenceHeaders,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
+       // TreeTableColumn<SequenceHeaders,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
+        TreeTableColumn<SequenceHeaders,String>  insightVersion=new TreeTableColumn<>("insightVersion");
         TreeTableColumn<SequenceHeaders,Boolean>  alert=new TreeTableColumn<>("alert");
         TreeTableColumn<SequenceHeaders,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
         TreeTableColumn<SequenceHeaders,Boolean>  modified=new TreeTableColumn<>("modified");
@@ -374,7 +461,13 @@ public class HeadersViewController extends Stage implements Initializable {
         cmpMax.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpMax"));
         cmpMin.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpMin"));
         cmpInc.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpInc"));
-        insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
+        insightVersion.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceHeaders, String> param) {
+                return param.getValue().getValue().insightVersionProperty();
+            }
+        });
+       // insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
         alert.setCellValueFactory(new TreeItemPropertyValueFactory<>("alert"));
         numberOfRuns.setCellValueFactory(new TreeItemPropertyValueFactory<>("numberOfRuns"));
         modified.setCellValueFactory(new TreeItemPropertyValueFactory<>("modified"));
@@ -574,15 +667,23 @@ public class HeadersViewController extends Stage implements Initializable {
      }
      
      
-   
+    }catch(Exception ex){
+    logger.severe(ex.getMessage());
+    }
      
     }
 
     void setView(HeadersNode aThis) {
+        
+        
+        try{
         hnode=aThis;
         this.setTitle("Results for "+vname);
         this.setScene(new Scene(hnode));
         this.showAndWait();
+        }catch(Exception ex){
+            logger.severe(ex.getMessage());
+        }
     }
 
     
