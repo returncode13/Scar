@@ -19,7 +19,8 @@ import javafx.beans.property.StringProperty;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class SummarySequenceModel {
     

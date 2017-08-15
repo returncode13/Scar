@@ -139,7 +139,11 @@ public class DugioHeaderValuesExtractor {
         try{
         this.volume = volume;
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
     }
     
@@ -178,7 +182,11 @@ public class DugioHeaderValuesExtractor {
         logger.info("Time Taken: "+deltaTime+" headers.size(): "+headers.size());
          
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
         
         return headers;
@@ -278,8 +286,10 @@ public class DugioHeaderValuesExtractor {
             }).get();
         }catch(ExecutionException ex){
         ex.printStackTrace();
+        logger.severe(ex.getMessage());
         
         } catch (InterruptedException ex) {
+            logger.severe(ex.getMessage());
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
         }
@@ -371,9 +381,11 @@ public class DugioHeaderValuesExtractor {
             }).get();
         }catch(ExecutionException ex){
         ex.printStackTrace();
+        logger.severe(ex.getMessage());
         
         } catch (InterruptedException ex) {
         Logger.getLogger(DugioHeaderValuesExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        logger.severe(ex.getMessage());
         }
         }
         
@@ -485,8 +497,10 @@ public class DugioHeaderValuesExtractor {
                 }).get();
             } catch (InterruptedException ex) {
                Exceptions.printStackTrace(ex);
+               logger.severe(ex.getMessage());
            } catch (ExecutionException ex) {
                Exceptions.printStackTrace(ex);
+               logger.severe(ex.getMessage());
            }
             
             
@@ -502,7 +516,11 @@ public class DugioHeaderValuesExtractor {
         End
         */
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
         
     }

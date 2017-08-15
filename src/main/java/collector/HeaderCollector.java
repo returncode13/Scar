@@ -365,8 +365,8 @@ public class HeaderCollector {
              
                 Long wfMaxVersion=0L;
                 if(latestLog!=null){
-                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
-                    logger.info("LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp());
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp()+" with insight version: "+latestLog.getInsightVersion());
+                    logger.info("LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp()+" with insight version: "+latestLog.getInsightVersion());
                     next.setInsightVersion(latestLog.getInsightVersion());
                     wfMaxVersion=latestLog.getWorkflow().getWfversion();
                     System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Workflow from the latest log is: "+wfMaxVersion);
@@ -601,7 +601,13 @@ public class HeaderCollector {
        // feVolumeSelModel.setHeaderButtonStatus(Boolean.TRUE);
    // }
             }catch(Exception ex){
-                logger.severe(ex.getMessage());
+              //ex.printStackTrace();
+              if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
+                    
             }
     }
 
@@ -620,7 +626,11 @@ public class HeaderCollector {
       }
       }
       catch(Exception ex){
-          logger.severe(ex.getMessage());
+          if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
           throw ex; 
       }
   }

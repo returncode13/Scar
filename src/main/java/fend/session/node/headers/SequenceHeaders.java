@@ -109,7 +109,7 @@ public class SequenceHeaders implements Serializable{
     public void setDoubt(Doubt doubt) {
         this.doubt = doubt;
     }
-    private final StringProperty insightVersion = new SimpleStringProperty();
+    private final StringProperty insightVersion = new SimpleStringProperty(this,"insightVersion");
 
     public String getInsightVersion() {
         if(insightSet.size()>1){
@@ -126,6 +126,11 @@ public class SequenceHeaders implements Serializable{
     }
 
     public StringProperty insightVersionProperty() {
+        if(insightSet.size()>1){
+            insightVersion.set(new String(">1"));
+        }else{
+            insightVersion.set(new ArrayList<String>(insightSet).get(0));
+        }
         return insightVersion;
     }
     

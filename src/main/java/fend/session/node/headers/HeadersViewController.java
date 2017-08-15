@@ -47,6 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,6 +63,7 @@ import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.hibernate.annotations.common.util.impl.Log;
 import watcher.LogWatcher;
 
@@ -429,7 +431,8 @@ public class HeadersViewController extends Stage  {
         TreeTableColumn<SequenceHeaders,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
         TreeTableColumn<SequenceHeaders,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
         TreeTableColumn<SequenceHeaders,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
-        TreeTableColumn<SequenceHeaders,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
+       // TreeTableColumn<SequenceHeaders,Long>  insightVersion=new TreeTableColumn<>("insightVersion");
+        TreeTableColumn<SequenceHeaders,String>  insightVersion=new TreeTableColumn<>("insightVersion");
         TreeTableColumn<SequenceHeaders,Boolean>  alert=new TreeTableColumn<>("alert");
         TreeTableColumn<SequenceHeaders,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
         TreeTableColumn<SequenceHeaders,Boolean>  modified=new TreeTableColumn<>("modified");
@@ -458,7 +461,13 @@ public class HeadersViewController extends Stage  {
         cmpMax.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpMax"));
         cmpMin.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpMin"));
         cmpInc.setCellValueFactory(new TreeItemPropertyValueFactory<>("cmpInc"));
-        insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
+        insightVersion.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceHeaders, String> param) {
+                return param.getValue().getValue().insightVersionProperty();
+            }
+        });
+       // insightVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("insightVersion"));
         alert.setCellValueFactory(new TreeItemPropertyValueFactory<>("alert"));
         numberOfRuns.setCellValueFactory(new TreeItemPropertyValueFactory<>("numberOfRuns"));
         modified.setCellValueFactory(new TreeItemPropertyValueFactory<>("modified"));

@@ -215,7 +215,11 @@ public class Collector {
        // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
         setupEntries();
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+           if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
     }
     
@@ -727,7 +731,11 @@ public class Collector {
         
         commitEntries();
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
     }
     
@@ -925,7 +933,11 @@ public class Collector {
        
         startWatching();
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
     }
    
@@ -1044,7 +1056,11 @@ public class Collector {
           
       }
          }catch(Exception ex){
-             logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
          }
          
     }
@@ -1193,7 +1209,11 @@ public class Collector {
           
       }
          }catch(Exception ex){
-             logger.severe(ex.getMessage());
+             if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
          }
     }
 
@@ -1218,7 +1238,11 @@ public class Collector {
              }
         }
         }catch(Exception ex){
-            logger.severe(ex.getMessage());
+            if ( ex instanceof NullPointerException){
+                  logger.severe("Null pointer exception encountered");
+              }else{
+                  logger.severe(ex.getMessage());
+              }
         }
     }
 

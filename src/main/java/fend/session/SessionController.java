@@ -251,7 +251,7 @@ public class SessionController implements Initializable {
     public SessionController() {
         //LogManager.getLogManager().reset();
         logger.addHandler(obpManagerLogDatabaseHandler);
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.SEVERE);
     }
              
      

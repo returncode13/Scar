@@ -415,14 +415,21 @@ public class SummaryController extends Stage{
                                    return param.getValue().notApplicableBooleanProperty(); 
                                }
                                else{
-                                   String inss=new String("");
-                                   Boolean insf=ss.insightFlagProperty().getValue();
+                                   String inss=ss.getInsightVersion();
+                                   /*Boolean insf=ss.insightFlagProperty().getValue();
+                                   
                                    if(insf){
-                                       inss="FAIL";
+                                   inss="FAIL";
                                    }else{
-                                       inss="PASS";
-                                   }
-                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insf);
+                                   inss="PASS";
+                                   }*/
+                                   
+                                   Boolean insightflag=false;
+                                   if(inss.equals(">1")) insightflag=false;
+                                   else insightflag=true;
+                                   
+                                   //param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insf);
+                                   param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).setIns(insightflag);
                                    System.out.println("fend.summary.SummaryController.setModel().call(): returning: "+param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty().get());
                                    return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).insProperty();
                                    //return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq()).insightFlagProperty();
