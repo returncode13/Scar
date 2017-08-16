@@ -132,7 +132,7 @@ public class DugioHeaderValuesExtractor {
     public DugioHeaderValuesExtractor(){
         //LogManager.getLogManager().reset();
         logger.addHandler(obpManagerLogDatabaseHandler);
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.SEVERE);
     }
 
     public void setVolume(File volume) {
