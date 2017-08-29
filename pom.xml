@@ -4,7 +4,7 @@
 
     <groupId>landing</groupId>
     <artifactId>Scar</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT-install</version>
     <packaging>jar</packaging>
 
     <name>Scar</name>
@@ -152,4 +152,5 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+    <description>Install tables (temporarily)</description>
 </project>

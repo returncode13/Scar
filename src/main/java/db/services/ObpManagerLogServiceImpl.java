@@ -8,6 +8,7 @@ package db.services;
 import db.dao.ObpManagerLogDAO;
 import db.dao.ObpManagerLogDAOImpl;
 import db.model.ObpManagerLog;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,27 +20,29 @@ public class ObpManagerLogServiceImpl implements ObpManagerLogService{
 
     @Override
     public void createObpManagerLog(ObpManagerLog o) {
-        odao.createObpManagerLog(o);
+      //  odao.createObpManagerLog(o);          //uncommet in install version
     }
 
     @Override
     public ObpManagerLog getObpManagerLog(Long oid) {
-        return odao.getObpManagerLog(oid);
+        //return odao.getObpManagerLog(oid);    //uncommet in install version
+        return new ObpManagerLog();  //comment in install
     }
 
     @Override
     public void updateObpManagerLog(Long oid, ObpManagerLog newO) {
-        updateObpManagerLog(oid, newO);
+        //updateObpManagerLog(oid, newO);   //uncommet in install version
     }
 
     @Override
     public void deleteObpManagerLog(Long oid) {
-        odao.deleteObpManagerLog(oid);
+        //odao.deleteObpManagerLog(oid);    //uncommet in install version
     }
 
     @Override
     public List<ObpManagerLog> getObpManagerLogs() {
-        return odao.getObpManagerLogs();
+       // return odao.getObpManagerLogs();  //uncommet in install version
+       return new ArrayList<>(); //comment in install
     }
     
 }
