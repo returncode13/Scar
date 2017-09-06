@@ -28,6 +28,8 @@ import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioHeaderValuesExtractor;
+import fend.session.dialogs.DialogModel;
+import fend.session.dialogs.DialogNode;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
@@ -126,7 +128,14 @@ public class HeaderCollector {
        this.feVolumeSelModel=vmod;
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
-        
+        if(dbVolume==null){
+           System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): dbVol is null");
+            DialogModel dm=new DialogModel();
+                            String message="Please save the session before attempting to extract headers ";
+                            dm.setMessage(message);
+                            DialogNode dn=new DialogNode(dm);
+                            return;
+       }
          System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
          logger.info("Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
@@ -155,6 +164,14 @@ public class HeaderCollector {
         this.feVolumeSelModel = feVolumeSelModel;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(feVolumeSelModel.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
+        if(dbVolume==null){
+           System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): dbVol is null");
+            DialogModel dm=new DialogModel();
+                            String message="Please save the session before attempting to extract headers ";
+                            dm.setMessage(message);
+                            DialogNode dn=new DialogNode(dm);
+                            return;
+       }
         Long type=this.feVolumeSelModel.getType();
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): Volume of Type "+type+" found");
        
@@ -196,6 +213,15 @@ public class HeaderCollector {
          this.feVolumeSelModel = model;
         this.headersModel=this.feVolumeSelModel.getHeadersModel();
         dbVolume = volServ.getVolume(model.getId());                                 //retrieve the correct dbVolume from the db. This would mean that the dbVolume table needs to exist before Headers are retrieved
+       if(dbVolume==null){
+           System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): dbVol is null");
+            DialogModel dm=new DialogModel();
+                            String message="Please save the session before attempting to extract headers ";
+                            dm.setMessage(message);
+                            DialogNode dn=new DialogNode(dm);
+                            return;
+       }
+        
         Long type=this.feVolumeSelModel.getType();
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): Volume of Type "+type+" found");
        logger.info("Volume of Type "+type+" found");
@@ -230,7 +256,14 @@ public class HeaderCollector {
        this.feVolumeSelModel=vmod;
        this.headersModel=feVolumeSelModel.getHeadersModel();
         dbVolume=volServ.getVolume(feVolumeSelModel.getId());
-        
+        if(dbVolume==null){
+           System.out.println("collector.HeaderCollector.setFeVolumeSelModel(): dbVol is null");
+            DialogModel dm=new DialogModel();
+                            String message="Please save the session before attempting to extract headers ";
+                            dm.setMessage(message);
+                            DialogNode dn=new DialogNode(dm);
+                            return;
+       }
          System.out.println("collector.HeaderCollector.setFeVolumeSelModel: Set the volume Sel model "+feVolumeSelModel.getLabel());
         System.out.println("collector.HeaderCollector.setFeVolumeSelModel: volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());
         logger.info("volume retrieved from db id:  "+dbVolume.getIdVolume()+ " name: "+dbVolume.getNameVolume());

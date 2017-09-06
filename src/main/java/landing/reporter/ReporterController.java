@@ -27,14 +27,14 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import landing.reporter.page.ReportPage;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class ReporterController extends Stage{
-    private final String htmlLocation="/d/home/adira0150/programming/php/submit_out.html";
+    private final String htmlLocation="/d/home/dubai0197/programming/php/submit_out.html";
     final File file=new File(htmlLocation);
     private URL url;
     //private String url="http://10.11.1.180/obpmanager/report.html";
@@ -98,16 +98,17 @@ public class ReporterController extends Stage{
         System.out.println("landing.reporter.ReporterController.setModel(): finished setting logContent to : "+logContent);
         Writer writer=null;
         try{
-            writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-            writer.write(page.getHtmlContent());
+        writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+        writer.write(page.getHtmlContent());
         }catch(IOException ioe){
-            ioe.printStackTrace();
+        ioe.printStackTrace();
         }finally{
-           try {
-               writer.close();
-           } catch (IOException ex) {
-               Exceptions.printStackTrace(ex);
-           }
+        try {
+        writer.close();
+        } catch (IOException ex) {
+        // Exceptions.printStackTrace(ex);
+        ex.printStackTrace();
+        }
         }
         
          this.node=aThis;
@@ -120,8 +121,8 @@ public class ReporterController extends Stage{
         final WebEngine webengine=webView.getEngine();
         //webengine.load(url);
         System.out.println("landing.reporter.ReporterController.setView(): Loading "+file.getAbsolutePath());
-        webengine.load(file.getAbsolutePath());
-       // webengine.load(page.getHtmlContent());
+        //webengine.load(file.getAbsolutePath());
+        webengine.load(page.getHtmlContent());
         this.setTitle("Reporter");
         this.setScene(new Scene(node));
         this.showAndWait();

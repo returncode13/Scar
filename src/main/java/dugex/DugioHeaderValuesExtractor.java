@@ -32,7 +32,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
@@ -496,10 +496,12 @@ public class DugioHeaderValuesExtractor {
                 
                 }).get();
             } catch (InterruptedException ex) {
-               Exceptions.printStackTrace(ex);
+               //Exceptions.printStackTrace(ex);
+               ex.printStackTrace();
                logger.severe(ex.getMessage());
            } catch (ExecutionException ex) {
-               Exceptions.printStackTrace(ex);
+               //Exceptions.printStackTrace(ex);
+               ex.printStackTrace();
                logger.severe(ex.getMessage());
            }
             

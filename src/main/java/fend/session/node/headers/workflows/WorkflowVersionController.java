@@ -40,7 +40,7 @@ import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.StackPane;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 /**
  *
  * @author sharath nair
@@ -86,7 +86,8 @@ public class WorkflowVersionController extends Stage implements Initializable{
            
         } catch (Exception ex) {
             logger.severe(ex.getMessage());
-            Exceptions.printStackTrace(ex);
+//            Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         }
     }
 

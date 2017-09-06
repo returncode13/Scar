@@ -135,7 +135,7 @@ import landing.settings.ssh.SShSettingsWrapper;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  * FXML Controller class
@@ -280,7 +280,8 @@ public class LandingController extends Stage implements Initializable,Serializab
             //logger.log(Level.SEVERE, "File not found!: {0}", ex.getMessage());
             logger.severe("File not foun");
             //logger.log(Level.SEVERE, null, ex);
-            Exceptions.printStackTrace(ex);
+            //Exceptions.printStackTrace(ex);'
+            ex.printStackTrace();
             
             
         } finally {
@@ -288,7 +289,8 @@ public class LandingController extends Stage implements Initializable,Serializab
                 is.close();
             } catch (IOException ex) {
                 logger.severe("Couldn't close file");
-                Exceptions.printStackTrace(ex);
+               // Exceptions.printStackTrace(ex);
+               ex.printStackTrace();
             }
         }
     }
@@ -350,13 +352,15 @@ public class LandingController extends Stage implements Initializable,Serializab
            
         } catch (FileNotFoundException ex) {
             logger.severe("file not found! : "+ ex.getMessage());
-            Exceptions.printStackTrace(ex);
+           // Exceptions.printStackTrace(ex);
+           ex.printStackTrace();
         } finally {
             try {
                 is.close();
             } catch (IOException ex) {
                 logger.severe("Can't close file : "+ ex.getMessage());
-                Exceptions.printStackTrace(ex);
+               //Exceptions.printStackTrace(ex);
+               ex.printStackTrace();
             }
         }
         

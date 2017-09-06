@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
@@ -170,7 +170,8 @@ public  class LogWatcher {
                                             }
                                         }
                                     } catch (IOException ex) {
-                                        Exceptions.printStackTrace(ex);
+                                        //Exceptions.printStackTrace(ex);
+                                        ex.printStackTrace();
                                     }
                                     
                                     }
