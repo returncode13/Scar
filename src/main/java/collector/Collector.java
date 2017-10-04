@@ -70,7 +70,10 @@ import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.SessionModel;
+import fend.session.dialogs.DialogModel;
+import fend.session.dialogs.DialogNode;
 import fend.session.node.headers.SubSurfaceHeaders;
+import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
@@ -210,8 +213,56 @@ public class Collector {
              System.out.println("collector.Collector.saveCurrentSession(): List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
              //logger.log(Level.INFO, "List of Jobs in session: {0} :ID: {1}", new Object[]{next.getJobStepText(), next.getId()});
              logger.info("List of Jobs in session: "+next.getJobStepText()+" :ID: "+next.getId());
+             
+             List<VolumeSelectionModelType0> vl=next.getVolList();
+             if(vl.isEmpty()){
+                 System.out.println("collector.Collector.saveCurrentSession(): vl is empty for job "+next.getJobStepText());
+                 DialogModel dm=new DialogModel();
+                 String message="Please add a volume to the node "+next.getJobStepText()+" before attempting to save the session ";
+                 dm.setMessage(message);
+                 DialogNode dn=new DialogNode(dm);
+                 return;
+             }
+             if(!vl.isEmpty()){
+                 for (Iterator<VolumeSelectionModelType0> iterator1 = vl.iterator(); iterator1.hasNext();) {
+                     VolumeSelectionModelType0 next1 = iterator1.next();
+                     if(next1.getVolumeChosen()==null){
+                            DialogModel dm=new DialogModel();
+                            String message="Please add a volume to the node "+next.getJobStepText()+" before attempting to save the session ";
+                            dm.setMessage(message);
+                            DialogNode dn=new DialogNode(dm);
+                            return;
+                     }
+                 }
+                 
+             }
+             InsightVersionsModel inm=next.getInsightVersionsModel();
+             if(inm==null){
+                 System.out.println("collector.Collector.saveCurrentSession() inm is null");
+                 DialogModel dm=new DialogModel();
+                 String message="Please associate an insight version with the node "+next.getJobStepText()+" before attempting to save the session";
+                 dm.setMessage(message);
+                 DialogNode dn =new DialogNode(dm);
+                 return;
+             }
+             List<String> ins=next.getInsightVersionsModel().getCheckedVersions();
+             if(ins==null||ins.isEmpty()){
+                 System.out.println("collector.Collector.saveCurrentSession(): ins is empty for job: "+next.getJobStepText());
+                 DialogModel dm=new DialogModel();
+                 String message="Please associate an insight version with the node "+next.getJobStepText()+" before attempting to save the session";
+                 dm.setMessage(message);
+                 DialogNode dn =new DialogNode(dm);
+                 return;
+             }
          }
         dbSessions.add(currentSession);
+        
+        
+        
+        
+        
+        
+        
        // if(sesServ.getSessions(currentSession.getIdSessions())==null)dbSessions.add(currentSession);
         setupEntries();
         }catch(Exception ex){

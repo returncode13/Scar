@@ -12,12 +12,16 @@ package landing.reporter.page;
 public class ReportPage {
     
     String phplocation="http://10.11.1.180/obpmanager/php/process4.php";
-    
+    String cssb=getClass().getClassLoader().getResource("landingResources/reporter/css/bootstrap.min.css").toString();
+    String jsb=getClass().getClassLoader().getResource("landingResources/reporter/js/bootstrap.min.js").toString();
+    String jq=getClass().getClassLoader().getResource("landingResources/reporter/jquery/jquery.min.js").toString();
     String htmlContent1="<html lang=\"en\">\n" +
 "<head>\n" +
 "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
-"  <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">\n" +
-"  \n" +
+//"  <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">\n" +
+//"  \n" +
+"  <link rel=\"stylesheet\" href=\""+cssb+"\">\n" +
+"  \n" +            
 "</head>\n" +
 "<body>\n" +
 "</div>\n" +
@@ -139,8 +143,10 @@ public class ReportPage {
 "    </div>\n" +
 "  </div>\n" +
 "\n" +
-"    <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>\n" +
-"  <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>\n" +
+//"    <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>\n" +
+"    <script src=\""+jq+"\"></script>\n" +
+"  <script src=\""+jsb+"\"></script>\n" +
+//"  <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"></script>\n" +
 "\n" +
 "\n" +
 "  </body>\n" +

@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>landing</groupId>
-    <artifactId>Scar</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>OBPManager</artifactId>
+    <version>0.0.3</version>
     <packaging>jar</packaging>
 
     <name>Scar</name>
@@ -152,4 +152,5 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+    <description>Bug reporter bundled css,js, jquery</description>
 </project>
