@@ -23,6 +23,7 @@ import javax.persistence.spi.PersistenceProvider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import landing.AppProperties;
 import landing.LandingController;
 import landing.settings.database.DataBaseSettings;
 import landing.settings.ssh.SShSettings;
@@ -119,7 +120,8 @@ public class HibernateUtil {
          DataBaseSettings dbsett=(DataBaseSettings)dbunm.unmarshal(dbFile);
          
          database=dbsett.getChosenDatabase();
-         
+         String parts[]=dbsett.getChosenDatabase().split("/");
+                AppProperties.setProject(parts[parts.length-1]);
             
          
         } catch (JAXBException ex) {
