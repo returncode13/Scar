@@ -6,6 +6,7 @@
 package fend.session.node.jobs.insightVersions;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -70,7 +71,7 @@ public class InsightVersionsController extends Stage{
     void setModel(InsightVersionsModel m) {
         ismodel=m;
         items=FXCollections.observableArrayList(ismodel.getVersions());
-        
+        Collections.sort(items);
         for (Iterator<String> iterator = items.iterator(); iterator.hasNext();) {
             String next = iterator.next();
             System.out.println("fend.session.node.jobs.insightVersions.InsightVersionsController.setModel():   Versions "+next);
