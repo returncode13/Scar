@@ -10,7 +10,7 @@ package landing;
  * @author sharath
  */
 public class AppProperties {
-    public static final String VERSION="0.0.4";
+    public static final String VERSION="0.0.5";
     private static String project=new String("no project selected");
     private String sessionName=new String("unknown session");
     private String irdbHost=new String("no host assigned");

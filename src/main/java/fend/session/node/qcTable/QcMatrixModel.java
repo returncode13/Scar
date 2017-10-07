@@ -10,6 +10,7 @@ import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,8 +82,19 @@ public class QcMatrixModel {
     
     public List<QcTypeModel> getQcTypeModels(){   //the qctypes chosen for this job step
         Set<QcTypeModel> keys=qcTypePresMap.keySet();
+        
+        /*
         List<QcTypeModel> types=new ArrayList<>(keys);
-        Collections.sort(types);
+        Collections.sort(types);*/
+        List<QcTypeModel> types=new ArrayList<>();
+        for (Iterator<QcTypeModel> iterator = keys.iterator(); iterator.hasNext();) {
+            QcTypeModel next = iterator.next();
+            if(qcTypePresMap.get(next)){
+                System.out.println("fend.session.node.qcTable.QcMatrixModel.getQcTypeModels(): key: "+next.getName()+" value: "+qcTypePresMap.get(next));
+                types.add(next);
+            }
+            
+        }
         
         
         
