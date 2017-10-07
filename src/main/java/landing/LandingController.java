@@ -43,6 +43,7 @@ import fend.session.SessionController;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
 import fend.session.dialogs.DialogModel;
+import fend.session.dialogs.DialogNode;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeadersModel;
@@ -235,9 +236,9 @@ public class LandingController extends Stage implements Initializable,Serializab
      @FXML
     void about(ActionEvent event) {
          DialogModel dmodel=new DialogModel();
-         dmodel.setMessage("VERSION: "+appproperties.VERSION+"\n"+
-                           "host   : "+appproperties.getIrdbHost()+"\n"+
-                           "project: "+appproperties.getProject()+"\n");
+         dmodel.setMessage("VERSION: "+appproperties.VERSION);
+         DialogNode dnode=new DialogNode(dmodel);
+                         
          
     }
      
@@ -274,7 +275,8 @@ public class LandingController extends Stage implements Initializable,Serializab
                 DataBaseSettings dbsett=(DataBaseSettings) unm.unmarshal(is);
                 System.out.println("landing.LandingController.settings():  unmarshalled: "+dbsett.getChosenDatabase());
                 logger.info("unmarshalled: "+dbsett.getChosenDatabase());
-                appproperties.setProject(dbsett.getChosenDatabase());
+                String parts[]=dbsett.getChosenDatabase().split("/");
+                AppProperties.setProject(parts[parts.length-1]);
                 databaseSettingsModel.setDbUser(dbsett.getDbUser());
                 databaseSettingsModel.setDbPassword(dbsett.getDbPassword());
                 databaseSettingsModel.setChosenDatabase(dbsett.getChosenDatabase());
@@ -1047,6 +1049,9 @@ public class LandingController extends Stage implements Initializable,Serializab
        scontr.setAllModelsForFrontEndDisplay();
        scontr.setAllLinksForFrontEnd();
        scontr.startWatching(); 
+       appproperties.setSessionName(smodel.getName());
+                   this.setTitle("OBPManager-"+appproperties.VERSION+" Project: "+appproperties.getProject()+" Session: "+appproperties.getSessionName());
+
         /*
         
         

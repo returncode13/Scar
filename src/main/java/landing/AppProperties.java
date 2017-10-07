@@ -11,7 +11,7 @@ package landing;
  */
 public class AppProperties {
     public static final String VERSION="0.0.4";
-    private String project=new String("no project selected");
+    private static String project=new String("no project selected");
     private String sessionName=new String("unknown session");
     private String irdbHost=new String("no host assigned");
 
@@ -19,8 +19,8 @@ public class AppProperties {
         return project;
     }
 
-    public void setProject(String project) {
-        this.project = project;
+    public static void setProject(String project) {
+        AppProperties.project = project;
     }
 
     public String getSessionName() {
