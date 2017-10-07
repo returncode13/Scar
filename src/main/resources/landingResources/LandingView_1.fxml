@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2048.0" prefWidth="2048.0" stylesheets="@landing.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="landing.LandingController">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2048.0" prefWidth="2048.0" stylesheets="@landing.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="landing.LandingController">
    <children>
       <SplitPane dividerPositions="0.060784313725490195" orientation="VERTICAL" prefHeight="512.0" prefWidth="602.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -40,7 +40,7 @@
                             </Menu>
                             <Menu mnemonicParsing="false" text="Help">
                               <items>
-                                <MenuItem mnemonicParsing="false" text="About" />
+                                <MenuItem fx:id="idAbout" mnemonicParsing="false" onAction="#about" text="About" />
                               </items>
                             </Menu>
                           </menus>

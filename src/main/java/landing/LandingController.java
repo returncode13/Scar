@@ -42,6 +42,7 @@ import db.services.SessionsServiceImpl;
 import fend.session.SessionController;
 import fend.session.SessionModel;
 import fend.session.SessionNode;
+import fend.session.dialogs.DialogModel;
 import fend.session.edges.LinksModel;
 import fend.session.edges.anchor.AnchorModel;
 import fend.session.node.headers.HeadersModel;
@@ -194,6 +195,7 @@ public class LandingController extends Stage implements Initializable,Serializab
     
     private SShSettings settingsModel;
     private DataBaseSettings databaseSettingsModel;
+    private AppProperties appproperties=new AppProperties();
     
      @FXML
     private StackPane basePane;
@@ -225,6 +227,19 @@ public class LandingController extends Stage implements Initializable,Serializab
      
      @FXML
     private Button bugReport;
+     
+     @FXML
+    private MenuItem idAbout;
+
+     
+     @FXML
+    void about(ActionEvent event) {
+         DialogModel dmodel=new DialogModel();
+         dmodel.setMessage("VERSION: "+appproperties.VERSION+"\n"+
+                           "host   : "+appproperties.getIrdbHost()+"\n"+
+                           "project: "+appproperties.getProject()+"\n");
+         
+    }
      
      @FXML
     void handleBugReport(ActionEvent event) {
@@ -259,6 +274,7 @@ public class LandingController extends Stage implements Initializable,Serializab
                 DataBaseSettings dbsett=(DataBaseSettings) unm.unmarshal(is);
                 System.out.println("landing.LandingController.settings():  unmarshalled: "+dbsett.getChosenDatabase());
                 logger.info("unmarshalled: "+dbsett.getChosenDatabase());
+                appproperties.setProject(dbsett.getChosenDatabase());
                 databaseSettingsModel.setDbUser(dbsett.getDbUser());
                 databaseSettingsModel.setDbPassword(dbsett.getDbPassword());
                 databaseSettingsModel.setChosenDatabase(dbsett.getChosenDatabase());
@@ -278,7 +294,7 @@ public class LandingController extends Stage implements Initializable,Serializab
             
         } catch (FileNotFoundException ex) {
             //logger.log(Level.SEVERE, "File not found!: {0}", ex.getMessage());
-            logger.severe("File not foun");
+            logger.severe("File not found");
             //logger.log(Level.SEVERE, null, ex);
             //Exceptions.printStackTrace(ex);'
             ex.printStackTrace();
@@ -331,6 +347,7 @@ public class LandingController extends Stage implements Initializable,Serializab
                     settingsModel.setSshHost(sett.getSshHost());
                     settingsModel.setSshPassword(sett.getSshPassword());
                     settingsModel.setSshUser(sett.getSshUser());
+                    appproperties.setIrdbHost(settingsModel.getSshHost());
                 }
                 
                 SShSettingsNode setnode=new SShSettingsNode(settingsModel);
@@ -379,6 +396,7 @@ public class LandingController extends Stage implements Initializable,Serializab
             scontr=snode.getSessionController();
             obsModL.add(smodel);
             basePane.getChildren().add(snode);
+            this.setTitle("OBPManager-"+appproperties.VERSION+" Project: "+appproperties.getProject());
             
             
     }
@@ -393,6 +411,7 @@ public class LandingController extends Stage implements Initializable,Serializab
                       
             String name=ssm.getName();
             smodel.setName(name);
+            appproperties.setSessionName(smodel.getName());
         }
          
         
@@ -431,6 +450,9 @@ public class LandingController extends Stage implements Initializable,Serializab
             }catch(Exception ex){
                 logger.severe("NULL Encountered while trying to save session");
             }
+            
+            
+            this.setTitle("OBPManager-"+appproperties.VERSION+" Project: "+appproperties.getProject()+" Session: "+appproperties.getSessionName());
     }
 
     @FXML
@@ -1106,7 +1128,7 @@ public class LandingController extends Stage implements Initializable,Serializab
 
     void setView(LandingNode aThis) {
        this.lnode=aThis;
-       this.setTitle("OBPManager");
+       this.setTitle("OBPManager-"+appproperties.VERSION);
         this.setScene(new Scene(lnode));
         this.showAndWait();
     }
