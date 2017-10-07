@@ -111,7 +111,9 @@ public class QcTableModel {
                 QcTableSequences q=new QcTableSequences();
                  List<QcTypeModel> qctypescopy=new ArrayList<>();
             for (Iterator<QcTypeModel> iterator3 = qctypes.iterator(); iterator3.hasNext();) {
+                
                 QcTypeModel next1 = iterator3.next();
+                System.out.println("fend.session.node.qcTable.QcTableModel.loadQcTypes(): qctype: "+next1.getName());
                  QcTypeModel n=new QcTypeModel();
                 n.setId(next1.getId());
                 n.setName(next1.getName());

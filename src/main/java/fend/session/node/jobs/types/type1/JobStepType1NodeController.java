@@ -437,13 +437,14 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         
         
         
-        
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): size of qcmatdef= "+qcmatdef.size());
        
            
          showPopList(qcmatdef);    //qcmatdef holds the definitions
        // }
         
        }else{
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): Size of the qctypePresMap: "+qcMatrixModel.getQcTypePresMap().size());
             List<SequenceHeaders> seqsinJob=new ArrayList<>();
            for(VolumeSelectionModelType1 vmod:obsList){
                HeadersModel hmod=vmod.getHeadersModel();
@@ -465,12 +466,12 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
     void showPopList(List<QcMatrix> qcmatrices){
        //if(model.getQcTableModel().getQcMatrixModel()==null){     //the resultant qcmatrix from this call is not the same as the models qcmatrix. aka, the qcMatrixModel variable
        
-        System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.showPopList(): qcMatrixModel.getQcTypePresMap().isEmpty()?: "+qcMatrixModel.getQcTypePresMap().isEmpty());
+        System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.showPopList(): qcMatrixModel.getQcTypePresMap().isEmpty()?: "+qcMatrixModel.getQcTypePresMap().isEmpty()+" size: "+qcMatrixModel.getQcTypePresMap().size());
        
        
        if(qcMatrixModel.getQcTypePresMap().isEmpty()){                             //there is no definition of the qcmatrix in this job..so define it
         //qcMatrixModel.clear();
-        
+           System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.showPopList(): map is Empty.");
         
            for (Iterator<QcMatrix> iterator = qcmatrices.iterator(); iterator.hasNext();) {
             QcMatrix rec = iterator.next();
@@ -491,9 +492,12 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
            model.getQcTableModel().setQcMatrixModel(qcMatrixModel); 
         }
        else
+       {
        qcMatrixModel=model.getQcTableModel().getQcMatrixModel();            //qcmatrix has been defined. get it.
         
+        System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.showPopList(): map is NOT Empty.");
         
+    }
         
            //model.getQcTableModel().setQctypes(qctypeModels);
            List<SequenceHeaders> seqsinJob=new ArrayList<>();
