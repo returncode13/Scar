@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,9 +23,9 @@ import javax.persistence.Table;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 @Entity
-@Table(name="Subsurface",schema="obpmanager")
+@Table(name="subsurface",schema="public")
 
-public class Subsurface {
+public class Subsurface implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
