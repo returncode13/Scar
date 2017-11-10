@@ -5,6 +5,14 @@
  */
 package fend.summary;
 
+import db.model.RawSeqInfo;
+import db.model.Sequence;
+import db.services.OrcaViewService;
+import db.services.OrcaViewServiceImpl;
+import db.services.RawSeqInfoService;
+import db.services.RawSeqInfoServiceImpl;
+import db.services.SequenceService;
+import db.services.SequenceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.session.node.headers.HeadersModel;
@@ -61,6 +69,9 @@ public class SummaryController extends Stage{
     private MultiMap<Long,DepthModel> mapseqDepthModel=new MultiValueMap<>();
     private MultiMap<DepthModel,Long> mapDepthModelSeq=new MultiValueMap<>();                  //inverse map of mapseqDepthModel
     private DepthListModel depthListmodel;
+    private SequenceService seqserv=new SequenceServiceImpl();
+    private OrcaViewService ovserv=new OrcaViewServiceImpl();
+    private RawSeqInfoService rawSeqServ=new RawSeqInfoServiceImpl();
     
     @FXML
             TableView tableView;
@@ -195,6 +206,7 @@ public class SummaryController extends Stage{
                   for (Iterator<SequenceHeaders> iterator1 = seqs.iterator(); iterator1.hasNext();) {
                   SequenceHeaders seq = iterator1.next();
                   mapDepthModelSeq.put(dm, seq.getSequenceNumber());
+                  
                   
                   
                   }
@@ -889,7 +901,17 @@ public class SummaryController extends Stage{
         Set<Long> keyseq=mapseqDepthModel.keySet();
         
         
+        List<Sequence> seqFromDb=seqserv.getSequenceList();
+        List<RawSeqInfo> rawSeqInfoList=rawSeqServ.getListOfRawSeqInfo();
         
+        Map<Long,String> seqLineNameMap=new HashMap<>();
+        for (Iterator<Sequence> iterator = seqFromDb.iterator(); iterator.hasNext();) {
+            Sequence next = iterator.next();
+            //String linename=ovserv.getOrcaViewsForSeq(next).get(0).getSubsurfaceLineNames();
+            String linename=rawSeqServ.getRawSeqInfo(next.getSequenceno()).getRealLineName();
+            seqLineNameMap.put(next.getSequenceno(), linename);
+            
+        }
         
         
         for (Iterator<Long> iterator = keyseq.iterator(); iterator.hasNext();) {
@@ -898,6 +920,7 @@ public class SummaryController extends Stage{
             System.out.println("fend.summary.SummaryController.createData(): got seq: "+seqno);
             SummarySequenceModel seqm=new SummarySequenceModel();
             seqm.setSeq(seqno);
+            seqm.setLinename(seqLineNameMap.get(seqno));
             List<DepthModel> deplist=(List<DepthModel>) mapseqDepthModel.get(seqno);
             DepthListModel seqdplistmodel=new DepthListModel();
             seqdplistmodel.setListOfDepthModel(dmodelList);
