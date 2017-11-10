@@ -28,6 +28,8 @@ import db.services.VolumeServiceImpl;
 
 import fend.session.SessionController;
 import fend.session.SessionModel;
+import fend.session.dialogs.DialogModel;
+import fend.session.dialogs.DialogNode;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -267,39 +269,33 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             
       
             SessionModel smodel=model.getSessionModel();
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): session is currently: "+smodel.getName());
         Sessions currentsession= sserv.getSessions(smodel.getId());
+            if(currentsession!=null){
+                System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): session from database is currently: "+smodel.getName());
+            }else{
+                System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): NO ENTRY FOR SESSION found in database");
+            }
         JobStep js= jserv.getJobStep(model.getId());
-         SessionDetails sessiondetails=ssdserv.getSessionDetails(js, currentsession);
-        
-        
-   //     for(VolumeSelectionModelType1 vmodel:obsList){
-            //Check with definition of QcMatrix
-        //Volume v=vserv.getVolume(vmodel.getId());
-        
-      //  List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForVolume(v);
-        List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
-         
-         //qcMatrixModel=model.getQcMatrixModel();
-         
-      //  List<QcType>
-        
-        //List<QcType> allQcTypes=qserv.getQcTypesForSession(currentsession);
-        List<QcType> allQcTypes=qserv.getAllQcTypes();
-        
-        /*if(allQcTypes.isEmpty()){          //no qctypes declared for the entire session
-        for (Iterator<String> iterator = types.iterator(); iterator.hasNext();) {
-        String type = iterator.next();
-        QcType q=new QcType();
-        q.setName(type.toLowerCase());              //2Dstacks is the same as 2dstACks
-        // q.setSessions(currentsession);
-        qserv.createQcType(q);
-        
-        allQcTypes=qserv.getAllQcTypes();
+        if(js==null){
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): Null value found for jobstep from database: Please save the session before proceeding");
+                DialogModel dm=new DialogModel();
+                 String message="Please save the session before attempting to assign a QC matrix ";
+                 dm.setMessage(message);
+                 DialogNode dn=new DialogNode(dm);
+                 return;
+        }else{
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): Jobstep: "+js.getNameJobStep()+" found");
         }
-        */
-              //  allQcTypes=qserv.getQcTypesForSession(currentsession);
+        SessionDetails sessiondetails=ssdserv.getSessionDetails(js, currentsession);
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): sessiondetails: "+((sessiondetails==null)?"is Null":"session: "+sessiondetails.getSessions().getNameSessions()));
+     
+        List<QcMatrix> qcmatdef=qcmserv.getQcMatrixForSessionDetails(sessiondetails);
+       
+        List<QcType> allQcTypes=qserv.getAllQcTypes();
+
              
-        
+         
         List<String> qcTypesNames=new ArrayList<>();
         //qcCModel=vmodel.getQcCheckListModel(); 
         qcCModel=model.getQcCheckListModel();
@@ -310,14 +306,15 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         }
         qcCModel.setQcTypes(qcTypesNames);
       
+         System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): Checking if the QCMatrix is defined for this node");
         if(qcmatdef.isEmpty()){                     //no matrix defined for this job. ask for a definition           
            
             
             
-            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): QcMatrix not defined for current node");
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): QcMatrix not defined for current node");
             
             qcCheckListNode qcCNode=new qcCheckListNode(qcCModel);
-            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): selected: "+qcCModel.getCheckedTypes());
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): selected: "+qcCModel.getCheckedTypes());
            
            
             
@@ -382,7 +379,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             List<QcTypeModel> sessionQcTypeModels=new ArrayList<>();
             for (Iterator<QcType> iterator = allQcTypes.iterator(); iterator.hasNext();) {
                 QcType next = iterator.next();
-                System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): retrieved from db: "+next.getName());
+                System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): retrieved from db: "+next.getName());
                 //names.(next.getName());
                 QcTypeModel qcTypeModel=new QcTypeModel();
                 qcTypeModel.setId(next.getIdQcType());
@@ -390,14 +387,14 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
                 sessionQcTypeModels.add(qcTypeModel);
                 qcMatrixModel.addToQcTypePresMap(qcTypeModel, Boolean.FALSE);               //initially set all qctypes to false;
             }
-            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): Setting the ticked ones to true");
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): Setting the ticked ones to true");
              for (Iterator<Long> iterator = ticked.iterator(); iterator.hasNext();) {
                 Long tickedid = iterator.next();
                 QcType selectedType=qserv.getQcType(tickedid);
                 QcTypeModel qctymod=new QcTypeModel();
                 qctymod.setId(selectedType.getIdQcType());
                 qctymod.setName(selectedType.getName());
-                System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): ticked: id: "+selectedType.getIdQcType()+" :name: "+selectedType.getName());
+                System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): ticked: id: "+selectedType.getIdQcType()+" :name: "+selectedType.getName());
                 
                 qctypeModels.add(qctymod);
             }
@@ -405,7 +402,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             
              
             
-            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qctypeModels.size(): "+qctypeModels.size());
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): qctypeModels.size(): "+qctypeModels.size());
             for (Iterator<QcTypeModel> iterator = qctypeModels.iterator(); iterator.hasNext();) {
                 QcTypeModel def = iterator.next();
                 qcMatrixModel.addToQcTypePresMap(def, Boolean.TRUE);                    //set the ones checked to true;
@@ -414,8 +411,8 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             
             Map<QcTypeModel,Boolean> qcmmap=qcMatrixModel.getQcTypePresMap();
             
-            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): Creating the Qc matrix for Job: "+model.getJobStepText());
-            System.out.println("fend.session.node.volumes.VolumeSelectionController.openQMatrix(): qcMatrixModel.size(): "+qcMatrixModel.getQcTypePresMap().size());
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): Creating the Qc matrix for Job: "+model.getJobStepText());
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): qcMatrixModel.size(): "+qcMatrixModel.getQcTypePresMap().size());
             for (Map.Entry<QcTypeModel, Boolean> entry : qcmmap.entrySet()) {
                 QcTypeModel qctype = entry.getKey();
                 Boolean ispres = entry.getValue();
@@ -436,7 +433,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
         }
         
         
-        
+            System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): QCMatrix is defined for this node");
             System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): size of qcmatdef= "+qcmatdef.size());
        
            

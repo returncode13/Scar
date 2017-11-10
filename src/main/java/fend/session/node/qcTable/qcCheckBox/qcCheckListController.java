@@ -91,7 +91,7 @@ public class qcCheckListController extends Stage{
             
                                     }
         }
-        
+       
         checkListView.getItems().addListener(new ListChangeListener<String>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends String> c) {
@@ -108,9 +108,9 @@ public class qcCheckListController extends Stage{
             public void onChanged(ListChangeListener.Change<? extends String> c) {
                 c.next();
                 if(c.wasAdded()) {
-                    System.out.println("Item Checked : " + c.getAddedSubList().get(0));
+                    System.out.println("fend.session.node.qcTable.qcCheckBox.qcCheckListController.setModel(): Item Checked : " + c.getAddedSubList().get(0));
                 } else if (c.wasRemoved()) {
-                    System.out.println("Item Unchecked : " + c.getRemoved().get(0));
+                    System.out.println("fend.session.node.qcTable.qcCheckBox.qcCheckListController.setModel(): Item Unchecked : " + c.getRemoved().get(0));
                 }
             }
         });

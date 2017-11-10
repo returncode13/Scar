@@ -49,7 +49,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
     
     
     public SubSurfaceHeaders getSub() {
-        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSubsurfaces.getSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
+        System.out.println("fend.session.node.qcTable.QcTableSubsurfaces.getSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
         return sub;
     }
 
@@ -58,7 +58,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
         sequenceNumber.setValue(sub.getSequenceNumber());
         subsurface.setValue(sub.getSubsurface());
         
-        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSubsurfaces.setSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
+        System.out.println("fend.session.node.qcTable.QcTableSubsurfaces.setSub(): seq: "+sub.getSequenceNumber()+" sub: "+sub.getSubsurface());
         
     }
     

@@ -4,7 +4,7 @@
 
     <groupId>landing</groupId>
     <artifactId>OBPManager</artifactId>
-    <version>0.0.3</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Scar</name>
@@ -152,5 +152,5 @@
             <type>jar</type>
         </dependency>
     </dependencies>
-    <description>Bug reporter bundled css,js, jquery</description>
+    <description>backwards-incompatible changes to reflect database version 13</description>
 </project>

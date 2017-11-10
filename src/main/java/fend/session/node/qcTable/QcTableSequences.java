@@ -83,7 +83,7 @@ public class QcTableSequences {
         this.sequence = sequence;
         sequenceNumber.set(this.sequence.getSequenceNumber());
         subsurface.set(this.sequence.getSubsurface());
-        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.setSequence(): added seq: "+sequenceNumber.get()+" and sub: "+subsurface.get());
+        System.out.println("fend.session.node.qcTable.QcTableSequences.setSequence(): added seq: "+sequenceNumber.get()+" and sub: "+subsurface.get());
         
         /* Map<QcTypeModel,BooleanProperty> fmap=new HashMap<>();
         for (Iterator<QcTypeModel> iteratorq = qctypes.iterator(); iteratorq.hasNext();) {
@@ -122,7 +122,7 @@ public class QcTableSequences {
    
 
     public long getSequenceNumber() {
-        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.getSequenceNumber(): setting property to "+sequence.getSequenceNumber());
+        System.out.println("fend.session.node.qcTable.QcTableSequences.getSequenceNumber(): setting property to "+sequence.getSequenceNumber());
         sequenceNumber.set(sequence.getSequenceNumber());
         return sequenceNumber.get();
     }
@@ -169,7 +169,7 @@ public class QcTableSequences {
             qsub.setSequence(this.sequence);
             qsub.setSub(subs); 
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-                System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+                System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
             
              for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                 QcTypeModel next1 = iterator1.next();
@@ -193,7 +193,7 @@ public class QcTableSequences {
             qsub.setSequence(this.sequence);
             qsub.setSub(subs); 
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-              System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+              System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
              ///-->Start
             /* 
              
@@ -262,7 +262,7 @@ public class QcTableSequences {
                     for (Iterator<QcTable> iterator1 = qctableObjList.iterator(); iterator1.hasNext();) {
                         QcTable next = iterator1.next();
                         QcTypeModel n=new QcTypeModel();
-                        System.out.println("fend.session.node.volumes.type1.qcTable.QcTableSequences.loadQcTypes(): loading for sub: "+h.getSubsurface().getSubsurface()+" id: "+next.getQcmatrix().getQctype().getIdQcType()+
+                        System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading for sub: "+h.getSubsurface().getSubsurface()+" id: "+next.getQcmatrix().getQctype().getIdQcType()+
                                 "  name: "+next.getQcmatrix().getQctype().getName()+" ticked: "+ next.getResult());
                 n.setId(next.getQcmatrix().getQctype().getIdQcType());
                 n.setName(next.getQcmatrix().getQctype().getName());

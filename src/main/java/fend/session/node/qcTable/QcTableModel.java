@@ -129,7 +129,7 @@ public class QcTableModel {
            
         
             //q.setQcs(o);
-            System.out.println("fend.session.node.volumes.type1.qcTable.QcTableModel.getQcTableSequences(): Adding seq: "+seq.getSequenceNumber());
+            System.out.println("fend.session.node.qcTable.QcTableModel.getQcTableSequences(): Adding seq: "+seq.getSequenceNumber());
             q.setSequence(seq);
             q.setJobModel(jobmodel);
             q.loadQcTypes();
