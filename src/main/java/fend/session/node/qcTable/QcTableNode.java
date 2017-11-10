@@ -49,7 +49,7 @@ public class QcTableNode extends AnchorPane{
                 lsc.setView(this) ;
                 
                
-                System.out.println("fend.session.node.volumes.qcTable.QcTableNode.<init>()");
+                System.out.println("fend.session.node.qcTable.QcTableNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);

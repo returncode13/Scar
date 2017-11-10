@@ -91,7 +91,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
            public void handle(MouseEvent event) {
                int sel=getTreeTableRow().getIndex();
                index=getTreeTableRow().getIndex();
-               System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): selectedrow:  "+sel);
+               System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedrow:  "+sel);
                selectedItem=param.getTreeTableView().getTreeItem(sel).getValue();
                               
                
@@ -107,8 +107,8 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
                }
                
                
-               System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): selectedSeq:  "+selectedItem.getSequenceNumber());
-               System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): selectedSub:  "+selectedItem.getSubsurface());
+               System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedSeq:  "+selectedItem.getSequenceNumber());
+               System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedSub:  "+selectedItem.getSubsurface());
                /*  System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): qcstatus:  "+selectedItem.getQctypes().get(ind).getQcStatus());
                System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): passQc:  "+selectedItem.getQctypes().get(ind).isPassQc());
                System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): notQc:  "+selectedItem.getQctypes().get(ind).isNotQcd());*/
@@ -146,7 +146,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
                /*checkBox.setSelected(isselected.get());
                checkBox.setIndeterminate(isindeterminate.get());*/
                 Boolean treeItem=getItem();
-               System.out.println("fend.session.node.volumes.type1.qcTable.CheckBoxCell.updateItem(): called on "+qcstatus);
+               System.out.println("fend.session.node.qcTable.CheckBoxCell.updateItem(): called on "+qcstatus);
                /*if(qcstatus)checkBox.setSelected(true);
                else checkBox.setSelected(false);*/
                checkBox.setSelected(isselected.get());

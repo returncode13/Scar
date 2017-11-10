@@ -61,13 +61,13 @@ public class QcTableController extends Stage {
         for(QcTableSequences qcTableSequence: qcTableSequences){
             
             //CheckBoxTreeItem<QcTableSequences> seqroot=new CheckBoxTreeItem<>(qcTableSequence);
-            System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): creating treeItem seq: "+qcTableSequence.getSequence().getSequenceNumber());
+            System.out.println("fend.session.node.qcTable.QcTableController.setModel(): creating treeItem seq: "+qcTableSequence.getSequence().getSequenceNumber());
             TreeItem<QcTableSequences> seqroot=new TreeItem<>(qcTableSequence);
           //  qcTableSequence.setQcfields(qctypes);
             List<QcTableSubsurfaces> qcsubs=qcTableSequence.getQcSubs();
             for(QcTableSubsurfaces qcsub:qcsubs){
                // CheckBoxTreeItem<QcTableSequences> subItem=new CheckBoxTreeItem<>(qcsub);
-               System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): creating subtreeItem seq: "+qcsub.getSub().getSequenceNumber() +" sub: "+qcsub.getSub().getSubsurface());
+               System.out.println("fend.session.node.qcTable.QcTableController.setModel(): creating subtreeItem seq: "+qcsub.getSub().getSequenceNumber() +" sub: "+qcsub.getSub().getSubsurface());
                 TreeItem<QcTableSequences> subItem=new TreeItem<>(qcsub);
                 seqroot.getChildren().add(subItem);
                 
@@ -89,7 +89,7 @@ public class QcTableController extends Stage {
            //TreeTableColumn<QcTableSequences,QcTypeModel> qcval=new TreeTableColumn<>(qctype.getName());
             final int iii=i;
             
-            System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): Column name : "+qctype.getName());
+            System.out.println("fend.session.node.qcTable.QcTableController.setModel(): Column name : "+qctype.getName());
             TreeTableColumn<QcTableSequences,Boolean> qctypeCol=new TreeTableColumn<>();//   <<<This is the culprit!!
             
            //qctypeCol.setCellValueFactory(cellData->cellData.getValue().getValue().tpProperty());
@@ -238,7 +238,7 @@ public class QcTableController extends Stage {
            qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
           
           
-            System.out.println("fend.session.node.volumes.type1.qcTable.QcTableController.setModel(): inside for loop for qctype: "+qctype.getName());
+            System.out.println("fend.session.node.qcTable.QcTableController.setModel(): inside for loop for qctype: "+qctype.getName());
             /* qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
             @Override
             public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
