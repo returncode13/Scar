@@ -351,6 +351,7 @@ public class Collector {
                         for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
                             QcTableSubsurfaces qcsub = iterator1.next();
                             SubSurfaceHeaders subh=qcsub.getSub();
+                            subh.resetPassQC();
                             
                             Subsurface subobj=subserv.getSubsurfaceObjBysubsurfacename(subh.getSubsurface());
                             Headers hdr=null;
@@ -409,6 +410,8 @@ public class Collector {
                                    // System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     //logger.log(Level.INFO, "updating seq: {0} sub: {1} in job: {2} qctype: (id,name) : ({3},{4}) from: {5} to: {6}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), qctmod.getId(), qctmod.getName(), oldval, qctmod.isPassQc()});
                                     logger.info(subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    subh.qcStatus(qctmod.isPassQc());
+                                    
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -447,6 +450,7 @@ public class Collector {
                         for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
                             QcTableSubsurfaces qcsub = iterator1.next();
                             SubSurfaceHeaders subh=qcsub.getSub();
+                            subh.resetPassQC();
                             
                             Subsurface subobj=subserv.getSubsurfaceObjBysubsurfacename(subh.getSubsurface());
                             Headers hdr=null;
@@ -502,7 +506,9 @@ public class Collector {
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                    // System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
-                                    logger.warning("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                   subh.qcStatus(qctmod.isPassQc()); 
+                                   logger.warning("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -597,6 +603,7 @@ public class Collector {
                                     //qct.setHeaders(hdr);
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
+                                    subh.qcStatus(qctmod.isPassQc());
                                     System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     logger.info("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);

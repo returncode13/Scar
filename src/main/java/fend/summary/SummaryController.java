@@ -19,6 +19,8 @@ import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.HeadersNode;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
+import fend.session.node.jobs.types.type1.JobStepType1Model;
+import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -47,6 +49,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import mid.doubt.Doubt;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -297,8 +300,10 @@ public class SummaryController extends Stage{
                              */
                              if(type.equals(1L)){
                                   try{
+                                     
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  SequenceHeaders ss=vol1.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
+                                      JobStepType1Model job1=(JobStepType1Model) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model();
                              
                                if(ss==null){
                                    return param.getValue().notApplicableDependencyProperty();
@@ -308,20 +313,44 @@ public class SummaryController extends Stage{
                                    Boolean Pf=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model().getPendingFlagProperty().getValue();
                                    //Boolean Qf=ss.getQcAlert();
                                    Boolean Qf=ss.getDoubt().isDoubt();
+                                   Boolean isParent=ss.getDoubt().isParent(job1);
+                                  Boolean isChild=ss.getDoubt().isChild(job1);
+                                   System.out.println("ParentChild.call() node: "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+" Parent: "+isParent+" Child: "+isChild);
+                                  
+                                  List<String> dtypes=ss.getDoubt().getDoubtTypes();
+                                  for(Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
+                                       String next = iterator1.next();
+                                        System.out.println(".call(): "+next);
+                                       
+                                   }
+                                  if(isChild && dtypes.contains(Doubt.doubtTime)){
+                                      dep="Time";
+                                  }
+                                  if(isChild && dtypes.contains(Doubt.doubtTraces)){
+                                      dep+="Traces";
+                                  }
+                                  if(isChild && !dtypes.contains(Doubt.doubtTime) && !dtypes.contains(Doubt.doubtTraces)){
+                                      dep="OK";
+                                  }
+                                  if(isParent){
+                                      dep="OK";
+                                  }
                                   // System.out.println("fend.summary.SummaryController.setModel().call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
                                    
-                                   if(Pf){
-                                       dep="";
-                                   }
-                                   if(Qf){
-                                       dep="Q";
-                                   }
-                                   /*if(Pf && Qf){
-                                   dep="Q";
-                                   }*/
-                                   if(!Qf){
-                                       dep="OK";
-                                   }
+                                  /* if(Pf){
+                                  dep="";
+                                  }
+                                  if(Qf){
+                                  dep="Q";
+                                  }
+                                  /*if(Pf && Qf){
+                                  dep="Q";
+                                  }*/
+                                  /*
+                                  if(!Qf){
+                                      dep="OK";
+                                  }*/
+                                  
                                    param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).dependencyProperty().set(dep);
                                    return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).dependencyProperty();
                                }
@@ -346,7 +375,7 @@ public class SummaryController extends Stage{
                                   try{
                                  VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                                  SequenceHeaders ss=vol2.getHeadersModel().getSequenceObjBySequenceNumber(param.getValue().getSeq());
-                             
+                                   JobStepType2Model job2=(JobStepType2Model) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model();
                                if(ss==null){
                                    return param.getValue().notApplicableDependencyProperty();
                                }
@@ -355,8 +384,30 @@ public class SummaryController extends Stage{
                                    Boolean Pf=param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model().getPendingFlagProperty().getValue();
                                    //Boolean Qf=ss.getQcAlert();
                                    Boolean Qf=ss.getDoubt().isDoubt();
+                                   Boolean isParent=ss.getDoubt().isParent(job2);
+                                  Boolean isChild=ss.getDoubt().isChild(job2);
+                                  
+                                  
+                                    List<String> dtypes=ss.getDoubt().getDoubtTypes();
+                                    /*for(Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
+                                    String next = iterator1.next();
+                                    System.out.println(".call(): "+next);
+                                    
+                                    }*/
+                                  if(isChild && dtypes.contains(Doubt.doubtTime)){
+                                      dep="Time";
+                                  }
+                                  if(isChild && dtypes.contains(Doubt.doubtTraces)){
+                                      dep+="Traces";
+                                  }
+                                  if(isChild && !dtypes.contains(Doubt.doubtTime) && !dtypes.contains(Doubt.doubtTraces)){
+                                      dep="OK";
+                                  }
+                                  if(isParent){
+                                      dep="OK";
+                                  }
                                    //System.out.println("fend.summary.SummaryController.setModel().call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
-                                   
+                                   /*
                                    if(Pf){
                                        dep="";
                                    }
@@ -366,9 +417,10 @@ public class SummaryController extends Stage{
                                    /*if(Pf && Qf){
                                    dep="Q";
                                    }*/
+                                   /*
                                    if(!Qf){
                                        dep="OK";
-                                   }
+                                   }*/
                                    param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).dependencyProperty().set(dep);
                                    return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).dependencyProperty();
                                }
@@ -628,7 +680,7 @@ public class SummaryController extends Stage{
                             if(type.equals(1L)){
                                   try{
                                  VolumeSelectionModelType1 vol1=(VolumeSelectionModelType1) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
-                            
+                            JobStepType1Model job1=(JobStepType1Model) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model();
                             
                             
                             
@@ -639,6 +691,26 @@ public class SummaryController extends Stage{
                                    return param.getValue().notApplicableProperty(); 
                                }
                                else{
+                                /* String dep=new String();
+                                List<String> dtypes=ss.getDoubt().getDoubtTypes();
+                                
+                                for (Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
+                                String next = iterator1.next();
+                                System.out.println("QC.call(): "+next);
+                                
+                                }
+                                if(dtypes.contains(Doubt.doubtQc)){
+                                dep="QC";
+                                }
+                                
+                                else{
+                                dep="OK";
+                                }
+                                */
+                                  
+                                 // param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty().set(dep);
+                                  // return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty();
+                                  System.out.println("ParentChild.call() node: "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+" QC.call(): "+ss.qcStatusProperty().get());
                                    return  ss.qcStatusProperty();
                                }
                             }catch(ArrayIndexOutOfBoundsException ae){
@@ -660,7 +732,7 @@ public class SummaryController extends Stage{
                                   try{
                                  VolumeSelectionModelType2 vol2=(VolumeSelectionModelType2) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
                             
-                            
+                            JobStepType2Model job2=(JobStepType2Model) param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getJobsteptype0model();
                             
                             
                              
@@ -670,6 +742,20 @@ public class SummaryController extends Stage{
                                    return param.getValue().notApplicableProperty(); 
                                }
                                else{
+                                /*String dep=new String();
+                                List<String> dtypes=ss.getDoubt().getDoubtTypes();
+                                if(dtypes.contains(Doubt.doubtQc)){
+                                dep="QC";
+                                }
+                                
+                                else{
+                                dep="OK";
+                                }
+                                
+                                
+                                param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty().set(dep);
+                                return  param.getValue().getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).qcflagProperty();*/
+                                System.out.println("ParentChild.call() node: "+job2.getJobStepText()+" sub: "+ss.getSubsurface()+" QC.call(): "+ss.qcStatusProperty().get());
                                    return  ss.qcStatusProperty();
                                }
                             }catch(ArrayIndexOutOfBoundsException ae){

@@ -34,6 +34,8 @@ import mid.doubt.Doubt;
  *
  * @author sharath nair
  * sharath.nair@polarcus.com
+ * 
+ * SEGDLoad Model
  */
 public class JobStepType2Model implements JobStepType0Model{
     

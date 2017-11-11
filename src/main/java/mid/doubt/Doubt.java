@@ -209,6 +209,47 @@ public class Doubt {
         this.errorMessageList = errorMessageList;
     }
     
+    public List<String> getDoubtTypes(){
+        
+        List<String> types=new ArrayList<>();
+        
+        for (Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
+            JobPair key = entry.getKey();
+            String value = entry.getValue();
+            types.add(key.type);
+        }
+        
+        return types;
+    }
+
+    public Boolean isParent(JobStepType0Model job) {
+        
+        for(Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
+            JobPair key = entry.getKey();
+            
+            if(key.parent.getId().equals(job.getId()))
+            {
+                return true;
+            }
+            
+        }
+        return false;
+        
+    }
+
+    public Boolean isChild(JobStepType0Model job) {
+        for(Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
+            JobPair key = entry.getKey();
+            
+            if(key.child.getId().equals(job.getId()))
+            {
+                return true;
+            }
+            
+        }
+        return false;
+       
+    }
     
     
     
