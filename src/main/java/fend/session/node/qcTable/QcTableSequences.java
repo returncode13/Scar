@@ -169,7 +169,7 @@ public class QcTableSequences {
             qsub.setSequence(this.sequence);
             qsub.setSub(subs); 
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-                System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+              //  System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
             
              for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                 QcTypeModel next1 = iterator1.next();
@@ -193,7 +193,7 @@ public class QcTableSequences {
             qsub.setSequence(this.sequence);
             qsub.setSub(subs); 
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-              System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+            //  System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
              ///-->Start
             /* 
              
@@ -237,7 +237,7 @@ public class QcTableSequences {
                     
                     if(qctableObjList.isEmpty()){
                          
-                        System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): list is empty. creating copies of qctypes");
+                        //System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): list is empty. creating copies of qctypes");
             
                         for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                            QcTypeModel next1 = iterator1.next();

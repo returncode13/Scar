@@ -378,7 +378,11 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
             System.out.println("fend.session.node.jobs.types.type2.JobStepType2NodeController.openQMatrix(): qctypeModels.size(): "+qctypeModels.size());
             for (Iterator<QcTypeModel> iterator = qctypeModels.iterator(); iterator.hasNext();) {
                 QcTypeModel def = iterator.next();
-                qcMatrixModel.addToQcTypePresMap(def, Boolean.TRUE);                    //set the ones checked to true;
+                QcTypeModel keyInTypePresMap=qcMatrixModel.getKeyFromTypePresMap(def);
+                if(keyInTypePresMap==null){
+                    System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQMatrix(): NULL value encountered");
+                }
+                qcMatrixModel.addToQcTypePresMap(keyInTypePresMap, Boolean.TRUE);                    //set the ones checked to true;
                 
             }
             
