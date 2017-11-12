@@ -79,13 +79,19 @@ public class Q21 {
         
         //JobStep parentJs=jserv.getJobStep(this.parent.getId());
         //List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
+        
+        JobStep childjs=jserv.getJobStep(this.child.getId());
+        List<JobVolumeDetails> chjvList=jvserv.getJobVolumeDetails(childjs);
+        
+        JobStep parentJs=jserv.getJobStep(this.parent.getId());
+         List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
+        
         Sessions sess=sessServ.getSessions(session.getId());
         DoubtType dqc=dstypeServ.getDoubtTypeByName(Doubt.doubtQc);
         JobStep parentjs=jserv.getJobStep(this.parent.getId());
         SessionDetails parentSsd=ssdServ.getSessionDetails(parentjs, sess);
         
-        JobStep childjs=jserv.getJobStep(this.child.getId());
-        List<JobVolumeDetails> chjvList=jvserv.getJobVolumeDetails(childjs);
+        
         SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
         
         
@@ -116,11 +122,13 @@ public class Q21 {
                                     */
                                     //Volume pVol=null;
                                     Volume chVol=null;
+                                    Headers ch=null;
+                                    Volume pVol=null;
                                     Headers ph=null;
                                     Integer once=0;
                                     List<String> doubtMessage=new ArrayList<>();
                                     
-                                    /*for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
+                                   /* for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
                                     JobVolumeDetails jv = pjviterator.next();
                                     pVol=jv.getVolume();
                                     List<Headers> hdrlist=hserv.getHeadersFor(pVol, subObj);
@@ -141,7 +149,7 @@ public class Q21 {
                                             if(hdrlist.isEmpty()){
                                                 
                                             }else if(hdrlist.size()==1){
-                                                ph=hdrlist.get(0);
+                                                ch=hdrlist.get(0);
                                                 
                                                 once++;
                                             }
@@ -153,7 +161,8 @@ public class Q21 {
                                             return;
                                         }
                                     once=0;    
-                                    List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ph);  //looking for doubt in child based on qc failure in parent.
+                                    List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ch);  //looking for doubt in child based on qc failure in parent.
+                                   // List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ph);  //looking for doubt in child based on qc failure in parent.
                                     if(dst.isEmpty()){ //no entry ..no doubt for child
                                         
                                     }else{              //doubt exists in child. now determine if the status is  overridden  or yes
@@ -233,6 +242,7 @@ public class Q21 {
                            if(currentDoubtStatus.equals("O")){
                                //dont do anything. it stays doubtful with status=O for Doubt.qc type
                                chsub.getDoubt().setStatus("O");
+                                chsub.getSequenceHeader().getDoubt().setStatus("O");
                                chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
                                 setSeqDoubtStatus(chsub);
                                chsub.getDoubt().setDoubt(true);
@@ -256,7 +266,8 @@ public class Q21 {
                            ds.setDoubtType(dqc);
                            ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());
                            ds.setParentSessionDetails(parentSsd);
-                           ds.setHeaders(ph);
+                           ds.setHeaders(ch);
+                           //ds.setHeaders(ph);
                            ds.setUser(null);
                            ds.setStatus("Y");
                            ds.setErrorMessage(err);

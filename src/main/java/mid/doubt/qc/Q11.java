@@ -77,8 +77,12 @@ public class Q11 {
         /*JobStep parentJs=jserv.getJobStep(this.parent.getId());
         List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);*/
         // JobStep childJs=jserv.getJobStep(this.child.getId());
-         JobStep childjs=jserv.getJobStep(this.child.getId());
+        JobStep childjs=jserv.getJobStep(this.child.getId());
         List<JobVolumeDetails> chjvList=jvserv.getJobVolumeDetails(childjs);
+        
+        JobStep parentJs=jserv.getJobStep(this.parent.getId());
+        List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
+        
         
         
         Sessions sess=sessServ.getSessions(session.getId());
@@ -96,6 +100,7 @@ public class Q11 {
          
          for (Iterator<SubSurfaceHeaders> iterator = chsubs.iterator(); iterator.hasNext();) {
             SubSurfaceHeaders chsub = iterator.next();
+            SubSurfaceHeaders parsub;
             Boolean hasPassed=true;
                 Boolean currentlyDoubtful=chsub.getDoubt().isDoubt();                                      //get current doubtboolean state of child subObj. this can be set by the previous step. dependencyChecks()
                 String currentDoubtStatus=new String("N");
@@ -112,6 +117,8 @@ public class Q11 {
                                     //Volume pVol=null;
                                     Volume chVol=null;
                                     Headers ch=null;
+                                    Volume pVol=null;
+                                    Headers ph=null;
                                     Integer once=0;
                                      List<String> doubtMessage=new ArrayList<>();
                                      /*for (Iterator<JobVolumeDetails> pjviterator = pjvList.iterator(); pjviterator.hasNext();) {
@@ -121,13 +128,15 @@ public class Q11 {
                                      if(hdrlist.isEmpty()){
                                      
                                      }else if(hdrlist.size()==1){
-                                     ch=hdrlist.get(0);
+                                     //ch=hdrlist.get(0);
+                                     ph=hdrlist.get(0);
                                      
                                      once++;
                                      }
                                      
                                      
                                      }*/
+                                     
                                         for (Iterator<JobVolumeDetails> chjviterator = chjvList.iterator(); chjviterator.hasNext();) {
                                             JobVolumeDetails jv = chjviterator.next();
                                             chVol=jv.getVolume();
@@ -145,12 +154,14 @@ public class Q11 {
                                         
                                         
                                         
+                                        
                                         if(once>1){
                                             System.out.println("mid.doubt.qc.Q11.<init>(): sub: "+subObj.getSubsurface()+" found multiple times in job: "+this.parent.getJobStepText());
                                             return;
                                         }
                                     once=0;    
                                     List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ch);  //looking for doubt in child based on qc failure in parent.
+                                    //List<DoubtStatus> dst=dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dqc, ph);  //looking for doubt in child based on qc failure in parent.
                                     if(dst.isEmpty()){ //no entry ..no doubt for child
                                         
                                     }else{              //doubt exists in child. now determine if the status is  overridden  or yes
@@ -164,7 +175,7 @@ public class Q11 {
                                       if(once>1){
                                           System.out.println("mid.doubt.qc.Q11.<init>() sub: "+subObj.getSubsurface()+" has multiple doubts of the same type: "+Doubt.doubtQc+" between "+ this.parent.getJobStepText()+" and "+this.child.getJobStepText());
                                       return;
-                                      };
+                                      }
                                        
                                     }
                                     
@@ -186,6 +197,7 @@ public class Q11 {
                             if(psubh.getSubsurface().equals(chsub.getSubsurface())){
                                 once++;
                                 qcsubInParent=pqcsub;
+                                parsub=pqcsub.getSub();
                             }
                             
                         }
@@ -230,6 +242,7 @@ public class Q11 {
                            if(currentDoubtStatus.equals("O")){
                                //dont do anything. it stays doubtful with status=O for Doubt.qc type
                                chsub.getDoubt().setStatus("O");
+                               chsub.getSequenceHeader().getDoubt().setStatus("O");
                                chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
                                setSeqDoubtStatus(chsub);
                                chsub.getDoubt().setDoubt(true);
@@ -252,6 +265,7 @@ public class Q11 {
                            ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());
                            ds.setParentSessionDetails(parentSsd);
                            ds.setHeaders(ch);
+                           //ds.setHeaders(ph);
                            ds.setUser(null);
                            ds.setStatus("Y");
                            ds.setErrorMessage(err);

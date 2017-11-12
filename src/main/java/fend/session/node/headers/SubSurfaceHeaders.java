@@ -57,7 +57,7 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
     private   LongProperty numberOfRuns=new SimpleLongProperty(0L);
     private   StringProperty errorMessage=new SimpleStringProperty();
-    
+    private   boolean   passQC=true;
     
     private final StringProperty run = new SimpleStringProperty(this,"run");
     //private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
@@ -569,7 +569,22 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
         return true;
     }
 
+    public void qcStatus(boolean passQc) {
+        this.passQC=this.passQC && passQc;
+        System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC);
+       //this.sequenceHeader.setPassQC(this.passQC);
+    }
+    
+    
+    public void resetPassQC(){
+        this.passQC=true;
+    }
+
+    public boolean isPassQC() {
+        return passQC;
+    }
    
+    
    
      
     

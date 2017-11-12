@@ -23,7 +23,8 @@ import mid.doubt.Doubt;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
+ * sharath.nair@polarcus.com
  */
 public class SequenceHeaders implements Serializable{
 
@@ -69,6 +70,48 @@ public class SequenceHeaders implements Serializable{
 
     
     private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
+   
+    
+    public String getQcStatus() {
+        return qcStatus.get();
+    }
+
+    public void setQcStatus(String value) {
+        qcStatus.set(value);
+    }
+
+    public StringProperty qcStatusProperty() {
+        this.isPassQC();
+        if(this.passQC){
+            qcStatus.set("OK");
+        }else{
+            qcStatus.set("QC");
+        }
+        return qcStatus;
+    }
+    
+     private boolean passQC =true;
+
+    public boolean isPassQC() {
+        this.passQC=true;
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            this.passQC=this.passQC && next.isPassQC();
+            
+        }
+         System.out.println("fend.session.node.headers.SequenceHeaders.setPassQC(): seq: "+this.sequenceNumber+" QCSTATUS: "+this.passQC);
+        return passQC;
+    }
+    
+    /* public void setPassQC(boolean passQC) {
+    this.passQC = this.passQC && passQC;
+    
+    }
+    
+    public void resetPassQC(){
+    this.passQC=true;
+    }*/
+     
     private final BooleanProperty pendingalert = new SimpleBooleanProperty(Boolean.FALSE);
     private Set<Long> wfversionSet=new HashSet<>();                                                         //use this set to check if there are more than one versions of the workflow present in the seq
     
@@ -211,19 +254,6 @@ public class SequenceHeaders implements Serializable{
     
     
     
-    
-
-    public String getQcStatus() {
-        return qcStatus.get();
-    }
-
-    public void setQcStatus(String value) {
-        qcStatus.set(value);
-    }
-
-    public StringProperty qcStatusProperty() {
-        return qcStatus;
-    }
     
 
    

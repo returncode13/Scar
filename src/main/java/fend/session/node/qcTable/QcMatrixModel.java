@@ -100,5 +100,17 @@ public class QcMatrixModel {
         
         return types;
     }
+
+    public QcTypeModel getKeyFromTypePresMap(QcTypeModel def) {
+        Set<QcTypeModel> keys=qcTypePresMap.keySet();
+        for (Iterator<QcTypeModel> iterator = keys.iterator(); iterator.hasNext();) {
+            QcTypeModel next = iterator.next();
+            if(def.getName().equalsIgnoreCase(next.getName())){
+                return next;
+            }
+            
+        }
+        return null;
+    }
     
 }

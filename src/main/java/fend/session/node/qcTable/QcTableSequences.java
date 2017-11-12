@@ -167,9 +167,10 @@ public class QcTableSequences {
                 QcTableSubsurfaces qsub=new QcTableSubsurfaces();
             qsub.setQcTableSeq(this);
             qsub.setSequence(this.sequence);
-            qsub.setSub(subs); 
+            qsub.setSub(subs);
+            qsub.getSub().resetPassQC();
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-                System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+              //  System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
             
              for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                 QcTypeModel next1 = iterator1.next();
@@ -177,8 +178,10 @@ public class QcTableSequences {
                 n.setId(next1.getId());
                 n.setName(next1.getName());
                 n.setPassQc(next1.isPassQc());
+                qsub.getSub().qcStatus(next1.isPassQc());
                 qctypescopy.add(n);
                // qctypescopy.add(next1);
+               
                 
             }
              qsub.setQctypes(qctypescopy);
@@ -193,7 +196,7 @@ public class QcTableSequences {
             qsub.setSequence(this.sequence);
             qsub.setSub(subs); 
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-              System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+            //  System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
              ///-->Start
             /* 
              
@@ -215,6 +218,7 @@ public class QcTableSequences {
              //check if an entry exists in the database
             
            SubSurfaceHeaders sub=qsub.getSub();
+           sub.resetPassQC();
             Subsurface subobj=subserv.getSubsurfaceObjBysubsurfacename(sub.getSubsurface());
             JobStep js=jobserv.getJobStep(jobModel.getId());
             List<JobVolumeDetails> jvlist=jvserv.getJobVolumeDetails(js);
@@ -237,14 +241,15 @@ public class QcTableSequences {
                     
                     if(qctableObjList.isEmpty()){
                          
-                        System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): list is empty. creating copies of qctypes");
-            
+                        //System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): list is empty. creating copies of qctypes");
+                        qsub.getSub().resetPassQC();
                         for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                            QcTypeModel next1 = iterator1.next();
                            QcTypeModel n=new QcTypeModel();
                            n.setId(next1.getId());
                            n.setName(next1.getName());
                            n.setPassQc(next1.isPassQc());
+                           qsub.getSub().qcStatus(next1.isPassQc());
                            qctypescopy.add(n);
                           // qctypescopy.add(next1);
 
@@ -257,7 +262,7 @@ public class QcTableSequences {
                         
                    
                     
-                    
+                    qsub.getSub().resetPassQC();
                     
                     for (Iterator<QcTable> iterator1 = qctableObjList.iterator(); iterator1.hasNext();) {
                         QcTable next = iterator1.next();
@@ -268,6 +273,7 @@ public class QcTableSequences {
                 n.setName(next.getQcmatrix().getQctype().getName());
                 n.setPassQc(next.getResult());
                 qctypescopy.add(n);
+                qsub.getSub().qcStatus(next.getResult());
                         
                     }
                      qsub.setQctypes(qctypescopy);
