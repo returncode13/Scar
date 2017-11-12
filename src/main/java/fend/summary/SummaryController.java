@@ -39,14 +39,18 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import mid.doubt.Doubt;
@@ -56,7 +60,7 @@ import org.apache.commons.collections4.map.MultiValueMap;
 /**
  *
  * @author sharath nair
- * 
+ * sharath.nair@polarcus.com
  */
 
 
@@ -127,18 +131,50 @@ public class SummaryController extends Stage{
                 @Override
                 public TableCell<SummarySequenceModel, DepthModel> call(TableColumn<SummarySequenceModel, DepthModel> param) {
                     
-                    TableCell<SummarySequenceModel, DepthModel>  cell=new TableCell(){
+                    TableCell<SummarySequenceModel, DepthModel>  cell=new TableCell<SummarySequenceModel, DepthModel>(){
                         
+                        /*@Override
+                        public void updateItem(DepthModel item,boolean empty){
+                        super.updateItem(item, empty);
+                        if(!isEmpty()){
+                        String color=depthcolors.get(depindex%2);
+                        this.setStyle("-fx-background-color:red;");
+                        System.out.println(" STYLE "+getStyle() +" COLOR "+depthcolors.get(depindex%2));
+                        setText(""+item.getDepth());
+                        }
+                        }*/
                         
                         @Override
+                         protected void updateItem(DepthModel item,boolean empty){
+                                   super.updateItem(item, empty);
+                                   if(empty||item==null){
+                                     //  setText("Empty");
+                                       setStyle("");
+                                   }
+                                   else{
+                                   
+                                   
+                                 
+                                      // setText(item.toString());
+                                       setStyle("-fx-background-color:orange");
+                                      System.out.println(" STYLE "+getStyle() +" COLOR "+depthcolors.get(depindex%2));
+                                  
+                                     
+                                   }
+                               }
+                        
+                        
+                        
+                        /* @Override
                         public void updateIndex(int i){
-                            super.updateIndex(i);
-                            if(i>=0){
-                                String color=depthcolors.get(depindex%2);
-                                this.setStyle("-fx-background-color: "+color);
-                                
-                            }
+                        super.updateIndex(i);
+                        if(i>=0){
+                        String color=depthcolors.get(depindex%2);
+                        this.setStyle("-fx-background-color: "+color+";");
+                        System.out.println(getStyle());
+                        
                         }
+                        }*/
                     };
                  return cell;   
                 }
@@ -214,12 +250,55 @@ public class SummaryController extends Stage{
                   
                   }
                     
+                    Label runl=new Label("Run");
+                    Label depl=new Label("Dependency");
+                    Label insl=new Label("Insight Version");
+                    Label wfl=new Label("Worflow Version");
+                    Label qcl=new Label("Qc");
+                    /* runl.setRotate(-90);
+                    depl.setRotate(-90);
+                    insl.setRotate(-90);
+                    wfl.setRotate(-90);
+                    qcl.setRotate(-90);*/
                     
-                    TableColumn<SummarySequenceModel,String> run=new TableColumn<>("Run");
+                    VBox vboxd=new VBox(depl);
+                    vboxd.setRotate(-90);
+                    vboxd.setPadding(new Insets(5,5,5,5));
+                    Group grpd=new Group(vboxd);
+                    
+                    VBox vboxr=new VBox(runl);
+                    vboxr.setRotate(-90);
+                    vboxr.setPadding(new Insets(5,5,5,5));
+                    Group grpr=new Group(vboxr);
+                    
+                    VBox vboxw=new VBox(wfl);
+                    vboxw.setRotate(-90);
+                    vboxw.setPadding(new Insets(5,5,5,5));
+                    Group grpw=new Group(vboxw);
+                    
+                    VBox vboxi=new VBox(insl);
+                    vboxi.setRotate(-90);
+                    vboxi.setPadding(new Insets(5,5,5,5));
+                    Group grpi=new Group(vboxi);
+                    
+                    VBox vboxq=new VBox(qcl);
+                    vboxq.setRotate(-90);
+                    vboxq.setPadding(new Insets(5,5,5,5));
+                    Group grpq=new Group(vboxq);
+                    
+                    /*TableColumn<SummarySequenceModel,String> run=new TableColumn<>("Run");
                     TableColumn<SummarySequenceModel,String> dep=new TableColumn<>("Dependency");
                     TableColumn<SummarySequenceModel,Boolean> ins=new TableColumn<>("InsightVersion");
                     TableColumn<SummarySequenceModel,String> wf=new TableColumn<>("Workflow");
                     TableColumn<SummarySequenceModel,String > qc=new TableColumn<>("QC");
+                    */
+                    
+                    TableColumn<SummarySequenceModel,String> run=new TableColumn<>(""); run.setGraphic(grpr);
+                    TableColumn<SummarySequenceModel,String> dep=new TableColumn<>(""); dep.setGraphic(grpd);
+                    TableColumn<SummarySequenceModel,Boolean> ins=new TableColumn<>(""); ins.setGraphic(grpi);
+                    TableColumn<SummarySequenceModel,String> wf=new TableColumn<>(""); wf.setGraphic(grpw);
+                    TableColumn<SummarySequenceModel,String > qc=new TableColumn<>(""); qc.setGraphic(grpq);
+                   
                   //The values that the columns read  
                     run.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
@@ -784,6 +863,117 @@ public class SummaryController extends Stage{
                      }
                     });
                     
+                    dep.setCellFactory(ee->{
+                        TableCell<SummarySequenceModel,String> cell=new TableCell<SummarySequenceModel,String>(){
+                               @Override
+                               protected void updateItem(String item,boolean empty){
+                                   super.updateItem(item, empty);
+                                   if(empty||item==null){
+                                     //  setText("Empty");
+                                       setStyle("");
+                                   }
+                                   else{
+                                   
+                                   if(item.equals("OK")){
+                                      // setText(item.toString());
+                                       setStyle("-fx-background-color:green");
+                                   }
+                                    if(item.equals("Time")){
+                                      // setText(item.toString());
+                                       setStyle("-fx-background-color:orange");
+                                   }
+                                    if(item.equals("Traces")){
+                                      // setText(item.toString());
+                                       setStyle("-fx-background-color:purple");
+                                   }
+                                    if(item.equals("TimeTraces")){
+                                      // setText(item.toString());
+                                       setStyle("-fx-background-color:blue");
+                                   }
+                                     
+                                   }
+                               }
+                           };
+                        
+                        cell.textProperty().bind(cell.itemProperty());
+                           final ContextMenu contextMenu=new ContextMenu();
+                           final MenuItem showSeq=new MenuItem("seq information");
+                           showSeq.setOnAction(e->{
+                               String cellString=cell.getItem();
+                               SummarySequenceModel summarySequenceModel=(SummarySequenceModel) cell.getTableRow().getItem();
+                               
+                               System.out.println("fend.summary.SummaryController.setModel().call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
+                               Long type=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
+                                /*
+                             Volume type 1L: denoise
+                             Start
+                             */ 
+                            
+                               
+                               if(type.equals(1L)){
+                                   
+                              VolumeSelectionModelType1 vmod1=(VolumeSelectionModelType1) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod1.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod1.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 1L: denoise
+                             End
+                             */ 
+                             
+                             /*
+                             Volume type 2L: segdLoad
+                             Start
+                             */
+                               if(type.equals(2L)){
+                                   
+                              VolumeSelectionModelType2 vmod2=(VolumeSelectionModelType2) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod2.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod2.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 2L: segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Volume type 3L: acq
+                             Start
+                             */
+                               
+                               if(type.equals(3L)){
+                                   System.out.println("fend.summary.SummaryController.setModel().call():  AcquisitionModel implementation pending");
+                               }
+                            /*
+                             Volume type 3L: acq
+                             End
+                             */
+                           
+                           });
+                           contextMenu.getItems().add(showSeq);
+                           cell.setContextMenu(contextMenu);
+                           
+                        
+                        
+                        
+                        
+                        //cell.textProperty().bind(cell.itemProperty());
+                        return cell;
+                        
+                    });
+                    
+                    
+                    
                     
                     
                     //The context menus for each column
@@ -902,7 +1092,7 @@ public class SummaryController extends Stage{
                                protected void updateItem(Boolean item,boolean empty){
                                    super.updateItem(item, empty);
                                    if(empty||item==null){
-                                       setText("Empty");
+                                     //  setText("Empty");
                                        setStyle("");
                                    }
                                    else{
@@ -921,6 +1111,208 @@ public class SummaryController extends Stage{
                            };
                         //cell.textProperty().bind(cell.itemProperty());
                         return cell;
+                    });
+                    
+                    wf.setCellFactory(ee->{
+                        TableCell<SummarySequenceModel,String> cell=new TableCell<SummarySequenceModel,String>(){
+                               @Override
+                               protected void updateItem(String item,boolean empty){
+                                   super.updateItem(item, empty);
+                                   if(empty||item==null){
+                                      // setText("Empty");
+                                       setStyle("");
+                                   }
+                                   else{
+                                   
+                                   if(item.equals(">1")){
+                                     //  setText(item);
+                                       setStyle("-fx-background-color:orange");
+                                   }
+                                    else{
+                                      // setText(item);
+                                       setStyle("-fx-background-color:green");
+                                   }
+                                     
+                                   }
+                               }
+                           };
+                        
+                         cell.textProperty().bind(cell.itemProperty());
+                           final ContextMenu contextMenu=new ContextMenu();
+                           final MenuItem showSeq=new MenuItem("seq information");
+                           showSeq.setOnAction(e->{
+                               String cellString=cell.getItem();
+                               SummarySequenceModel summarySequenceModel=(SummarySequenceModel) cell.getTableRow().getItem();
+                               
+                               System.out.println("fend.summary.SummaryController.setModel().call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
+                               Long type=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
+                                /*
+                             Volume type 1L: denoise
+                             Start
+                             */ 
+                            
+                               
+                               if(type.equals(1L)){
+                                   
+                              VolumeSelectionModelType1 vmod1=(VolumeSelectionModelType1) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod1.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod1.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 1L: denoise
+                             End
+                             */ 
+                             
+                             /*
+                             Volume type 2L: segdLoad
+                             Start
+                             */
+                               if(type.equals(2L)){
+                                   
+                              VolumeSelectionModelType2 vmod2=(VolumeSelectionModelType2) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod2.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod2.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 2L: segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Volume type 3L: acq
+                             Start
+                             */
+                               
+                               if(type.equals(3L)){
+                                   System.out.println("fend.summary.SummaryController.setModel().call():  AcquisitionModel implementation pending");
+                               }
+                            /*
+                             Volume type 3L: acq
+                             End
+                             */
+                           
+                           });
+                           contextMenu.getItems().add(showSeq);
+                           cell.setContextMenu(contextMenu);
+                           
+                        
+                        
+                        
+                        
+                        //cell.textProperty().bind(cell.itemProperty());
+                        return cell;
+                        
+                    });
+                    
+                    qc.setCellFactory(ee->{
+                        TableCell<SummarySequenceModel,String> cell=new TableCell<SummarySequenceModel,String>(){
+                               @Override
+                               protected void updateItem(String item,boolean empty){
+                                   super.updateItem(item, empty);
+                                   if(empty||item==null){
+                                      // setText("Empty");
+                                       setStyle("");
+                                   }
+                                   else{
+                                   
+                                   if(item.equals("OK")){
+                                       //setText(item);
+                                       setStyle("-fx-background-color:green");
+                                   }
+                                    if(item.equals("QC")){
+                                       //setText(item);
+                                       setStyle("-fx-background-color:orange");
+                                   }
+                                     
+                                   }
+                               }
+                           };
+                        
+                         cell.textProperty().bind(cell.itemProperty());
+                           final ContextMenu contextMenu=new ContextMenu();
+                           final MenuItem showSeq=new MenuItem("seq information");
+                           showSeq.setOnAction(e->{
+                               String cellString=cell.getItem();
+                               SummarySequenceModel summarySequenceModel=(SummarySequenceModel) cell.getTableRow().getItem();
+                               
+                               System.out.println("fend.summary.SummaryController.setModel().call(): seq "+summarySequenceModel.getSeq()+" status: "+cellString);
+                               Long type=summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel().getType();
+                                /*
+                             Volume type 1L: denoise
+                             Start
+                             */ 
+                            
+                               
+                               if(type.equals(1L)){
+                                   
+                              VolumeSelectionModelType1 vmod1=(VolumeSelectionModelType1) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod1.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod1.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 1L: denoise
+                             End
+                             */ 
+                             
+                             /*
+                             Volume type 2L: segdLoad
+                             Start
+                             */
+                               if(type.equals(2L)){
+                                   
+                              VolumeSelectionModelType2 vmod2=(VolumeSelectionModelType2) summarySequenceModel.getDepthlist().getListOfDepthModel().get(depindex).getListOfJobs().get(jobindex).getListOfVolumes().get(volindex).getVolumeSelectionModel();
+                               SequenceHeaders ss=vmod2.getHeadersModel().getSequenceObjBySequenceNumber(summarySequenceModel.getSeq());
+                               if(ss==null){
+                                   
+                               }else{
+                                   HeadersModel hmod=vmod2.getHeadersModel();
+                                   HeadersNode hnode=new HeadersNode(hmod, (int) summarySequenceModel.getSeq());
+                               }
+                               }
+                               /*
+                             Volume type 2L: segdLoad
+                             End
+                             */
+                             
+                              /*
+                             Volume type 3L: acq
+                             Start
+                             */
+                               
+                               if(type.equals(3L)){
+                                   System.out.println("fend.summary.SummaryController.setModel().call():  AcquisitionModel implementation pending");
+                               }
+                            /*
+                             Volume type 3L: acq
+                             End
+                             */
+                           
+                           });
+                           contextMenu.getItems().add(showSeq);
+                           cell.setContextMenu(contextMenu);
+                           
+                        
+                        
+                        
+                        
+                        //cell.textProperty().bind(cell.itemProperty());
+                        return cell;
+                        
                     });
                     
                     vtc.getColumns().addAll(dep,run,wf,ins,qc);
@@ -1139,7 +1531,7 @@ public class SummaryController extends Stage{
     }
     
     
-    final List<String> depthcolors=Arrays.asList("DIMGRAY","DARKGRAY");
+    final List<String> depthcolors=Arrays.asList("BLUE","RED");
 }
 
 class SHolder{
