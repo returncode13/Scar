@@ -89,6 +89,32 @@ public class QcTable implements Serializable {
     public void setSubsurface(String subsurface) {
     this.subsurface = subsurface;
     }*/
+    
+    
+    @Column(name="UpdateTime")
+    private String updateTime;
+    
+    @Column(name="SummaryTime")
+    private String summaryTime;
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
+    
+    
+    
 
     public String getTime() {
         return time;

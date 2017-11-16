@@ -35,6 +35,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
     SequenceHeaders sequence;
     List<QcTypeModel> qcfields=null;
     QcTableSequences qcTableSeq;
+    String updateTime;
    // Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
 
     public QcTableSequences getQcTableSeq() {
@@ -120,6 +121,15 @@ public class QcTableSubsurfaces extends QcTableSequences{
     public void setQctypeMap(Map<QcTypeModel, BooleanProperty> qctypeMap) {
         this.qctypeMap = qctypeMap;
     }
+
+    void setUpdateTime(String updateTime) {
+        this.updateTime=updateTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+    
     
     
 }

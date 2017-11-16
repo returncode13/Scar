@@ -6,9 +6,13 @@
 package fend.session.node.qcTable;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TablePosition;
@@ -18,6 +22,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 /**
  *
@@ -28,99 +33,70 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
     TreeTableView<QcTableSequences> ttv;
     QcTableSequences selectedItem;
     int index;
-    final CheckBox checkBox=new CheckBox(){{
-        setIndeterminate(true);
-        allowIndeterminateProperty().set(true);
-    }};
+    final CheckBox checkBox;
+   // private ObservableValue<Boolean> objSelProperty;
+    //private ObservableValue<Boolean> objIndProperty;
     
-    BooleanProperty isselected=new SimpleBooleanProperty(false);
-    BooleanProperty isindeterminate=new SimpleBooleanProperty(true);
+     private ObjectProperty<Boolean> objSelProperty;
+    private ObjectProperty<Boolean> objIndProperty;
     
+    private BooleanProperty booleanSel;
+    private BooleanProperty booleanInd;
     
-    
-    /*CheckBoxCell(TreeTableColumn<QcTableSequences, String> param, int ind) {
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): new called: with params: "+param.getCellData(ind)+" and iii: "+ind);
-    checkBox.allowIndeterminateProperty().set(true);
-    checkBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
-    @Override
-    public void handle(MouseEvent event) {
-    int sel=getTreeTableRow().getIndex();
-    index=getTreeTableRow().getIndex();
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): selectedrow:  "+sel);
-    selectedItem=param.getTreeTableView().getTreeItem(sel).getValue();
+    ChangeListener<Boolean> listenerA;
+    ChangeListener<Boolean> listenerB;
     
     
-    /* if(selectedItem.getQcfields().get(ind).isPassQc()){
-    checkBox.setSelected(true);
-    }
-    if(!selectedItem.getQcfields().get(ind).isPassQc()){
-    checkBox.setSelected(false);
-    }
-    if(selectedItem.getQcfields().get(ind).isNotQcd()){
-    checkBox.setIndeterminate(true);
-    }*/
-    /*
-    if(checkBox.isIndeterminate()){
-        selectedItem.getQcfields().get(ind).setQcStatus("NQ");
-    }
-    if(checkBox.isSelected()){
-        selectedItem.getQcfields().get(ind).setQcStatus("OK");
-    }
-    if(!checkBox.isSelected() && !checkBox.isIndeterminate()){
-        selectedItem.getQcfields().get(ind).setQcStatus("FQ");
-    }
-    
-    
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): selectedSeq:  "+selectedItem.getSequenceNumber());
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): selectedSub:  "+selectedItem.getSubsurface());
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): qcstatus:  "+selectedItem.getQcfields().get(ind).getQcStatus());
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): passQc:  "+selectedItem.getQcfields().get(ind).isPassQc());
-    System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): notQc:  "+selectedItem.getQcfields().get(ind).isNotQcd());
-    isselected.bindBidirectional(selectedItem.getQcfields().get(ind).passQcProperty());
-    isindeterminate.bindBidirectional(selectedItem.getQcfields().get(ind).notQcdProperty());
-}
-}
-);
-}*/
 
     CheckBoxCell(TreeTableColumn<QcTableSequences, Boolean> param, int ind) {
-//        System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): new called: with params: "+param.get+" and iii: "+ind);
-       checkBox.allowIndeterminateProperty().set(true);
+
+       checkBox=new CheckBox();
+       checkBox.setAllowIndeterminate(true);
+        index=ind;
+       
+       
+      listenerA =new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            updateSel(newValue);
+            
+        }
+    };
+      listenerB =new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            updateInd(newValue);
+            
+        }
+
+           
+    };
+      
+      checkBox.selectedProperty().addListener(listenerA);
+       checkBox.indeterminateProperty().addListener(listenerB);
+       
        checkBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
            @Override
            public void handle(MouseEvent event) {
-               int sel=getTreeTableRow().getIndex();
-               index=getTreeTableRow().getIndex();
-               System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedrow:  "+sel);
-               selectedItem=param.getTreeTableView().getTreeItem(sel).getValue();
-                              
                
-              
-               if(checkBox.isIndeterminate()){
-                   //selectedItem.getQcfields().get(ind).setQcStatus("NQ");
-                }
-               if(checkBox.isSelected()){
-                  // selectedItem.setTp(true);
-                }
-               if(!checkBox.isSelected() && !checkBox.isIndeterminate()){
-                   //selectedItem.setTp(false);
-               }
+             //  index=getTreeTableRow().getIndex();
+            //int sel=getTreeTableRow().getIndex();
+                //selectedItem=param.getTreeTableView().getTreeItem(sel).getValue();
+                selectedItem=getTreeTableRow().getItem();
+               //System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedrow:  "+sel);
                
                
                System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedSeq:  "+selectedItem.getSequenceNumber());
                System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedSub:  "+selectedItem.getSubsurface());
-               /*  System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): qcstatus:  "+selectedItem.getQctypes().get(ind).getQcStatus());
-               System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): passQc:  "+selectedItem.getQctypes().get(ind).isPassQc());
-               System.out.println("fend.session.node.volumes.qcTable.CheckBoxCell.<init>(): notQc:  "+selectedItem.getQctypes().get(ind).isNotQcd());*/
-               //isselected.bindBidirectional(selectedItem.getQcfields().get(ind).passQcProperty());
-               //isindeterminate.bindBidirectional(selectedItem.getQcfields().get(ind).notQcdProperty());
-               /*checkBox.setSelected(selectedItem.isTp());
-               isselected.bind(selectedItem.tpProperty());*/
+               
+             
+               
            }
        }
        );
     }
 
+    
     
     
     @Override
@@ -130,28 +106,44 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
             if(empty ){
             setGraphic(null);
             }else{
-                /* switch(qcstatus){
-                case "OK":
-                checkBox.setSelected(true);
-                break;
-                case "FQ":
-                checkBox.setSelected(false);
-                break;
-                case "NQ":
-                checkBox.setIndeterminate(true);
-                break;
-                }*/
-            //  isselected.bind(checkBox.);
-               //checkBox.indeterminateProperty().bindBidirectional(isindeterminate);
-               /*checkBox.setSelected(isselected.get());
-               checkBox.setIndeterminate(isindeterminate.get());*/
-                Boolean treeItem=getItem();
-               System.out.println("fend.session.node.qcTable.CheckBoxCell.updateItem(): called on "+qcstatus);
-               /*if(qcstatus)checkBox.setSelected(true);
-               else checkBox.setSelected(false);*/
-               checkBox.setSelected(isselected.get());
-            setGraphic(checkBox);
+                
+                //selectedItem= getTreeTableRow().getItem();
+               if(selectedItem!=null){
+                   
+              
+               System.out.println("fend.session.node.qcTable.CheckBoxCell.updateItem(): called on "+selectedItem.getSequenceNumber()+" ,  "+selectedItem.getSubsurface()+" : "+qcstatus);
+                System.out.println("fend.session.node.qcTable.CheckBoxCell.updateItem(): qcstatus is : "+qcstatus);
+                  
+                 checkBox.selectedProperty().bindBidirectional(selectedItem.getQctypes().get(index).getCheckUncheckProperty());
+             //    checkBox.indeterminateProperty().bindBidirectional(selectedItem.getQctypes().get(index).getFailProperty());
+                   }
+                //checkBox.indeterminateProperty().bindBidirectional(selectedItem.getQctypes().get(index).getTriStateProperty());
+              
+               
+               
+               setGraphic(checkBox);
+            
             }
     }
+    
+    
+    private void updateSel(Boolean newValue){
+         selectedItem=getTreeTableRow().getItem();
+          
+        if(selectedItem!=null){
+                        
+            selectedItem.getQctypes().get(index).setCheckUncheckProperty(newValue);
+            checkBox.setIndeterminate(false);
+            
+        }
+        
+    }
+    
+    private void updateInd(Boolean newValue) {
+        if(selectedItem!=null){
+             selectedItem.getQctypes().get(index).setFailProperty(newValue);
+        }
+              
+           }
     
 }

@@ -62,6 +62,7 @@ public class QcTableSequences {
     Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
     JobStepType0Model jobModel; 
     Boolean loading=true;
+    String updateTime;
     
     public JobStepType0Model getJobModel() {
         return jobModel;
@@ -300,6 +301,14 @@ public class QcTableSequences {
             
         }
         loading=false;
+    }
+
+    void setUpdateTime(String updateTime) {
+        this.updateTime=updateTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
     }
     
     

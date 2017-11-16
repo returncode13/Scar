@@ -7,7 +7,9 @@ package fend.session.node.qcTable;
 
 import java.util.Comparator;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -48,7 +50,7 @@ public class QcTypeModel implements Comparator<QcTypeModel>,Comparable<QcTypeMod
     }
     
     public BooleanProperty passQcProperty() {
-    System.out.println("fend.session.node.volumes.qcTable.QcTypeModel.passQcProperty(): Returning: "+passQc.get()+" for type: "+name+" id: "+this);
+    //System.out.println("fend.session.node.volumes.qcTable.QcTypeModel.passQcProperty(): Returning: "+passQc.get()+" for type: "+name+" id: "+this);
     return passQc;
     }
     
@@ -57,8 +59,33 @@ public class QcTypeModel implements Comparator<QcTypeModel>,Comparable<QcTypeMod
         return (this.id).compareTo(q1.id);
     }
     
+    private final BooleanProperty checkUncheckProperty=new SimpleBooleanProperty(false);
+    public void setCheckUncheckProperty(Boolean value){
+        checkUncheckProperty.set(value);
+    }
     
+    public BooleanProperty getCheckUncheckProperty(){
+        return checkUncheckProperty;
+        
+    }
     
+    public Boolean getCheckUncheck(){
+        return checkUncheckProperty.get();
+    }
+    
+    private final BooleanProperty  failProperty=new SimpleBooleanProperty(false);
+    
+    public void setFailProperty(Boolean value){
+        failProperty.set(value);
+    }
+    
+    public BooleanProperty getFailProperty() {
+        return failProperty;
+    }
+    
+    public Boolean getFail(){
+        return failProperty.get();
+    }
     
     /*private final BooleanProperty notQcd = new SimpleBooleanProperty(true);
     
