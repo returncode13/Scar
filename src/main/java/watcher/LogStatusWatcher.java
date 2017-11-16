@@ -30,6 +30,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import landing.AppProperties;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -141,6 +144,7 @@ public class LogStatusWatcher {
                             Boolean cancelled=log.getCancelled();
                             Boolean success=log.getCompletedsuccessfully();
                             if()*/
+                            log.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));      //stored as a string  yyyyMMddHHmmss
                             lserv.updateLogs(log.getIdLogs(), log);
                             //LogStatusWatcher.this.volselmodel.addToLogstatusMapForSeq(log.getSeqn(),);
                         }

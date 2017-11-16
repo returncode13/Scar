@@ -43,6 +43,7 @@ import fend.session.node.volumes.type4.VolumeSelectionModelType4;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,8 +59,11 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import landing.AppProperties;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import watcher.LogWatcher;
 
 /**
@@ -287,7 +291,7 @@ public class HeaderCollector {
     
     private void calculateAndCommitHeaders(){
                         
-
+Boolean updateTime=true;
         
             try{
             
@@ -357,17 +361,21 @@ public class HeaderCollector {
                        
                    
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): running on Thread: "+Thread.currentThread().getName()+" joining");
-            //logger.info("running on Thread: "+Thread.currentThread().getName()+" joining");
-            if(finalExistingHeaders!=null){
-                headerList.addAll(finalExistingHeaders);                                                         //append any old headers
-            }
+            
             if (headerList.isEmpty()){
                 System.out.println("collector.HeaderCollector: headerList is empty");
                 logger.info("headerList is empty");
+                updateTime=false;
                // return null;                     // the while loop will break when there are no more headers to process.
             }
             else
                 System.out.println("collector.HeaderCollector: headerList is NOT empty : size: "+headerList.size()); 
+            //logger.info("running on Thread: "+Thread.currentThread().getName()+" joining");
+            if(finalExistingHeaders!=null){
+            headerList.addAll(finalExistingHeaders);                                                         //append any old headers   //removed in 1.0.8
+            }
+            
+            
             logger.info("headerList is NOT empty : size: "+headerList.size());
             /*sl=new ArrayList<>();*/
             sl=new HashSet<>();
@@ -434,19 +442,33 @@ public class HeaderCollector {
                 {
                     System.out.println(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
                     logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
-                    
-                    hdrServ.updateHeaders(next.getIdHeaders(), next);       
+                  if(updateTime){
+                      next.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT)); //stored as a string
+                      hdrServ.updateHeaders(next.getIdHeaders(), next);
+                  }      
+                           
                 }
                 else{
                     logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be created!");
-                hdrServ.createHeaders(next);                             //commit to the db
+                    
+                    if(updateTime){
+                        next.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT)); //stored as a string  yyyyMMddHHmmss
+                    hdrServ.createHeaders(next);                             //commit to the db
+                    }      
+                    
+                    
+                
                 }
                 
                 
                 for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
                     Logs next1 = iterator1.next();
                     next1.setHeaders(next);
-                    lserv.updateLogs(next1.getIdLogs(), next1);
+                    if(updateTime){
+                        next1.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                        lserv.updateLogs(next1.getIdLogs(), next1);
+                    }      
+                    
                 }
             }
                 
@@ -473,11 +495,22 @@ public class HeaderCollector {
                 {
                     System.out.println(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
                     logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be updated!");
-                    hdrServ.updateHeaders(next.getIdHeaders(), next);       
+                   if(updateTime){
+                       next.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                   }      //stored as a string  yyyyMMddHHmmss
+                   hdrServ.updateHeaders(next.getIdHeaders(), next);       
+                    
                 }
                 else{
                     logger.info(next.getSubsurface()+ " : with id : "+next.getIdHeaders()+" : is about to be created!");
-                hdrServ.createHeaders(next);                             //commit to the db
+                    if(updateTime){
+                        next.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                         //stored as a string  yyyyMMddHHmmss 
+                         hdrServ.createHeaders(next);                             //commit to the db
+                    }
+                    
+                    
+                
                 }
                 
                 
@@ -510,7 +543,12 @@ public class HeaderCollector {
                     if(lhdr.size()==0 ){
                         System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): creating headers for "+next.getSubsurface().getSubsurface());
                         logger.info("creating headers for "+next.getSubsurface().getSubsurface());
+                        if(updateTime){
+                            next.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                              //stored as a string  yyyyMMddHHmmss
                         hdrServ.createHeaders(next);
+                        }
+                        
                     }
                 }
                 
@@ -534,7 +572,12 @@ public class HeaderCollector {
                     if(lhdr.size()==0 ){
                         System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): creating headers for "+next.getSubsurface().getSubsurface());
                         logger.info("creating headers for "+next.getSubsurface().getSubsurface());
-                        hdrServ.createHeaders(next);
+                       if(updateTime){
+                           next.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                             //stored as a string  yyyyMMddHHmmss
+                       hdrServ.createHeaders(next);
+                       }
+                        
                     }
                 }
                   

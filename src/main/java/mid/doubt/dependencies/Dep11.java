@@ -47,8 +47,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import landing.AppProperties;
 import mid.doubt.Doubt;
 import org.apache.commons.collections4.map.MultiValueMap;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -96,7 +99,7 @@ public class Dep11 {
          if(parent.getType().equals(1L) && child.getType().equals(1L)){
             
         
-        //If Child has been traversed then return.   Create a "traversed" flag in JobStepModel and set in each time the node is returning "upwards". i.e it and all of its descendants have been traversed, set its "traversed" flag to True
+       
         Boolean passTraceCounts=true;            //defualt QC status is false
         Boolean passTimeStamps=true;
         //Boolean insightFail=false;
@@ -536,6 +539,8 @@ public class Dep11 {
                                                ds.setChildSessionDetailsId(childSsd.getIdSessionDetails());
                                                ds.setStatus("Y");
                                                ds.setUser(null);
+                                               //ds.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));      //stored as a string  yyyyMMddHHmmss
+                                               
                                                if(laterTimestamp){
                                                    ds.setErrorMessage(refSub.getSubsurface()+"in parent: "+parent.getJobStepText()+" has a later timestamp ("+refSub.getTimeStamp()+") than the one in the child job: "+child.getJobStepText()
                                                    +" ("+targetSub.getTimeStamp()+")");
@@ -673,22 +678,22 @@ public class Dep11 {
                                            targetSub.getDoubt().setStatus("Y");
                                            setSeqDoubtStatus(targetSub);
                                            
-                                           this.parent.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                           this.parent.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
-                                           refSeq.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                           refSeq.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
-                                           refSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                           refSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
                                            
                                            
-                                           this.child.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                           this.child.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
-                                                  targetSeq.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                                  targetSeq.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
-                                                  targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                                  targetSub.getDoubt().addToDoubtMap(this.parent,this.child,Doubt.doubtTraces, refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")");
                                                   
-                                                  String err=refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has lesser traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
+                                                  String err=refSub.getSubsurface()+"in parent: "+this.parent.getJobStepText()+" has more traces ("+refSub.getTraceCount()+") than the one in the child job: "+this.child.getJobStepText()
                                                    +" ("+targetSub.getTraceCount()+")";
                                                   doubtMessageInChildSub.add(err);
                                                   //refSub.setErrorMessageList(doubtMessageInChildSub);

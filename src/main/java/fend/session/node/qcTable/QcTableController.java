@@ -30,6 +30,9 @@ import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import landing.AppProperties;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -176,7 +179,9 @@ public class QcTableController extends Stage {
                          public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                              if(qseq instanceof QcTableSubsurfaces){
                                  System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for subseq: "+((QcTableSubsurfaces)qseq).getSub()+ " with seqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber()+" sub: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                                 
                                  ((QcTableSubsurfaces)qseq).getQctypes().get(iii).setPassQc(newValue);
+                                 ((QcTableSubsurfaces)qseq).setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                  if(!newValue){
                                    ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(newValue);
                                  }
@@ -188,6 +193,7 @@ public class QcTableController extends Stage {
                                  }
                                  if(alltrue){
                                      ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(alltrue);
+                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                  }
                              }
                              else
@@ -197,10 +203,12 @@ public class QcTableController extends Stage {
                                  
                                  if(newValue){                  //if true clicked for a seq, then set all the subs as true
                                      qseq.getQctypes().get(iii).setPassQc(newValue);
+                                     qseq.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                      List<QcTableSubsurfaces> qseqsubs=qseq.getQcSubs();
                                  for (Iterator<QcTableSubsurfaces> iterator = qseqsubs.iterator(); iterator.hasNext();) {
                                      QcTableSubsurfaces next = iterator.next();
                                      next.getQctypes().get(iii).setPassQc(newValue);
+                                     next.setUpdateTime(qseq.getUpdateTime());
                                      
                                  }
                                  }
@@ -217,8 +225,10 @@ public class QcTableController extends Stage {
                                      
                                      if(alltrue){
                                           qseq.getQctypes().get(iii).setPassQc(!newValue);
+                                          qseq.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                      }else{
                                          qseq.getQctypes().get(iii).setPassQc(newValue);
+                                         qseq.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                      }
                                  }
                                  

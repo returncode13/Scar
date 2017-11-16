@@ -5,6 +5,8 @@
  */
 package landing;
 
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author sharath
@@ -16,6 +18,9 @@ public class AppProperties {
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.
                                                                     3. PATCH version when you make backwards-compatible bug fixes
                                                             */
+    
+    
+    public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     private static String project=new String("no project selected");
     private String sessionName=new String("unknown session");
     private String irdbHost=new String("no host assigned");

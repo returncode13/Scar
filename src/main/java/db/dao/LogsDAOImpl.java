@@ -74,6 +74,7 @@ public class LogsDAOImpl implements LogsDAO{
             ll.setRunning(newL.getRunning());
             ll.setCancelled(newL.getCancelled());
             ll.setWorkflow(newL.getWorkflow());
+            ll.setUpdateTime(newL.getUpdateTime());
             session.update(ll);
             
             

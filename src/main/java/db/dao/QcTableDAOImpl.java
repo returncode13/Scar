@@ -69,6 +69,7 @@ public class QcTableDAOImpl implements QcTableDAO{
           //  h.setQctype(newQ.getQctype());
           h.setQcmatrix(newQ.getQcmatrix());
             h.setComment(newQ.getComment());
+            h.setUpdateTime(newQ.getUpdateTime());
             session.update(h);
             
             

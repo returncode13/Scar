@@ -140,6 +140,14 @@ public class Headers implements Serializable{
     @Column(name="workflowVersion")                                       //version of workflow
     private Long workflowVersion;
     
+    
+    @Column(name="UpdateTime")
+    private String updateTime;
+    
+    @Column(name="SummaryTime")
+    private String summaryTime;
+    
+    
     public Headers() {
         this.modified=Boolean.FALSE;
         this.deleted=Boolean.FALSE;
@@ -566,6 +574,22 @@ public class Headers implements Serializable{
 
     public void setWorkflowVersion(Long workflowVersion) {
         this.workflowVersion = workflowVersion;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
     }
     
     

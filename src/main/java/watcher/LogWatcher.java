@@ -41,13 +41,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import landing.AppProperties;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 //import org.openide.util.Exceptions;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 
 class LogWatchHolder{
@@ -431,7 +434,7 @@ public  class LogWatcher {
                             l.setInsightVersion(lgw.insightVersion);
                             l.setSubsurfaces(lgw.linename);
                            l.setSequence(lgw.seqno);
-                           
+                           l.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));      //stored as a string  yyyyMMddHHmmss
                             lserv.createLogs(l);
                             
                             //   preVersion++;
