@@ -50,7 +50,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import landing.AppProperties;
 import mid.doubt.Doubt;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -88,6 +91,9 @@ public class Dep21 {
         
         JobStep childjs=jserv.getJobStep(this.child.getId());
         SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
+        
+        List<Headers> hdrsToBeUpdated=new ArrayList<>();
+        
         
          if(parent.getType().equals(2L) && child.getType().equals(1L)){
             
@@ -341,6 +347,9 @@ public class Dep21 {
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
                                     Headers phdr=pdhrl.get(0);
+                                    phdr.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                    
+                                    hdrsToBeUpdated.add(phdr);
                                  //   List<DoubtStatus> parentChildDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtime,phdr);   //should be of size 1 or 0
                                  
                                    //<--Prerequired Parent block end
@@ -357,6 +366,8 @@ public class Dep21 {
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
+                                    chdr.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                    hdrsToBeUpdated.add(chdr);
                                    // List<DoubtStatus> childDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(childSsd, dtime,chdr);   //should be of size 1 or 0
                                   
                                     
@@ -420,6 +431,8 @@ public class Dep21 {
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
                                     Headers phdr=pdhrl.get(0);
+                                    phdr.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                    hdrsToBeUpdated.add(phdr);
                                    // List<DoubtStatus> parentDoubtstatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtrace,phdr);   //should be of size 1 or 0
                                    //<--Prerequired Parent block end
                                    
@@ -434,6 +447,8 @@ public class Dep21 {
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
+                                    chdr.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                    hdrsToBeUpdated.add(chdr);
                                   //  List<DoubtStatus> childDoubtstatTrace= dsServ.getDoubtStatusListForJobInSession(childSsd, dtrace,chdr);   //should be of size 1 or 0
                                   List<DoubtStatus> parentDoubtstatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtrace,phdr);   //should be of size 1 or 0
                                     
@@ -505,6 +520,8 @@ public class Dep21 {
                                     Volume tarv=vserv.getVolume(targetVol.getId());
                                     List<Headers> hdr=hserv.getHeadersFor(tarv, tsub);               //should be of size 1
                                     Headers chdr=hdr.get(0);
+                                    chdr.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                  hdrsToBeUpdated.add(chdr);
                                    // List<DoubtStatus> childDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(childSsd, dtime,chdr);   //should be of size 1 or null
                                   //  List<DoubtStatus> childDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(childSsd, dtrace,chdr);   //should be of size 1 or null
                                     
@@ -520,6 +537,8 @@ public class Dep21 {
                                     Volume refV=vserv.getVolume(refVol.getId());
                                     List<Headers> pdhrl=hserv.getHeadersFor(refV, rsub);
                                     Headers phdr=pdhrl.get(0);
+                                    hdrsToBeUpdated.add(phdr);
+                                    phdr.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                     //List<DoubtStatus> parentChildDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtime,phdr);   //should be of size 1 or null
                                     //List<DoubtStatus> parentChildDoubtStatTrace= dsServ.getDoubtStatusListForJobInSession(parentSsd, dtrace,phdr);   //should be of size 1 or null
                                     List<DoubtStatus> parentChildDoubtstatTime= dsServ.getDoubtStatusListForJobInSession(parentSsd,childSsd.getIdSessionDetails(), dtime,phdr); 
@@ -771,7 +790,7 @@ public class Dep21 {
              }
        
          
-        
+        updateSummaryTimes(hdrsToBeUpdated);
          
          
          
@@ -906,5 +925,13 @@ public class Dep21 {
             seq.getDoubt().setDoubt(false);
         }
         
+    }
+
+    private void updateSummaryTimes(List<Headers> hdrsToBeUpdated) {
+        for (Iterator<Headers> iterator = hdrsToBeUpdated.iterator(); iterator.hasNext();) {
+            
+            Headers next = iterator.next();
+            hserv.updateHeaders(next.getIdHeaders(), next);
+        }
     }
 }

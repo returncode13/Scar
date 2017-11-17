@@ -10,6 +10,7 @@ import db.model.DoubtType;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.QcTable;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Subsurface;
@@ -24,6 +25,8 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.QcTableService;
+import db.services.QcTableServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
@@ -46,7 +49,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import landing.AppProperties;
 import mid.doubt.Doubt;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -66,6 +72,8 @@ public class Q11 {
     HeadersService hserv=new HeadersServiceImpl();
     SubsurfaceService subserv=new SubsurfaceServiceImpl();
     JobVolumeDetailsService jvserv=new JobVolumeDetailsServiceImpl();
+    QcTableService qctserv=new QcTableServiceImpl();
+    
     
     SessionModel session;
     
@@ -83,7 +91,7 @@ public class Q11 {
         JobStep parentJs=jserv.getJobStep(this.parent.getId());
         List<JobVolumeDetails> pjvList=jvserv.getJobVolumeDetails(parentJs);
         
-        
+        List<Headers> hdrsToBeUpdated=new ArrayList<>();
         
         Sessions sess=sessServ.getSessions(session.getId());
         DoubtType dqc=dstypeServ.getDoubtTypeByName(Doubt.doubtQc);
@@ -145,7 +153,8 @@ public class Q11 {
                                                 
                                             }else if(hdrlist.size()==1){
                                                 ch=hdrlist.get(0);
-                                                
+                                               
+                                                hdrsToBeUpdated.add(ch);
                                                 once++;
                                             }
                                         
@@ -297,7 +306,7 @@ public class Q11 {
             
         }
          
-         
+          updateSummaryTimes(hdrsToBeUpdated);
         
     }
     
@@ -387,6 +396,22 @@ public class Q11 {
         }
         
     }
+
+    private void updateSummaryTimes(List<Headers> hdrsToBeUpdated) {
+        for (Iterator<Headers> iterator = hdrsToBeUpdated.iterator(); iterator.hasNext();) {
+            Headers next = iterator.next();
+            List<QcTable> qctabListForHeaderSelected=qctserv.getQcTableFor(next);
+            System.out.println("mid.doubt.qc.Q11.updateSummaryTimes():  for header ID: "+next.getIdHeaders()+" size of qctable list returned "+qctabListForHeaderSelected.size());
+            for (Iterator<QcTable> iterator1 = qctabListForHeaderSelected.iterator(); iterator1.hasNext();) {
+                QcTable qctab = iterator1.next();
+                qctab.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                qctserv.updateQcTable(qctab.getIdQcTable(), qctab);
+                
+            }
+        }
+    }
+
+    
     
     
     

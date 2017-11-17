@@ -201,7 +201,8 @@ public class SessionController implements Initializable {
     private NodeTypeService nodeserv=new NodeTypeServiceImpl();
     private NodePropertyService npropserv=new NodePropertyServiceImpl();
     private PropertyTypeService propServ=new PropertyTypeServiceImpl();
-
+    private SessionsService sessionServ=new SessionsServiceImpl();
+            
     @FXML
     private VBox buttonHolderVBox;
 
@@ -1230,7 +1231,7 @@ public class SessionController implements Initializable {
          System.out.println("fend.session.SessionController.tracking():  STARTED");
          logger.info("started");
          setRoots();
-        // List<Acquisition> acuiredSubs=acqServ.getAcquisition();      // this will query the db. Maybe put a timer?
+       
          List<OrcaView> acquiredSubs=orcaServ.getOrcaView();
          List<String> acqString=new ArrayList<>();                      // hold the names of the acquired subsurfaces
          
@@ -1241,6 +1242,8 @@ public class SessionController implements Initializable {
          logger.info("in AcqString: added: "+acqString.get(acqString.size()-1));
          
          }
+         
+         List<Headers> listOfHeadersToBeSummarized=getListOfHeadersToBeSummarized();
          
          List<String> jobSubString=new ArrayList<>();            // holds the names of the subsurfaces in the job
          
@@ -2304,6 +2307,33 @@ public class SessionController implements Initializable {
         String versf=insightVersion.replaceAll("([^\\w])","");
         
         return claimf.equals(versf);
+        
+    }
+    
+    
+    /*
+    Retrive list of headers to be summarized based on updateTime and summarytime in database tables .
+    */
+    private List<Headers> getListOfHeadersToBeSummarized() {
+        Sessions currentSession= sessionServ.getSessions(model.getId());
+        List<SessionDetails> ssdOfCurrentSession=ssdServ.getSessionDetails(currentSession);
+        List<Headers> headersToBeSummarized=new ArrayList<>();
+        List<JobStep> jobsInCurrentSession=new ArrayList<>();
+        List<Volume> volumesInCurrentSession=new ArrayList<>();
+        for (Iterator<SessionDetails> iterator = ssdOfCurrentSession.iterator(); iterator.hasNext();) {
+            SessionDetails next = iterator.next();
+            JobStep j=next.getJobStep();
+            jobsInCurrentSession.add(j);
+            volumesInCurrentSession.addAll(jvdServ.getVolumesFor(j));
+        }
+       
+        for (Iterator<Volume> iterator = volumesInCurrentSession.iterator(); iterator.hasNext();) {
+            Volume next = iterator.next();
+            List<Headers> hlist=hdrServ.getHeadersToBeSummarized(next);
+            headersToBeSummarized.addAll(hlist);
+        }
+        
+        return headersToBeSummarized;
         
     }
 

@@ -10,6 +10,7 @@ import db.model.DoubtType;
 import db.model.Headers;
 import db.model.JobStep;
 import db.model.JobVolumeDetails;
+import db.model.QcTable;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Subsurface;
@@ -24,6 +25,8 @@ import db.services.JobStepService;
 import db.services.JobStepServiceImpl;
 import db.services.JobVolumeDetailsService;
 import db.services.JobVolumeDetailsServiceImpl;
+import db.services.QcTableService;
+import db.services.QcTableServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
@@ -49,7 +52,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import landing.AppProperties;
 import mid.doubt.Doubt;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -69,6 +75,7 @@ public class Q21 {
     HeadersService hserv=new HeadersServiceImpl();
     SubsurfaceService subserv=new SubsurfaceServiceImpl();
     JobVolumeDetailsService jvserv=new JobVolumeDetailsServiceImpl();
+    QcTableService qctserv=new QcTableServiceImpl();
     
     SessionModel session;
     
@@ -94,7 +101,7 @@ public class Q21 {
         
         SessionDetails childSsd =ssdServ.getSessionDetails(childjs, sess);
         
-        
+        List<Headers> hdrsToBeUpdated=new ArrayList<>();
         
         System.out.println("mid.doubt.qc.Q21.<init>(): parentJob: "+parent.getJobStepText()+" childJob: "+child.getJobStepText());
         //List<QcTableSequences> childqcseqs=this.child.getQcTableModel().getQcTableSequences();
@@ -150,7 +157,8 @@ public class Q21 {
                                                 
                                             }else if(hdrlist.size()==1){
                                                 ch=hdrlist.get(0);
-                                                
+                                                //ch.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                                hdrsToBeUpdated.add(ch);
                                                 once++;
                                             }
                                         
@@ -198,6 +206,7 @@ public class Q21 {
                             if(psubh.getSubsurface().equals(chsub.getSubsurface())){
                                 once++;
                                 qcsubInParent=pqcsub;
+                                
                             }
                             
                         }
@@ -295,7 +304,7 @@ public class Q21 {
                     }
                     
                     
-                    
+                    updateSummaryTimes(hdrsToBeUpdated);
             
         }
 }
@@ -420,4 +429,22 @@ private void setSeqDoubtStatus(SubSurfaceHeaders chsub) {
         }
         
     }
+
+    private void updateSummaryTimes(List<Headers> hdrsToBeUpdated) {
+        for (Iterator<Headers> iterator = hdrsToBeUpdated.iterator(); iterator.hasNext();) {
+            Headers next = iterator.next();
+            List<QcTable> qctabListForHeaderSelected=qctserv.getQcTableFor(next);
+            
+            for (Iterator<QcTable> iterator1 = qctabListForHeaderSelected.iterator(); iterator1.hasNext();) {
+                QcTable qctab = iterator1.next();
+                qctab.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                qctserv.updateQcTable(qctab.getIdQcTable(), qctab);
+                
+            }
+        }
+    }
+
+
+   
+
 }

@@ -93,6 +93,7 @@ public class HeadersDAOImpl implements HeadersDAO{
             h.setModified(newH.getModified());
             h.setWorkflowVersion(newH.getWorkflowVersion());
             h.setUpdateTime(newH.getUpdateTime());
+            h.setSummaryTime(newH.getSummaryTime());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/
@@ -380,6 +381,26 @@ public class HeadersDAOImpl implements HeadersDAO{
             Criteria criteria=session.createCriteria(Headers.class);
             criteria.add(Restrictions.eq("volume", v));
             criteria.add(Restrictions.eq("subsurface", s));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Headers> getHeadersToBeSummarized(Volume v) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Headers> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Headers.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.gtProperty("summaryTime", "updateTime"));
             result=criteria.list();
             transaction.commit();
         }catch(Exception e){
