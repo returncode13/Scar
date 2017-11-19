@@ -105,23 +105,32 @@ public class SummaryStatusWatcher {
                                     Logs sublog = iterator.next();
                                     String subline=sublog.getSubsurfaces();
                                     Logs latestLog=lserv.getLatestLogFor(volume, subline);
+                                    
+                                    if(latestLog==null){
+                                        error=success=cancelled=running=false;
+                                    }
+                                    else{
                                     error=error || latestLog.getErrored();                      //if any have errored. set error =true
                                     success=success && latestLog.getCompletedsuccessfully();    //if all have succeeded . set success=true
                                     cancelled=cancelled || latestLog.getCancelled();            //if any
                                     running=running || latestLog.getRunning();                  //if any
+                                    }
                                     
                                 }
                                 if(error){
                                     runstatus="Errored";
                                 }
-                                if(!error && cancelled){
+                                else if(!error && cancelled){
                                     runstatus="Cancelled";
                                 }
-                                if(!error && !cancelled && running){
+                                else if(!error && !cancelled && running){
                                     runstatus="Running";
                                 }
-                                if(!error && !cancelled && !running && success){
+                                else if(!error && !cancelled && !running && success){
                                     runstatus="Success";
+                                }
+                                else{
+                                    runstatus="";
                                 }
                                 
                                 StringProperty runprop=new SimpleStringProperty(runstatus);

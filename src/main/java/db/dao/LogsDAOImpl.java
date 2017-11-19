@@ -179,7 +179,10 @@ public class LogsDAOImpl implements LogsDAO{
         }finally{
             session.close();
         }
+        if(result.isEmpty())return null;
+        else{
         return result.get(0);
+        }
     }
 
     @Override

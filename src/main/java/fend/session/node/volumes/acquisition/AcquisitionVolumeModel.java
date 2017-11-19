@@ -128,7 +128,9 @@ public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
         return new SimpleBooleanProperty(true);
     }
 
-    
+    public ObservableValue<String> getInsightString(){
+        return new SimpleStringProperty("");
+    }
     
     public ObservableValue<String> getWorkflowVersion() {
         return new SimpleStringProperty("v0");
