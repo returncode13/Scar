@@ -9,6 +9,9 @@ import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -138,6 +141,21 @@ public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
     @Override
     public HeadersModel getHeadersModel() {
         return headersModel;
+    }
+
+    @Override
+    public Set<SubSurfaceHeaders> getSubsurfaces() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<SubSurfaceHeaders> getSubSurfaceHeadersToBeSummarized() {
+        return new ArrayList<>();       //return maybe just the latest set of subsurfaces
+    }
+
+    @Override
+    public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
    
     

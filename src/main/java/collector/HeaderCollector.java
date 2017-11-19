@@ -631,7 +631,7 @@ Boolean updateTime=true;
                 s.setNumberOfRuns(next.getNumberOfRuns());
                 s.setInsightVersion(next.getInsightVersion());
                 s.setWorkflowVersion(next.getWorkflowVersion());
-          
+                s.setUpdateTime(next.getUpdateTime());
                 seqSubMap.put(s.getSequenceNumber(), s);
                 
                 

@@ -83,8 +83,8 @@ public class HeadersServiceImpl implements HeadersService{
     }
 
     @Override
-    public List<Headers> getHeadersToBeSummarized(Volume next) {
-        return hDao.getHeadersToBeSummarized(next);
+    public List<Subsurface> getSubsurfacesToBeSummarized(Volume next) {
+        return hDao.getSubsurfacesToBeSummarized(next);
     }
     
 }

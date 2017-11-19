@@ -20,12 +20,18 @@ import mid.doubt.Doubt;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     
     
     private Doubt doubt=new Doubt();
+    private String updateTime=new String();
+    private String summaryTime=new String();
+    
+    
+    
+    
     
     private SequenceHeaders sequenceHeader=new SequenceHeaders();
     private   LongProperty sequenceNumber=new SimpleLongProperty();   
@@ -583,7 +589,28 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     public boolean isPassQC() {
         return passQC;
     }
+
+    @Override
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    @Override
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
    
+    
     
    
      

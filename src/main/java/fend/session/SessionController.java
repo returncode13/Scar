@@ -21,6 +21,7 @@ import db.model.Parent;
 import db.model.PropertyType;
 import db.model.SessionDetails;
 import db.model.Sessions;
+import db.model.Subsurface;
 import db.model.Volume;
 import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
@@ -119,6 +120,7 @@ import fend.session.node.jobs.types.type2.JobStepType2Node;
 import fend.session.node.jobs.types.type4.JobStepType4Model;
 import fend.session.node.jobs.types.type4.JobStepType4Node;
 import fend.session.node.jobs.types.type4.properties.JobStepType4ModelProperties;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 //import fend.session.node.volumes.type1.VolumeSelectionModelType1;
 import fend.summary.SummaryModel;
@@ -178,13 +180,14 @@ public class SessionController implements Initializable {
                                                            // here there are two roots namely step1 and step6
     
     private List<JobStepType0Model> modelRoots=new ArrayList<>();
+    private List<JobStepType0Model> jobsThatHaveChanged=new ArrayList<>();
+    Map<JobStepType0Model,List<SubSurfaceHeaders>> mapOfChangesSinceLastSummary=new HashMap<>();
     private int rowNo,ColNo;
     private int numCols=1;
     private int numRows=0;
    
     private Collector collector=new Collector();
     private Long id;
-    
     
     
     //private AcquisitionService acqServ=new AcquisitionServiceImpl();
@@ -202,7 +205,9 @@ public class SessionController implements Initializable {
     private NodePropertyService npropserv=new NodePropertyServiceImpl();
     private PropertyTypeService propServ=new PropertyTypeServiceImpl();
     private SessionsService sessionServ=new SessionsServiceImpl();
-            
+     
+    private SummaryNode summaryNode=null;
+    
     @FXML
     private VBox buttonHolderVBox;
 
@@ -248,6 +253,7 @@ public class SessionController implements Initializable {
 
      private MultiMap<JobStepType0Model,MultiMap<Integer,JobStepType0Model>> mapOfDepthMaps=new MultiValueMap<>();    //for multiple roots. The map will store the root job and a map of jobs keyed off their depths
     // private MultiValueMap<JobStepType0Model,List<JobStepType0Model>> graphMap=new MultiValueMap<>();                           //for multiple roots. The map will store the root job and its corresponding adjacency list of children. this list will be the graph traversed
+    private boolean initSummary=true;
 
     public SessionController() {
         //LogManager.getLogManager().reset();
@@ -356,7 +362,14 @@ public class SessionController implements Initializable {
     void overviewButtonClicked(ActionEvent event) {
          System.out.println("fend.session.SessionController.overviewButtonClicked(): Click");
          mapOfDepthMaps.clear();
-         tracking();
+         if(initSummary){
+             firstSummary();
+             initSummary=false;
+         }else{
+             laterSummaries();
+         }
+                 
+         
          /*List<OverviewItem> overviewItems=new ArrayList<>();
          OverviewModel ovModel=new OverviewModel();
          
@@ -397,7 +410,12 @@ public class SessionController implements Initializable {
                  MultiMap<Integer, JobStepType0Model> depthnodeMap = iterator1.next();
                  SummaryModel sumModel=new SummaryModel();
                 sumModel.setDepthNodeMap(depthnodeMap);
-                SummaryNode snode=new SummaryNode(sumModel);
+                if(summaryNode==null)
+                {
+                    summaryNode=new SummaryNode(sumModel);
+                }else{
+                    summaryNode.updateModel(sumModel);
+                }
              }
              
                      
@@ -412,7 +430,7 @@ public class SessionController implements Initializable {
     void onTrackCheck(ActionEvent event) {
          System.out.println("fend.session.SessionController.onTrackCheck() Checked "+tracker.isSelected());
          if(tracker.isSelected()){
-             tracking();
+             firstSummary();
          }
     }
     
@@ -1017,7 +1035,7 @@ public class SessionController implements Initializable {
             JobStepType0Model next1 = iterator.next();
             
             if(next1.getId().equals(jsmod.getId())){
-                System.out.println("fend.session.SessionController.drawCurve(): "+jsmod.getJobStepText()+ " :is a leaf: "+next1.getJobStepText());
+              //  System.out.println("fend.session.SessionController.drawCurve(): "+jsmod.getJobStepText()+ " :is a leaf: "+next1.getJobStepText());
                 return;
             }
                 for (Map.Entry<JobStepType0Node, AnchorModel> entry : jsnAnchorMap.entrySet()) {
@@ -1028,12 +1046,12 @@ public class SessionController implements Initializable {
                    // System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " id of node: "+keyId);
                 
                 if(next1.getId().equals(keyId)){
-                    System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " EQUALS id of node: "+keyId+ " : starting to draw cubic curves here: ");
-                    System.out.println("fend.session.SessionController.drawCurve()    found   : "+next1.getJobStepText()+" === "+key.getJsnc().getModel().getJobStepText());
-                  // double sx=mEnd.getCenterX().doubleValue();
+                  //  System.out.println("fend.session.SessionController.drawCurve() id of model: "+next1.getId() + " EQUALS id of node: "+keyId+ " : starting to draw cubic curves here: ");
+                   // System.out.println("fend.session.SessionController.drawCurve()    found   : "+next1.getJobStepText()+" === "+key.getJsnc().getModel().getJobStepText());
+                  /// double sx=mEnd.getCenterX().doubleValue();
                  //  double sy=mEnd.getCenterY().doubleValue();
-                    System.out.println("fend.session.SessionController.drawCurve() MAYlayoutY: "+((AnchorPane)key).getParent().boundsInLocalProperty().getValue().getMaxY());
-                    System.out.println("fend.session.SessionController.drawCurve() "+((AnchorPane)key).getProperties().toString());
+                 //   System.out.println("fend.session.SessionController.drawCurve() MAYlayoutY: "+((AnchorPane)key).getParent().boundsInLocalProperty().getValue().getMaxY());
+                 //   System.out.println("fend.session.SessionController.drawCurve() "+((AnchorPane)key).getProperties().toString());
                   double sx=((AnchorPane)key).boundsInLocalProperty().getValue().getMaxX();
                 // double sy=key.boundsInLocalProperty().getValue().getMinY()+144;
                   double sy=((AnchorPane)key).boundsInLocalProperty().getValue().getMaxY()/2;
@@ -1226,8 +1244,49 @@ public class SessionController implements Initializable {
     }
     
     
+    private void laterSummaries(){
+        fillMapOfJobsAndSubsurfacesToBeSummarized();                   //update the map that contains jobs and subsurfaces that need to be summarized
+        System.out.println("fend.session.SessionController.laterSummaries(): size of MapOFChanges: "+mapOfChangesSinceLastSummary.size());
+        for (Map.Entry<JobStepType0Model, List<SubSurfaceHeaders>> entry : mapOfChangesSinceLastSummary.entrySet()) {
+            JobStepType0Model job = entry.getKey();
+            List<SubSurfaceHeaders> subsToSummarize = entry.getValue();
+            
+            System.out.println("fend.session.SessionController.laterSummaries(): Listing subsurfaces that need to be summarized for job: "+job.getJobStepText()+" ");
+            for (Iterator<SubSurfaceHeaders> iterator = subsToSummarize.iterator(); iterator.hasNext();) {
+                SubSurfaceHeaders next = iterator.next();
+                System.err.println("job: "+job.getJobStepText()+" : "+next.getSubsurface());
+            }
+            /*
+            Check dependency,qc and inheritance with parent.
+            */
+            List<JobStepType0Model> parents=job.getJsParents();
+            for (Iterator<JobStepType0Model> iterator = parents.iterator(); iterator.hasNext();) {
+                JobStepType0Model parent = iterator.next();
+                lsDependency(parent,job,subsToSummarize,false);
+                lsQc(parent,job,subsToSummarize,false);
+                lsInherit(parent,job,subsToSummarize,false);
+                
+            }
+            
+            
+            /*
+                Downwards walk for descendants from current node.
+            */
+            List<JobStepType0Model> children=job.getJsChildren();
+            for (Iterator<JobStepType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                JobStepType0Model child = iterator.next();
+                lsDependency(job, child, subsToSummarize,true);
+                lsQc(job, child, subsToSummarize, true);
+                lsInherit(job, child, subsToSummarize, true);
+            }
+            
+            
+        }
     
-     private void tracking(){
+    }
+    
+    
+     private void firstSummary(){
          System.out.println("fend.session.SessionController.tracking():  STARTED");
          logger.info("started");
          setRoots();
@@ -1243,9 +1302,11 @@ public class SessionController implements Initializable {
          
          }
          
-         List<Headers> listOfHeadersToBeSummarized=getListOfHeadersToBeSummarized();
+        
          
-         List<String> jobSubString=new ArrayList<>();            // holds the names of the subsurfaces in the job
+         
+         
+         //List<String> jobSubString=new ArrayList<>();            // holds the names of the subsurfaces in the job
          
          for(JobStepType0Model root : modelRoots){
         
@@ -2060,7 +2121,7 @@ public class SessionController implements Initializable {
            if(parent.getType().equals(2L) && child.getType().equals(1L)){                       //between parent=SEGDLoad(type2) and child=Denoise(type1)
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             logger.info("calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
-            Dep21 dep21=new Dep21(parent,child,model);
+            Dep21 dep21=new Dep21(parent,child,null,model);
             System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
         } 
            
@@ -2075,7 +2136,7 @@ public class SessionController implements Initializable {
         if(parent.getType().equals(1L) && child.getType().equals(1L)){                         //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.dependencyChecks(): calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             logger.info("calling dependencyChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
-            Dep11 dep11=new Dep11(parent, child,model);               //set doubt flags here
+            Dep11 dep11=new Dep11(parent, child,null,model);               //set doubt flags here
             
             System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
          }
@@ -2107,7 +2168,7 @@ public class SessionController implements Initializable {
         if(parent.getType().equals(2L) && child.getType().equals(1L)){            //between parent=SEGDLoad(type2) and child=Denoise(type1)
             System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             logger.info("calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
-            Q21 q21=new Q21(parent, child);
+            Q21 q21=new Q21(parent, child,null);
         } 
         
         
@@ -2121,7 +2182,7 @@ public class SessionController implements Initializable {
          if(parent.getType().equals(1L) && child.getType().equals(1L)){             //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.qcChecks(): calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
             logger.info("calling qcChecks("+parent.getJobStepText()+","+child.getJobStepText()+")");
-            Q11 qa1=new Q11(parent, child);
+            Q11 qa1=new Q11(parent, child,null);
         } 
         
         List<JobStepType0Model> grandChildren=child.getJsChildren();
@@ -2153,7 +2214,7 @@ public class SessionController implements Initializable {
         if(parent.getType().equals(2L) && child.getType().equals(1L)){              //between parent=SEGDLoad(type2) and child=Denoise(type1)
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
             logger.info("calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
-            Inherit21 inh21=new Inherit21(parent, child);
+            Inherit21 inh21=new Inherit21(parent, child,null);
         } 
         
         if(parent.getType().equals(3L) && child.getType().equals(1L)){              //between parent=Acq and child=Denoise (type1)
@@ -2165,7 +2226,7 @@ public class SessionController implements Initializable {
         if(parent.getType().equals(1L) && child.getType().equals(1L)){              //between parent=Denoise and child=Denoise (type1)
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
             logger.info("calling inheritanceOfDoubt("+parent.getJobStepText()+","+child.getJobStepText()+")");
-           Inherit11 inh11=new Inherit11(parent, child);                     
+           Inherit11 inh11=new Inherit11(parent, child,null);                     
             System.out.println("fend.session.SessionController.inheritanceOfDoubt(): moving on..");
          }
         
@@ -2314,27 +2375,220 @@ public class SessionController implements Initializable {
     /*
     Retrive list of headers to be summarized based on updateTime and summarytime in database tables .
     */
-    private List<Headers> getListOfHeadersToBeSummarized() {
+    private void fillMapOfJobsAndSubsurfacesToBeSummarized() {
+        mapOfChangesSinceLastSummary.clear();   //clear existing changes
+        
         Sessions currentSession= sessionServ.getSessions(model.getId());
         List<SessionDetails> ssdOfCurrentSession=ssdServ.getSessionDetails(currentSession);
-        List<Headers> headersToBeSummarized=new ArrayList<>();
+        /*
         List<JobStep> jobsInCurrentSession=new ArrayList<>();
-        List<Volume> volumesInCurrentSession=new ArrayList<>();
-        for (Iterator<SessionDetails> iterator = ssdOfCurrentSession.iterator(); iterator.hasNext();) {
+        
+        List<Volume> volumesInCurrentSession=new ArrayList<>();*/
+        for (Iterator<SessionDetails> iterator = ssdOfCurrentSession.iterator(); iterator.hasNext();) {    // for each job in session
             SessionDetails next = iterator.next();
-            JobStep j=next.getJobStep();
-            jobsInCurrentSession.add(j);
-            volumesInCurrentSession.addAll(jvdServ.getVolumesFor(j));
+            JobStep j=next.getJobStep();                            //getdb job
+           // jobsInCurrentSession.add(j);
+            List<Volume> volsInJ=jvdServ.getVolumesFor(j);          //get  db vols in the db job
+           // List<Subsurface> subsurfacesThatHaveChangedInBackEndNode=new ArrayList<>();
+          //  volumesInCurrentSession.addAll(volsInJ);
+            
+            /* for (Iterator<Volume> iterator1 = volsInJ.iterator(); iterator1.hasNext();) {
+            Volume vol = iterator1.next();
+            subsurfacesThatHaveChangedInBackEndNode.addAll(hdrServ.getSubsurfacesToBeSummarized(vol));      //subsurfaces in db vol that have changed
+            
+            
+            }*/
+            
+            JobStepType0Model feJob=model.getJobStepWithId(j.getIdJobStep());  //get frontend corresponding to the backend job
+            if(feJob==null){
+                throw new NullPointerException("No front end job corresponding to backend: "+j.getNameJobStep()+ " with ID: "+j.getIdJobStep()+" found");
+            }else{
+                List<SubSurfaceHeaders> subsToSummarizeForFrontEndNode=new ArrayList<>();   //list of front end subsurfaces that need to be summarized
+               
+               
+                /*List<VolumeSelectionModelType0> volsinFeJob=feJob.getVolList();              //all front end vols in the current front end job
+                for (Iterator<VolumeSelectionModelType0> iterator2 = volsinFeJob.iterator(); iterator2.hasNext();) {
+                VolumeSelectionModelType0 fevol = iterator2.next();
+                List<SequenceHeaders> seqsInFevol=fevol.getHeadersModel().getSequenceListInHeaders();           //sequences inside current fe vol
+                for (Iterator<SequenceHeaders> iterator3 = seqsInFevol.iterator(); iterator3.hasNext();) {
+                SequenceHeaders seqH = iterator3.next();
+                List<SubSurfaceHeaders> subsInseqH=seqH.getSubsurfaces();                                   //subs inside the current seq
+                for (Iterator<SubSurfaceHeaders> iterator4 = subsInseqH.iterator(); iterator4.hasNext();) {
+                SubSurfaceHeaders subInFrontEndVol = iterator4.next();
+                for (Iterator<Subsurface> iterator5 = subsurfacesThatHaveChangedInBackEndNode.iterator(); iterator5.hasNext();) {
+                Subsurface dbSub = iterator5.next();
+                if(subInFrontEndVol.getSubsurface().equalsIgnoreCase(dbSub.getSubsurface())){
+                //mapOfChangesSinceSummary.put(frontEndJob, subsInseqH)
+                subsToSummarizeForFrontEndNode.add(subInFrontEndVol);
+                }
+                
+                }
+                
+                }
+                
+                }
+                
+                
+                }*/
+                
+                List<VolumeSelectionModelType0> volsinFeJob=feJob.getVolList();              //all front end vols in the current front end job
+                for (Iterator<VolumeSelectionModelType0> iterator1 = volsinFeJob.iterator(); iterator1.hasNext();) {
+                    VolumeSelectionModelType0 vol = iterator1.next();
+                   subsToSummarizeForFrontEndNode.addAll(vol.getSubSurfaceHeadersToBeSummarized());
+                }
+                
+               
+           
+              mapOfChangesSinceLastSummary.put(feJob, subsToSummarizeForFrontEndNode);          //map of frontend jobs --- subsurfaces that have changed
+             
+            }
+            
+            
+            
         }
+             
+        
        
-        for (Iterator<Volume> iterator = volumesInCurrentSession.iterator(); iterator.hasNext();) {
-            Volume next = iterator.next();
-            List<Headers> hlist=hdrServ.getHeadersToBeSummarized(next);
-            headersToBeSummarized.addAll(hlist);
+        
+    }
+
+    private void lsDependency(JobStepType0Model parent, JobStepType0Model child, List<SubSurfaceHeaders> subsToSummarize,boolean recurseDownwards) {
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+                      logger.info("ROOT/LEAF found: "+parent.getJobStepText());
+            System.out.println("fend.session.SessionController.lsDependency():  ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+        
+       
+           if(parent.getType().equals(3L) && child.getType().equals(2L)){                       //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.lsDependency(): calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            DepA2 depA2=new DepA2(parent,child);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        } 
+           
+           if(parent.getType().equals(2L) && child.getType().equals(1L)){                       //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.lsDependency(): calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Dep21 dep21=new Dep21(parent,child,subsToSummarize,model);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        } 
+           
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){                          //between parent=Acq and child=Denoise (type1)
+            System.out.println("fend.session.SessionController.lsDependency(): calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            DepA1 depA1=new DepA1(parent,child);
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+        }   
+           
+           
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){                         //between parent=Denoise and child=Denoise (type1)
+            System.out.println("fend.session.SessionController.lsDependency(): calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsDependency("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Dep11 dep11=new Dep11(parent, child,subsToSummarize,model);               //set doubt flags here
+            
+            System.out.println("fend.session.SessionController.dependencyChecks(): moving on..");
+         }
+        
+        if(recurseDownwards){
+             List<JobStepType0Model> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
+            JobStepType0Model gchild = iterator.next();
+             System.out.println("fend.session.SessionController.lsDependency():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+             logger.info("Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+            lsDependency(child, gchild,subsToSummarize,recurseDownwards);
+        }
         }
         
-        return headersToBeSummarized;
+    }
+
+    private void lsQc(JobStepType0Model parent, JobStepType0Model child, List<SubSurfaceHeaders> subsToSummarize,boolean recurseDownwards) {
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+                      
+            System.out.println("fend.session.SessionController.lsQc():  ROOT/LEAF found: "+parent.getJobStepText());
+             logger.info("ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
         
+        if(parent.getType().equals(3L) && child.getType().equals(2L)){           //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.lsQc(): calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            QA2 qa2=new QA2(parent, child);
+        } 
+        
+        if(parent.getType().equals(2L) && child.getType().equals(1L)){            //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.lsQc(): calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Q21 q21=new Q21(parent, child,subsToSummarize);
+        } 
+        
+        
+        
+         if(parent.getType().equals(3L) && child.getType().equals(1L)){             //between parent=Acq and child=Denoise (type1)
+            System.out.println("fend.session.SessionController.lsQc(): calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            QA1 qa1=new QA1(parent, child);
+        } 
+         
+         if(parent.getType().equals(1L) && child.getType().equals(1L)){             //between parent=Denoise and child=Denoise (type1)
+            System.out.println("fend.session.SessionController.lsQc(): calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsQc("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Q11 qa1=new Q11(parent, child,subsToSummarize);
+        }
+         
+         if(recurseDownwards){
+              List<JobStepType0Model> grandChildren=child.getJsChildren();
+                for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
+                   JobStepType0Model gchild = iterator.next();
+                    System.out.println("fend.session.SessionController.lsQc():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+                    logger.info("Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+                   lsQc(child, gchild,subsToSummarize,recurseDownwards);
+               }
+         }
+    }
+
+    private void lsInherit(JobStepType0Model parent, JobStepType0Model child, List<SubSurfaceHeaders> subsToSummarize,boolean recurseDownwards) {
+        if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
+                      
+            System.out.println("fend.session.SessionController.lsInherit():  ROOT/LEAF found: "+parent.getJobStepText());
+            logger.info("ROOT/LEAF found: "+parent.getJobStepText());
+             return;
+         }
+        System.out.println("fend.session.SessionController.lsInherit()");
+        if(parent.getType().equals(3L) && child.getType().equals(2L)){              //between parent=Acq and child=SEGDLoad (type2)
+            System.out.println("fend.session.SessionController.lsInherit(): calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            InheritA2 inhA2=new InheritA2(parent, child);
+        } 
+        
+        if(parent.getType().equals(2L) && child.getType().equals(1L)){              //between parent=SEGDLoad(type2) and child=Denoise(type1)
+            System.out.println("fend.session.SessionController.lsInherit(): calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            Inherit21 inh21=new Inherit21(parent, child,subsToSummarize);
+        } 
+        
+        if(parent.getType().equals(3L) && child.getType().equals(1L)){              //between parent=Acq and child=Denoise (type1)
+            System.out.println("fend.session.SessionController.lsInherit(): calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            InheritA1 inhA1=new InheritA1(parent, child);
+        } 
+        
+        if(parent.getType().equals(1L) && child.getType().equals(1L)){              //between parent=Denoise and child=Denoise (type1)
+            System.out.println("fend.session.SessionController.lsInherit(): calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+            logger.info("calling lsInherit("+parent.getJobStepText()+","+child.getJobStepText()+")");
+           Inherit11 inh11=new Inherit11(parent, child,subsToSummarize);                     
+            System.out.println("fend.session.SessionController.inheritanceOfDoubt(): moving on..");
+         }
+        
+        if(recurseDownwards){
+             List<JobStepType0Model> grandChildren=child.getJsChildren();
+         for (Iterator<JobStepType0Model> iterator = grandChildren.iterator(); iterator.hasNext();) {
+            JobStepType0Model gchild = iterator.next();
+             System.out.println("fend.session.SessionController.lsInherit():  Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+             logger.info("Calling the next child : "+gchild.getJobStepText() +" :Parent: "+child.getJobStepText());
+            lsInherit(child, gchild,subsToSummarize,recurseDownwards);
+        }
+        }
     }
 
    

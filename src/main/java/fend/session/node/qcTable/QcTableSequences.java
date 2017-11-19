@@ -251,6 +251,7 @@ public class QcTableSequences {
                            n.setName(next1.getName());
                            n.setPassQc(next1.isPassQc());
                            qsub.getSub().qcStatus(next1.isPassQc());
+                           
                            qctypescopy.add(n);
                           // qctypescopy.add(next1);
 
@@ -269,12 +270,18 @@ public class QcTableSequences {
                         QcTable next = iterator1.next();
                         QcTypeModel n=new QcTypeModel();
                         System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading for sub: "+h.getSubsurface().getSubsurface()+" id: "+next.getQcmatrix().getQctype().getIdQcType()+
-                                "  name: "+next.getQcmatrix().getQctype().getName()+" ticked: "+ next.getResult());
+                                "  name: "+next.getQcmatrix().getQctype().getName()+" ticked: "+ next.getResult()+" Utime: "+next.getUpdateTime());
                 n.setId(next.getQcmatrix().getQctype().getIdQcType());
                 n.setName(next.getQcmatrix().getQctype().getName());
                 n.setPassQc(next.getResult());
+                
                 qctypescopy.add(n);
+                
                 qsub.getSub().qcStatus(next.getResult());
+                qsub.getSub().setUpdateTime(next.getUpdateTime());
+                qsub.getSub().setSummaryTime(next.getSummaryTime());
+                qsub.setUpdateTime(next.getUpdateTime());
+                
                         
                     }
                      qsub.setQctypes(qctypescopy);

@@ -10,6 +10,10 @@ import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.MapProperty;
@@ -25,6 +29,7 @@ import watcher.VolumeWatcher;
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * Text Volume
  */
 public class VolumeSelectionModelType4 implements VolumeSelectionModelType0{
      private final Long type=4L;
@@ -53,7 +58,7 @@ public class VolumeSelectionModelType4 implements VolumeSelectionModelType0{
     private Long volumeType;
     //private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
     private JobStepType0Model parentjob;
-    
+    private Map<String,SubSurfaceHeaders> subsurfaceNameSubSurfaceHeaderMap=new HashMap<>();
     
     
     
@@ -294,6 +299,27 @@ public class VolumeSelectionModelType4 implements VolumeSelectionModelType0{
     @Override
     public void setSubsurfaces(Set<SubSurfaceHeaders> sl) {
         this.subsurfaces=sl;
+        /*for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+        SubSurfaceHeaders next = iterator.next();
+        System.out.println("fend.session.node.volumes.type1.VolumeSelectionModelType4.setSubsurfaces(): "+next.getSubsurface()+" UTime: "+next.getUpdateTime()+" STime: "+next.getSummaryTime());
+        subsurfaceNameSubSurfaceHeaderMap.put(next.getSubsurface(), next);
+        }*/
+    }
+    
+
+    @Override
+    public Set<SubSurfaceHeaders> getSubsurfaces() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<SubSurfaceHeaders> getSubSurfaceHeadersToBeSummarized() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

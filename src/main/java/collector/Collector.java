@@ -412,7 +412,7 @@ public class Collector {
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
-                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc()+" with Uptime: "+qct.getUpdateTime());
                                     //logger.log(Level.INFO, "updating seq: {0} sub: {1} in job: {2} qctype: (id,name) : ({3},{4}) from: {5} to: {6}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), qctmod.getId(), qctmod.getName(), oldval, qctmod.isPassQc()});
                                     logger.info(subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     subh.qcStatus(qctmod.isPassQc());

@@ -29,6 +29,9 @@ import mid.doubt.Doubt;
 public class SequenceHeaders implements Serializable{
 
     private Doubt doubt=new Doubt();
+    private String updateTime=new String();
+    private String summaryTime=new String();
+    
     
     ArrayList<SubSurfaceHeaders> subsurfaces=new ArrayList<>();
     private Long sequenceNumber;   
@@ -334,6 +337,14 @@ public class SequenceHeaders implements Serializable{
         this.insightVersion.set(new String(">1"));
         }*/
         
+        this.updateTime=Collections.max(subsurfaces, (SubSurfaceHeaders o1, SubSurfaceHeaders o2) -> {
+            return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+        }).getUpdateTime();
+        
+        this.summaryTime=Collections.max(subsurfaces, (SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
+        return o1.getSummaryTime().compareTo(o2.getSummaryTime());
+        }).getSummaryTime();
+        
         
     }
 
@@ -568,6 +579,23 @@ public class SequenceHeaders implements Serializable{
     public boolean getInsightFlag() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
+    
     
     
     

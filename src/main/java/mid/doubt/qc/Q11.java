@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import landing.AppProperties;
 import mid.doubt.Doubt;
@@ -76,8 +77,14 @@ public class Q11 {
     
     
     SessionModel session;
-    
-    public Q11(JobStepType0Model parent, JobStepType0Model child) {
+    /**
+     * @params: 
+     * parent : Parent Job
+     * child: Child job
+     * subsToSummarize: null for first summary, subs in child job to be summarized for later queries
+     * 
+     */
+    public Q11(JobStepType0Model parent, JobStepType0Model child,List<SubSurfaceHeaders> subsToSummarize) {
         this.parent = (JobStepType1Model) parent;
         this.child = (JobStepType1Model) child;
         this.session=this.parent.getSessionModel();
@@ -103,11 +110,17 @@ public class Q11 {
         
         System.out.println("mid.doubt.qc.Q11.<init>(): parentJob: "+parent.getJobStepText()+" childJob: "+child.getJobStepText());
         //List<QcTableSequences> childqcseqs=this.child.getQcTableModel().getQcTableSequences();
+        Set<SubSurfaceHeaders> chsubs;
+        if(subsToSummarize==null){
          calculateSubsInJob(this.child);
-         Set<SubSurfaceHeaders> chsubs=this.child.getSubsurfacesInJob();
-         
+         chsubs=this.child.getSubsurfacesInJob();
+        }else{
+         //   chsubs=new HashSet<>(subsToSummarize);
+         chsubs=lookupSubsFromMap(this.child,subsToSummarize);
+        }
          for (Iterator<SubSurfaceHeaders> iterator = chsubs.iterator(); iterator.hasNext();) {
             SubSurfaceHeaders chsub = iterator.next();
+            chsub.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
             SubSurfaceHeaders parsub;
             Boolean hasPassed=true;
                 Boolean currentlyDoubtful=chsub.getDoubt().isDoubt();                                      //get current doubtboolean state of child subObj. this can be set by the previous step. dependencyChecks()
@@ -411,7 +424,41 @@ public class Q11 {
         }
     }
 
-    
+    private Set<SubSurfaceHeaders> lookupSubsFromMap(JobStepType0Model job, List<SubSurfaceHeaders> subsToSummarize) {
+        
+        if(job instanceof JobStepType1Model){                   //for 2D case
+            List<VolumeSelectionModelType1> volList=job.getVolList();
+        Set<SubSurfaceHeaders> correspondingSubsInJob=new HashSet<>();
+        
+        for (Iterator<VolumeSelectionModelType1> iterator = volList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 vol = iterator.next();
+                
+                if(!vol.getHeaderButtonStatus()){
+                                   
+                    Map<String,SubSurfaceHeaders>map=vol.getSubsurfaceNameSubSurfaceHeaderMap();
+                    for (Iterator<SubSurfaceHeaders> iterator1 = subsToSummarize.iterator(); iterator1.hasNext();) {
+                        SubSurfaceHeaders requiredSub = iterator1.next();
+                        correspondingSubsInJob.add(map.get(requiredSub.getSubsurface()));
+                        
+                    }
+                }
+            
+            
+            
+        }
+       // job.setSubsurfacesInJob(correspondingSubsInJob);
+        /*for (Iterator<SubSurface> iterator = correspondingSubsInJob.iterator(); iterator.hasNext();) {
+        SubSurfaceHeaders subinJob = iterator.next();
+        System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
+        }*/
+        
+        System.out.println("mid.doubt.dependencies.Dep11.lookupSubsFromMap(): returning sublist of size: "+correspondingSubsInJob.size());
+        return correspondingSubsInJob;
+        }
+        else{
+            throw new UnsupportedOperationException("calculateSubsinJob for job type. "+job.getType()+" not defined");
+        }
+    }
     
     
     

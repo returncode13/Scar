@@ -683,7 +683,9 @@ public class LandingController extends Stage implements Initializable,Serializab
                             s.setNumberOfRuns(beH.getNumberOfRuns());
                             s.setInsightVersion(beH.getInsightVersion());
                             s.setWorkflowVersion(beH.getWorkflowVersion());
-                            
+                            System.out.println("landing.LandingController.loadSession(): setting updateTime for "+beH.getSubsurface().getSubsurface()+" Utime: "+beH.getUpdateTime());
+                            s.setUpdateTime(beH.getUpdateTime());
+                            s.setSummaryTime(beH.getSummaryTime());
           
                             //
                             //

@@ -16,7 +16,9 @@ import fend.session.node.qcTable.QcMatrixModel;
 import fend.session.node.qcTable.QcTableModel;
 import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -42,7 +44,7 @@ import watcher.VolumeWatcher;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private final Long type=1L;
@@ -71,7 +73,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     private Long volumeType;
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
     private JobStepType0Model parentjob;
-    
+    private Map<String,SubSurfaceHeaders> subsurfaceNameSubSurfaceHeaderMap=new HashMap<>();
     
     
     
@@ -116,6 +118,7 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
 
     
 
+    @Override
     public Set<SubSurfaceHeaders> getSubsurfaces() {
         return subsurfaces;
     }
@@ -123,8 +126,20 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     @Override
     public void setSubsurfaces(Set<SubSurfaceHeaders> subsurfaces) {
         this.subsurfaces = subsurfaces;
+        subsurfaceNameSubSurfaceHeaderMap.clear();
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            System.out.println("fend.session.node.volumes.type1.VolumeSelectionModelType1.setSubsurfaces(): "+next.getSubsurface()+" UTime: "+next.getUpdateTime()+" STime: "+next.getSummaryTime());
+            subsurfaceNameSubSurfaceHeaderMap.put(next.getSubsurface(), next);
+        }
     }
 
+    public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap() {
+        return subsurfaceNameSubSurfaceHeaderMap;
+    }
+
+    
+    
         
     
     
@@ -301,6 +316,21 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
     @Override
     public void setVolumeType(Long volumeType) {
         this.volumeType = volumeType;
+    }
+
+    @Override
+    public List<SubSurfaceHeaders> getSubSurfaceHeadersToBeSummarized() {
+        List<SubSurfaceHeaders> subsToBeSummarized=new ArrayList<>();
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders sub = iterator.next();
+            System.out.println("fend.session.node.volumes.type1.VolumeSelectionModelType1.getSubSurfaceHeadersToBeSummarized(): updateTime "+sub.getUpdateTime() +" sub: "+sub.getSubsurface()+ " in node: "+parentjob.getJobStepText());
+            System.out.println("fend.session.node.volumes.type1.VolumeSelectionModelType1.getSubSurfaceHeadersToBeSummarized(): summaryTime "+sub.getSummaryTime()+" sub: "+sub.getSubsurface()+" in node: "+parentjob.getJobStepText());
+            if(sub.getUpdateTime().compareTo(sub.getSummaryTime())>0){       //if updateTime > summaryTime
+                subsToBeSummarized.add(sub);
+            }
+            
+        }
+        return subsToBeSummarized;
     }
 
     

@@ -237,7 +237,7 @@ public  class LogWatcher {
             LogWatchHolder lw=new LogWatchHolder(next.getTimestamp(), next.getLogpath(), next.getSequence(),next.getSubsurfaces(), next.getInsightVersion());
             //listOfExistingLogs.add(lw);
             mapOfExistingLogs.put(next.getLogpath(), lw);
-                System.out.println("watcher.LogWatcher.extract(): found existing log for  : "+next.getSubsurfaces()+" log under: "+next.getLogpath()+" adding to map");
+             //   System.out.println("watcher.LogWatcher.extract(): found existing log for  : "+next.getSubsurfaces()+" log under: "+next.getLogpath()+" adding to map");
             }
         }
         else{

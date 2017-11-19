@@ -305,7 +305,7 @@ public class SummaryController extends Stage{
                     TableColumn<SummarySequenceModel,String> wf=new TableColumn<>(""); wf.setGraphic(grpw);
                     TableColumn<SummarySequenceModel,String > qc=new TableColumn<>(""); qc.setGraphic(grpq);
                     TableColumn<SummarySequenceModel,String > dbt=new TableColumn<>(""); dbt.setGraphic(grpdbt);
-                   
+                    System.out.println("fend.summary.SummaryController.setModel()");
                     
                     dbt.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SummarySequenceModel, String>, ObservableValue<String>>() {
                         @Override
@@ -340,12 +340,12 @@ public class SummaryController extends Stage{
                                    String dbtStat=ss.getDoubt().getStatus();
                                    Boolean isParent=ss.getDoubt().isParent(job1);
                                   Boolean isChild=ss.getDoubt().isChild(job1);
-                                   System.out.println("ParentChild.call() node: "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+" Parent: "+isParent+" Child: "+isChild);
+                                 //  System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call() node: "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+" Parent: "+isParent+" Child: "+isChild);
                                   
                                     List<String> dtypes=ss.getDoubt().getDoubtTypes();
                                    for(Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
                                    String next = iterator1.next();
-                                   System.out.println(".call(): "+next);
+                                  // System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call(): "+next);
                                    
                                    }
                                    /*

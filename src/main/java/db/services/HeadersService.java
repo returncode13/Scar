@@ -31,7 +31,7 @@ public interface HeadersService {
     //public Set<Volume> getVolumesContaining(String subsurface);       //a convenience function. return the volume associated with the Subsurface=subsurface from the Headers Table
     public Set<Volume> getVolumesContaining(Subsurface subsurface);       //a convenience function. return the volume associated with the Subsurface=subsurface from the Headers Table
 
-    public List<Headers> getHeadersToBeSummarized(Volume next);
+    public List<Subsurface> getSubsurfacesToBeSummarized(Volume next);
     
     
 }

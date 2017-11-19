@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,9 +77,16 @@ public class Dep11 {
     
     
     SessionModel session;
-     static Boolean Debug=Boolean.FALSE;
-           
-    public Dep11(JobStepType0Model parent, JobStepType0Model child,SessionModel model) {
+     static Boolean Debug=Boolean.TRUE;
+     
+    /**
+     * @params: 
+     * parent : Parent Job
+     * child: Child job
+     * subsToSummarize: null for first summary, subs in child job to be summarized for later queries
+     * model: SessionsModel . current session
+     */ 
+    public Dep11(JobStepType0Model parent, JobStepType0Model child,List<SubSurfaceHeaders> subsToSummarize,SessionModel model) {
         
         this.session=model;
         this.parent = (JobStepType1Model) parent;
@@ -119,12 +127,25 @@ public class Dep11 {
         
           //this.child.setDependency(Boolean.FALSE);
                if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep11.<init>() Calculating subs in parent and child");
+           
+         Set<SubSurfaceHeaders> psubs;
+         Set<SubSurfaceHeaders> csubs;
+         if(subsToSummarize==null){         //for initial summary
             calculateSubsInJob(this.child);
             calculateSubsInJob(this.parent);
-       
-         Set<SubSurfaceHeaders> psubs=this.parent.getSubsurfacesInJob();
+             psubs=this.parent.getSubsurfacesInJob();
+             csubs=this.child.getSubsurfacesInJob();
+         }else{                 //for later summaries
+            // psubs=new HashSet<>(subsToSummarize);    //psubs=lookupSubsFromMap(this.parent,subsToSummarize)  // a function that returns the set of subs belonging to parent with the same name as the ones in the subs to summarize
+            // csubs=new HashSet<>(subsToSummarize);    //csubs=lookupSubsFromMap(this.child,subsToSummarize)  // a function that returns the set of subs belonging to child with the same name as the ones in the subs to summarize
+             psubs=lookupSubsFromMap(this.parent,subsToSummarize);
+             csubs=lookupSubsFromMap(this.child,subsToSummarize);
+         
+         }
+                 
              
-         Set<SubSurfaceHeaders> csubs=this.child.getSubsurfacesInJob();
+         
+         
              
             if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep11.<init>(): size of child and parent subs: "+csubs.size()+" : "+psubs.size());
             
@@ -132,7 +153,9 @@ public class Dep11 {
          List<VolumeSelectionModelType1> pVolList=this.parent.getVolList();
          for (Iterator<VolumeSelectionModelType1> iterator = cVolList.iterator(); iterator.hasNext();) {
             VolumeSelectionModelType1 next = iterator.next();
-            next.setDependency(Boolean.FALSE);                        //first set all the volumes to false. then check each one below
+            if(subsToSummarize==null){
+                next.setDependency(Boolean.FALSE);   //first set all the volumes to false. then check each one below . Only to be done for the first summary
+            }                        
             
         }
         
@@ -261,7 +284,7 @@ public class Dep11 {
                             errorMessage+="\nSub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+"("+refSub.getTimeStamp()+") created after the child job: "+this.child.getJobStepText()+" ("+targetSub.getTimeStamp()+")";
                             laterTimestamp=true;
                         }
-                        if(refTime.equals(targetTime)){         //parent created after child
+                        if(refTime.equals(targetTime)){         //parent created with child
                             passTimeStamps=false;
                             if(Debug)System.out.println("fend.session.node.jobs.dependencies.Dep11.<init>():  sub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+" has the same timestamp as in the child job: "+this.child.getJobStepText());
                             errorMessage+="\nSub: "+refSub.getSubsurface()+ " in parent job: "+this.parent.getJobStepText()+"("+refSub.getTimeStamp()+") has the same timestamp as in the child job: "+this.child.getJobStepText()+" ("+targetSub.getTimeStamp()+")";
@@ -812,7 +835,7 @@ public class Dep11 {
             
         }
         job.setSubsurfacesInJob(subsInJob);
-        /*for (Iterator<SubSurface> iterator = subsInJob.iterator(); iterator.hasNext();) {
+        /*for (Iterator<SubSurface> iterator = correspondingSubsInJob.iterator(); iterator.hasNext();) {
         SubSurfaceHeaders subinJob = iterator.next();
         System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
         }*/
@@ -825,6 +848,9 @@ public class Dep11 {
         }
         
     }
+    
+    
+    
 
     public SessionModel getSession() {
         return session;
@@ -836,6 +862,7 @@ public class Dep11 {
     
      private void setSeqDoubtStatus(SubSurfaceHeaders chsub) {
         SequenceHeaders seq=chsub.getSequenceHeader();
+        
         boolean seqover=false;
         boolean seqno=true;
         boolean seqyes=false;
@@ -885,6 +912,8 @@ public class Dep11 {
             seq.getDoubt().setDoubt(false);
         }
         
+        
+       chsub.setSummaryTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
     }
 
     private void updateSummaryTimes(List<Headers> hdrsToBeUpdated) {
@@ -892,6 +921,42 @@ public class Dep11 {
             
             Headers next = iterator.next();
             hserv.updateHeaders(next.getIdHeaders(), next);
+        }
+    }
+
+    private Set<SubSurfaceHeaders> lookupSubsFromMap(JobStepType0Model job, List<SubSurfaceHeaders> subsToSummarize) {
+        
+        if(job instanceof JobStepType1Model){                   //for 2D case
+            List<VolumeSelectionModelType1> volList=job.getVolList();
+        Set<SubSurfaceHeaders> correspondingSubsInJob=new HashSet<>();
+        
+        for (Iterator<VolumeSelectionModelType1> iterator = volList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType1 vol = iterator.next();
+                
+                if(!vol.getHeaderButtonStatus()){
+                                   
+                    Map<String,SubSurfaceHeaders>map=vol.getSubsurfaceNameSubSurfaceHeaderMap();
+                    for (Iterator<SubSurfaceHeaders> iterator1 = subsToSummarize.iterator(); iterator1.hasNext();) {
+                        SubSurfaceHeaders requiredSub = iterator1.next();
+                        correspondingSubsInJob.add(map.get(requiredSub.getSubsurface()));
+                        
+                    }
+                }
+            
+            
+            
+        }
+       // job.setSubsurfacesInJob(correspondingSubsInJob);
+        /*for (Iterator<SubSurface> iterator = correspondingSubsInJob.iterator(); iterator.hasNext();) {
+        SubSurfaceHeaders subinJob = iterator.next();
+        System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
+        }*/
+        
+        System.out.println("mid.doubt.dependencies.Dep11.lookupSubsFromMap(): returning sublist of size: "+correspondingSubsInJob.size());
+        return correspondingSubsInJob;
+        }
+        else{
+            throw new UnsupportedOperationException("calculateSubsinJob for job type. "+job.getType()+" not defined");
         }
     }
 
