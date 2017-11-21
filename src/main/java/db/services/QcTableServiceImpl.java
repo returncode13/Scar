@@ -65,7 +65,7 @@ public class QcTableServiceImpl implements QcTableService{
     }
 
     @Override
-    public List<QcTable> getQcTableFor(QcMatrix qmx, Headers h) {
+    public QcTable getQcTableFor(QcMatrix qmx, Headers h)  throws Exception{
         return qcmDAO.getQcTableFor(qmx, h);
     }
     

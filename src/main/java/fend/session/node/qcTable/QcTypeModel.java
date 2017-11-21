@@ -16,8 +16,11 @@ import javafx.beans.property.StringProperty;
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * 
+ * This class holds the name and id for each of the users "qctypes"..shot, stack ,cdp etc.
+ * A list of this class' objects are used in the QCTableModel class: which is a class holding the qc table entries. shot checked(unchecked) for subs seq1_cab2_gun1
  */
-public class QcTypeModel implements Comparator<QcTypeModel>,Comparable<QcTypeModel>{
+public class QcTypeModel {
     String name;
     Long id;
     
@@ -145,10 +148,8 @@ public class QcTypeModel implements Comparator<QcTypeModel>,Comparable<QcTypeMod
     }
     */
 
-    @Override
-    public int compare(QcTypeModel o1, QcTypeModel o2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
+
     
     
 }

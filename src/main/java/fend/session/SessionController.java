@@ -139,12 +139,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import mid.doubt.dependencies.Dep21;
 import mid.doubt.dependencies.DepA2;
+import mid.doubt.dependencies.DepXX;
 import mid.doubt.inheritance.Inherit21;
 import mid.doubt.inheritance.InheritA2;
+import mid.doubt.inheritance.InheritXX;
 import mid.doubt.qc.Q11;
 import mid.doubt.qc.Q21;
 import mid.doubt.qc.QA1;
 import mid.doubt.qc.QA2;
+import mid.doubt.qc.QXX;
 import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.controlsfx.control.GridView;
@@ -2108,6 +2111,7 @@ public class SessionController implements Initializable {
            if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
                       logger.info("ROOT/LEAF found: "+parent.getJobStepText());
             System.out.println("collector.Collector.dependencychecks():  ROOT/LEAF found: "+parent.getJobStepText());
+                new DepXX(parent,null);
              return;
          }
         
@@ -2156,6 +2160,7 @@ public class SessionController implements Initializable {
                       
             System.out.println("collector.Collector.qcChecks():  ROOT/LEAF found: "+parent.getJobStepText());
              logger.info("ROOT/LEAF found: "+parent.getJobStepText());
+             new QXX(parent,null);
              return;
          }
         
@@ -2202,6 +2207,7 @@ public class SessionController implements Initializable {
                       
             System.out.println("collector.Collector.inheritanceOfDoubt():  ROOT/LEAF found: "+parent.getJobStepText());
             logger.info("ROOT/LEAF found: "+parent.getJobStepText());
+            new InheritXX(parent,null);
              return;
          }
         
@@ -2455,6 +2461,7 @@ public class SessionController implements Initializable {
     private void lsDependency(JobStepType0Model parent, JobStepType0Model child, List<SubSurfaceHeaders> subsToSummarize,boolean recurseDownwards) {
         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
                       logger.info("ROOT/LEAF found: "+parent.getJobStepText());
+                      new DepXX(parent,subsToSummarize);
             System.out.println("fend.session.SessionController.lsDependency():  ROOT/LEAF found: "+parent.getJobStepText());
              return;
          }
@@ -2506,6 +2513,7 @@ public class SessionController implements Initializable {
         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
                       
             System.out.println("fend.session.SessionController.lsQc():  ROOT/LEAF found: "+parent.getJobStepText());
+            new QXX(parent,subsToSummarize);
              logger.info("ROOT/LEAF found: "+parent.getJobStepText());
              return;
          }
@@ -2551,6 +2559,7 @@ public class SessionController implements Initializable {
         if(parent.getJsChildren().size()==1 && parent.getJsChildren().get(parent.getJsChildren().size()-1).getId().equals(parent.getId())){   //if child=parent. leaf/root reached
                       
             System.out.println("fend.session.SessionController.lsInherit():  ROOT/LEAF found: "+parent.getJobStepText());
+            new InheritXX(parent,subsToSummarize);
             logger.info("ROOT/LEAF found: "+parent.getJobStepText());
              return;
          }

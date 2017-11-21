@@ -348,6 +348,7 @@ public class Collector {
                     
                     QcTableModel qctabmod=j1.getQcTableModel();
                     List<QcTableSequences> qctabSeqList=qctabmod.getQcTableSequences();
+                        System.out.println("collector.Collector.setupEntries(): Size of qcTabSeqList :  "+qctabSeqList.size());
                     for (Iterator<QcTableSequences> iterator = qctabSeqList.iterator(); iterator.hasNext();) {
                         QcTableSequences qcseq = iterator.next();
                         List<QcTableSubsurfaces> qcsubList=qcseq.getQcSubs();
@@ -378,7 +379,7 @@ public class Collector {
                                 
                             }
                             SessionDetails sd=ssdServ.getSessionDetails(job, sess);
-                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd);
+                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd,true);
                             for (Iterator<QcMatrix> iterator2 = qcmatrixList.iterator(); iterator2.hasNext();) {
                                 QcMatrix qcmat = iterator2.next();
                                 
@@ -397,8 +398,8 @@ public class Collector {
 
 
                                 //check if an entry exists..if not create else update
-                                List<QcTable> qctList=qctabServ.getQcTableFor(qcmat, hdr);
-                                if(qctList.isEmpty()){
+                                QcTable qctEntry=qctabServ.getQcTableFor(qcmat, hdr);
+                                if(qctEntry==null){
                                     QcTable qct=new QcTable();
                                     qct.setHeaders(hdr);
                                     qct.setQcmatrix(qcmat);
@@ -406,8 +407,8 @@ public class Collector {
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
                                     qctabServ.createQcTable(qct);
                                     
-                                }else if(qctList.size()==1){
-                                    QcTable qct=qctList.get(0);
+                                }else {
+                                    QcTable qct=qctEntry;
                                     //qct.setHeaders(hdr);
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
@@ -497,8 +498,8 @@ public class Collector {
 
 
                                 //check if an entry exists..if not create else update
-                                List<QcTable> qctList=qctabServ.getQcTableFor(qcmat, hdr);
-                                if(qctList.isEmpty()){
+                                QcTable qctEntry=qctabServ.getQcTableFor(qcmat, hdr);
+                                if(qctEntry==null){
                                     QcTable qct=new QcTable();
                                     qct.setHeaders(hdr);
                                     qct.setQcmatrix(qcmat);
@@ -506,16 +507,17 @@ public class Collector {
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
                                     qctabServ.createQcTable(qct);
                                     
-                                }else if(qctList.size()==1){
-                                    QcTable qct=qctList.get(0);
+                                }else {
+                                    QcTable qct=qctEntry;
                                     //qct.setHeaders(hdr);
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
-                                   // System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
-                                   subh.qcStatus(qctmod.isPassQc()); 
-                                   logger.warning("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
-                                    
+                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc()+" with Uptime: "+qct.getUpdateTime());
+                                    //logger.log(Level.INFO, "updating seq: {0} sub: {1} in job: {2} qctype: (id,name) : ({3},{4}) from: {5} to: {6}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), qctmod.getId(), qctmod.getName(), oldval, qctmod.isPassQc()});
+                                    logger.info(subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    subh.qcStatus(qctmod.isPassQc());
+                                   
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 
@@ -597,24 +599,26 @@ public class Collector {
 
 
                                 //check if an entry exists..if not create else update
-                                List<QcTable> qctList=qctabServ.getQcTableFor(qcmat, hdr);
-                                if(qctList.isEmpty()){
+                                QcTable qctEntry=qctabServ.getQcTableFor(qcmat, hdr);
+                                if(qctEntry==null){
                                     QcTable qct=new QcTable();
                                     qct.setHeaders(hdr);
                                     qct.setQcmatrix(qcmat);
                                     qct.setResult(qctmod.isPassQc());
-                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
+                                    qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
                                     qctabServ.createQcTable(qct);
                                     
-                                }else if(qctList.size()==1){
-                                    QcTable qct=qctList.get(0);
+                                }else {
+                                    QcTable qct=qctEntry;
                                     //qct.setHeaders(hdr);
                                     Boolean oldval=qct.getResult();
                                     qct.setResult(qctmod.isPassQc());
-                                    subh.qcStatus(qctmod.isPassQc());
-                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
-                                    logger.info("updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
+                                    System.out.println("collector.Collector.setupEntries(): updating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc()+" with Uptime: "+qct.getUpdateTime());
+                                    //logger.log(Level.INFO, "updating seq: {0} sub: {1} in job: {2} qctype: (id,name) : ({3},{4}) from: {5} to: {6}", new Object[]{subh.getSequenceHeader().getSequenceNumber(), subh.getSubsurface(), j1.getJobStepText(), qctmod.getId(), qctmod.getName(), oldval, qctmod.isPassQc()});
+                                    logger.info(subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+") from: "+oldval+" to: "+qctmod.isPassQc());
+                                    subh.qcStatus(qctmod.isPassQc());
+                                   
                                     qctabServ.updateQcTable(qct.getIdQcTable(), qct);
                                 }
                                 

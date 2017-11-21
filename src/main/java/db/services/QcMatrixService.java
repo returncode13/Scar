@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.QcMatrix;
+import db.model.QcType;
 import db.model.SessionDetails;
 import db.model.Volume;
 import java.util.List;
@@ -22,4 +23,7 @@ public interface QcMatrixService {
     
     //public List<QcMatrix> getQcMatrixForVolume(Volume v);    //get all the fields for volume v where present="true"
     public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sd);
+    public QcMatrix getQcMatrixFor(SessionDetails sd,QcType qctype) throws Exception;
+
+    public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sessDetails, boolean b);
 }

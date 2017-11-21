@@ -6,6 +6,7 @@
 package db.dao;
 
 import db.model.QcMatrix;
+import db.model.QcType;
 import db.model.SessionDetails;
 import db.model.Volume;
 import hibUtil.HibernateUtil;
@@ -46,6 +47,7 @@ public class QcMatrixDAOImpl implements QcMatrixDAO{
         //    h.setVolume(newq.getVolume());
             h.setSessionDetails(newq.getSessionDetails());
             h.setQctype(newq.getQctype());
+            h.setPresent(newq.getPresent());
             session.update(h);
             
             
@@ -113,21 +115,68 @@ public class QcMatrixDAOImpl implements QcMatrixDAO{
 
     @Override
     public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sd) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction transaction = null;
-    List<QcMatrix> result=null;
-    try{
-    transaction=session.beginTransaction();
-    Criteria criteria=session.createCriteria(QcMatrix.class);
-    criteria.add(Restrictions.eq("sessionDetails", sd));
-    criteria.add(Restrictions.eq("present", true));
-    result=criteria.list();
-    transaction.commit();
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<QcMatrix> result=null;
+        try{
+        transaction=session.beginTransaction();
+        Criteria criteria=session.createCriteria(QcMatrix.class);
+        criteria.add(Restrictions.eq("sessionDetails", sd));
+        //criteria.add(Restrictions.eq("present", true));
+        result=criteria.list();
+        transaction.commit();
+        }catch(Exception e){
+        e.printStackTrace();
+        }finally{
+        session.close();
+        }
+        return result; 
     }
-    return result;    }
+
+    @Override
+    public QcMatrix getQcMatrixFor(SessionDetails sd, QcType qctype) throws Exception{
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<QcMatrix> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(QcMatrix.class);
+            criteria.add(Restrictions.eq("sessionDetails", sd));
+            criteria.add(Restrictions.eq("qctype", qctype));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>1) throw new Exception("More than one entries encountered for "+sd.getJobStep().getNameJobStep()+" : ssd id : "+sd.getIdSessionDetails()+"    and qctype: "+qctype.getName()+" :qctypeid: "+qctype.getIdQcType() );
+        if(result.isEmpty()){
+            return null;
+        }
+        else{
+            return result.get(0);
+        } 
+    }
+
+    @Override
+    public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sessDetails, boolean b) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<QcMatrix> result=null;
+        try{
+        transaction=session.beginTransaction();
+        Criteria criteria=session.createCriteria(QcMatrix.class);
+        criteria.add(Restrictions.eq("sessionDetails", sessDetails));
+        criteria.add(Restrictions.eq("present",b));
+        result=criteria.list();
+        transaction.commit();
+        }catch(Exception e){
+        e.printStackTrace();
+        }finally{
+        session.close();
+        }
+        return result; 
+    }
     
 }

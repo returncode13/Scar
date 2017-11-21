@@ -19,6 +19,13 @@ import org.apache.commons.collections4.comparators.ComparableComparator;
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * 
+ * class holding the model for the QCMatrix definition for the jobmodel 
+ * shot check
+ * stack uncheck
+ * cdp check;
+ * 
+ * 
  */
 public class QcMatrixModel {
    // VolumeSelectionModelType1 vmodel;
@@ -89,7 +96,7 @@ public class QcMatrixModel {
         List<QcTypeModel> types=new ArrayList<>();
         for (Iterator<QcTypeModel> iterator = keys.iterator(); iterator.hasNext();) {
             QcTypeModel next = iterator.next();
-            if(qcTypePresMap.get(next)){
+            if(qcTypePresMap.get(next)){      //if selected
                 System.out.println("fend.session.node.qcTable.QcMatrixModel.getQcTypeModels(): key: "+next.getName()+" value: "+qcTypePresMap.get(next));
                 types.add(next);
             }
@@ -111,6 +118,10 @@ public class QcMatrixModel {
             
         }
         return null;
+    }
+
+    public void clearQcTypePresMap() {
+        qcTypePresMap.clear();
     }
     
 }

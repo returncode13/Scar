@@ -177,7 +177,7 @@ public class QcTableDAOImpl implements QcTableDAO{
     }
 
     @Override
-    public List<QcTable> getQcTableFor(QcMatrix qmx, Headers h) {
+    public QcTable getQcTableFor(QcMatrix qmx, Headers h) throws Exception{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;
@@ -193,7 +193,14 @@ public class QcTableDAOImpl implements QcTableDAO{
         }finally{
         session.close();
         }
-        return result;
+        if(result.isEmpty()){
+            return null;
+        }else if(result.size()>1){
+            throw new Exception("More than one qcTable entries encountered for qcmatrix :  id "+qmx.getIdqcmatrix()+" and header id: "+h.getIdHeaders());
+        }else{
+            return result.get(0);
+        }
+        
     }
     
     

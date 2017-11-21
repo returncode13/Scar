@@ -8,6 +8,7 @@ package fend.session.node.qcTable;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
     
     @Override
     public List<QcTypeModel> getQctypes() {
+        
         return qcfields;
     }
     

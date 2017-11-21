@@ -92,7 +92,7 @@ public class QcTableController extends Stage {
            //TreeTableColumn<QcTableSequences,QcTypeModel> qcval=new TreeTableColumn<>(qctype.getName());
             final int iii=i;
             
-            System.out.println("fend.session.node.qcTable.QcTableController.setModel(): Column name : "+qctype.getName());
+            System.out.println("fend.session.node.qcTable.QcTableController.setModel(): Column name : "+qctype.getName()+" iii: "+iii);
             TreeTableColumn<QcTableSequences,Boolean> qctypeCol=new TreeTableColumn<>();//   <<<This is the culprit!!
             
            //qctypeCol.setCellValueFactory(cellData->cellData.getValue().getValue().tpProperty());
@@ -157,11 +157,12 @@ public class QcTableController extends Stage {
                      
                      if(qseq instanceof QcTableSubsurfaces){
                          qctypeCol.setText(((QcTableSubsurfaces)qseq).getQctypes().get(iii).getName());
-                         System.out.println("subObj: "+((QcTableSubsurfaces)qseq).getSub());
+                         System.out.println("subObj: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
                      System.out.println("subSeqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber());
                      System.out.println(" and subSurface : "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
                          System.out.println("iii: "+iii+" NAME: "+((QcTableSubsurfaces)qseq).getQctypes().get(iii).getName()+" colName: "+qctypeCol.getText());
                          System.out.println("iii: "+iii+" Ticked: "+((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty().get());
+                         System.out.println("UpdateTime: "+((QcTableSubsurfaces)qseq).getUpdateTime());
                      bprop=(SimpleBooleanProperty) ((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty();
                      
                      }

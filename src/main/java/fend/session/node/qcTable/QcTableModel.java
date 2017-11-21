@@ -9,6 +9,8 @@ import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -92,23 +94,26 @@ public class QcTableModel {
             
         }
         
-        //qcTableSequences.clear();
+        qcTableSequences.clear();
         qctypes=qcMatrixModel.getQcTypeModels();
+        
+        System.out.println("fend.session.node.qcTable.QcTableModel.loadQcTypes(): size of qctypes: "+qctypes.size());
+        System.out.println("fend.session.node.qcTable.QcTableModel.loadQcTypes(): size of sequences: "+sequences.size());
          for (Iterator<SequenceHeaders> iterator1 = sequences.iterator(); iterator1.hasNext();) {
              SequenceHeaders seq=iterator1.next();
-             boolean present=false;
-                            for (Iterator<QcTableSequences> iterator2 = qcTableSeqSave.iterator(); iterator2.hasNext();) {
-                                QcTableSequences next1 = iterator2.next();
-                                if(next1.getSequence().equals(seq)){                //seq present in 
-                                    present=true;
-                                    break;
-                                }
-
-                            }
+             /*  boolean present=false;                         //flag to check if the qcTableSequence is present in the qcTable
+             for (Iterator<QcTableSequences> iterator2 = qcTableSeqSave.iterator(); iterator2.hasNext();) {
+             QcTableSequences next1 = iterator2.next();
+             if(next1.getSequence().equals(seq)){                //seq present in
+             present=true;
+             break;
+             }
+             
+             }*/
                             
                             
-             if(!present){
-                QcTableSequences q=new QcTableSequences();
+          //   if(!present){              //during the initial load, present=false;
+                QcTableSequences qctabSeq=new QcTableSequences();
                  List<QcTypeModel> qctypescopy=new ArrayList<>();
             for (Iterator<QcTypeModel> iterator3 = qctypes.iterator(); iterator3.hasNext();) {
                 
@@ -122,22 +127,37 @@ public class QcTableModel {
                 //qctypescopy.add(next1);
                 
             }
+            /*
+             sort based on the id. 
+            Due to the removal/insertion/reinsert operations, the qctypescopy list here needn't correlate with the one used to set up the qctable views columns. i.e. QcTableSequences variable qctypes
+            so both lists ought to be sorted by ids.
+            */
+            Collections.sort(qctypescopy,new Comparator<QcTypeModel>(){
+                 @Override
+                 public int compare(QcTypeModel o1, QcTypeModel o2) {
+                     return (int) (o1.getId() - o2.getId());
+                 }
+                
+            });
             
-          q.setQctypes(qctypescopy);
+            
+          qctabSeq.setQctypes(qctypescopy);
            
            // ObservableList<QcTypeModel> o=FXCollections.observableList(qctypes);
            
         
             //q.setQcs(o);
-            System.out.println("fend.session.node.qcTable.QcTableModel.getQcTableSequences(): Adding seq: "+seq.getSequenceNumber());
-            q.setSequence(seq);
-            q.setJobModel(jobmodel);
-            q.loadQcTypes();
+            System.out.println("fend.session.node.qcTable.QcTableModel.loadQcTypes(): Adding seq: "+seq.getSequenceNumber());
+            qctabSeq.setSequence(seq);
+            qctabSeq.setJobModel(jobmodel);
+            qctabSeq.loadQcTypes();
             
             //q.setQctypeMap(fmap);
             
-            qcTableSequences.add(q);
-             }               
+            qcTableSequences.add(qctabSeq);
+            /*  }else{
+            System.out.println("fend.session.node.qcTable.QcTableModel.loadQcTypes(): Present : "+present);
+            } */              
          }
                      
         
@@ -150,14 +170,15 @@ public class QcTableModel {
         
         /*  for (Iterator<SequenceHeaders> iterator = sequences.iterator(); iterator.hasNext();) {
         SequenceHeaders next = iterator.next();
-        QcTableSequences q=new QcTableSequences();;
+        QcTableSequences qctabSeq=new QcTableSequences();;
         //  System.out.println("fend.session.node.volumes.qcTable.QcTableModel.getQcTableSequences(): adding seq: "+next.getSequenceNumber());
         
-        //System.out.println("fend.session.node.volumes.type1.qcTable.QcTableModel.getQcTableSequences(): q.getQcTypes() is NULL");
+        //System.out.println("fend.session.node.volumes.type1.qcTable.QcTableModel.getQcTableSequences(): qctabSeq.getQcTypes() is NULL");
         
         
         }*/
         
+       
         
     }
 
