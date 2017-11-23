@@ -239,7 +239,8 @@ public class Q21 {
                     List<QcTypeModel> qctypes=qcsubInParent.getQctypes();                                               //get the qctypes in the parent.
                     for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                         QcTypeModel qct = iterator1.next();
-                        hasPassed = hasPassed && qct.isPassQc();
+                       // hasPassed = hasPassed && qct.isPassQc();
+                       hasPassed = hasPassed && (qct.isPassQc().equals(QcTypeModel.isInDeterminate) || qct.isPassQc().equals(Boolean.FALSE.toString()))?false:true;
 
                     }
                     

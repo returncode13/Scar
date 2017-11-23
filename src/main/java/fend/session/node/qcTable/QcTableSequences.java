@@ -71,6 +71,11 @@ public class QcTableSequences {
     private QcMatrixService qcMatServ=new QcMatrixServiceImpl();
     private SessionDetailsService ssdServ=new SessionDetailsServiceImpl();
     
+    
+    
+    
+    
+    
     Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
     JobStepType0Model jobModel; 
     Boolean loading=true;
@@ -205,7 +210,15 @@ public class QcTableSequences {
                 n.setId(next1.getId());
                 n.setName(next1.getName());
                 n.setPassQc(next1.isPassQc());
-                qsub.getSub().qcStatus(next1.isPassQc());
+                if(next1.isPassQc().equals(QcTypeModel.isInDeterminate)){
+                    qsub.getSub().qcStatus(null);
+                }else if(next1.isPassQc().equals(Boolean.TRUE.toString())){
+                    qsub.getSub().qcStatus(true);
+                }else{
+                    qsub.getSub().qcStatus(false);
+                }
+                        
+                
                 qctypescopy.add(n);
                // qctypescopy.add(next1);
                
@@ -357,7 +370,7 @@ public class QcTableSequences {
                                                     QcTypeModel newQtm=new QcTypeModel();
                                                     newQtm.setId(qcmat.getQctype().getIdQcType());
                                                     newQtm.setName(qcmat.getQctype().getName());
-                                                    newQtm.setPassQc(false);   //initial state is false
+                                                    newQtm.setPassQc(Boolean.FALSE.toString());   //initial state is false
                                                     qsub.getSub().qcStatus(false); 
                                                   //  qsub.setUpdateTime();
                                                     qctypescopy.add(newQtm);
@@ -393,7 +406,16 @@ public class QcTableSequences {
                                 QcTypeModel newQt=new QcTypeModel();
                                 newQt.setId(qctableForQmxHdr.getQcmatrix().getQctype().getIdQcType());
                                 newQt.setName(qctableForQmxHdr.getQcmatrix().getQctype().getName());
-                                newQt.setPassQc(qctableForQmxHdr.getResult());
+                                
+                                if(qctableForQmxHdr.getResult()==null){
+                                 newQt.setPassQc(QcTypeModel.isInDeterminate);
+                                }else if(qctableForQmxHdr.getResult()){
+                                    newQt.setPassQc(Boolean.TRUE.toString());
+                                }else{
+                                    newQt.setPassQc(Boolean.FALSE.toString());
+                                }
+                                
+                             //   newQt.setPassQc(qctableForQmxHdr.getResult());
                                 qctypescopy.add(newQt);
                                 qsub.getSub().qcStatus(qctableForQmxHdr.getResult());
                                 qsub.getSub().setSummaryTime(qctableForQmxHdr.getSummaryTime());

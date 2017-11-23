@@ -95,11 +95,16 @@ public class SequenceHeaders implements Serializable{
     
      private boolean passQC =true;
 
-    public boolean isPassQC() {
+    public Boolean isPassQC() {
         this.passQC=true;
         for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
             SubSurfaceHeaders next = iterator.next();
-            this.passQC=this.passQC && next.isPassQC();
+            if(next.isPassQC()==null){
+                 this.passQC=false;
+            }else{
+                this.passQC=this.passQC && next.isPassQC();
+            }
+            
             
         }
          System.out.println("fend.session.node.headers.SequenceHeaders.setPassQC(): seq: "+this.sequenceNumber+" QCSTATUS: "+this.passQC);

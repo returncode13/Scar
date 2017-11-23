@@ -151,50 +151,103 @@ public class QcTableController extends Stage {
                qctypeCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean>, ObservableValue<Boolean>>() {
                 @Override
                 public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
-                     SimpleBooleanProperty bprop=new SimpleBooleanProperty();
+                     SimpleStringProperty bprop=new SimpleStringProperty();
                      //System.out.println(".call(): bprop: is "+((bprop==null)?"is NULL":" not null"));
                      QcTableSequences qseq=param.getValue().getValue();
+                     SimpleBooleanProperty checkUncheck=new SimpleBooleanProperty();
+                     SimpleBooleanProperty indeterminate=new SimpleBooleanProperty();
+                     
+                     checkUncheck.bindBidirectional(qseq.getQctypes().get(iii).getCheckUncheck());
+                     indeterminate.bindBidirectional(qseq.getQctypes().get(iii).getIndeterminate());
+                     
+                     
+                     checkUncheck.addListener(new ChangeListener<Boolean>(){
+                         @Override
+                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                             qseq.getQctypes().get(iii).indeterminateProperty().set(false);
+                             qseq.getQctypes().get(iii).checkUncheckProperty().set(newValue);
+                         }
+                         
+                     });
+                     
+                     
+                     indeterminate.addListener(new ChangeListener<Boolean>(){
+                         @Override
+                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                             if(newValue){
+                                 System.out.println("Indeterminate.changed(): ");
+                                 qseq.getQctypes().get(iii).indeterminateProperty().set(newValue);
+                                 System.out.println("Indeterminate.changed(): "+qseq.getQctypes().get(iii).indeterminateProperty().get());
+                                 //bprop.set(QcTypeModel.isInDeterminate);
+                             }
+                         }
+                         
+                     });
+                     
+                    
+                     
+                     
                      
                      if(qseq instanceof QcTableSubsurfaces){
                          qctypeCol.setText(((QcTableSubsurfaces)qseq).getQctypes().get(iii).getName());
+                          bprop= (SimpleStringProperty) ((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty();
                          System.out.println("subObj: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
                      System.out.println("subSeqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber());
                      System.out.println(" and subSurface : "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
                          System.out.println("iii: "+iii+" NAME: "+((QcTableSubsurfaces)qseq).getQctypes().get(iii).getName()+" colName: "+qctypeCol.getText());
-                         System.out.println("iii: "+iii+" Ticked: "+((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty().get());
+                         System.out.println("iii: "+iii+" Ticked: "+(bprop==null?" NULL ":bprop.getValue()));
                          System.out.println("UpdateTime: "+((QcTableSubsurfaces)qseq).getUpdateTime());
-                     bprop=(SimpleBooleanProperty) ((QcTableSubsurfaces)qseq).getQctypes().get(iii).passQcProperty();
-                     
+                    
+                         System.out.println("BProp.call(): BPropValue is : "+(bprop==null?" NULL ":bprop.getValue()));
                      }
                      else        
                      if(qseq instanceof QcTableSequences){
                          qctypeCol.setText(qseq.getQctypes().get(iii).getName());
                         // System.out.println("seqObj: "+qseq.getSequence());
-                         bprop=(SimpleBooleanProperty) qseq.getQctypes().get(iii).passQcProperty();
+                         bprop= (SimpleStringProperty) qseq.getQctypes().get(iii).passQcProperty();
+                         System.out.println("BProp.call(): BPropValue for QSeq is : "+(bprop==null?" NULL ":bprop.getValue()));
 //                     System.out.println("seqNO: "+qseq.getSequence().getSequenceNumber());
   //                   System.out.println(" and sub : "+qseq.getSequence().getSubsurface());
                      }
                      
-                     bprop.addListener(new ChangeListener<Boolean>(){
+                     bprop.addListener(new ChangeListener<String>(){
                          @Override
-                         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                             
                              if(qseq instanceof QcTableSubsurfaces){
-                                 System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for subseq: "+((QcTableSubsurfaces)qseq).getSub()+ " with seqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber()+" sub: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
+                                 System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for subseq: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface()+ " with seqNO: "+((QcTableSubsurfaces)qseq).getSub().getSequenceNumber()+" sub: "+((QcTableSubsurfaces)qseq).getSub().getSubsurface());
                                  
                                  ((QcTableSubsurfaces)qseq).getQctypes().get(iii).setPassQc(newValue);
                                  ((QcTableSubsurfaces)qseq).setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                  ((QcTableSubsurfaces)qseq).getSub().setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
-                                 if(!newValue){
-                                   ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(newValue);
-                                 }
+                                 /*if(!newValue){
+                                 ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(newValue);
+                                 }*/
                                  List<QcTableSubsurfaces> qcss=((QcTableSubsurfaces)qseq).getQcTableSeq().getQcSubs();
-                                 Boolean alltrue=true;
+                                 Boolean alltrue=true;           //are all the subs true?
                                  for (Iterator<QcTableSubsurfaces> iterator = qcss.iterator(); iterator.hasNext();) {
                                      QcTableSubsurfaces next = iterator.next();
-                                     alltrue= alltrue && next.getQctypes().get(iii).isPassQc();
+                                     Boolean thisQcCheckValue;
+                                     if(next.getQctypes().get(iii).isPassQc().equals(QcTypeModel.isInDeterminate)){
+                                         thisQcCheckValue=null;
+                                         alltrue=null;
+                                         break;
+                                     }else  if(next.getQctypes().get(iii).isPassQc().equals(Boolean.TRUE.toString())){
+                                         thisQcCheckValue=true;
+                                     }else{
+                                         thisQcCheckValue=false;
+                                     }
+                                     alltrue= alltrue && thisQcCheckValue;
                                  }
-                                 if(alltrue){
-                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(alltrue);
+                                 if(alltrue==null){
+                                      ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(QcTypeModel.isInDeterminate);
+                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                 }
+                                 else if(alltrue){
+                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(Boolean.TRUE.toString());
+                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                 }else{
+                                     ((QcTableSubsurfaces)qseq).getQcTableSeq().getQctypes().get(iii).setPassQc(Boolean.FALSE.toString());
                                      ((QcTableSubsurfaces)qseq).getQcTableSeq().setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                  }
                              }
@@ -202,8 +255,7 @@ public class QcTableController extends Stage {
                              if(qseq instanceof QcTableSequences){
                                  System.out.println(".changed(): from : "+oldValue+" to : "+newValue+" for seq: "+qseq.getSequence()+" with seqNO: "+qseq.getSequenceNumber());
                                 
-                                 
-                                 if(newValue){                  //if true clicked for a seq, then set all the subs as true
+                                 if(newValue.equals(Boolean.TRUE.toString())){                  //if true clicked for a seq, then set all the subs as true
                                      qseq.getQctypes().get(iii).setPassQc(newValue);
                                      qseq.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                      qseq.getSequence().setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -217,18 +269,32 @@ public class QcTableController extends Stage {
                                  }
                                  }
                                  
-                                 if(!newValue){                 //if false clicked for a seq, first check if the subs are all true in which case dont uncheck the seq but
+                                 if(newValue.equals(Boolean.FALSE.toString()) || newValue.equals(QcTypeModel.isInDeterminate)){                 //if false clicked for a seq, first check if the subs are all true in which case dont uncheck the seq but
                                                                 // if any of them are unchecked then allow uncheck  for seq
                                      Boolean alltrue=true;
                                      List<QcTableSubsurfaces> qseqsubs=qseq.getQcSubs();
-                                     for (Iterator<QcTableSubsurfaces> iterator = qseqsubs.iterator(); iterator.hasNext();) {
-                                         QcTableSubsurfaces next = iterator.next();
-                                         alltrue= alltrue && next.getQctypes().get(iii).isPassQc();
+                                        for (Iterator<QcTableSubsurfaces> iterator = qseqsubs.iterator(); iterator.hasNext();) {
+                                            QcTableSubsurfaces next = iterator.next();
+                                            Boolean thisQcCheckValue;
+                                            if(next.getQctypes().get(iii).isPassQc().equals(QcTypeModel.isInDeterminate)){
+                                            thisQcCheckValue=null;
+                                            alltrue=null;
+                                            break;
+                                        }else  if(next.getQctypes().get(iii).isPassQc().equals(Boolean.TRUE.toString())){
+                                            thisQcCheckValue=true;
+                                        }else{
+                                            thisQcCheckValue=false;
+                                        }
+                                     alltrue= alltrue && thisQcCheckValue;
                                          
                                      }
-                                     
-                                     if(alltrue){
-                                          qseq.getQctypes().get(iii).setPassQc(!newValue);
+                                     if(alltrue==null){
+                                         qseq.getQctypes().get(iii).setPassQc(QcTypeModel.isInDeterminate);
+                                          qseq.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                                          qseq.getSequence().setUpdateTime(qseq.getUpdateTime());
+                                     }
+                                     else if(alltrue){
+                                          qseq.getQctypes().get(iii).setPassQc(Boolean.TRUE.toString());
                                           qseq.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                           qseq.getSequence().setUpdateTime(qseq.getUpdateTime());
                                      }else{
@@ -240,18 +306,23 @@ public class QcTableController extends Stage {
                                  
                              }
                              
-                             
-                            // param.getValue().getValue().addToQcTypeMap(qctype, newValue);
-                             
-                             
-                             
+                         
                          }
                          
                      });
-                     return bprop;
+               
+                    if(indeterminate.get()){
+                        return null;
+                    }else{
+                        return checkUncheck;
+                    }
+                
                 }
             });
-           qctypeCol.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(qctypeCol));
+        
+          qctypeCol.setCellFactory((param) -> {
+              return new CheckBoxCell(param, iii);
+          });
           
           
             System.out.println("fend.session.node.qcTable.QcTableController.setModel(): inside for loop for qctype: "+qctype.getName());
