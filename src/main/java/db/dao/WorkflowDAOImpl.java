@@ -17,7 +17,7 @@ import org.hibernate.criterion.Restrictions;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
  */
 public class WorkflowDAOImpl implements WorkflowDAO {
 
@@ -113,6 +113,29 @@ public class WorkflowDAOImpl implements WorkflowDAO {
             Criteria criteria=session.createCriteria(Workflow.class);
             criteria.add(Restrictions.eq("volume", v));
             criteria.addOrder(Order.desc("wfversion"));
+            result=criteria.list();
+            transaction.commit();
+            if(result==null || result.size()==0)
+                return null;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+    }
+
+    @Override
+    public Workflow getWorkflowRunBeforeTime(String time, Volume vol) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Workflow> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Workflow.class);
+            criteria.add(Restrictions.eq("volume", vol));
+            criteria.add(Restrictions.le("time", time));
+            criteria.addOrder(Order.desc("time"));
             result=criteria.list();
             transaction.commit();
             if(result==null || result.size()==0)

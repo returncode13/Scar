@@ -185,11 +185,11 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
      @FXML
     private ListView<String> insightListView;
     
-    @FXML
-    private CheckBox pendingCheckBox;
-    
+     /* @FXML
+     private CheckBox pendingCheckBox;
+     
      @FXML
-    private CheckBox qcCheckBox;
+     private CheckBox qcCheckBox;s*/
  
        @FXML
     private Button qmatBtn1;
@@ -788,8 +788,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
          
          model.getVolListProperty().removeListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().unbindBidirectional(model.getVolListProperty());
-         pendingCheckBox.selectedProperty().unbind();
-         qcCheckBox.selectedProperty().unbind();
+         /*pendingCheckBox.selectedProperty().unbind();
+         qcCheckBox.selectedProperty().unbind();*/ 
         
          
      }
@@ -817,8 +817,8 @@ public class JobStepType2NodeController implements JobStepType0NodeController{
                     });
          
         // model.getPendingFlagProperty().addListener(CHECK_BOX_CHANGE_LISTENER);
-         pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
-         qcCheckBox.selectedProperty().bind(model.getDependency());
+        /*pendingCheckBox.selectedProperty().bind(model.getPendingFlagProperty());
+        qcCheckBox.selectedProperty().bind(model.getDependency());*/
          model.getVolListProperty().addListener(JOBSTEP_VOLUME_LIST_CHANGE_LISTENER);
          volumeSelView.itemsProperty().bindBidirectional(model.getVolListProperty());
          obsLinkList.addListener(LINKS_CHANGE_LISTENER);

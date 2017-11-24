@@ -12,7 +12,9 @@ import db.services.LogsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioScripts;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +38,7 @@ import org.joda.time.DateTimeZone;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
  */
 class LogStatusHolder{
     String filename;
@@ -51,7 +53,7 @@ public class LogStatusWatcher {
     private List<Logs>  listOfdbLogs;
     private List<LogStatusHolder> logstatusHolderList=new ArrayList<>();
     private VolumeService volserv=new VolumeServiceImpl();
-    private VolumeSelectionModelType1 volselmodel;
+    private VolumeSelectionModelType0 volselmodel;
     private Volume volume;
     private DugioScripts dugioscripts;
     
@@ -59,8 +61,10 @@ public class LogStatusWatcher {
     Timer timer;
     
     
-    public LogStatusWatcher(VolumeSelectionModelType1 volselmod){
-        this.volselmodel=volselmod;
+    public LogStatusWatcher(VolumeSelectionModelType0 volselmod){
+        
+        if(volselmod instanceof VolumeSelectionModelType1){
+            this.volselmodel=(VolumeSelectionModelType1) volselmod;
         dugioscripts=new DugioScripts();
         volume = volserv.getVolume(this.volselmodel.getId());
         
@@ -168,6 +172,45 @@ public class LogStatusWatcher {
         } catch (ExecutionException ex) {
             Logger.getLogger(LogStatusWatcher.class.getName()).log(Level.SEVERE, null, ex);
         }
+        }
+        
+        
+        if(volselmod instanceof VolumeSelectionModelType2){
+            this.volselmodel=(VolumeSelectionModelType2) volselmod;
+        dugioscripts=new DugioScripts();
+        volume = volserv.getVolume(this.volselmodel.getId());
+        
+        ExecutorService executorserv= Executors.newFixedThreadPool(1);
+        try{
+            executorserv.submit(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                  
+                    
+                    task=new TimerTask() {
+                        @Override
+                        public void run() {
+                       
+                    
+                        }
+                    };
+                        
+                        timer=new Timer();
+                        timer.schedule(task,new Date(),30000);       
+                    
+                   
+                    
+                    return null;
+                }
+            }).get();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(LogStatusWatcher.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(LogStatusWatcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
+        
+        
         
     }
     

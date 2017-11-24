@@ -8,6 +8,8 @@ package watcher;
 import db.model.Headers;
 import db.model.Logs;
 import db.model.Volume;
+import db.services.AcquisitionService;
+import db.services.AcquisitionServiceImpl;
 import db.services.HeadersService;
 import db.services.HeadersServiceImpl;
 import db.services.LogsService;
@@ -15,8 +17,10 @@ import db.services.LogsServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import dugex.DugioScripts;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
+import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -46,6 +50,10 @@ import org.apache.commons.collections4.MultiMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.openide.util.Exceptions;
 //import org.openide.util.Exceptions;
 
 /**
@@ -88,14 +96,19 @@ public  class LogWatcher {
     private static int counter=0;
     private String filter=new String();
     
-    VolumeSelectionModelType1 volumeModel;
+    VolumeSelectionModelType0 volumeModel;
     HeadersService hserv=new HeadersServiceImpl();
     VolumeService vserv=new VolumeServiceImpl();
     LogsService lserv=new LogsServiceImpl();
     List<LogWatchHolder> lwatchHolderList=new ArrayList<>();
     MultiMap<String, LogWatchHolder> maplineLog=new MultiValueMap<>();
     Map<String,String> mapSubInsightVersion=new HashMap<>();                //map that will contain the Insight version number extracted from the latest log for the subsurface
-     private Volume volume;
+    AcquisitionService acqserv=new AcquisitionServiceImpl();
+    List<Long> cables;
+    List<Long> guns;
+    List<String> logNamesForSegD=new ArrayList<>();
+    
+    private Volume volume;
      private List<LogWatchHolder> listOfExistingLogs=new ArrayList<>();
      private Map<String,LogWatchHolder> mapOfExistingLogs=new HashMap<>();
      LogStatusWatcher logstatuswatcher=null;
@@ -103,8 +116,25 @@ public  class LogWatcher {
     public LogWatcher(){
     }
     
-    public LogWatcher(String logsLocation,String filter,VolumeSelectionModelType1 vmod) 
+    public LogWatcher(String logsLocation,String filter,VolumeSelectionModelType0 vmod) 
     {
+        System.out.println("watcher.LogWatcher.<init>(): Inside the constructor for LogWatcher : "+logsLocation+" vmodType: "+vmod.getType());
+        guns=acqserv.getGuns();
+        System.out.println("watcher.LogWatcher.<init>(): Test Separator");
+       cables=acqserv.getCables();
+       
+       for(Long cable:cables){
+           for(Long gun:guns){
+               String gunCableLog="gun"+gun+"_cable"+cable+".log";                  // the logs are named as gun2_cable6.log
+               logNamesForSegD.add(gunCableLog);
+           }
+       }
+        
+        if(vmod instanceof VolumeSelectionModelType1){
+            
+       
+        
+        
         System.out.println("watcher.LogWatcher.<init>(): called for : "+vmod.getLabel());
         counter++;
         
@@ -112,7 +142,7 @@ public  class LogWatcher {
         account for those logs , and put those sublines into a list. A.
         
         */
-        LogWatcher.this.volumeModel=vmod;
+        LogWatcher.this.volumeModel=(VolumeSelectionModelType1)vmod;
         volume=vserv.getVolume(volumeModel.getId());
         LogWatcher.this.logsLocation=logsLocation;
         /*List<Logs> logL=lserv.getLogsFor(this.volume);
@@ -224,10 +254,122 @@ public  class LogWatcher {
         }
 
         
+       }
         
+        if(vmod instanceof VolumeSelectionModelType2){   //SEGDLoad
+                 /*
+            For SeqgVolumes, the logs are not added to. but appended.
+            Get the total number of cables and guns for the survey from the database.
+            the logs present are of the format gun_x_cable_y.log where x=1,2..lastgun and y=1,2..,lastcable
+            
+            
+            */
+           List<File> logs=new ArrayList<>();   // the log files under volume/logs of format gun2_cable6.log
+        
+        System.out.println("watcher.LogWatcher.<init>(): called for : "+vmod.getLabel());
+            System.out.println("watcher.LogWatcher.<init>: looking under : "+logsLocation);
+        counter++;
+        
+                LogWatcher.this.volumeModel=(VolumeSelectionModelType2)vmod;
+                volume=vserv.getVolume(volumeModel.getId());
+                LogWatcher.this.logsLocation=logsLocation;     //location of segd logs folder.  under segdloadVolume/logs
+                for(String log: logNamesForSegD){
+                    File logfile=new File(this.logsLocation+log);
+                    System.out.println("watcher.LogWatcher.<init>(): Adding log file to list to watch out for : "+log);
+                    logs.add(logfile);
+                }
+                
+                for(final File gcfile:logs){
+                    
+                    System.out.println("watcher.LogWatcher.<init>(): Performing the first check for logfile: "+gcfile.getName());
+                    /* this first check is done when the s/w is fired up.
+                    */
+                    if(checkIfSegDLogIsDone(gcfile)){
+                                        //get the list of contents that are not present in the database
+                                        List<LogWatchHolder> modifiedList=getModifiedContents(gcfile); 
+                                        getInsightVersionsFromLog(gcfile,modifiedList);
+                                        maplineLog.clear();
+                                        for(LogWatchHolder mod:modifiedList){
+                                            maplineLog.put(mod.linename, mod);
+                                        }
+                                        
+                                        commitToDb();
+                                    }
+                    
+                    
+                    ExecutorService executorService= Executors.newFixedThreadPool(1);
+        try {
+            executorService.submit(new Callable<Void>() {
+                
+                @Override
+                public Void call() throws Exception {
+                   
+                    
+                    System.out.println("watcher.LogWatcher: started to watch");
+                    
+                    LogWatcher.this.filter=filter;
+                    
+                    
+             
+                        task=new Watcher(LogWatcher.this.logsLocation, filter) {
+                            
+                            @Override
+                            protected void onChange(File logfile, String action) {
+                                
+                                
+                                
+                                if(action.equals("Added")){
+                                    
+                                    System.out.println(".onChange() : "+logfile+" added. Implementation Pending. Contact dev");
+                                    
+                                }
+                                if(action.equals("Modified")){
+                                    System.out.println(".onChange() : "+logfile+" modified");
+                                    
+                                    if(checkIfSegDLogIsDone(gcfile)){
+                                        //get the list of contents that are not present in the database
+                                        List<LogWatchHolder> modifiedList=getModifiedContents(gcfile); 
+                                        getInsightVersionsFromLog(gcfile,modifiedList);
+                                        maplineLog.clear();
+                                        for(LogWatchHolder mod:modifiedList){
+                                            maplineLog.put(mod.linename, mod);
+                                        }
+                                        
+                                        commitToDb();
+                                    }else{
+                                        //go to sleep
+                                    }
+                                }
+                            }
+
+                  
+
+                       
+                        };
+                        
+                        
+                        
+                        
+                        timer=new Timer();
+                        timer.schedule(task,new Date(),5000);                          //every 2 seconds
+                   //}
+                    
+                   
+                    return null;
+                }
+            }).get();
+                } catch (InterruptedException ex) {
+                   Exceptions.printStackTrace(ex);
+               } catch (ExecutionException ex) {
+                   Exceptions.printStackTrace(ex);
+               }
+                
+        
+        }
         
     }
-
+        
+    }
     private void extract(){
         mapOfExistingLogs.clear();
                       List<Logs> logL=lserv.getLogsFor(this.volume);
@@ -401,8 +543,11 @@ public  class LogWatcher {
     }
     
     private void commitToDb(){
-        
-        try {
+         /*
+        //for 2DProcess volumes and SEGDLOAD volumes
+        */
+        if(volume.getVolumeType().equals(1L) || volume.getVolumeType().equals(2L) ){
+         try {
            
             //List<Logs>logsList=lserv.getLogsFor(volume);
             Set<String> keys=maplineLog.keySet();
@@ -462,6 +607,10 @@ public  class LogWatcher {
         } catch (ExecutionException ex) {
             Logger.getLogger(LogWatcher.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+        
+        
+       
         
         
     }
@@ -475,15 +624,15 @@ public  class LogWatcher {
                             List<LogWatchHolder> lgwl=(List<LogWatchHolder>)maplineLog.get(linename);
                             String insver=new String();
                             String oldDate="Mon Jan 01 01:01:01 UTC 2001";
-                            Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(oldDate);                   // date set to 201001010000
+                            Date date=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(oldDate);                   // dateTime set to 201001010000
                             for (Iterator<LogWatchHolder> iterator1 = lgwl.iterator(); iterator1.hasNext();) {   //loop to find the insight version from the latest log
                                 LogWatchHolder lgw = iterator1.next();
-                               // System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+lgw.date);
+                               // System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+lgw.dateTime);
                                 Date d=new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(lgw.date);
                                 if(d.after(date)){
                                     date=d;
                                     insver=lgw.insightVersion;
-                                 //   System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+date+"  inv: "+insver);
+                                 //   System.out.println("watcher.LogWatcher.getsubInsightVersionMap(): "+dateTime+"  inv: "+insver);
                                 }
                             }
                             
@@ -501,9 +650,160 @@ public  class LogWatcher {
         }
         return numberOfruns;
     }
+
     
+    /*
+    check if the gun_cable.log files are done updating
+    */
+    private boolean checkIfSegDLogIsDone(File f) {
+                            DugioScripts ds=new DugioScripts();
+                            Process process=null;
+                                try {
+                                    process = new ProcessBuilder(ds.getSegdLoadCheckIfGCLogsFinished().getAbsolutePath(),f.getAbsolutePath()).start();
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            InputStream is = process.getInputStream();
+                            InputStreamReader isr=new InputStreamReader(is);
+                            BufferedReader br=new BufferedReader(isr);
+                            String line;
+                            boolean isdone=false;
+                                try {
+                                    while((line=br.readLine())!=null){    //script will return either 0(success) or 1 (fail)
+                                        int done=Integer.valueOf(line);
+                                        System.out.println(".checkIfSegDLogIsDone(): linevalue is: "+line);
+                                            if(done==0){
+                                                isdone=true;
+                                            }else{
+                                                isdone=false;
+                                            }
+                                    }
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            return isdone;
+                        }
     
-   
+    /*
+    check contents of file not present in db
+    */
+    
+    private List<LogWatchHolder> getModifiedContents(File gcfile) {
+                            DugioScripts ds=new DugioScripts();
+                            Process process=null;
+                                try {
+                                    process = new ProcessBuilder(ds.getSegdLoadLinenameTimeFromGCLogs().getAbsolutePath(),gcfile.getAbsolutePath()).start();
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            InputStream is = process.getInputStream();
+                            InputStreamReader isr=new InputStreamReader(is);
+                            BufferedReader br=new BufferedReader(isr);
+                            String line;
+                            List<LogWatchHolder> allResults=new ArrayList<>();
+                            System.out.println(".getModifiedContents():Script results");
+                                try {
+                                    while((line=br.readLine())!=null){          //line will be of form  01-Nov-2017T10:50:41 0327-1P11234A082_cable2_gun2
+                                        String timeStamp=line.substring(0,line.indexOf(" "));
+                                        String linename=line.substring(line.indexOf(" ")+1,line.length());
+                                        String seq=line.substring(line.indexOf("_")-3,line.indexOf("_"));
+                                     //   /* String dateTime=timeStamp.substring(0,timeStamp.indexOf("T"));
+                                    //    String timeOfDay=timeStamp.substring(timeStamp.indexOf("T")+1,timeStamp.length());*/
+                                        
+                                        
+                                        
+                                        DateTimeFormatter formatter=DateTimeFormat.forPattern("dd-MMM-yyyy'T'HH:mm:ss");
+                                        DateTime dt=formatter.parseDateTime(timeStamp);
+      
+                                        DateTimeFormatter opformat=new DateTimeFormatterBuilder()
+                                                .appendDayOfWeekShortText()
+                                                .appendLiteral(" ")
+                                                .appendMonthOfYearShortText()
+                                                .appendLiteral(" ")
+                                                .appendDayOfMonth(2)
+                                                .appendLiteral(" ")
+                                                .appendHourOfDay(2)
+                                                .appendLiteral(":")
+                                                .appendMinuteOfHour(2)
+                                                .appendLiteral(":")
+                                                .appendSecondOfMinute(2)
+                                                .appendLiteral(" ")
+                                                .appendTimeZoneShortName()
+                                                .appendLiteral(" ")
+                                                .appendYear(4, 4)
+                                                .toFormatter();
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        String dateTime=opformat.print(dt);
+                                        System.out.println(".getModifiedContents(): TimeStamp: "+timeStamp+" line: "+linename+" jodadatetime: "+dateTime);
+                                        LogWatchHolder lw=new LogWatchHolder(dateTime,gcfile.getAbsolutePath() , Long.valueOf(seq), linename, "");
+                                        allResults.add(lw);
+                                    }   } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                                
+                                
+                                List<LogWatchHolder> modifiedContents=new ArrayList<>();
+                                for(LogWatchHolder l:allResults){
+                                try {
+                                    Logs log=lserv.getLogsFor(volume,l.linename,l.date,l.filename);
+                                    if(log==null){              //if the database doesn't contain any log for the above params, then add to the list of modified.
+                                        modifiedContents.add(l);
+                                    }
+                                } catch (Exception ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                                }
+                                
+                               return modifiedContents;
+                            
+                        }
+    
+    /*
+    get insight version and link it to the subline
+    */
+    
+   private void getInsightVersionsFromLog(File gcfile,List<LogWatchHolder> modifiedList) {
+                            DugioScripts ds=new DugioScripts();
+                            Process process=null;
+                                try {
+                                    process = new ProcessBuilder(ds.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath(),gcfile.getAbsolutePath()).start();
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                            InputStream is = process.getInputStream();
+                            InputStreamReader isr=new InputStreamReader(is);
+                            BufferedReader br=new BufferedReader(isr);
+                            String line;
+                            Map<String,String> sailInsMap=new HashMap<>();  //sailline insight Map
+                                try {
+                                    while((line=br.readLine())!=null){  //line now will read "5.0-707143-plcs  0327-1P1205B081"
+                                         String insVersion=line.substring(0,line.indexOf(" "));
+                                         String sailline=line.substring(line.indexOf(" ")+1,line.length());
+                                         System.out.println(".getInsightVersionsFromLog(): sailline: "+sailline+" insight: "+insVersion);
+                                         sailInsMap.put(sailline, insVersion);
+                                    }   
+                                } catch (IOException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
+                                
+                            for (Map.Entry<String, String> entry : sailInsMap.entrySet()) {
+                                String saill = entry.getKey();
+                                String ins = entry.getValue();
+                                
+                                for(LogWatchHolder l:modifiedList){
+                                    if(l.linename.contains(saill)){
+                                        System.out.println(".getInsightVersionsFromLog(): adding insight version"+ins+" to "+l.linename+" which belongs to sailline: "+saill);
+                                        l.insightVersion=ins;
+                                    }
+                                }
+                                
+                            }     
+                        }
 
     
 }

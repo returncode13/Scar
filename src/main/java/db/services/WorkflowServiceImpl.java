@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
  */
 public class WorkflowServiceImpl implements WorkflowService{
     WorkflowDAO wdao=new WorkflowDAOImpl();
@@ -52,6 +52,11 @@ public class WorkflowServiceImpl implements WorkflowService{
     @Override
     public Workflow getWorkFlowVersionFor(Volume v) {
         return wdao.getWorkFlowVersionFor(v);
+    }
+
+    @Override
+    public Workflow getWorkflowRunBeforeTime(String time, Volume vol) {
+        return wdao.getWorkflowRunBeforeTime(time, vol);
     }
     
 }

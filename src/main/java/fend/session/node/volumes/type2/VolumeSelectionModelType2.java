@@ -55,7 +55,7 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
     private MultiMap<Long,SubSurfaceHeaders> seqSubsMap=new MultiValueMap<>();
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
-    //private LogWatcher logTimerTask=null;                                   // No logs for this volume type
+    private LogWatcher logTimerTask=null;                                   // 
     //private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
     //for Debug                                                             //to get the seq object use the getSequenceObjBySequenceNumber() call inside HeadersModel class
     
@@ -262,21 +262,21 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
        }
        
    }
-   /*
+  
    private void startLogWatching() {
    System.out.println("fend.session.node.volumes.VolumeSelectionModelType2.startLogWatching():  starting to watch logs for:  "+volumeChosen.getName());
    String logPath=volumeChosen.getAbsolutePath();
-   logPath=logPath+"/../../000scratch/logs";
+   logPath=logPath+"/logs/";
    if(logTimerTask==null) {
    System.out.println("fend.session.node.volumes.VolumeSelectionModelType2.startLogWatching():  initiating logwatcher for :  "+volumeChosen.getName());
    logTimerTask=new LogWatcher(logPath,"",this);
    }
-   }*/
+   }
     
     @Override
     public void startWatching() {
         
-        /* ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         executorService.submit(new Callable<Void>() {
         @Override
         public Void call() throws Exception {
@@ -286,7 +286,7 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
         return null;
         }
         
-        });*/
+        });
         
         
         
