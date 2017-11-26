@@ -162,7 +162,7 @@ public class SummarySequenceModel {
 
     public SummarySequenceModel() {
     }
-    private final StringProperty notApplicableDependency = new SimpleStringProperty("P");
+    private final StringProperty notApplicableDependency = new SimpleStringProperty("");
 
     public String getNotApplicableDependency() {
         return notApplicableDependency.get();

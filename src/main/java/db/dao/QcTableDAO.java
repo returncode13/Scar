@@ -26,5 +26,5 @@ public interface QcTableDAO {
   //  public List<QcTable> getQcTableFor(Volume v,QcType qctype);               //for column wise retrieval
     public List<QcTable> getQcTableFor(QcMatrix qmx);
     public List<QcTable> getQcTableFor(Headers h);                      
-    public List<QcTable> getQcTableFor(QcMatrix qmx,Headers h);
+    public QcTable getQcTableFor(QcMatrix qmx,Headers h) throws Exception;
 }

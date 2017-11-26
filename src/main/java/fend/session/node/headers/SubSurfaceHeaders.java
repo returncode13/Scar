@@ -20,12 +20,18 @@ import mid.doubt.Doubt;
 
 /**
  *
- * @author naila0152
+ * @author sharath nair
  */
 public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     
     
     private Doubt doubt=new Doubt();
+    private String updateTime=new String();
+    private String summaryTime=new String();
+    
+    
+    
+    
     
     private SequenceHeaders sequenceHeader=new SequenceHeaders();
     private   LongProperty sequenceNumber=new SimpleLongProperty();   
@@ -57,7 +63,7 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
     private   LongProperty numberOfRuns=new SimpleLongProperty(0L);
     private   StringProperty errorMessage=new SimpleStringProperty();
-    private   boolean   passQC=true;
+    private   Boolean   passQC=true;
     
     private final StringProperty run = new SimpleStringProperty(this,"run");
     //private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
@@ -569,9 +575,19 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
         return true;
     }
 
-    public void qcStatus(boolean passQc) {
-        this.passQC=this.passQC && passQc;
-        System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC);
+    public void qcStatus(Boolean passQc) {
+        if(passQc==null){
+            this.passQC=null;
+            return;
+        }else{
+            if(this.passQC==null){
+                System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC==null?" INDETERMINATE ":this.passQC);
+                return;
+            }
+            this.passQC=this.passQC && passQc;
+            System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC);
+        }
+        
        //this.sequenceHeader.setPassQC(this.passQC);
     }
     
@@ -580,10 +596,31 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
         this.passQC=true;
     }
 
-    public boolean isPassQC() {
+    public Boolean isPassQC() {
         return passQC;
     }
+
+    @Override
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    @Override
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
    
+    
     
    
      

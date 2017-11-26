@@ -7,8 +7,15 @@ package db.dao;
 
 import db.model.Acquisition;
 import hibUtil.HibernateUtil;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 
 /**
  *
@@ -92,6 +99,71 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
         }finally{
             session.close();
         }    
+    }
+
+    @Override
+    public List<Long> getCables() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Acquisition> result=null;
+        List<Long> cables=new ArrayList<>();
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Acquisition.class);
+            ProjectionList pList=Projections.projectionList();
+            pList.add(Projections.property("cable"));
+            criteria.setProjection(Projections.distinct(pList));
+            criteria.addOrder(Order.desc("cable"));
+            cables=criteria.list();
+            transaction.commit();
+            System.out.println("db.dao.AcquisitionDAOImpl.getCables(): returning cables: size:  "+cables.size());
+           // System.out.println("db.dao.AcquisitionDAOImpl.getCable(): result.size() "+result.size());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        } 
+        /*for (Iterator<Acquisition> iterator = result.iterator(); iterator.hasNext();) {
+        Acquisition next = iterator.next();
+        System.out.println("db.dao.AcquisitionDAOImpl.getCables(): adding: "+next.getCable());
+        cables.add(next.getCable());
+        }*/
+        System.out.println("db.dao.AcquisitionDAOImpl.getCables(): returning cables: size:  "+cables.size());
+        return cables;
+    }
+
+    @Override
+    public List<Long> getGuns() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Acquisition> result=null;
+        List<Long> guns=new ArrayList<>();
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Acquisition.class);
+            ProjectionList pList=Projections.projectionList();
+            pList.add(Projections.property("gun"));
+            criteria.setProjection(Projections.distinct(pList));
+            criteria.addOrder(Order.desc("gun"));
+            //result=criteria.list();
+            guns=criteria.list();
+            transaction.commit();
+             System.out.println("db.dao.AcquisitionDAOImpl.getGuns(): returning guns: size: "+guns.size());
+          //  System.out.println("db.dao.AcquisitionDAOImpl.getGuns(): result.size() "+result.size());
+            /*for (Iterator<Acquisition> iterator = result.iterator(); iterator.hasNext();) {
+            Acquisition next = iterator.next();
+            System.out.println("db.dao.AcquisitionDAOImpl.getGuns(): adding : "+next.getGun());
+            guns.add(next.getGun());
+            }*/
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        } 
+        
+        
+        System.out.println("db.dao.AcquisitionDAOImpl.getGuns(): returning guns: size: "+guns.size());
+        return guns;
     }
     
    

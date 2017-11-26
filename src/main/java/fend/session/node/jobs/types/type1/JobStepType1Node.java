@@ -58,7 +58,7 @@ static int i=0;
 
     public JobStepType1Node(JobStepType1Model item) {
         this.jmodel=item;
-        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/types/type1/JobStepType1NodeView_1.fxml"); 
+        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/types/type1/JobStepType1NodeView_2.fxml"); 
         //URL location = JobStepNodeController.class.getResource("JobStepNodeView.fxml");
           
            fXMLLoader=new FXMLLoader();

@@ -8,6 +8,7 @@ package db.services;
 import db.dao.QcMatrixDAO;
 import db.dao.QcMatrixDAOImpl;
 import db.model.QcMatrix;
+import db.model.QcType;
 import db.model.SessionDetails;
 import db.model.Volume;
 import java.util.List;
@@ -47,6 +48,16 @@ public class QcMatrixServiceImpl implements QcMatrixService{
     @Override
     public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sd) {
         return qcmDao.getQcMatrixForSessionDetails(sd);
+    }
+
+    @Override
+    public QcMatrix getQcMatrixFor(SessionDetails sd, QcType qctype) throws Exception {
+        return qcmDao.getQcMatrixFor(sd, qctype);
+    }
+
+    @Override
+    public List<QcMatrix> getQcMatrixForSessionDetails(SessionDetails sessDetails, boolean b) {
+        return qcmDao.getQcMatrixForSessionDetails(sessDetails,b);
     }
     
 }

@@ -56,4 +56,9 @@ public class SummaryNode extends AnchorPane {
                 throw new RuntimeException(e);
             } 
 }
+    
+    
+    public void updateModel(SummaryModel lsm){
+        lsc.setModel(lsm);
+    }
 }

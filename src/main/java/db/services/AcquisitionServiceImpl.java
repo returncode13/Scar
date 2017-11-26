@@ -8,6 +8,7 @@ package db.services;
 import db.dao.AcquisitionDAO;
 import db.dao.AcquisitionDAOImpl;
 import db.model.Acquisition;
+import java.util.List;
 
 /**
  *
@@ -34,6 +35,16 @@ public class AcquisitionServiceImpl implements AcquisitionService{
     @Override
     public void updateAcquisition(Long aid, Acquisition newAcq) {
         aDao.updateAcquisition(aid, newAcq);
+    }
+
+    @Override
+    public List<Long> getCables() {
+        return aDao.getCables();
+    }
+
+    @Override
+    public List<Long> getGuns() {
+        return aDao.getGuns();
     }
     
 }

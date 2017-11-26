@@ -75,6 +75,7 @@ public class LogsDAOImpl implements LogsDAO{
             ll.setCancelled(newL.getCancelled());
             ll.setWorkflow(newL.getWorkflow());
             ll.setUpdateTime(newL.getUpdateTime());
+            ll.setSummaryTime(newL.getSummaryTime());
             session.update(ll);
             
             
@@ -178,7 +179,10 @@ public class LogsDAOImpl implements LogsDAO{
         }finally{
             session.close();
         }
+        if(result.isEmpty())return null;
+        else{
         return result.get(0);
+        }
     }
 
     @Override
@@ -316,6 +320,36 @@ public class LogsDAOImpl implements LogsDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public Logs getLogsFor(Volume volume, String linename, String timestamp, String filename) throws Exception{
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Logs> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Logs.class);
+            criteria.add(Restrictions.eq("volume", volume));
+            criteria.add(Restrictions.eq("subsurfaces", linename));
+            criteria.add(Restrictions.eq("logpath", filename));
+            criteria.add(Restrictions.eq("timestamp", timestamp));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.isEmpty()){
+            return null;
+        }else if(result.size()>1){
+            throw new Exception("More than one results encountered for log: "+filename+" timestamp: "+timestamp+" volume: "+volume.getIdVolume()+" line: "+linename);
+        }else{
+            return result.get(0);
+        }
+            
+        
     }
 
     

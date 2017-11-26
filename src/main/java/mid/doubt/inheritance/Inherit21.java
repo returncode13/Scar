@@ -17,6 +17,7 @@ import fend.session.node.volumes.type2.VolumeSelectionModelType2;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,7 +29,16 @@ public class Inherit21 {
     JobStepType2Model parent;
     JobStepType1Model child;
 
-    public Inherit21(JobStepType0Model  parent, JobStepType0Model  child) {
+     /**
+     * @params: 
+     * parent : Parent Job
+     * child: Child job
+     * subsToSummarize: null for first summary, subs in child job to be summarized for later queries
+     * 
+     */
+    
+    
+    public Inherit21(JobStepType0Model  parent, JobStepType0Model  child,List<SubSurfaceHeaders> subsToSummarize) {
         this.parent = (JobStepType2Model) parent;
         this.child = (JobStepType1Model)child;
         
@@ -38,11 +48,19 @@ public class Inherit21 {
         
         
          System.out.println("fend.session.node.jobs.dependencies.Inherit21.<init>() Calculating subs in parent and child");
+             Set<SubSurfaceHeaders> psubs;
+         Set<SubSurfaceHeaders> csubs;
+         if(subsToSummarize==null){         //for initial summary
             calculateSubsInJob(this.child);
             calculateSubsInJob(this.parent);
-       
-         Set<SubSurfaceHeaders> psubs=this.parent.getSubsurfacesInJob();
-         Set<SubSurfaceHeaders> csubs=this.child.getSubsurfacesInJob();
+             psubs=this.parent.getSubsurfacesInJob();
+             csubs=this.child.getSubsurfacesInJob();
+         }else{                 //for later summaries
+             /*psubs=new HashSet<>(subsToSummarize);
+             csubs=new HashSet<>(subsToSummarize);*/
+             psubs=lookupSubsFromMap(this.parent,subsToSummarize);
+             csubs=lookupSubsFromMap(this.child,subsToSummarize);
+         }
             System.out.println("fend.session.node.jobs.dependencies.Inherit21.<init>(): size of child and parent subs: "+csubs.size()+" : "+psubs.size());
             
          List<VolumeSelectionModelType1> cVolList=this.child.getVolList();
@@ -314,4 +332,42 @@ public class Inherit21 {
         
         
     }
+     
+     
+     private Set<SubSurfaceHeaders> lookupSubsFromMap(JobStepType0Model job, List<SubSurfaceHeaders> subsToSummarize) {
+        
+        if(job instanceof JobStepType2Model){                   //for 2D case
+            List<VolumeSelectionModelType2> volList=job.getVolList();
+        Set<SubSurfaceHeaders> correspondingSubsInJob=new HashSet<>();
+        
+        for (Iterator<VolumeSelectionModelType2> iterator = volList.iterator(); iterator.hasNext();) {
+            VolumeSelectionModelType2 vol = iterator.next();
+                
+                if(!vol.getHeaderButtonStatus()){
+                                   
+                    Map<String,SubSurfaceHeaders>map=vol.getSubsurfaceNameSubSurfaceHeaderMap();
+                    for (Iterator<SubSurfaceHeaders> iterator1 = subsToSummarize.iterator(); iterator1.hasNext();) {
+                        SubSurfaceHeaders requiredSub = iterator1.next();
+                        correspondingSubsInJob.add(map.get(requiredSub.getSubsurface()));
+                        
+                    }
+                }
+            
+            
+            
+        }
+       // job.setSubsurfacesInJob(correspondingSubsInJob);
+        /*for (Iterator<SubSurface> iterator = correspondingSubsInJob.iterator(); iterator.hasNext();) {
+        SubSurfaceHeaders subinJob = iterator.next();
+        System.out.println("fend.session.SessionController.calculateSubsInJob(): "+job.getJobStepText()+"  :contains: "+subinJob.getSubsurface());
+        }*/
+        
+        System.out.println("mid.doubt.dependencies.Dep11.lookupSubsFromMap(): returning sublist of size: "+correspondingSubsInJob.size());
+        return correspondingSubsInJob;
+        }
+        else{
+            throw new UnsupportedOperationException("calculateSubsinJob for job type. "+job.getType()+" not defined");
+        }
+    }
+    
 }

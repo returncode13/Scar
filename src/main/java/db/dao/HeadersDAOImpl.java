@@ -93,11 +93,12 @@ public class HeadersDAOImpl implements HeadersDAO{
             h.setModified(newH.getModified());
             h.setWorkflowVersion(newH.getWorkflowVersion());
             h.setUpdateTime(newH.getUpdateTime());
+            h.setSummaryTime(newH.getSummaryTime());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/
             session.update(h);
-                System.out.println("db.dao.HeadersDAOImpl: updating entry for subsurface : "+newH.getSubsurface()+" with id: "+newH.getIdHeaders() );
+          //      System.out.println("db.dao.HeadersDAOImpl: updating entry for subsurface : "+newH.getSubsurface().getSubsurface()+" with id: "+newH.getIdHeaders() );
             }
             else{
                 throw new Exception("db.dao.HeadersDAOImpl: The id belongs to a different seq/subsurface compared to the ones that the new header value refers to!!. ");
@@ -388,6 +389,39 @@ public class HeadersDAOImpl implements HeadersDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public List<Subsurface> getSubsurfacesToBeSummarized(Volume v) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Headers> result=null;
+        List<Subsurface> subsurfacesThatNeedToBeSummarized=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Headers.class);
+            criteria.add(Restrictions.eq("volume", v));
+            criteria.add(Restrictions.gtProperty("summaryTime", "updateTime"));
+            result=criteria.list();
+            transaction.commit();
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>0){
+            for (Iterator<Headers> iterator = result.iterator(); iterator.hasNext();) {
+                Headers hdr = iterator.next();
+                subsurfacesThatNeedToBeSummarized.add(hdr.getSubsurface());
+                
+            }
+            return subsurfacesThatNeedToBeSummarized;
+        }
+        else {
+            return null;
+        }
     }
     
 }

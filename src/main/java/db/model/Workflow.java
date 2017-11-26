@@ -44,7 +44,11 @@ public class Workflow implements Serializable{
     
     @Column(name="contents",length=600000)
     private String contents;
-
+    
+    @Column(name="time")
+    private String time;
+    
+    
     public Long getIdworkflows() {
         return idworkflows;
     }
@@ -91,6 +95,14 @@ public class Workflow implements Serializable{
 
     public void setLogs(Set<Logs> logs) {
         this.logs = logs;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
     
     

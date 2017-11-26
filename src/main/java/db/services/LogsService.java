@@ -31,4 +31,6 @@ public interface LogsService {
     public List<Logs> getLogsFor(Volume v,Long seq);       //get logs for seq
     public List<Logs> getSequencesFor(Volume v);           //get distinct sequences in volume
     public List<Logs> getSubsurfacesFor(Volume v, Long seq); //get distinct subsurfaces for  volume,seq
+
+    public Logs getLogsFor(Volume volume, String linename, String timstamp, String filename) throws Exception;
 }

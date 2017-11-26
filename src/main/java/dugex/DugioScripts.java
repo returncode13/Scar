@@ -29,7 +29,12 @@ public class DugioScripts implements Serializable{
     private File logStatusCancelled;
     private File workflowExtractor;
     private File p190TimeStampLineNameExtractor;
-  
+    private File segdLoadNotesTxtTimeWorkflowExtractor;
+    private File segdLoadLinenameTimeFromGCLogs;
+    private File segdLoadSaillineInsightFromGCLogs;
+    private File segdLoadCheckIfGCLogsFinished;
+    
+    
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
             + "module add prod\n"
@@ -86,8 +91,32 @@ public class DugioScripts implements Serializable{
        private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
       "for i in $1; do  ls -ltr --time-style=+%Y%m%d%H%M%S $i | grep -o \"[[:digit:]]\\{14\\}.[[:alnum:]]*\"; done";
       
-      /*private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
-      " ls -ltr --time-style=+%Y%m%d%H%M%S $i | grep -o \"[[:digit:]]\\{14\\}.[[:alnum:]]*\"";*/
+       /*
+       for extraction of workflow and times from notes.txt
+       */
+       private String segdLoadNotesTxtTimeContents="#!/bin/bash\n" +                
+"var=$(grep -w Time $1/notes.txt | cut -c6-)\n" +
+"content=$(cat $1/notes.txt)\n" +
+"echo \"$var\" \"  Contents: \" \"$content\"";
+       
+       /*
+       check if the gun_cable.logs under segdloadVolume/logs folder has finished updating
+       */
+       private String segdLoadCheckIfGCLogsFinishedContents="#!/bin/bash\n" +
+"tail -1 $1| grep -q Finished ;echo $?";
+       
+       /*
+       for extraction of time linename from the gun_cable.logs under segdloadVolume/logs folder
+       */
+       private String segdLoadLineNameTimeMappingFromGunCableLogsContents="#!/bin/bash\n" +
+"grep Finished $1 | awk '{print $5\"-\"$6\"-\"$7\"T\" $8\" \"$13}'|sed 's/.$//'|sed 's/]//'";
+       
+     /*
+       for extracting sailline-insight mapping from the gun_cable.logs under segdloadVolume/logs folder
+       */
+       private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
+"grep -B 1 Started  $1 | awk '{print $2 $13}' | sed 's/://' |grep [[:alnum:]]|sed '$!N;s/\\n/ /' ";
+       
      public DugioScripts()
     {
         try {
@@ -240,6 +269,59 @@ public class DugioScripts implements Serializable{
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        try {
+            segdLoadNotesTxtTimeWorkflowExtractor=File.createTempFile("segdLoadNotesTxtTimeWorkflowExtractor", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(segdLoadNotesTxtTimeWorkflowExtractor));
+            bw.write(segdLoadNotesTxtTimeContents);
+            bw.close();
+            segdLoadNotesTxtTimeWorkflowExtractor.setExecutable(true,false);
+            
+            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            segdLoadLinenameTimeFromGCLogs=File.createTempFile("segdLoadLinenameTimeFromGCLogs", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(segdLoadLinenameTimeFromGCLogs));
+            bw.write(segdLoadLineNameTimeMappingFromGunCableLogsContents);
+            bw.close();
+            segdLoadLinenameTimeFromGCLogs.setExecutable(true,false);
+            
+            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            segdLoadSaillineInsightFromGCLogs=File.createTempFile("segdLoadSaillineInsightFromGCLogs", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(segdLoadSaillineInsightFromGCLogs));
+            bw.write(segdLoadSaillineInsightFromGCLogsContents);
+            bw.close();
+            segdLoadSaillineInsightFromGCLogs.setExecutable(true,false);
+            
+            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            segdLoadCheckIfGCLogsFinished=File.createTempFile("segdLoadCheckIfGCLogsFinished", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(segdLoadCheckIfGCLogsFinished));
+            bw.write(segdLoadCheckIfGCLogsFinishedContents);
+            bw.close();
+            segdLoadCheckIfGCLogsFinished.setExecutable(true,false);
+            
+            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         
     }
     
@@ -285,6 +367,24 @@ public class DugioScripts implements Serializable{
     public File getP190TimeStampLineNameExtractor() {
         return p190TimeStampLineNameExtractor;
     }
+
+    public File getSegdLoadNotesTxtTimeWorkflowExtractor() {
+        return segdLoadNotesTxtTimeWorkflowExtractor;
+    }
+
+    public File getSegdLoadLinenameTimeFromGCLogs() {
+        return segdLoadLinenameTimeFromGCLogs;
+    }
+
+    public File getSegdLoadSaillineInsightFromGCLogs() {
+        return segdLoadSaillineInsightFromGCLogs;
+    }
+
+    public File getSegdLoadCheckIfGCLogsFinished() {
+        return segdLoadCheckIfGCLogsFinished;
+    }
+    
+    
     
     
     

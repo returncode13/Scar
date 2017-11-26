@@ -127,6 +127,18 @@ public class SessionModel implements Serializable{
         jobsToBeDeleted.add(jmodel);
     }
 
+    JobStepType0Model getJobStepWithId(Long idJobStep) {
+        for (Iterator<JobStepType0Model> iterator = listOfJobs.iterator(); iterator.hasNext();) {
+            JobStepType0Model next = iterator.next();
+            if(next.getId().equals(idJobStep))
+            {
+                return next;
+            }
+            
+        }
+        return null;
+    }
+
     
 
     

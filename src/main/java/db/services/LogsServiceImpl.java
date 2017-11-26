@@ -90,6 +90,11 @@ public class LogsServiceImpl implements LogsService{
         return ldao.getSubsurfacesFor(v, seq);
     }
 
+    @Override
+    public Logs getLogsFor(Volume volume, String linename, String timestamp, String filename) throws Exception{
+        return ldao.getLogsFor(volume,linename,timestamp,filename);
+    }
+
    
     
 }

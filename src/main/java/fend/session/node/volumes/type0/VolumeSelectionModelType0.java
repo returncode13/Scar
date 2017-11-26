@@ -8,6 +8,8 @@ package fend.session.node.volumes.type0;
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.SubSurfaceHeaders;
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,9 +46,13 @@ public interface VolumeSelectionModelType0 {
     public void setInflated(Boolean b);
 
     public void setSubsurfaces(Set<SubSurfaceHeaders> sl);
-
+    public Set<SubSurfaceHeaders> getSubsurfaces();
+    
     public void setHeadersModel(HeadersModel hmod);
 
     public HeadersModel getHeadersModel();
+    
+    public List<SubSurfaceHeaders> getSubSurfaceHeadersToBeSummarized();
+    public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap();
    
 }

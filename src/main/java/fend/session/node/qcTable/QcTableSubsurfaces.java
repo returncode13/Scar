@@ -8,6 +8,7 @@ package fend.session.node.qcTable;
 import fend.session.node.headers.SequenceHeaders;
 import fend.session.node.headers.SubSurfaceHeaders;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,25 @@ public class QcTableSubsurfaces extends QcTableSequences{
     List<QcTypeModel> qcfields=null;
     QcTableSequences qcTableSeq;
     String updateTime;
+    final private boolean parent=false;
+    final private boolean child=true;
+    public boolean updateParent=false;
+    public boolean updateChildren=false;
    // Map<QcTypeModel,BooleanProperty> qctypeMap=new HashMap<>();
 
+    @Override
+    public boolean isParent() {
+        return parent;
+    }
+
+    @Override
+    public boolean isChild() {
+        return child;
+    }
+    
+    
+    
+    @Override
     public QcTableSequences getQcTableSeq() {
         return qcTableSeq;
     }
@@ -71,6 +89,7 @@ public class QcTableSubsurfaces extends QcTableSequences{
     
     @Override
     public List<QcTypeModel> getQctypes() {
+        
         return qcfields;
     }
     
@@ -105,31 +124,40 @@ public class QcTableSubsurfaces extends QcTableSequences{
     
     
     
+    @Override
     public void addToQcTypeMap(QcTypeModel q,Boolean b){
         PassBP ps=new PassBP();
         qctypeMap.put(q, ps.passProperty());
     }
     
+    @Override
     public void clearQcTypeMap(){
         qctypeMap.clear();
     }
 
+    @Override
     public Map<QcTypeModel, BooleanProperty> getQctypeMap() {
         return qctypeMap;
     }
 
+    @Override
     public void setQctypeMap(Map<QcTypeModel, BooleanProperty> qctypeMap) {
         this.qctypeMap = qctypeMap;
     }
 
+    @Override
     void setUpdateTime(String updateTime) {
         this.updateTime=updateTime;
     }
 
+    @Override
     public String getUpdateTime() {
         return updateTime;
     }
     
     
     
+    public List<QcTableSubsurfaces> getQcSubs() {
+       return this.getQcTableSeq().getQcSubs();
+    }
 }

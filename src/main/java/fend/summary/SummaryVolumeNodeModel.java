@@ -39,6 +39,20 @@ public class SummaryVolumeNodeModel {
     private final BooleanProperty ins = new SimpleBooleanProperty();
     private SummaryStatusWatcher summaryStatusWatcher;
     
+    
+    private  StringProperty insightString=new SimpleStringProperty();
+    
+    public StringProperty insightStringProperty(){
+        return insightString;
+    }
+    
+    public void setInsightString(String insightVersion){
+        this.insightString.set(insightVersion);
+    }
+    
+    public String getInsightString(){
+        return insightString.get();
+    }
 
     public Boolean getIns() {
         return ins.get();

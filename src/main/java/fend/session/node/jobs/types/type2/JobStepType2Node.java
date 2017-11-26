@@ -61,7 +61,7 @@ public class JobStepType2Node extends AnchorPane implements JobStepType0Node {
     public JobStepType2Node(JobStepType2Model item) {
       
         this.jmodel=item;
-        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/types/type2/JobStepType2NodeView_2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("nodeResources/jobs/types/type2/JobStepType2NodeView_3.fxml"); 
         //URL location = JobStepNodeController.class.getResource("JobStepNodeView.fxml");
           
            fXMLLoader=new FXMLLoader();

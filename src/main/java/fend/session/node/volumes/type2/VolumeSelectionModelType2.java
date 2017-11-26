@@ -7,6 +7,11 @@ import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -50,7 +55,7 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
     private MultiMap<Long,SubSurfaceHeaders> seqSubsMap=new MultiValueMap<>();
     private String insightVersionUsed;
     private VolumeWatcher volTimerTask=null;                                   //watch for any new subs in the volume
-    //private LogWatcher logTimerTask=null;                                   // No logs for this volume type
+    private LogWatcher logTimerTask=null;                                   // 
     //private Map<Long,StringProperty> logstatusMapForSeq=new HashMap<>();       //this is the map to hold the run status from the latest log for each seq. Remember that the seq key is not the sequence object but just a number of type Long
     //for Debug                                                             //to get the seq object use the getSequenceObjBySequenceNumber() call inside HeadersModel class
     
@@ -61,7 +66,7 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
     private final MapProperty<Long, StringProperty> logstatusMapForSeq = new SimpleMapProperty<>();
     private JobStepType0Model parentjob;
     
-    
+    private Map<String,SubSurfaceHeaders> subsurfaceNameSubSurfaceHeaderMap=new HashMap<>();
     
     
     
@@ -112,6 +117,12 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
     @Override
     public void setSubsurfaces(Set<SubSurfaceHeaders> subsurfaces) {
         this.subsurfaces = subsurfaces;
+        subsurfaceNameSubSurfaceHeaderMap.clear();
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders next = iterator.next();
+            System.out.println("fend.session.node.volumes.type1.VolumeSelectionModelType2.setSubsurfaces(): "+next.getSubsurface()+" UTime: "+next.getUpdateTime()+" STime: "+next.getSummaryTime());
+            subsurfaceNameSubSurfaceHeaderMap.put(next.getSubsurface(), next);
+        }
     }
 
         
@@ -251,21 +262,21 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
        }
        
    }
-   /*
+  
    private void startLogWatching() {
    System.out.println("fend.session.node.volumes.VolumeSelectionModelType2.startLogWatching():  starting to watch logs for:  "+volumeChosen.getName());
    String logPath=volumeChosen.getAbsolutePath();
-   logPath=logPath+"/../../000scratch/logs";
+   logPath=logPath+"/logs/";
    if(logTimerTask==null) {
    System.out.println("fend.session.node.volumes.VolumeSelectionModelType2.startLogWatching():  initiating logwatcher for :  "+volumeChosen.getName());
    logTimerTask=new LogWatcher(logPath,"",this);
    }
-   }*/
+   }
     
     @Override
     public void startWatching() {
         
-        /* ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         executorService.submit(new Callable<Void>() {
         @Override
         public Void call() throws Exception {
@@ -275,7 +286,7 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
         return null;
         }
         
-        });*/
+        });
         
         
         
@@ -290,6 +301,24 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
     @Override
     public void setVolumeType(Long volumeType) {
         this.volumeType = volumeType;
+    }
+
+    @Override
+    public List<SubSurfaceHeaders> getSubSurfaceHeadersToBeSummarized() {
+        List<SubSurfaceHeaders> subsToBeSummarized=new ArrayList<>();
+        for (Iterator<SubSurfaceHeaders> iterator = subsurfaces.iterator(); iterator.hasNext();) {
+            SubSurfaceHeaders sub = iterator.next();
+            if(sub.getUpdateTime().compareTo(sub.getSummaryTime())>0){       //if updateTime > summaryTime
+                subsToBeSummarized.add(sub);
+            }
+            
+        }
+        return subsToBeSummarized;
+    }
+
+    @Override
+    public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap() {
+        return subsurfaceNameSubSurfaceHeaderMap;
     }
 
 }
