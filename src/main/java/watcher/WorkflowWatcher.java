@@ -155,34 +155,40 @@ public class WorkflowWatcher {
         }
         
         if(volume.getVolumeType().equals(2L)){
-           // System.out.println("watcher.WorkflowWatcher.watchForWorkflows()");
+            System.out.println("Started watcher.WorkflowWatcher.watchForWorkflows(): loglist Size: "+loglist.size());
         
             executorService.submit(new Callable<Void>(){
              @Override
              public Void call() throws Exception {
-                for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
-            
-                Logs next = iterator.next();
-                String logpath=volume.getPathOfVolume();                //type 2 workflow information stored in volPath/notes.txt
+              //  for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
+                 
+               // Logs next = iterator.next();
+                String logpath=volume.getPathOfVolume();                //type 2 workflow information stored in volPath/notes.txt  . the path to notes.txt is hardcoded in the dugioscript
+                System.out.println(".call(): Inside the executor Service for workflow watcher logpath: "+logpath);
                 Process process=new ProcessBuilder(dugioscripts.getSegdLoadNotesTxtTimeWorkflowExtractor().getAbsolutePath(),logpath).start();
+                 System.out.println(".call(): 1");
                 InputStream is = process.getInputStream();
                 InputStreamReader isr=new InputStreamReader(is);
                 BufferedReader br=new BufferedReader(isr);
                 workflowHolder=new WorkflowHolder();
+                System.out.println(".call(): 2");
                 String value;
                 String content=new String();
-                String delimiter="--Contents--";  //Split time and contents here. This is based on a word hardcoded in the extraction script
+                String delimiter="Contents:";  //Split time and contents here. This is based on a word hardcoded in the extraction script
                 String time =new String();
-                
+                 System.out.println(".call(): about to read the results from the script");
                 while((value=br.readLine())!=null){
+                    System.out.println("watcher.WorkflowWatcher.init<>.call(): "+value);
                     time= value.substring(0,value.indexOf(delimiter));
+                    System.out.println(".call(): time inside: "+time);
                     content+=value.substring(value.indexOf(delimiter)+delimiter.length(),value.length());
-                   // System.out.println("watcher.WorkflowWatcher.init<>.call(): "+value);
+                    System.out.println(".call(): content: "+content);
+                    
                     //content+=value;
                     //content+="\n";
                 };
                     System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Time: "+time);
-                    System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Content: "+content);
+                    System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Content:****"+content+"*****END");
                 workflowHolder.context=content;
                 md=MessageDigest.getInstance("MD5");
                 byte[] bytesofContent=workflowHolder.context.getBytes("UTF8");
@@ -196,7 +202,7 @@ public class WorkflowWatcher {
                     System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): MD5: "+md);
                    // System.out.println("watcher.WorkflowWatcher.init<>.call(): checking for  : md5"+workflowHolder.md5+" and content size: "+workflowHolder.context.length());
                    List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowWatcher.this.volume);
-                   
+                   Workflow wfForLog=null;
                    if(wlist==null){                    // no workflow for vol with md5, so create a new entry for such a workflow
                    Workflow wver=wserv.getWorkFlowVersionFor(WorkflowWatcher.this.volume); //get the  workflow with the highest version for this volume
                    Long vers=-1L;
@@ -213,18 +219,25 @@ public class WorkflowWatcher {
                    newWorkflow.setVolume(WorkflowWatcher.this.volume);
                    System.out.println("watcher.WorkflowWatcher.init<>.call(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
                    wserv.createWorkFlow(newWorkflow);      //create the workflow in the db table
-                   next.setWorkflow(newWorkflow);          //set the log in question to have this new workflow
+                   wfForLog=newWorkflow;      //this will be the logs new workflow
                    }
                    else{                                       //found a workflow for vol with md5 . use that
-                   Workflow w=wlist.get(0);                //there should be just one such entry. Put a check for this
-                   next.setWorkflow(w);                    //the log in question now has the workflow
+                    wfForLog=wlist.get(0);                //there should be just one such entry. Put a check for this
+                //   next.setWorkflow(w);                    //the log in question now has the workflow
                    
+                   }
+                   
+                   
+                   for(Logs log:loglist){
+                       System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
+                       log.setWorkflow(wfForLog);
+                       lserv.updateLogs(log.getIdLogs(), log);
                    }
                    
                    //   mlogwfholder.put(next, workflowHolder);
                    
-                   lserv.updateLogs(next.getIdLogs(), next);       //update all these logs . all logs now have a workflow assigned*/   //UNOMMENT THIS
-             }
+                 //  lserv.updateLogs(next.getIdLogs(), next);       //update all these logs . all logs now have a workflow assigned*/   //UNOMMENT THIS
+          //   }
                 return null;
              }
                 
