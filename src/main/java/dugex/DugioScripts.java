@@ -97,7 +97,7 @@ public class DugioScripts implements Serializable{
        private String segdLoadNotesTxtTimeContents="#!/bin/bash\n" +                
 "var=$(grep -w Time $1/notes.txt | cut -c6-)\n" +
 "content=$(cat $1/notes.txt)\n" +
-"echo \"$var\" \"  Contents: \" \"$content\"";
+"echo $var \"  Contents: \" $content";
        
        /*
        check if the gun_cable.logs under segdloadVolume/logs folder has finished updating
@@ -288,7 +288,7 @@ public class DugioScripts implements Serializable{
             bw.write(segdLoadLineNameTimeMappingFromGunCableLogsContents);
             bw.close();
             segdLoadLinenameTimeFromGCLogs.setExecutable(true,false);
-            
+            segdLoadLinenameTimeFromGCLogs.deleteOnExit();
             //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
@@ -301,7 +301,7 @@ public class DugioScripts implements Serializable{
             bw.write(segdLoadSaillineInsightFromGCLogsContents);
             bw.close();
             segdLoadSaillineInsightFromGCLogs.setExecutable(true,false);
-            
+            segdLoadSaillineInsightFromGCLogs.deleteOnExit();
             //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {
@@ -314,7 +314,7 @@ public class DugioScripts implements Serializable{
             bw.write(segdLoadCheckIfGCLogsFinishedContents);
             bw.close();
             segdLoadCheckIfGCLogsFinished.setExecutable(true,false);
-            
+            segdLoadCheckIfGCLogsFinished.deleteOnExit();
             //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
         } catch (IOException ex) {

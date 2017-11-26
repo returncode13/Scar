@@ -570,7 +570,7 @@ public  class LogWatcher {
                             LogWatchHolder lgw = iterator1.next();
                             
                             //if(lgw.filename.equals())
-                            System.out.println("watcher.LogWatcher.commitToDb(): I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+"" );//" with version: "+preVersion);
+                           // System.out.println("watcher.LogWatcher.commitToDb(): I found "+lgw.linename+" with Log: "+lgw.filename+" made on: "+lgw.date+"" );//" with version: "+preVersion);
                             Logs l=new Logs();
                             
                             l.setLogpath(lgw.filename);
@@ -599,6 +599,7 @@ public  class LogWatcher {
             logstatuswatcher=new LogStatusWatcher(volumeModel);
             }
             if(workflowWatcher==null){
+                System.out.println("watcher.LogWatcher.commitToDb(): starting a new workflowWatcher for volume :"+volume.getNameVolume());
                 workflowWatcher=new WorkflowWatcher(volume);
                
             }

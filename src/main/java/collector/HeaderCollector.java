@@ -481,14 +481,55 @@ Boolean updateTime=true;
                 if(volumeType.equals(2L)){
                 
                 String lineN=next.getSubsurface().getSubsurface();
-                
+                 List<Logs> logs=lserv.getLogsFor(dbVolume, lineN);
+                Logs latestLog=lserv.getLatestLogFor(dbVolume, lineN);
+                Boolean errored=latestLog.getErrored();
+                Boolean running=latestLog.getRunning();
+                Boolean cancelled=latestLog.getCancelled();
+                Boolean success=latestLog.getCompletedsuccessfully();
                 
                 
              
+                Long wfMaxVersion=0L;
+                if(latestLog!=null){
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp()+" with insight version: "+latestLog.getInsightVersion());
+                    logger.info("LatestLog for line: "+lineN+" is: "+latestLog.getLogpath()+" created at: "+latestLog.getTimestamp()+" with insight version: "+latestLog.getInsightVersion());
+                    next.setInsightVersion(latestLog.getInsightVersion());
+                    wfMaxVersion=latestLog.getWorkflow().getWfversion();
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): Workflow from the latest log is: "+wfMaxVersion);
+                    logger.info("Workflow from the latest log is: "+wfMaxVersion);
+                }else{
+                    System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
+                    logger.info("I couldn't find the latest log entry for "+dbVolume.getNameVolume()+" : "+lineN);
+                    next.setInsightVersion(new String("no logs found"));
+                    
+                }
+                    //String latestInsightVersion=lserv.getInsightVersionFromLatestLog();
+                    
+                    if(logs!=null){
+                        next.setNumberOfRuns(new Long(logs.size()));
+                    }else{
+                        next.setNumberOfRuns(-1L);
+                    }
+                
+                /* for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
+                Logs logsForLineN = iterator1.next();
+                Workflow wf=logsForLineN.getWorkflow();
+                Long version=wf.getWfversion();
+                if(version>wfMaxVersion){
+                wfMaxVersion=version;
+                }
+                
+                }*/
+                next.setWorkflowVersion(wfMaxVersion);
+                
+                /*
+                
+                
                 Long wfMaxVersion=-1L;
                 next.setNumberOfRuns(-1L);
-               
-                next.setWorkflowVersion(wfMaxVersion);
+                
+                next.setWorkflowVersion(wfMaxVersion);*/
                 
                 /// Code up a method to set id of headers based on the hash generated from fields (subsurface,tracecount,.....) of the headers. 
                 if(next.getModified()) 
@@ -513,6 +554,15 @@ Boolean updateTime=true;
                 
                 }
                 
+                for (Iterator<Logs> iterator1 = logs.iterator(); iterator1.hasNext();) {
+                    Logs next1 = iterator1.next();
+                    next1.setHeaders(next);
+                    if(updateTime){
+                        next1.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                        lserv.updateLogs(next1.getIdLogs(), next1);
+                    }      
+                    
+                }
                 
                
             }
