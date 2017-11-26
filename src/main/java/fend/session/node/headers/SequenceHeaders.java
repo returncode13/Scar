@@ -346,9 +346,9 @@ public class SequenceHeaders implements Serializable{
             return o1.getUpdateTime().compareTo(o2.getUpdateTime());
         }).getUpdateTime();
         
-        this.summaryTime=Collections.max(subsurfaces, (SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
+        /*this.summaryTime=Collections.max(subsurfaces, (SubSurfaceHeaders o1,SubSurfaceHeaders o2)->{
         return o1.getSummaryTime().compareTo(o2.getSummaryTime());
-        }).getSummaryTime();
+        }).getSummaryTime();*/
         
         
     }

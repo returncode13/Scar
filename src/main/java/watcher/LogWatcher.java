@@ -351,7 +351,7 @@ public  class LogWatcher {
                         
                         
                         timer=new Timer();
-                        timer.schedule(task,new Date(),5000);                          //every 2 seconds
+                        timer.schedule(task,new Date(),100000);                          //every 10 mins
                    //}
                     
                    
@@ -701,7 +701,7 @@ public  class LogWatcher {
                             BufferedReader br=new BufferedReader(isr);
                             String line;
                             List<LogWatchHolder> allResults=new ArrayList<>();
-                            System.out.println(".getModifiedContents():Script results");
+                      //      System.out.println(".getModifiedContents():Script results");
                                 try {
                                     while((line=br.readLine())!=null){          //line will be of form  01-Nov-2017T10:50:41 0327-1P11234A082_cable2_gun2
                                         String timeStamp=line.substring(0,line.indexOf(" "));
@@ -739,7 +739,7 @@ public  class LogWatcher {
                                         
                                         
                                         String dateTime=opformat.print(dt);
-                                        System.out.println(".getModifiedContents(): TimeStamp: "+timeStamp+" line: "+linename+" jodadatetime: "+dateTime);
+                            //            System.out.println(".getModifiedContents(): TimeStamp: "+timeStamp+" line: "+linename+" jodadatetime: "+dateTime);
                                         LogWatchHolder lw=new LogWatchHolder(dateTime,gcfile.getAbsolutePath() , Long.valueOf(seq), linename, "");
                                         allResults.add(lw);
                                     }   } catch (IOException ex) {
@@ -784,7 +784,7 @@ public  class LogWatcher {
                                     while((line=br.readLine())!=null){  //line now will read "5.0-707143-plcs  0327-1P1205B081"
                                          String insVersion=line.substring(0,line.indexOf(" "));
                                          String sailline=line.substring(line.indexOf(" ")+1,line.length());
-                                         System.out.println(".getInsightVersionsFromLog(): sailline: "+sailline+" insight: "+insVersion);
+                                 //        System.out.println(".getInsightVersionsFromLog(): sailline: "+sailline+" insight: "+insVersion);
                                          sailInsMap.put(sailline, insVersion);
                                     }   
                                 } catch (IOException ex) {
@@ -797,7 +797,7 @@ public  class LogWatcher {
                                 
                                 for(LogWatchHolder l:modifiedList){
                                     if(l.linename.contains(saill)){
-                                        System.out.println(".getInsightVersionsFromLog(): adding insight version"+ins+" to "+l.linename+" which belongs to sailline: "+saill);
+                                   //     System.out.println(".getInsightVersionsFromLog(): adding insight version"+ins+" to "+l.linename+" which belongs to sailline: "+saill);
                                         l.insightVersion=ins;
                                     }
                                 }

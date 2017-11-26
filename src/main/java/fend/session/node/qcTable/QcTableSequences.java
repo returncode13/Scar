@@ -70,8 +70,10 @@ public class QcTableSequences {
     private QcTableService qctserv=new QcTableServiceImpl();
     private QcMatrixService qcMatServ=new QcMatrixServiceImpl();
     private SessionDetailsService ssdServ=new SessionDetailsServiceImpl();
-    
-    
+    final private boolean parent=true;
+    final private boolean child=false;
+    public boolean updateParent=false;
+    public boolean updateChildren=false;
     
     
     
@@ -80,6 +82,19 @@ public class QcTableSequences {
     JobStepType0Model jobModel; 
     Boolean loading=true;
     String updateTime;
+
+    public boolean isParent() {
+        return parent;
+    }
+
+    public boolean isChild() {
+        return child;
+    }
+    
+    public QcTableSequences getQcTableSeq() {
+        return this;
+    }
+    
     
     public JobStepType0Model getJobModel() {
         return jobModel;

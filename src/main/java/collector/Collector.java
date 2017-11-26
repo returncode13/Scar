@@ -108,6 +108,9 @@ import javafx.collections.ObservableList;
 import landing.AppProperties;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 
 /**
  *
@@ -285,6 +288,10 @@ public class Collector {
     //The code for setting up the sessions datastructures go here   <=== DONT FORGET.
     
     private void setupEntries(){
+       DateTimeFormatter formatter=DateTimeFormat.forPattern("dd-MMM-yyyy HH:mm:ss");
+        //DateTime summaryT=formatter.parseDateTime("01-Jan-1970 01:01:01").toString(AppProperties.TIMESTAMP_FORMAT);
+        DateTime summaryT=DateTime.parse("01-Jan-1970 01:01:01",DateTimeFormat.forPattern("dd-MMM-yyyy HH:mm:ss"));
+        String summaryTime=summaryT.toString(AppProperties.TIMESTAMP_FORMAT);
         try{
         dbSessionDetails.clear();
         dbJobSteps.clear();                         //clear previous jobmodel array. set current entries here
@@ -412,6 +419,7 @@ public class Collector {
                                     }
                                   //  qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
+                                    qct.setSummaryTime(summaryTime);   //set summary to 01-Jan-1970 01:01:01
                                     qctabServ.createQcTable(qct);
                                     
                                 }else {
@@ -540,6 +548,7 @@ public class Collector {
                                     
                                     //qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
+                                    qct.setSummaryTime(summaryTime);   //set summary to 01-Jan-1970 01:01:01
                                     qctabServ.createQcTable(qct);
                                     
                                 }else {
@@ -663,6 +672,7 @@ public class Collector {
                                     }
                                     //qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
+                                    qct.setSummaryTime(summaryTime);   //set summary to 01-Jan-1970 01:01:01 . saved as 19700101010101
                                     qctabServ.createQcTable(qct);
                                     
                                 }else {
