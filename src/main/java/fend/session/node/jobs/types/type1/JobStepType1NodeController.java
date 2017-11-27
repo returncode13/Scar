@@ -558,6 +558,9 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
     void openQCTable(ActionEvent event) {
         //model.getQcTableModel().setQctypes(qctypeModels);
          //qcMatrixModel=model.getQcTableModel().getQcMatrixModel();            //qcmatrix has been defined. get it.
+         
+         qcMatrixModel=model.getQcTableModel().getQcMatrixModel();
+         
         if(!qcMatrixModel.getQcTypePresMap().isEmpty()){
         System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQCTable(): Size of the qctypePresMap: "+qcMatrixModel.getQcTypePresMap().size());
            List<SequenceHeaders> seqsinJob=new ArrayList<>();
