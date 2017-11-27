@@ -177,12 +177,12 @@ public class QcTableController extends Stage {
                      indeterminate.addListener(new ChangeListener<Boolean>(){
                          @Override
                          public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                             if(newValue){
+                            // if(newValue){
                                 // System.out.println("Indeterminate.changed(): ");
                                  qseq.getQctypes().get(iii).indeterminateProperty().set(newValue);
                                  //System.out.println("Indeterminate.changed(): "+qseq.getQctypes().get(iii).indeterminateProperty().get());
                                  //bprop.set(QcTypeModel.isInDeterminate);
-                             }
+                         //    }
                          }
                          
                      });

@@ -358,9 +358,11 @@ public class Collector {
                         System.out.println("collector.Collector.setupEntries(): Size of qcTabSeqList :  "+qctabSeqList.size());
                     for (Iterator<QcTableSequences> iterator = qctabSeqList.iterator(); iterator.hasNext();) {
                         QcTableSequences qcseq = iterator.next();
+                        System.out.println("collector.Collector.setupEntries(): Inside QSeq: "+qcseq.getSequence().getSequenceNumber());
                         List<QcTableSubsurfaces> qcsubList=qcseq.getQcSubs();
                         for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
                             QcTableSubsurfaces qcsub = iterator1.next();
+                            System.out.println("QSub: "+qcsub.getSub().getSubsurface());
                             SubSurfaceHeaders subh=qcsub.getSub();
                             subh.resetPassQC();
                             
@@ -420,6 +422,7 @@ public class Collector {
                                   //  qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
                                     qct.setSummaryTime(summaryTime);   //set summary to 01-Jan-1970 01:01:01
+                                    System.out.println("collector.Collector.setupEntries(): creating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j1.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+")  to: "+qctmod.isPassQc()+" with Uptime: "+qct.getUpdateTime());
                                     qctabServ.createQcTable(qct);
                                     
                                 }else {
@@ -486,9 +489,11 @@ public class Collector {
                     List<QcTableSequences> qctabSeqList=qctabmod.getQcTableSequences();
                     for (Iterator<QcTableSequences> iterator = qctabSeqList.iterator(); iterator.hasNext();) {
                         QcTableSequences qcseq = iterator.next();
+                         System.out.println("collector.Collector.setupEntries(): Inside QSeq: "+qcseq.getSequence().getSequenceNumber());
                         List<QcTableSubsurfaces> qcsubList=qcseq.getQcSubs();
                         for (Iterator<QcTableSubsurfaces> iterator1 = qcsubList.iterator(); iterator1.hasNext();) {
                             QcTableSubsurfaces qcsub = iterator1.next();
+                            System.out.println("QcSub: "+qcsub.getSub().getSubsurface());
                             SubSurfaceHeaders subh=qcsub.getSub();
                             subh.resetPassQC();
                             
@@ -513,10 +518,10 @@ public class Collector {
                                 
                             }
                             SessionDetails sd=ssdServ.getSessionDetails(job, sess);
-                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd);
+                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd,true);
                             for (Iterator<QcMatrix> iterator2 = qcmatrixList.iterator(); iterator2.hasNext();) {
                                 QcMatrix qcmat = iterator2.next();
-                                
+                                System.out.println("QCMatrix: "+qcmat.getQctype().getName());
                                 QcTypeModel qctmod=null;    
                                 List<QcTypeModel> qctmodList=qcsub.getQctypes();            //finding the value of the qctype for this particular subsurface
                                 for (Iterator<QcTypeModel> iterator3 = qctmodList.iterator(); iterator3.hasNext();) {
@@ -537,6 +542,7 @@ public class Collector {
                                     QcTable qct=new QcTable();
                                     qct.setHeaders(hdr);
                                     qct.setQcmatrix(qcmat);
+                                    System.out.println("QctMod.IsPassQC= "+qctmod.isPassQc());
                                     if(qctmod.isPassQc().equals(QcTypeModel.isInDeterminate)){
                                         qct.setResult(null);
                                     }else if(qctmod.isPassQc().equals(Boolean.TRUE.toString())){
@@ -549,12 +555,14 @@ public class Collector {
                                     //qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
                                     qct.setSummaryTime(summaryTime);   //set summary to 01-Jan-1970 01:01:01
+                                    System.out.println("collector.Collector.setupEntries(): creating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j2.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+")  to: "+qctmod.isPassQc()+" with Uptime: "+qct.getUpdateTime());
                                     qctabServ.createQcTable(qct);
                                     
                                 }else {
                                     QcTable qct=qctEntry;
                                     //qct.setHeaders(hdr);
                                     Boolean oldval=qct.getResult();
+                                    System.out.println("QctMod.IsPassQC= "+qctmod.isPassQc());
                                      if(qctmod.isPassQc().equals(QcTypeModel.isInDeterminate)){
                                         qct.setResult(null);
                                     }else if(qctmod.isPassQc().equals(Boolean.TRUE.toString())){
@@ -639,7 +647,7 @@ public class Collector {
                                 
                             }
                             SessionDetails sd=ssdServ.getSessionDetails(job, sess);
-                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd);
+                            List<QcMatrix> qcmatrixList=qcmatserv.getQcMatrixForSessionDetails(sd,true);
                             for (Iterator<QcMatrix> iterator2 = qcmatrixList.iterator(); iterator2.hasNext();) {
                                 QcMatrix qcmat = iterator2.next();
                                 
@@ -673,6 +681,7 @@ public class Collector {
                                     //qct.setResult(qctmod.isPassQc());
                                     qct.setUpdateTime(qcsub.getUpdateTime());      //stored as a string  yyyyMMddHHmmss
                                     qct.setSummaryTime(summaryTime);   //set summary to 01-Jan-1970 01:01:01 . saved as 19700101010101
+                                    System.out.println("collector.Collector.setupEntries(): creating seq: "+subh.getSequenceHeader().getSequenceNumber()+" sub: "+subh.getSubsurface()+" in job: "+j4.getJobStepText()+" qctype: (id,name) : ("+qctmod.getId()+","+qctmod.getName()+")  to: "+qctmod.isPassQc()+" with Uptime: "+qct.getUpdateTime());
                                     qctabServ.createQcTable(qct);
                                     
                                 }else {
