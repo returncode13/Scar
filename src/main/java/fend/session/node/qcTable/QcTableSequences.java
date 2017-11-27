@@ -217,7 +217,7 @@ public class QcTableSequences {
             qsub.setSub(subs);
             qsub.getSub().resetPassQC();
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-                System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+              //  System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
             
              for (Iterator<QcTypeModel> iterator1 = qctypes.iterator(); iterator1.hasNext();) {
                 QcTypeModel next1 = iterator1.next();
@@ -251,7 +251,7 @@ public class QcTableSequences {
             qsub.setSequence(this.sequence);
             qsub.setSub(subs); 
             List<QcTypeModel> qctypescopy=new ArrayList<>();
-             System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
+             //System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading is "+loading);
              ///-->Start
             /* 
              
@@ -363,7 +363,7 @@ public class QcTableSequences {
                     
                     
                     Headers h=hlist.get(0);
-                    System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes()");
+                   // System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes()");
                     List<QcMatrix> qcmatList=qcMatServ.getQcMatrixForSessionDetails(sessDetails,true);    //get the checked items from the qcmatrix.  shot, stack
                     for (Iterator<QcMatrix> iterator0 = qcmatList.iterator(); iterator0.hasNext();) {
                                 QcMatrix qcmat = iterator0.next();
@@ -416,8 +416,8 @@ public class QcTableSequences {
                              // List<QcTypeModel> existingQcTypeModels=new ArrayList<>();
 
                                // qsub.getSub().resetPassQC();
-                               System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading for sub: "+h.getSubsurface().getSubsurface()+" id: "+qctableForQmxHdr.getQcmatrix().getQctype().getIdQcType()+
-                                            "  name: "+qctableForQmxHdr.getQcmatrix().getQctype().getName()+" ticked: "+ qctableForQmxHdr.getResult()+" Utime: "+qctableForQmxHdr.getUpdateTime());
+                          //     System.out.println("fend.session.node.qcTable.QcTableSequences.loadQcTypes(): loading for sub: "+h.getSubsurface().getSubsurface()+" id: "+qctableForQmxHdr.getQcmatrix().getQctype().getIdQcType()+
+                           //                 "  name: "+qctableForQmxHdr.getQcmatrix().getQctype().getName()+" ticked: "+ qctableForQmxHdr.getResult()+" Utime: "+qctableForQmxHdr.getUpdateTime());
                                 QcTypeModel newQt=new QcTypeModel();
                                 newQt.setId(qctableForQmxHdr.getQcmatrix().getQctype().getIdQcType());
                                 newQt.setName(qctableForQmxHdr.getQcmatrix().getQctype().getName());

@@ -342,45 +342,14 @@ public class SummaryController extends Stage{
                                    Boolean isParent=ss.getDoubt().isParent(job1);
                                   Boolean isChild=ss.getDoubt().isChild(job1);
                                  //  System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call() node: "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+" Parent: "+isParent+" Child: "+isChild);
-                                  
+                                   System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call(): "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+"dStat: "+dbtStat +" isChild: "+isChild+" QF: "+Qf);
                                     List<String> dtypes=ss.getDoubt().getDoubtTypes();
-                                   for(Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
-                                   String next = iterator1.next();
-                                  // System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call(): "+next);
-                                   
-                                   }
-                                   /*
-                                   if(isChild && Qf && dtypes.contains(Doubt.doubtTime)){
-                                   dep="Time";
-                                   }
-                                   if(isChild && Qf && dtypes.contains(Doubt.doubtTraces)){
-                                   dep+="Traces";
-                                   }
-                                   if(isChild && Qf && dtypes.contains(Doubt.doubtQc)){
-                                   dep+="Qc";
-                                   }
-                                   if(isChild && Qf && !dtypes.contains(Doubt.doubtTime) && !dtypes.contains(Doubt.doubtTraces)){
-                                   dep="OK";
-                                   }
-                                   if(isParent){
-                                   dep="OK";
-                                   }*/
-                                  // System.out.println("fend.summary.SummaryController.setModel().call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
-                                   
-                                  /* if(Pf){
-                                  dep="";
-                                  }
-                                  if(Qf){
-                                  dep="Q";
-                                  }
-                                  /*if(Pf && Qf){
-                                  dep="Q";
-                                  }*/
-                                  /*
-                                  if(!Qf){
-                                      dep="OK";
-                                  }*/
-                                  
+                                    /*for(Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
+                                    String next = iterator1.next();
+                                    System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call(): "+job1.getJobStepText()+" sub: "+ss.getSubsurface()+"dttype: "+next);
+                                    
+                                    }*/
+                                 
                                   
                                   if(Qf && isChild && dbtStat.equals("Y")){
                                   dep="Y";
@@ -427,41 +396,8 @@ public class SummaryController extends Stage{
                                    String dbtStat=ss.getDoubt().getStatus();
                                    Boolean isParent=ss.getDoubt().isParent(job2);
                                   Boolean isChild=ss.getDoubt().isChild(job2);
-                                  
-                                  /*
-                                    List<String> dtypes=ss.getDoubt().getDoubtTypes();
-                                    /*for(Iterator<String> iterator1 = dtypes.iterator(); iterator1.hasNext();) {
-                                    String next = iterator1.next();
-                                    System.out.println(".call(): "+next);
-                                    
-                                    }
-                                  if(isChild && dtypes.contains(Doubt.doubtTime)){
-                                      dep="Time";
-                                  }
-                                  if(isChild && dtypes.contains(Doubt.doubtTraces)){
-                                      dep+="Traces";
-                                  }
-                                  if(isChild && !dtypes.contains(Doubt.doubtTime) && !dtypes.contains(Doubt.doubtTraces)){
-                                      dep="OK";
-                                  }
-                                  if(isParent){
-                                      dep="OK";
-                                  }
-                                   //System.out.println("fend.summary.SummaryController.setModel().call(): "+ss.getSequenceNumber()+" doubt: "+Qf);
-                                   /*
-                                   if(Pf){
-                                       dep="";
-                                   }
-                                   if(Qf){
-                                       dep="Q";
-                                   }
-                                   /*if(Pf && Qf){
-                                   dep="Q";
-                                   }*/
-                                   /*
-                                   if(!Qf){
-                                       dep="OK";
-                                   }*/
+                                  System.out.println("fend.summary.SummaryController.setModel().dbt.setCellValueFactory().call(): "+job2.getJobStepText()+" sub: "+ss.getSubsurface()+"dStat: "+dbtStat +" isChild: "+isChild+" QF: "+Qf);
+                                 
                                    if(Qf && isChild && dbtStat.equals("Y")){
                                   dep="Y";
                                   }else if(Qf && isChild && dbtStat.equals("O")){

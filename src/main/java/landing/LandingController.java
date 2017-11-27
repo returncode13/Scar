@@ -1017,6 +1017,7 @@ public class LandingController extends Stage implements Initializable,Serializab
         }
         
        
+        //finally load qctable for the front end jobs jmodList
         
         
         
