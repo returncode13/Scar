@@ -258,7 +258,9 @@ public class Q21 {
                                chsub.getDoubt().setStatus("Y");
                                chsub.getSequenceHeader().getDoubt().setStatus("Y");
                                chsub.getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, currentError);
+                               chsub.getSequenceHeader().getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, currentError);
                                chsub.getDoubt().setDoubt(true);
+                               chsub.getSequenceHeader().getDoubt().setDoubt(true);
                                doubtMessage.add(currentError);
                                
                              ///  chsub.setErrorMessageList(doubtMessage);
@@ -268,7 +270,8 @@ public class Q21 {
                                chsub.getDoubt().setStatus("O");
                                 chsub.getSequenceHeader().getDoubt().setStatus("O");
                                chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
-                                setSeqDoubtStatus(chsub);
+                               chsub.getSequenceHeader().getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
+                               setSeqDoubtStatus(chsub);
                                chsub.getDoubt().setDoubt(true);
                                doubtMessage.add(currentError);
                               // chsub.setErrorMessageList(doubtMessage);
@@ -279,6 +282,7 @@ public class Q21 {
                        if(!exists){ //no entry in db
                            String err=new String("subsurface "+chsub.getSubsurface()+" in parent job: "+this.parent.getJobStepText()+" has failed at one or more qc types");
                            chsub.getDoubt().addToDoubtMap(parent, child, Doubt.doubtQc, err);    //add to the childs doubt map
+                           chsub.getSequenceHeader().getDoubt().addToDoubtMap(parent, child,Doubt.doubtQc, err); 
                            chsub.getDoubt().setStatus("Y");
                             chsub.getSequenceHeader().getDoubt().setStatus("Y");
                            doubtMessage.add(currentError);
@@ -308,6 +312,7 @@ public class Q21 {
                             DoubtStatus d=dst.get(0);
                             dsServ.deleteDoubtStatus(d.getIdDoubtStatus());
                             chsub.getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
+                            chsub.getSequenceHeader().getDoubt().removeFromDoubtMap(parent, child, Doubt.doubtQc);
                             chsub.getDoubt().setStatus("N");
                              setSeqDoubtStatus(chsub);
                         }

@@ -238,9 +238,11 @@ public class Doubt {
     }
 
     public Boolean isChild(JobStepType0Model job) {
+        
+        System.out.println("mid.doubt.Doubt.isChild(): size of doubtMap: "+doubtmap.size());
         for(Map.Entry<JobPair, String> entry : doubtmap.entrySet()) {
             JobPair key = entry.getKey();
-            
+            System.out.println("mid.doubt.Doubt.isChild(): Parent: "+key.parent.getJobStepText()+" Child: "+key.child.getJobStepText());
             if(key.child.getId().equals(job.getId()))
             {
                 return true;
