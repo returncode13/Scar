@@ -164,31 +164,31 @@ public class WorkflowWatcher {
                  
                // Logs next = iterator.next();
                 String logpath=volume.getPathOfVolume();                //type 2 workflow information stored in volPath/notes.txt  . the path to notes.txt is hardcoded in the dugioscript
-                System.out.println(".call(): Inside the executor Service for workflow watcher logpath: "+logpath);
+            
                 Process process=new ProcessBuilder(dugioscripts.getSegdLoadNotesTxtTimeWorkflowExtractor().getAbsolutePath(),logpath).start();
-                 System.out.println(".call(): 1");
+            
                 InputStream is = process.getInputStream();
                 InputStreamReader isr=new InputStreamReader(is);
                 BufferedReader br=new BufferedReader(isr);
                 workflowHolder=new WorkflowHolder();
-                System.out.println(".call(): 2");
+           
                 String value;
                 String content=new String();
                 String delimiter="Contents:";  //Split time and contents here. This is based on a word hardcoded in the extraction script
                 String time =new String();
-                 System.out.println(".call(): about to read the results from the script");
+               //  System.out.println(".call(): about to read the results from the script");
                 while((value=br.readLine())!=null){
-                    System.out.println("watcher.WorkflowWatcher.init<>.call(): "+value);
+                  //  System.out.println("watcher.WorkflowWatcher.init<>.call(): "+value);
                     time= value.substring(0,value.indexOf(delimiter));
-                    System.out.println(".call(): time inside: "+time);
+                  //  System.out.println(".call(): time inside: "+time);
                     content+=value.substring(value.indexOf(delimiter)+delimiter.length(),value.length());
-                    System.out.println(".call(): content: "+content);
+                  //  System.out.println(".call(): content: "+content);
                     
                     //content+=value;
                     //content+="\n";
                 };
-                    System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Time: "+time);
-                    System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Content:****"+content+"*****END");
+              //      System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Time: "+time);
+              //      System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): Content:****"+content+"*****END");
                 workflowHolder.context=content;
                 md=MessageDigest.getInstance("MD5");
                 byte[] bytesofContent=workflowHolder.context.getBytes("UTF8");
@@ -199,7 +199,7 @@ public class WorkflowWatcher {
                     sbuf.append(String.format("%02x", b & 0xff));
                 }
                 workflowHolder.md5=new String(sbuf.toString());
-                    System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): MD5: "+md);
+                 //   System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): MD5: "+md);
                    // System.out.println("watcher.WorkflowWatcher.init<>.call(): checking for  : md5"+workflowHolder.md5+" and content size: "+workflowHolder.context.length());
                    List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowWatcher.this.volume);
                    Workflow wfForLog=null;
@@ -217,7 +217,7 @@ public class WorkflowWatcher {
                    newWorkflow.setMd5sum(workflowHolder.md5);
                    newWorkflow.setWfversion(++vers);       //increment the version
                    newWorkflow.setVolume(WorkflowWatcher.this.volume);
-                   System.out.println("watcher.WorkflowWatcher.init<>.call(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
+                 //  System.out.println("watcher.WorkflowWatcher.init<>.call(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
                    wserv.createWorkFlow(newWorkflow);      //create the workflow in the db table
                    wfForLog=newWorkflow;      //this will be the logs new workflow
                    }
@@ -229,7 +229,7 @@ public class WorkflowWatcher {
                    
                    
                    for(Logs log:loglist){
-                       System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
+                      // System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
                        log.setWorkflow(wfForLog);
                        lserv.updateLogs(log.getIdLogs(), log);
                    }

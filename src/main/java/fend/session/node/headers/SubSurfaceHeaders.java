@@ -581,11 +581,11 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
             return;
         }else{
             if(this.passQC==null){
-                System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC==null?" INDETERMINATE ":this.passQC);
+               // System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC==null?" INDETERMINATE ":this.passQC);
                 return;
             }
             this.passQC=this.passQC && passQc;
-            System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC);
+            //System.out.println("fend.session.node.headers.SubSurfaceHeaders.qcStatus(): sub: "+this.getSubsurface()+" QCSTATUS: "+this.passQC);
         }
         
        //this.sequenceHeader.setPassQC(this.passQC);
