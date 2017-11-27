@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
  * @author sharath
  */
 public class AppProperties {
-    public static final String VERSION="4.0.3";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="4.1.0";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.

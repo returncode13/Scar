@@ -12,6 +12,8 @@ import fend.session.node.headers.SubSurfaceHeaders;
 import fend.session.node.jobs.insightVersions.InsightVersionsModel;
 import fend.session.node.jobs.nodeproperty.JobModelProperty;
 import fend.session.node.jobs.types.type0.JobStepType0Model;
+import fend.session.node.qcTable.QcTableModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -281,5 +283,11 @@ public class AcquisitionJobStepModel implements JobStepType0Model{
         
     }
 
+    @Override
+    public QcTableModel getQcTableModel() {
+        return new QcTableModel();
+    }
+
+    
     
 }

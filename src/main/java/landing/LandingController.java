@@ -15,6 +15,8 @@ import db.model.JobVolumeDetails;
 import db.model.NodePropertyValue;
 import db.model.NodeType;
 import db.model.Parent;
+import db.model.QcMatrix;
+import db.model.QcType;
 import db.model.SessionDetails;
 import db.model.Sessions;
 import db.model.Volume;
@@ -34,6 +36,10 @@ import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
 import db.services.ParentService;
 import db.services.ParentServiceImpl;
+import db.services.QcMatrixService;
+import db.services.QcMatrixServiceImpl;
+import db.services.QcTypeService;
+import db.services.QcTypeServiceImpl;
 import db.services.SessionDetailsService;
 import db.services.SessionDetailsServiceImpl;
 import db.services.SessionsService;
@@ -59,6 +65,9 @@ import fend.session.node.jobs.types.type0.JobStepType0NodeController;
 import fend.session.node.jobs.types.type1.JobStepType1Model;
 import fend.session.node.jobs.types.type2.JobStepType2Model;
 import fend.session.node.jobs.types.type4.JobStepType4Model;
+import fend.session.node.qcTable.QcMatrixModel;
+import fend.session.node.qcTable.QcTypeModel;
+import fend.session.node.qcTable.qcCheckBox.qcCheckListModel;
 import fend.session.node.volumes.acquisition.AcquisitionVolumeModel;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import fend.session.node.volumes.type1.VolumeSelectionModelType1;
@@ -1016,9 +1025,41 @@ public class LandingController extends Stage implements Initializable,Serializab
             
         }
         
-       
-        //finally load qctable for the front end jobs jmodList
+       JobStepService jsserv=new JobStepServiceImpl();              //can be made final private
+        QcMatrixService qcmatServ=new QcMatrixServiceImpl();
+        QcTypeService qcTypeServ=new QcTypeServiceImpl();
         
+        //finally load qctable for the front end jobs jmodList
+        for (Iterator<JobStepType0Model> iterator = jmodList.iterator(); iterator.hasNext();) {
+            
+            
+            
+            JobStepType0Model fejob = iterator.next();
+            if(fejob.getType().equals(3L)) continue;                    //skip this for the Acquisition Node
+            
+            JobStep bejob=jsserv.getJobStep(fejob.getId());
+            SessionDetails fessd=ssDserv.getSessionDetails(bejob, sessionFromDB);
+            
+            List<QcMatrix> qcmatrices= qcmatServ.getQcMatrixForSessionDetails(fessd,true); //for loading get only the qcmatrices in the db that were checked as true during the save phase
+            QcMatrixModel qcMatrixModel=fejob.getQcTableModel().getQcMatrixModel();
+            
+            for (Iterator<QcMatrix> iteratorForQcMatrix = qcmatrices.iterator(); iteratorForQcMatrix.hasNext();) {
+                    QcMatrix rec = iteratorForQcMatrix.next();
+                    QcType qctype=rec.getQctype();
+                    //Volume v=rec.getVolume();
+                    SessionDetails ssd=rec.getSessionDetails();
+                    Boolean pres=rec.getPresent();
+
+                    QcTypeModel qctm=new QcTypeModel();
+                    qctm.setId(qctype.getIdQcType());
+                    qctm.setName(qctype.getName());
+                    qcMatrixModel.addToQcTypePresMap(qctm, pres);
+           }
+            System.out.println("landing.LandingController.loadSession(): setting qcMatrixModel for : "+fejob.getJobStepText());
+            fejob.getQcTableModel().setQcMatrixModel(qcMatrixModel);
+            
+            
+        }
         
         
         
@@ -1064,8 +1105,8 @@ public class LandingController extends Stage implements Initializable,Serializab
         List<List<JobVolumeDetails>> ljvd = new ArrayList<>();
           
                 
-        for (Iterator<JobStep> iterator = js.iterator(); iterator.hasNext();) {
-            JobStep next = iterator.next();
+        for (Iterator<JobStep> iteratorForQcTypes = js.iteratorForQcTypes(); iteratorForQcTypes.hasNext();) {
+            JobStep next = iteratorForQcTypes.next();
             ljvd.add(jvdserv.getJobVolumeDetails(next));                      //This is a list of jobvolumedetail entries related to one job. Many to Many relation
             
             
@@ -1075,8 +1116,8 @@ public class LandingController extends Stage implements Initializable,Serializab
         System.out.println("Session Loaded: "+sessionFromDB.getNameSessions()+" :with ID: "+sessionFromDB.getIdSessions());
         System.err.println("");
         System.out.println("The following jobsteps are present in the session");
-         for (Iterator<JobStep> iterator = js.iterator(); iterator.hasNext();) {
-            JobStep next = iterator.next();
+         for (Iterator<JobStep> iteratorForQcTypes = js.iteratorForQcTypes(); iteratorForQcTypes.hasNext();) {
+            JobStep next = iteratorForQcTypes.next();
              System.out.println(next.getNameJobStep()+" :with ID: "+next.getIdJobStep());
             
         }
@@ -1085,10 +1126,10 @@ public class LandingController extends Stage implements Initializable,Serializab
        
         //next extract the list of volumes belonging to each job from the jobVolumeDetail list
          
-        for (Iterator<List<JobVolumeDetails>> iterator = ljvd.iterator(); iterator.hasNext();) {
-            List<JobVolumeDetails> next = iterator.next();
+        for (Iterator<List<JobVolumeDetails>> iteratorForQcTypes = ljvd.iteratorForQcTypes(); iteratorForQcTypes.hasNext();) {
+            List<JobVolumeDetails> next = iteratorForQcTypes.next();
             
-                for (Iterator<JobVolumeDetails> iterator1 = next.iterator(); iterator1.hasNext();) {
+                for (Iterator<JobVolumeDetails> iterator1 = next.iteratorForQcTypes(); iterator1.hasNext();) {
                 JobVolumeDetails next1 = iterator1.next();
                 System.out.println(next1.getJobStep().getNameJobStep()+"-   Volume: "+next1.getVolume().getNameVolume()+ ":with ID: "+next1.getVolume().getIdVolume());
                 
