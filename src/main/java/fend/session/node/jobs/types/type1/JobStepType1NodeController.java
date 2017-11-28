@@ -579,7 +579,7 @@ public class JobStepType1NodeController implements JobStepType0NodeController {
             System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQCTable(): ..starting QCTableNode");
           // QcTableNode qcTableNode=new QcTableNode(vmodel.getQcTableModel());
           QcTableNode qcTableNode=new QcTableNode(model.getQcTableModel());
-          
+          this.jsn.requestFocus();
            }else{
              System.out.println("fend.session.node.jobs.types.type1.JobStepType1NodeController.openQCTable(): Size of the qctypePresMap: "+qcMatrixModel.getQcTypePresMap().size()+" IS EMPTY..PUT A DIALOG BOX HERE");
         }

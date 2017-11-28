@@ -152,7 +152,7 @@ public class QcTableController extends Stage {
                 @Override
                 public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequences, Boolean> param) {
                     
-                     SimpleStringProperty bprop=new SimpleStringProperty();
+                //     SimpleStringProperty bprop=new SimpleStringProperty();
                      //System.out.println(".call(): bprop: is "+((bprop==null)?"is NULL":" not null"));
                     
                      QcTableSequences qseq=param.getValue().getValue();

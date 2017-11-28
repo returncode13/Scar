@@ -70,7 +70,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
           
           selectedItem.setUpdateTime(updateTime);
           selectedItem.getQctypes().get(index).setPassQc(passQcString);
-          System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedProperty(): "+newValue);
+         // System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): selectedProperty(): "+newValue+" for "+selectedItem.getSequenceNumber()+" : "+selectedItem.getSubsurface());
           
           /* if(selectedItem.isParent()){                      //reflect parents selection to the children . update the time on the children.
           updateDownwards(passQcString,updateTime);
@@ -94,6 +94,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
           String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
           selectedItem=this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
           selectedItem.setUpdateTime(updateTime);
+         // System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): indeterminateProperty(): "+newValue+" for "+selectedItem.getSequenceNumber()+" : "+selectedItem.getSubsurface());
           selectedItem.getQctypes().get(index).getIndeterminate().set(newValue);
           /* if(selectedItem.isParent()){
           //updateDownwards(updateTime);
@@ -101,7 +102,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
           if(selectedItem.isChild()){
           //updateUpwards(updateTime);
           }*/
-          getTreeTableView().refresh();
+        //  getTreeTableView().refresh();
       });
      
        
@@ -109,7 +110,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
        checkBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
            @Override
            public void handle(MouseEvent event) {
-               
+               System.out.println(".handle(): MouseClicked");
              
                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                
@@ -134,7 +135,20 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequences, Boolean> {
            
        });
        
+       checkBox.setOnMousePressed(new EventHandler<MouseEvent>(){
+           @Override
+           public void handle(MouseEvent event) {
+               System.out.println(".handle(): MousePressed");
+           }
+           
+       });
        
+       checkBox.setOnMouseReleased(new EventHandler<MouseEvent>(){
+           @Override
+           public void handle(MouseEvent event) {
+               System.out.println(".handle(): Released");
+           }
+       });
     }
 
     
