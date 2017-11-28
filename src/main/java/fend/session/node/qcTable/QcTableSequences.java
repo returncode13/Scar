@@ -155,7 +155,7 @@ public class QcTableSequences {
    
 
     public long getSequenceNumber() {
-        System.out.println("fend.session.node.qcTable.QcTableSequences.getSequenceNumber(): setting property to "+sequence.getSequenceNumber());
+        //System.out.println("fend.session.node.qcTable.QcTableSequences.getSequenceNumber(): setting property to "+sequence.getSequenceNumber());
         sequenceNumber.set(sequence.getSequenceNumber());
         return sequenceNumber.get();
     }
