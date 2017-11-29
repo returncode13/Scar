@@ -7,6 +7,7 @@ package fend.session.node.volumes.acquisition;
 
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.SubSurfaceHeaders;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.File;
 import java.util.ArrayList;
@@ -157,6 +158,11 @@ public class AcquisitionVolumeModel implements VolumeSelectionModelType0{
 
     @Override
     public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public JobStepType0Model getParentJob() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
    

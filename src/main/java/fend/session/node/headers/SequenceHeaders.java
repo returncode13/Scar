@@ -70,7 +70,7 @@ public class SequenceHeaders implements Serializable{
    // private final StringProperty dependency = new SimpleStringProperty(this,"dependency");
     private final BooleanProperty insightFlag = new SimpleBooleanProperty(this,"insightFlag");
     private final StringProperty workflowSeqProperty = new SimpleStringProperty();
-
+    private   StringProperty textFileNames=new SimpleStringProperty();
     
     private final StringProperty qcStatus = new SimpleStringProperty(this,"qcStatus");
    
@@ -601,7 +601,13 @@ public class SequenceHeaders implements Serializable{
         this.summaryTime = summaryTime;
     }
     
-    
+     public String getTextFileNames() {
+        return textFileNames.get();
+    }
+
+    public void setTextFileNames(String textFileNames) {
+        this.textFileNames .set(textFileNames);
+    }
     
     
     

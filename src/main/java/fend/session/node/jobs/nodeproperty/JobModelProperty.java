@@ -9,6 +9,7 @@ package fend.session.node.jobs.nodeproperty;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  * Class holds properties of job steps
+ * Holds the name,value of a single Property. e.g. "From"  or "To" or "X" or "Y"
  */
 public class JobModelProperty {
     String propertyName;

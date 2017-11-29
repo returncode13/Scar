@@ -147,6 +147,8 @@ public class Headers implements Serializable{
     @Column(name="SummaryTime")
     private String summaryTime;
     
+    @Column(name="textfilename")                                             //used for txt file types. job steptype=4
+    private String textfilepath;         
     
     public Headers() {
         this.modified=Boolean.FALSE;
@@ -590,6 +592,14 @@ public class Headers implements Serializable{
 
     public void setSummaryTime(String summaryTime) {
         this.summaryTime = summaryTime;
+    }
+
+    public String getTextfilepath() {
+        return textfilepath;
+    }
+
+    public void setTextfilepath(String textfilepath) {
+        this.textfilepath = textfilepath;
     }
     
     

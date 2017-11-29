@@ -321,4 +321,9 @@ public class VolumeSelectionModelType2 implements VolumeSelectionModelType0{
         return subsurfaceNameSubSurfaceHeaderMap;
     }
 
+    @Override
+    public JobStepType0Model getParentJob() {
+        return parentjob;
+    }
+
 }

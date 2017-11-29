@@ -724,6 +724,10 @@ public class Collector {
                         
                      }
                   }
+                    
+                    
+                    
+                    //save job properties in the table nodepropertyvalue;
                 }
                 /*
                 for jobtype=4. Text Node

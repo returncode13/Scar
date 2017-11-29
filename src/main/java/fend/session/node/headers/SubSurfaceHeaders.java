@@ -57,7 +57,7 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     private   LongProperty cmpMin= new SimpleLongProperty();
     private   LongProperty cmpInc= new SimpleLongProperty();
     private   StringProperty insightVersion=new SimpleStringProperty(this,"insightVersion");             //get from notes.txt
-            
+    private   StringProperty textFileNames=new SimpleStringProperty();
     private   BooleanProperty alert=new SimpleBooleanProperty();
     private   BooleanProperty modified=new SimpleBooleanProperty(Boolean.FALSE);
     private   BooleanProperty deleted=new SimpleBooleanProperty(Boolean.FALSE);
@@ -618,6 +618,20 @@ public class SubSurfaceHeaders extends SequenceHeaders implements Serializable{
     @Override
     public void setSummaryTime(String summaryTime) {
         this.summaryTime = summaryTime;
+    }
+    
+    /*  
+    Used only for text node. one subsurface per seq.
+    */
+    public String getTextFileNames() {
+        for(SubSurfaceHeaders sub:subsurfaces){      //only 1 sub per seq       
+            textFileNames.set(sub.getTextFileNames());
+        }
+        return textFileNames.get();
+    }
+
+    public void setTextFileNames(String textFileNames) {
+        this.textFileNames .set(textFileNames);
     }
    
     

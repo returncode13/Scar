@@ -7,6 +7,7 @@ package fend.session.node.volumes.type0;
 
 import fend.session.node.headers.HeadersModel;
 import fend.session.node.headers.SubSurfaceHeaders;
+import fend.session.node.jobs.types.type0.JobStepType0Model;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -54,5 +55,6 @@ public interface VolumeSelectionModelType0 {
     
     public List<SubSurfaceHeaders> getSubSurfaceHeadersToBeSummarized();
     public Map<String, SubSurfaceHeaders> getSubsurfaceNameSubSurfaceHeaderMap();
+    public JobStepType0Model getParentJob();
    
 }

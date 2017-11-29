@@ -695,7 +695,12 @@ public class LandingController extends Stage implements Initializable,Serializab
                             System.out.println("landing.LandingController.loadSession(): setting updateTime for "+beH.getSubsurface().getSubsurface()+" Utime: "+beH.getUpdateTime());
                             s.setUpdateTime(beH.getUpdateTime());
                             s.setSummaryTime(beH.getSummaryTime());
-          
+                             if(beV.getVolumeType().equals(4L)){
+                                String textpath=beH.getTextfilepath();
+                                s.setTextFileNames(textpath.substring(textpath.lastIndexOf("/")+1));
+                                }else{
+                                    s.setTextFileNames("");
+                                }
                             //
                             //
                             //

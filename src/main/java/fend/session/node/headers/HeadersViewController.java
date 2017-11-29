@@ -47,6 +47,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -54,6 +56,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
@@ -147,7 +150,10 @@ public class HeadersViewController extends Stage  {
      //End
      
      
-     
+     Long volType=hmodel.getVolmodel().getType();
+     if(volType.equals(1L)||volType.equals(2L)){
+         
+         
      
      
      
@@ -176,7 +182,7 @@ public class HeadersViewController extends Stage  {
                     setStyle("");
                     setContextMenu(null);
                 }//else if(item.getQcAlert()){
-                if(item!=null)System.out.println(".updateItem() seq: "+item.getSequenceNumber()+" sub: "+item.getSubsurface()+" isDependency(): "+item.isDependency()+" Doubt: "+item.getDoubt().isDoubt()+" Status: "+item.getDoubt().getStatus());
+               // if(item!=null)System.out.println(".updateItem() seq: "+item.getSequenceNumber()+" sub: "+item.getSubsurface()+" isDependency(): "+item.isDependency()+" Doubt: "+item.getDoubt().isDoubt()+" Status: "+item.getDoubt().getStatus());
                 
                 //doubts because of dependency failures
                 
@@ -668,10 +674,50 @@ public class HeadersViewController extends Stage  {
      }
      
      
+     
+     
+        }//end of if loop for type 1L and 2L
+     
+     
+     if(volType.equals(4L)){
+         TreeTableColumn<SequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
+         TreeTableColumn<SequenceHeaders,String>  timeStamp=new TreeTableColumn<>("TIMESTAMP");
+         TreeTableColumn<SequenceHeaders,String>  filename=new TreeTableColumn<>("file");
+         TreeTableColumn<SequenceHeaders,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
+             sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
+             filename.setCellValueFactory(new TreeItemPropertyValueFactory<>("textFileNames"));
+             timeStamp.setCellValueFactory(new TreeItemPropertyValueFactory<>("timeStamp"));
+             numberOfRuns.setCellValueFactory(new TreeItemPropertyValueFactory<>("numberOfRuns"));
+             
+         List<TreeItem<SequenceHeaders>> treeSeq = new ArrayList<>();
+         
+         for(SequenceHeaders s:seqListObs){
+            List<SubSurfaceHeaders> subs=s.getSubsurfaces();
+            TreeItem<SequenceHeaders> seqroot=new TreeItem<>(s);
+              for(SubSurfaceHeaders sub:subs){
+                  s.setTextFileNames(sub.getTextFileNames());
+                  s.setNumberOfRuns(sub.getNumberOfRuns());
+                  s.setTimeStamp(sub.getTimeStamp());
+              }
+            treeSeq.add(seqroot);
+         }
+         
+       
+        treetableView.getColumns().addAll(sequenceNumber,filename,timeStamp,numberOfRuns); 
+         
+        TreeItem<SequenceHeaders> rootOfAllseq=new TreeItem<>();
+        rootOfAllseq.getChildren().addAll(treeSeq);
+        treetableView.setRoot(rootOfAllseq);
+        treetableView.setShowRoot(false);
+         
+     }
     }catch(Exception ex){
     logger.severe(ex.getMessage());
     }
      
+        
+        
+        
     }
 
     void setView(HeadersNode aThis) {

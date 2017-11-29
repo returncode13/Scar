@@ -5,6 +5,7 @@
  */
 package db.services;
 
+import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.List;
 
@@ -18,8 +19,10 @@ public interface SubsurfaceService {
     public void deleteSubsurface(Long sid);
     public void updateSubsurface(Long sid, Subsurface newsub);
 
+    public List<Subsurface> getSubsurfaceForSequence(Sequence seq);
     public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface);
 
     public List<Subsurface> getSubsurfaceList();
+    
     
 }

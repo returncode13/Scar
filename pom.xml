@@ -4,7 +4,7 @@
 
     <groupId>landing</groupId>
     <artifactId>OBPManager</artifactId>
-    <version>1.0.1</version>
+    <version>4.1.0</version>
     <packaging>jar</packaging>
 
     <name>Scar</name>
@@ -157,5 +157,4 @@
             <version>2.9.9</version>
         </dependency>
     </dependencies>
-    <description>backwards-incompatible changes to reflect database version 13</description>
 </project>
