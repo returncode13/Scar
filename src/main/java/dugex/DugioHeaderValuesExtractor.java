@@ -497,7 +497,7 @@ public class DugioHeaderValuesExtractor {
                             Headers hdr=new Headers();
                             System.out.println("Type4 Script results: "+filename+" : "+timestamp+" Seq: "+sequenceNFromFilename);
                             FileTimeStampHolder ftsh=new FileTimeStampHolder();
-                            ftsh.filename=new File(volume.getAbsolutePath()+filename);
+                            ftsh.filename=new File(volume.getAbsolutePath()+"/"+filename);
                             System.out.println("FTSH filename : "+ftsh.filename.getAbsolutePath());
                             ftsh.timestamp=timestamp;
                             Long seq=null;
@@ -589,6 +589,7 @@ public class DugioHeaderValuesExtractor {
                                 h.setSequence(seq);
                                 h.setSubsurface(sub);
                                 h.setVolume(vol);
+                                h.setNumberOfRuns(1L);
                                 h.setTimeStamp(value.timestamp);
                                 h.setTextfilepath(value.filename.getAbsolutePath());
                                 headers.add(h);
@@ -604,6 +605,8 @@ public class DugioHeaderValuesExtractor {
                                 hfromDb.setSequence(seq);
                                 hfromDb.setSubsurface(sub);
                                 hfromDb.setVolume(vol);
+                                Long numberOfRuns=hfromDb.getNumberOfRuns();
+                                hfromDb.setNumberOfRuns(++numberOfRuns);
                                 hfromDb.setTimeStamp(value.timestamp);
                                 hfromDb.setTextfilepath(value.filename.getAbsolutePath());
                                 headers.add(hfromDb);

@@ -683,6 +683,14 @@ Boolean updateTime=true;
                 s.setInsightVersion(next.getInsightVersion());
                 s.setWorkflowVersion(next.getWorkflowVersion());
                 s.setUpdateTime(next.getUpdateTime());
+
+               
+                if(volumeType.equals(4L)){
+                String textpath=next.getTextfilepath();
+                s.setTextFileNames(textpath.substring(textpath.lastIndexOf("/")+1));
+                }else{
+                    s.setTextFileNames("");
+                }
                 seqSubMap.put(s.getSequenceNumber(), s);
                 
                 
@@ -741,7 +749,7 @@ Boolean updateTime=true;
   public List<SequenceHeaders> getHeaderListForVolume(VolumeSelectionModelType0 vm){
       try{
       Long type=vm.getType();
-      if(type.equals(1L) || type.equals(2L)){
+      if(type.equals(1L) || type.equals(2L) || type.equals(4L)){
       headersModel=vm.getHeadersModel();
       return headersModel.getSequenceListInHeaders();                                                //the observable List is the list of sequences. which contains all the header information
       }
