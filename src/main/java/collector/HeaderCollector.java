@@ -305,7 +305,8 @@ Boolean updateTime=true;
             System.out.println("collector.HeaderCollector.calculateAndCommitHeaders(): started");
             logger.info("started");
             final Long volumeType=feVolumeSelModel.getVolumeType();
-            dugHve.setVolume(volume);
+           // dugHve.setVolume(volume);
+            dugHve.setVolume(feVolumeSelModel);
          //   logForSub=new LogWatcher(logLocation,"", feVolumeSelModel, Boolean.TRUE);
        //     while(true)
       //  {

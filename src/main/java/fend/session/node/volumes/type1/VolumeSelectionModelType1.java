@@ -333,6 +333,11 @@ public class VolumeSelectionModelType1 implements VolumeSelectionModelType0 {
         return subsToBeSummarized;
     }
 
+    @Override
+    public JobStepType0Model getParentJob() {
+        return this.parentjob;
+    }
+
     
     
 }

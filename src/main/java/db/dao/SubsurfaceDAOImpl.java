@@ -100,7 +100,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
         try{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(Subsurface.class);
-            criteria.add(Restrictions.eq("sequence", seq.getSequenceno()));
+            criteria.add(Restrictions.eq("sequence.id", seq.getSequenceno()));
             
             
             result=criteria.list();

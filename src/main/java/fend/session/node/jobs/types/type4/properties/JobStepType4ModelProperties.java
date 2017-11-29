@@ -12,6 +12,8 @@ import java.util.Map;
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * This class only holds property names pertaining to type 4. 
+ * 
  */
 public class JobStepType4ModelProperties {
     List<String> properties=new ArrayList<>();

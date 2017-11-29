@@ -9,10 +9,24 @@ package dugex;
 import core.Sub;
 import db.handler.ObpManagerLogDatabaseHandler;
 import db.model.Headers;
+import db.model.JobStep;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Volume;
+import db.services.HeadersService;
+import db.services.HeadersServiceImpl;
+import db.services.JobVolumeDetailsService;
+import db.services.JobVolumeDetailsServiceImpl;
+import db.services.SequenceService;
+import db.services.SequenceServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
+import fend.session.node.jobs.nodeproperty.JobModelProperty;
+import fend.session.node.jobs.types.type4.JobStepType4Model;
+import fend.session.node.jobs.types.type4.properties.JobStepType4ModelProperties;
+import fend.session.node.volumes.type0.VolumeSelectionModelType0;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -128,6 +142,12 @@ public class DugioHeaderValuesExtractor {
     private File volume;
     private ArrayList<Headers> headers=new ArrayList<>();;
     private SubsurfaceService subserv=new SubsurfaceServiceImpl();
+    private VolumeService volserv=new VolumeServiceImpl();
+    private JobVolumeDetailsService jvServ=new JobVolumeDetailsServiceImpl();
+    private SequenceService seqServ=new SequenceServiceImpl();
+    private VolumeSelectionModelType0 volumeSelectionModel;
+    private HeadersService hdrserv=new HeadersServiceImpl();
+    
     
     public DugioHeaderValuesExtractor(){
         //LogManager.getLogManager().reset();
@@ -135,9 +155,22 @@ public class DugioHeaderValuesExtractor {
         logger.setLevel(Level.ALL);
     }
 
-    public void setVolume(File volume) {
+    /*public void setVolume(File volume) {
+    try{
+    this.volume = volume;
+    }catch(Exception ex){
+    if ( ex instanceof NullPointerException){
+    logger.severe("Null pointer exception encountered");
+    }else{
+    logger.severe(ex.getMessage());
+    }
+    }
+    }*/
+    
+    public void setVolume(VolumeSelectionModelType0 volmod) {
         try{
-        this.volume = volume;
+            this.volumeSelectionModel=volmod;
+        this.volume = this.volumeSelectionModel.getVolumeChosen();
         }catch(Exception ex){
             if ( ex instanceof NullPointerException){
                   logger.severe("Null pointer exception encountered");
@@ -146,8 +179,6 @@ public class DugioHeaderValuesExtractor {
               }
         }
     }
-    
-    
     
     
     public ArrayList<Headers> calculatedHeaders(final Map<Sub,Headers> subsurfaceTimestamp,final List<Headers> existingHeaders,final Long volumeType) throws InterruptedException, ExecutionException{
@@ -422,28 +453,68 @@ public class DugioHeaderValuesExtractor {
         Start
         */
         
-        if(volumeType.equals(4L)){              //acq type
+        if(volumeType.equals(4L)){              //text type
+            
+            Volume vol=volserv.getVolume(volumeSelectionModel.getId());
+            Integer from=null;
+            Integer to=null;
+            
+            JobStepType4Model fejob4=(JobStepType4Model) volumeSelectionModel.getParentJob();
+            List<JobModelProperty> job4Props=fejob4.getJobProperties();
+            System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines(): Property values for jobstep type 4");
+            for(JobModelProperty jobProp:job4Props){
+                System.out.println(jobProp.getPropertyName()+":"+jobProp.getPropertyValue());
+                if(jobProp.getPropertyName().equalsIgnoreCase("from")){
+                    from=Integer.valueOf(jobProp.getPropertyValue());
+                }
+                if(jobProp.getPropertyName().equalsIgnoreCase("to")){
+                    to=Integer.valueOf(jobProp.getPropertyValue());
+                }
+            }
+            final int ffrom=from;
+            final int fto=to;
+           Map<Long,FileTimeStampHolder> seqFileMap=new HashMap<>();
+           // return;
             headers.clear();
             try{
             ExecutorService executorService= Executors.newFixedThreadPool(1);
             executorService.submit(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
+                    
+                    List<Sequence> seqlistWorkAround=seqServ.getSequenceList();
                     Process process=new ProcessBuilder(ds.getP190TimeStampLineNameExtractor().getAbsolutePath(),volume.getAbsolutePath()).start();
                     InputStream is = process.getInputStream();
                     InputStreamReader isr=new InputStreamReader(is);
                     BufferedReader br=new BufferedReader(isr);
                     String line;
                     
-                    while((line=br.readLine())!=null){
-                        String time = line.substring(0,line.indexOf(" "));
-                        String sailline= line.substring(line.indexOf(" ")+1,line.length());
-                        Headers hdr=new Headers();
-                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: found "+sailline+" time: "+time);
+                    while((line=br.readLine())!=null){                          //the script returns result of the format   filenameContainingSequenceNumber<Space>timestamp
+                        String filename = line.substring(0,line.indexOf(" "));                  
+                        String timestamp= line.substring(line.indexOf(" ")+1,line.length());
+                        if(ffrom<=filename.length() && fto<=filename.length()){
+                            String sequenceNFromFilename=filename.substring(ffrom, fto+1);
+                            Headers hdr=new Headers();
+                            System.out.println("Type4 Script results: "+filename+" : "+timestamp+" Seq: "+sequenceNFromFilename);
+                            FileTimeStampHolder ftsh=new FileTimeStampHolder();
+                            ftsh.filename=new File(volume.getAbsolutePath()+filename);
+                            System.out.println("FTSH filename : "+ftsh.filename.getAbsolutePath());
+                            ftsh.timestamp=timestamp;
+                            Long seq=null;
+                            try{
+                                seq=Long.valueOf(sequenceNFromFilename);
+                            }catch(NumberFormatException nfe){
+                                System.out.println(".call(): skipping file "+filename);
+                                continue;
+                            }
+                            
+                            ftsh.sequence=seq;
+                            seqFileMap.put(ftsh.sequence, ftsh);
+                            
+                            
+                            
                         
-                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines: Map contains "+sailline+" ? "+checkSubMap.containsKey(sailline));
                         
-                        logger.info("found "+sailline+" time: "+time+ " : Map contains "+sailline+" ? "+checkSubMap.containsKey(sailline));
                        // if(!subsurfaceTimestamp.isEmpty() && subsurfaceTimestamp.containsKey(lineName) && subsurfaceTimestamp.get(lineName).getTimeStamp().equals(time)){
                        
                        //To DO ..update on dissimilar timestamp
@@ -480,17 +551,71 @@ public class DugioHeaderValuesExtractor {
                        //continue; //Comment this out later when implementing
                        }*/
                        
-                       
+                       }else{
+                            System.out.println("Type4 Script results: "+filename+" : is Erroneous. Not the same as the rest of the files??");
+                        }
                        //To do END
-                       System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+sailline);
-                        Subsurface hdrsub=subserv.getSubsurfaceObjBysubsurfacename(sailline+"_cable1_gun1");        //temporary fix  //replace this with a method that looks for subs with sailine as part of their substring. Better still create a sailine column under the sequence db model. and use the association subs->seq and seq.sailline
-                        //hdr.setSubsurface(lineName);
-                         hdr.setSubsurface(hdrsub);
-                        hdr.setTimeStamp(time);
-                        //hdr.setSequenceNumber(Long.valueOf(seq));
-                        hdr.setSequence(hdrsub.getSequence());
-                        headers.add(hdr);
+                       /*System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines:  Setting Subsurface "+sailline);
+                       Subsurface hdrsub=subserv.getSubsurfaceObjBysubsurfacename(sailline+"_cable1_gun1");        //temporary fix  //replace this with a method that looks for subs with sailine as part of their substring. Better still create a sailine column under the sequence db model. and use the association subs->seq and seq.sailline
+                       //hdr.setSubsurface(lineName);
+                       hdr.setSubsurface(hdrsub);
+                       hdr.setTimeStamp(time);
+                       //hdr.setSequenceNumber(Long.valueOf(seq));
+                       hdr.setSequence(hdrsub.getSequence());
+                       headers.add(hdr);*/
                     }
+                    
+                    for (Map.Entry<Long, FileTimeStampHolder> entry : seqFileMap.entrySet()) {
+                        Long key = entry.getKey();
+                        FileTimeStampHolder value = entry.getValue();
+                        //Sequence seq=seqServ.getSequenceObjByseqno(key);            //get the sequence object
+                       Sequence seq=null;
+                       for(Sequence s:seqlistWorkAround){
+                           if(s.getSequenceno().equals(key)){
+                               seq=s;
+                               break;
+                           }
+                       }
+                        
+                        if(seq!=null){
+                        Subsurface sub=subserv.getSubsurfaceForSequence(seq).get(0); //get the first subsurface that it finds and bind it to the file. Therefore this "volume" contains this one subsurface=sub from this one sequence=seq
+                        List<Headers> hListfromdb=hdrserv.getHeadersFor(vol, sub);
+                        if(hListfromdb.size()>1){
+                        System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines():Type4.call(): More than more headers encountered for volume "+vol.getNameVolume()+" volid:"+vol.getIdVolume()+" sub: "+sub.getSubsurface()+" subid: "+sub.getId());
+                        }
+                        else if(hListfromdb.isEmpty()){  //no entry exists.. add a new one
+                                System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines():Type4.call(): creating headers for "+seq.getSequenceno()+" "+sub.getSubsurface()+" time@ "+value.timestamp+" file: "+value.filename.getName());
+                                Headers h=new Headers();
+                                h.setSequence(seq);
+                                h.setSubsurface(sub);
+                                h.setVolume(vol);
+                                h.setTimeStamp(value.timestamp);
+                                h.setTextfilepath(value.filename.getAbsolutePath());
+                                headers.add(h);
+                            
+                        }else{
+                           Headers hfromDb=hListfromdb.get(0);
+                            if(hfromDb.getTimeStamp().equalsIgnoreCase(value.timestamp)){
+                                System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines():Type4.call(): "+value.filename.getName()+" is unchanged . Current timestamp: "+value.timestamp+" = "+hfromDb.getTimeStamp()+" . R.H.S  is the timestamp from the database");
+                            }
+                            else{   //time stamp changed.
+                                System.out.println("dugex.DugioHeaderValuesExtractor.calculateSubsurfaceLines():Type4.call(): updating headers for "+seq.getSequenceno()+" "+sub.getSubsurface()+" time@ "+value.timestamp+" file: "+value.filename.getName());
+                                //Headers h=new Headers();
+                                hfromDb.setSequence(seq);
+                                hfromDb.setSubsurface(sub);
+                                hfromDb.setVolume(vol);
+                                hfromDb.setTimeStamp(value.timestamp);
+                                hfromDb.setTextfilepath(value.filename.getAbsolutePath());
+                                headers.add(hfromDb);
+                            }
+                        }
+                        
+                        
+                        }
+                        
+                        
+                    }
+                    
                     return null;
                 }
                 
@@ -505,7 +630,7 @@ public class DugioHeaderValuesExtractor {
                logger.severe(ex.getMessage());
            }
             
-            
+           
             
             
             
@@ -1109,6 +1234,14 @@ futures.add(
          }).get();
         }
     }
+    
+    
+    
+}
+ class FileTimeStampHolder{
+    Long sequence;
+    File filename;
+    String timestamp;
 }
 
 

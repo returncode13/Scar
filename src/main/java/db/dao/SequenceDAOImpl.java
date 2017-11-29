@@ -72,7 +72,8 @@ public class SequenceDAOImpl implements SequenceDAO {
             transaction=session.beginTransaction();
             Sequence l= (Sequence) session.get(Sequence.class, sid);
             l.setSequenceno(sid);
-            
+            l.setStatus(newseq.getStatus());
+            l.setRealLineName(newseq.getRealLineName());
             session.update(l);
             
             

@@ -23,11 +23,18 @@ import javax.persistence.Table;
 @Table(name="sequence",schema="public")
 public class Sequence {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
+@GeneratedValue
 private Long id;
 
 @Column(name="sequenceno")
 private Long sequenceno;
+
+@Column(name="status")
+private String status;
+
+@Column(name="real_line_name")
+private String realLineName;
+
 
  
 @OneToMany(mappedBy = "sequence",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -38,6 +45,8 @@ private Set<Acquisition> acquisition;
 
 @OneToMany(mappedBy = "sequence",cascade = CascadeType.ALL,orphanRemoval = true)
 private Set<Headers> headers;
+
+
 
     public Set<Headers> getHeaders() {
         return headers;
@@ -64,21 +73,37 @@ private Set<Headers> headers;
     public void setSubsurfaces(Set<Subsurface> subsurfaces) {
         this.subsurfaces = subsurfaces;
     }
-    
-     public Long getSequenceno() {
+
+    public Long getSequenceno() {
         return sequenceno;
     }
 
     public void setSequenceno(Long sequenceno) {
         this.sequenceno = sequenceno;
     }
-
+   
     public Long getId() {
         return id;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRealLineName() {
+        return realLineName;
+    }
+
+    public void setRealLineName(String realLineName) {
+        this.realLineName = realLineName;
+    }
 
 
+    
 
 
 }

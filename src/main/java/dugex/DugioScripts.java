@@ -88,9 +88,14 @@ public class DugioScripts implements Serializable{
 "sed -n '/Process parameters:/,/Executing/p'  $1 |  awk '{$1=$2=$3=\"\";print $0}'";
      
       
-       private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
-      "for i in $1; do  ls -ltr --time-style=+%Y%m%d%H%M%S $i | grep -o \"[[:digit:]]\\{14\\}.[[:alnum:]]*\"; done";
+      /*private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
+      "for i in $1; do  ls -ltr --time-style=+%Y%m%d%H%M%S $i | grep -o \"[[:digit:]]\\{14\\}.[[:alnum:]]*\"; done";*/
+      /*   private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
+      "ls -ltr --time-style=+%Y%m%d%H%M%S $1 | awk '{print $6 \" \" $7}'|sed 's/....$//' | awk '{print $2 \" \" $1}'";*/
       
+      
+      private String p190TimeStampLineNameExContents="#!/bin/bash\n" +
+"ls -ltr --time-style=+%Y%m%d%H%M%S $1 | awk '{print $7 \" \" $6}'";
        /*
        for extraction of workflow and times from notes.txt
        */

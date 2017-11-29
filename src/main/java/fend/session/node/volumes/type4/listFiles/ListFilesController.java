@@ -69,7 +69,7 @@ public class ListFilesController extends Stage{
             model.setFrom(from);
             model.setTo(to);
              System.out.println("fend.session.node.volumes.type4.listFiles.ListFilesController.handleOK(): setting values inside model of From: "+from+" : TO: "+to);
-             List<JobModelProperty> jobProps=((VolumeSelectionModelType4)this.model.getVmodel0()).getParentjob().getJobProperties();
+             List<JobModelProperty> jobProps=((VolumeSelectionModelType4)this.model.getVmodel0()).getParentJob().getJobProperties();
              for (Iterator<JobModelProperty> iterator = jobProps.iterator(); iterator.hasNext();) {
             JobModelProperty jp = iterator.next();
             if(jp.getPropertyName().equals("from")){
